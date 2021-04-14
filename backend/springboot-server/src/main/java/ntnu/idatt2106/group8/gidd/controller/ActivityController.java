@@ -30,8 +30,8 @@ public class ActivityController {
         return activityService.addActivity(activity);
     }
 
-    @PutMapping("{id}")
-    public Activity updateActivity(@RequestBody Activity newActivity, @PathVariable("id") int id) {
+    @PutMapping("/{id}")
+    public Activity updateActivity(@RequestParam Activity newActivity, @PathVariable("id") int id) {
         return activityService.updateActivity(id, newActivity);
     }
 

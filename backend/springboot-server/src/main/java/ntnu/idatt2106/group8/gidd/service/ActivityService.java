@@ -57,10 +57,6 @@ public class ActivityService {
         return null;
     }
 
-    public Activity cancelActivity(int id, Activity activity) {
-        return activityRepo.save(activity);
-    }
-
     public void deleteActivity(int id) {
         try {
             activityRepo.deleteById(id);
