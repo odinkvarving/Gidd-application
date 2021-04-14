@@ -26,7 +26,7 @@ public class Activity {
     private LocalDateTime activityStart;
     private LocalDateTime activityEnd;
     private String description;
-    
+
     private Activity(User creator, ActivityType activityType, Level level, List<Equipment> equipment, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description) {
         this.creator = creator;
         this.activityType = activityType;

@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
