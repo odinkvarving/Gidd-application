@@ -1,7 +1,9 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import ntnu.idatt2106.group8.gidd.model.entities.Activity;
+import ntnu.idatt2106.group8.gidd.service.ActivityService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
