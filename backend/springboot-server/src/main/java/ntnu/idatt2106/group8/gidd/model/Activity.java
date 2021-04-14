@@ -1,21 +1,21 @@
 package ntnu.idatt2106.group8.gidd.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Activity {
     private int id;
     private int creatorId;
     private String longitude;
     private String latitude;
-    private Date activityStart;
-    private Date activityEnd;
+    private LocalDateTime activityStart;
+    private LocalDateTime activityEnd;
     private String description;
 
     public Activity() {
 
     }
 
-    public Activity(int id, int creatorId, String longitude, String latitude, Date activityStart, Date activityEnd, String description) {
+    public Activity(int id, int creatorId, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description) {
         this.id = id;
         this.creatorId = creatorId;
         this.longitude = longitude;
