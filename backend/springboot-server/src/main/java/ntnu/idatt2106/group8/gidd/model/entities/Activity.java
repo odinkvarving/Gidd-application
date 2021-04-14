@@ -26,10 +26,8 @@ public class Activity {
     private LocalDateTime activityStart;
     private LocalDateTime activityEnd;
     private String description;
-
-    //TODO: Create ActivityBuilder
-    public Activity(int id, User creator, ActivityType activityType, Level level, List<Equipment> equipment, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description) {
-        this.id = id;
+    
+    private Activity(User creator, ActivityType activityType, Level level, List<Equipment> equipment, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description) {
         this.creator = creator;
         this.activityType = activityType;
         this.level = level;
@@ -122,5 +120,75 @@ public class Activity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public static class Builder {
+
+        private User creator;
+        private ActivityType activityType;
+        private Level level;
+        private List<Equipment> equipment;
+        private String longitude;
+        private String latitude;
+        private LocalDateTime activityStart;
+        private LocalDateTime activityEnd;
+        private String description;
+
+        public Activity build() {
+            return new Activity(creator, activityType, level, equipment, longitude, latitude, activityStart, activityEnd, description);
+        }
+
+        public Builder(User creator, ActivityType activityType, Level level, LocalDateTime activityStart, LocalDateTime activityEnd) {
+            this.creator = creator;
+            this.activityType = activityType;
+            this.level = level;
+            this.activityStart = activityStart;
+            this.activityEnd = activityEnd;
+        }
+
+        public Builder setCreator(User creator) {
+            this.creator = creator;
+            return this;
+        }
+
+        public Builder setLevel(Level level) {
+            this.level = level;
+            return this;
+        }
+
+        public Builder setEquipment(List<Equipment> equipment) {
+            this.equipment = equipment;
+            return this;
+        }
+
+        public Builder setLongitude(String longitude) {
+            this.longitude = longitude;
+            return this;
+        }
+
+        public Builder setLatitude(String latitude) {
+            this.latitude = latitude;
+            return this;
+        }
+
+        public Builder setActivityStart(LocalDateTime activityStart) {
+            this.activityStart = activityStart;
+            return this;
+        }
+
+        public Builder setActivityEnd(LocalDateTime activityEnd) {
+            this.activityEnd = activityEnd;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setActivityType(ActivityType activityType) {
+            this.activityType = activityType;
+            return this;
+        }
     }
 }

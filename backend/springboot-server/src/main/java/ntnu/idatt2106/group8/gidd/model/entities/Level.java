@@ -23,8 +23,7 @@ public class Level {
     public Level() {
     }
 
-    public Level(int id, String description, List<Activity> activities, List<UserInfo> userInfos) {
-        this.id = id;
+    public Level(String description, List<Activity> activities, List<UserInfo> userInfos) {
         this.description = description;
         this.activities = activities;
         this.userInfos = userInfos;
