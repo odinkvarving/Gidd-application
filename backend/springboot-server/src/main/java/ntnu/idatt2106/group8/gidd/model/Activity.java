@@ -57,19 +57,19 @@ public class Activity {
         this.latitude = latitude;
     }
 
-    public Date getActivityStart() {
+    public LocalDateTime getActivityStart() {
         return activityStart;
     }
 
-    public void setActivityStart(Date activityStart) {
+    public void setActivityStart(LocalDateTime activityStart) {
         this.activityStart = activityStart;
     }
 
-    public Date getActivityEnd() {
+    public LocalDateTime getActivityEnd() {
         return activityEnd;
     }
 
-    public void setActivityEnd(Date activityEnd) {
+    public void setActivityEnd(LocalDateTime activityEnd) {
         this.activityEnd = activityEnd;
     }
 
