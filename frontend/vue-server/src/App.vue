@@ -1,18 +1,14 @@
 <template>
-  <!--<img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
-  <ActivityCard></ActivityCard>
+  <RegistrationBox />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
+import RegistrationBox from "./components/UserComponents/RegistrationBox"
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
-    ActivityCard
+    RegistrationBox
   }
 }
 </script>
