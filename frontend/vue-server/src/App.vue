@@ -1,14 +1,18 @@
 <template>
-  <index/>
+  <!--<img alt="Vue logo" src="./assets/logo.png">
+  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
+  <ActivityCard></ActivityCard>
 </template>
 
 <script>
-import index from './router/index.vue'
+import HelloWorld from './components/HelloWorld.vue'
+import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
 
 export default {
   name: 'App',
   components: {
-    index
+    HelloWorld,
+    ActivityCard
   }
 }
 </script>
