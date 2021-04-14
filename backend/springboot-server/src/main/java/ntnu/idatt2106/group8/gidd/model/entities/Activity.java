@@ -1,28 +1,47 @@
-package ntnu.idatt2106.group8.gidd.model;
+package ntnu.idatt2106.group8.gidd.model.entities;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
+/**
+ * A database-entity created by Endré
+ */
+@Entity
 public class Activity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private int creatorId;
+    @ManyToOne
+    private User creator;
+    @ManyToOne
+    private ActivityType activityType;
+    @ManyToOne
+    private Level level;
+    @OneToMany
+    private List<Equipment> equipment;
     private String longitude;
     private String latitude;
     private LocalDateTime activityStart;
     private LocalDateTime activityEnd;
     private String description;
 
-    public Activity() {
-
-    }
-
-    public Activity(int id, int creatorId, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description) {
+    //TODO: Create ActivityBuilder
+    public Activity(int id, User creator, ActivityType activityType, Level level, List<Equipment> equipment, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description) {
         this.id = id;
-        this.creatorId = creatorId;
+        this.creator = creator;
+        this.activityType = activityType;
+        this.level = level;
+        this.equipment = equipment;
         this.longitude = longitude;
         this.latitude = latitude;
         this.activityStart = activityStart;
         this.activityEnd = activityEnd;
         this.description = description;
+    }
+
+    public Activity() {
     }
 
     public int getId() {
@@ -33,12 +52,36 @@ public class Activity {
         this.id = id;
     }
 
-    public int getCreatorId() {
-        return creatorId;
+    public User getCreator() {
+        return creator;
     }
 
-    public void setCreatorId(int creatorId) {
-        this.creatorId = creatorId;
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
+    public ActivityType getActivityType() {
+        return activityType;
+    }
+
+    public void setActivityType(ActivityType activityType) {
+        this.activityType = activityType;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public List<Equipment> getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(List<Equipment> equipment) {
+        this.equipment = equipment;
     }
 
     public String getLongitude() {
