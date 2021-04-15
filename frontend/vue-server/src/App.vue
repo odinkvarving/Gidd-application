@@ -1,15 +1,21 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <!--<img alt="Vue logo" src="./assets/logo.png">
+  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
+  <!--<ActivityCard></ActivityCard>-->
+  <ActivityFeed></ActivityFeed>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
+import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
+import ActivityFeed from './components/activityFeedComponents/ActivityFeed.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HelloWorld,
+    ActivityCard,
+    ActivityFeed
   }
 }
 </script>
