@@ -1,6 +1,8 @@
 <template>
     <div class="registration-box">
-        <h2>Registrer deg hos GIDD idag<br />Det er bare å "GIDDE"</h2>
+
+        <button class="close" @click="$emit('close')">x</button>
+        <h2>Registrer deg hos GIDD idag<br />Det er bare å GIDDE</h2>
 
         <div id="facebook-btn">
             <img src="../../assets/facebook.png" alt="facebook logo" style="width: 32px; height: 32px">
@@ -22,12 +24,12 @@
             <input type="text" class="input" id="phone" placeholder="Telefon" v-model="phoneValue">
         </div>
         <div class="input-container">
-            <p v-if="!emailValid">Vennligst skriv inn en email!</p>
+            <p v-if="!emailValid">Vennligst skriv inn en gyldig e-postadresse</p>
             <input type="text" class="input" id="email" placeholder="E-post" v-model="emailValue">
         </div>
         <div class="input-container">
-            <p v-if="!passwordValid">Passord må være mellom 5 og 16 tegn!</p>
-            <input type="password" class="input" id="password" placeholder="Password" v-model="passwordValue">
+            <p v-if="!passwordValid">Passord må være mellom 5 og 16 tegn</p>
+            <input type="password" class="input" id="password" placeholder="Passord" v-model="passwordValue">
         </div>
 
         <button id="register-btn" @click="registerUser">Register</button>
@@ -154,13 +156,11 @@ export default {
 
 .registration-box {
     width: 563px;
-    height: 790px;
-
+    height: 720px;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
     justify-content: center;
-    box-shadow: 2px 2px 4px #b8b3b3;
     margin: 0;
     padding: 0;
     background: white;
@@ -174,7 +174,6 @@ export default {
     border-radius: 6px;
     border: 1px solid #dfdfe8;
     color: white;
-    
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
@@ -245,6 +244,7 @@ export default {
     padding: 0 10px;
     background-color: #F6F6F6;
     border: none;
+    outline: none;
 }
 
 #register-btn{
@@ -257,6 +257,7 @@ export default {
     background: #FFBD3E;
     border: none;
     border-radius: 6px;
+    outline: none;
 }
 
 #register-btn:hover{

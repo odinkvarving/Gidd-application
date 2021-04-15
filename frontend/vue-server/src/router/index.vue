@@ -1,38 +1,54 @@
 <template>
-        <div class="navigation-bar">
-            <button class="btn login"><span>Logg inn</span></button>
-        </div>
+    <div class="navigation-bar">
+        <button class="btn login" @click="showLoginBox"><span>Logg inn</span></button>
+    </div>
     <div class="front-page">
-        <div class="reg-box" v-if="showRegisterBox">
-            <registration-box />
-        </div>
-        <div class="header-container" v-if="!showRegisterBox">
+        <div class="header-container" v-if="!isRegistrationBoxVisible && !isLoginBoxVisible">
             <div class="title">GIDD</div>
             <div class="paragraph">Det er bare å gidde</div>
-            <button class="btn register" @click="registerBtnClicked"><span>Registrer deg</span></button>
+            <button class="btn register" @click="showRegistrationBox"><span>Registrer deg</span></button>
         </div>
+        <login-box v-show="isLoginBoxVisible" @close="closeLoginBox"/>
+        <registration-box v-show="isRegistrationBoxVisible" @close="closeRegistrationBox"/>
     </div>
     <div class="test"></div>
 </template>
 
 <script>
+import LoginBox from '../components/UserComponents/LoginBox.vue';
 import RegistrationBox from "../components/UserComponents/RegistrationBox.vue"
 
 export default {
   name: 'index',
   components: {
-      'registration-box': RegistrationBox
+      'registration-box': RegistrationBox,
+      'login-box': LoginBox,
   },
   data() {
       return {
-          showRegisterBox: false,
+          isRegistrationBoxVisible: false,
+          isLoginBoxVisible: false,
       }
   },
   methods: {
-      registerBtnClicked(){
-          console.log("Register button clicked");
-          this.showRegisterBox = true;
-      }
+      showRegistrationBox() {
+          this.isRegistrationBoxVisible = true;
+          console.log("Registration Box Clicked");
+      },
+      closeRegistrationBox() {
+          this.isRegistrationBoxVisible = false;
+          console.log("Close Registration Box Clicked");
+      },
+      showLoginBox() {
+          if (this.isRegistrationBoxVisible)
+            this.isRegistrationBoxVisible = false;
+            this.isLoginBoxVisible = true;
+          console.log("Login Box Clicked");
+      },
+      closeLoginBox() {
+          this.isLoginBoxVisible = false;
+          console.log('Close Login Box Clicked');
+      },
   },
 }
 </script>
@@ -66,7 +82,6 @@ export default {
     -o-background-size: cover;
     -webkit-overflow-scrolling: touch;
     background-size: cover;
-    
 }
 
 .header-container {
