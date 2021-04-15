@@ -4,30 +4,35 @@ import javax.persistence.*;
 import java.util.Objects;
 
 /**
- * A database-entity created by Endré
+ * A entity-class representing the user table in the database.
+ *
+ * @author Endré Hadzalic
  */
 @Entity
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    private int id;
 
     //hashed
-    String email;
-    String password;
+    private String email;
+    private String password;
 
-    @OneToOne
-    UserInfo userInfo;
+    @OneToOne(cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private UserInfo userInfo;
 
-    //TODO: compositetable with Activity
-
-    /**
-     * Default constructor
-     */
     public User() {
     }
 
+    /**
+     * Creates a new user
+     *
+     * @param email    the email of the new user.
+     * @param password the password of the new user.
+     * @param userInfo the user-info of the new user, represented in a UserInfo-object.
+     */
     public User(String email, String password, UserInfo userInfo) {
         this.email = email;
         this.password = password;
