@@ -11,7 +11,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/activities")
 public class ActivityController {
-   /* @Autowired
+    /*
+    @Autowired
     private ActivityService activityService;
 
     @GetMapping
@@ -27,17 +28,5 @@ public class ActivityController {
     @PostMapping
     public Activity addActivity(@RequestBody Activity activity) {
         return activityService.addActivity(activity);
-    }
-
-    @PutMapping("{id}")
-    public Activity updateActivity(@RequestBody Activity newActivity, @PathVariable("id") int id) {
-        return activityService.updateActivity(id, newActivity);
-    }
-
-
-    @DeleteMapping("/{id}")
-    public void deleteActivity(@PathVariable("id") int id) {
-        activityService.deleteActivity(id);
-    }
-
+    }*/
 }
