@@ -6,16 +6,13 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
-import ActivityFeed from './components/activityFeedComponents/ActivityFeed.vue'
+import Index from './router/index.vue'
+
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
-    ActivityCard,
-    ActivityFeed
+    Index
   }
 }
 </script>
