@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -26,6 +27,11 @@ public class UserService {
 
     public void save(User user){
         userRepo.save(user);
+    }
+
+    public User findByEmail(String email){
+        Optional<User> user = userRepo.findByEmail(email);
+        return user.orElse(null);
     }
 
 }
