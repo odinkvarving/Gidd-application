@@ -2,10 +2,13 @@ package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A database-entity created by Endré
+ * A database entity which represents the activity table in the database.
+ *
+ * @author Endré Hadzalic
  */
 @Entity
 public class Activity {
@@ -13,21 +16,22 @@ public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private User creator;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private ActivityType activityType;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Level level;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Equipment> equipment;
     private String longitude;
     private String latitude;
     private LocalDateTime activityStart;
     private LocalDateTime activityEnd;
     private String description;
+    private int maxParticipants;
 
-    private Activity(User creator, ActivityType activityType, Level level, List<Equipment> equipment, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description) {
+    private Activity(User creator, ActivityType activityType, Level level, List<Equipment> equipment, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description, int maxParticipants) {
         this.creator = creator;
         this.activityType = activityType;
         this.level = level;
@@ -37,9 +41,18 @@ public class Activity {
         this.activityStart = activityStart;
         this.activityEnd = activityEnd;
         this.description = description;
+        this.maxParticipants = maxParticipants;
     }
 
     public Activity() {
+    }
+
+    public int getMaxParticipants() {
+        return maxParticipants;
+    }
+
+    public void setMaxParticipants(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
     }
 
     public int getId() {
@@ -79,7 +92,7 @@ public class Activity {
     }
 
     public void setEquipment(List<Equipment> equipment) {
-        this.equipment = equipment;
+        if (equipment != null) this.equipment = equipment;
     }
 
     public String getLongitude() {
@@ -122,42 +135,60 @@ public class Activity {
         this.description = description;
     }
 
+    /**
+     * A class used to build a new Activity object.
+     *
+     * @author Endré Hadzalic
+     */
     public static class Builder {
 
-        private User creator;
+        private final User creator;
+        private final Level level;
+        private final LocalDateTime activityStart;
+        private final LocalDateTime activityEnd;
+        private final int maxParticipants;
         private ActivityType activityType;
-        private Level level;
         private List<Equipment> equipment;
         private String longitude;
         private String latitude;
-        private LocalDateTime activityStart;
-        private LocalDateTime activityEnd;
         private String description;
 
-        public Activity build() {
-            return new Activity(creator, activityType, level, equipment, longitude, latitude, activityStart, activityEnd, description);
-        }
-
-        public Builder(User creator, ActivityType activityType, Level level, LocalDateTime activityStart, LocalDateTime activityEnd) {
+        /**
+         * All params in this constructor are mandatory fields for creating a new Activity-object.
+         *
+         * @param creator         the user that creates the new activity represented as a User-object.
+         * @param activityType    the activity-type of the activity represented as a ActivityType-object.
+         * @param level           the difficulty level of the activity- represented as a Level-object.
+         * @param activityStart   the start-time of the activity represented as LocalDateTime-object.
+         * @param activityEnd     the end-time of the activity represented as LocalDateTime-object.
+         * @param maxParticipants the maximum amount of participants in the activity.
+         */
+        public Builder(User creator, ActivityType activityType, Level level, LocalDateTime activityStart, LocalDateTime activityEnd, int maxParticipants) {
             this.creator = creator;
             this.activityType = activityType;
             this.level = level;
             this.activityStart = activityStart;
             this.activityEnd = activityEnd;
+            this.maxParticipants = maxParticipants;
         }
 
-        public Builder setCreator(User creator) {
-            this.creator = creator;
-            return this;
+        /**
+         * Builds a new Activity-object.
+         *
+         * @return a new Activity-object.
+         */
+        public Activity build() {
+            return new Activity(creator, activityType, level, equipment, longitude, latitude, activityStart, activityEnd, description, maxParticipants);
         }
 
-        public Builder setLevel(Level level) {
-            this.level = level;
-            return this;
-        }
-
+        /**
+         * @param equipment nullable
+         * @return this
+         */
         public Builder setEquipment(List<Equipment> equipment) {
-            this.equipment = equipment;
+            if (this.equipment != null) this.equipment = equipment;
+            else this.equipment = new ArrayList<>();
+
             return this;
         }
 
@@ -168,16 +199,6 @@ public class Activity {
 
         public Builder setLatitude(String latitude) {
             this.latitude = latitude;
-            return this;
-        }
-
-        public Builder setActivityStart(LocalDateTime activityStart) {
-            this.activityStart = activityStart;
-            return this;
-        }
-
-        public Builder setActivityEnd(LocalDateTime activityEnd) {
-            this.activityEnd = activityEnd;
             return this;
         }
 
