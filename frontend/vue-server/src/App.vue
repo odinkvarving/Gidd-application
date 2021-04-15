@@ -1,32 +1,48 @@
 <template>
-  <!--<img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
-  <!--<ActivityCard></ActivityCard>-->
-  <ActivityFeed></ActivityFeed>
+  <div id="app">
+    <ActivityFeed v-show="isActivityFeedVisible" @activityClicked="onActivityClicked"/>
+    <ActivityCard v-show="isActivityCardVisible" :activity="selectedActivity"/>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
 import ActivityFeed from './components/activityFeedComponents/ActivityFeed.vue'
+//import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
 
 export default {
   name: 'App',
+
   components: {
-    HelloWorld,
-    ActivityCard,
+    //ActivityCard,
     ActivityFeed
+  },
+
+  data() {
+    return {
+      selectedActivity: null,
+      isActivityFeedVisible: true,
+      isActivityCardVisible: false,
+    }
+  },
+
+  methods: {
+    onActivityClicked(activity) {
+      console.log(activity);
+      this.selectedActivity = activity;
+      this.isActivityFeedVisible = false;
+      this.isActivityCardVisible = true;
+    }
   }
 }
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  background-color: #F6F6F6;
 }
 </style>
