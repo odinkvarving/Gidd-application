@@ -1,91 +1,60 @@
 <template>
-    <div class="registration-box">
-
-        <button class="close" @click="$emit('close')">x</button>
-        <h2>Registrer deg hos GIDD idag<br />Det er bare å GIDDE</h2>
+    <div class="login-box">
+        <button id="close-btn" @click="$emit('close')"><span>x</span></button>
+        <h2>GIDD og logg deg inn da</h2>
 
         <div id="facebook-btn">
             <img src="../../assets/facebook.png" alt="facebook logo" style="width: 32px; height: 32px">
-            <p class="text">Registrer deg med Facebook</p>
+            <p class="text">Logg inn med Facebook</p>
         </div>
         <div id="google-btn">
             <img src="../../assets/google.png" alt="google logo" style="width: 32px; height: 32px">
-            <p class="text">Registrer deg med Google</p>
+            <p class="text">Logg inn med Google</p>
         </div>
         <p class="or-text">eller bruk epost</p>
 
-
         <div class="input-container">
-            <p v-if="!nameValid">Ikke gyldig navn!</p>
-            <input type="text" class="input" id="name" placeholder="Fullt navn" v-model="nameValue">
-        </div>
-        <div class="input-container">
-            <p v-if="!phoneValid">Ikke gyldig telefon nummmer!(Husk landskode!)</p>
-            <input type="text" class="input" id="phone" placeholder="Telefon" v-model="phoneValue">
-        </div>
-        <div class="input-container">
-            <p v-if="!emailValid">Vennligst skriv inn en gyldig e-postadresse</p>
+            <p v-if="!isEmailValid">Skriv inn en gyldig e-postadresse</p>
             <input type="text" class="input" id="email" placeholder="E-post" v-model="emailValue">
         </div>
         <div class="input-container">
-            <p v-if="!passwordValid">Passord må være mellom 5 og 16 tegn</p>
+            <p v-if="!isPasswordValid">Passord må være mellom 5 og 16 tegn</p>
             <input type="password" class="input" id="password" placeholder="Passord" v-model="passwordValue">
         </div>
 
-        <button id="register-btn" @click="registerUser">Register</button>
-        
+        <button id="Login-btn" @click="loginUser">Logg inn</button>
     </div>
 </template>
 
 <script>
 
 export default {
-    name: "RegistrationBox",
+    name: "LoginBox",
     data(){
         return {
-            nameValid: true,
-            phoneValid: true,
-            emailValid: true,
-            passwordValid: true,
-            nameValue: '',
-            phoneValue: '',
+            isEmailValid: true,
+            isPasswordValid: true,
             emailValue: '',
             passwordValue: ''
         }
     },
     methods: {
-        registerUser(){
-            console.log("Register button clicked");
+        loginUser(){
+            console.log("Login button clicked");
 
-            this.nameValid = true;
-            this.phoneValid = true;
-            this.emailValid = true;
-            this.passwordValid = true;
-            if(!this.validateName()){
-                this.nameValid = false;
-            }
-            if(!this.validatePhone()){
-                this.phoneValid = false;
-            }
+            this.isEmailValid = true;
+            this.isPasswordValid = true;
             if(!this.validateEmail()){
-                this.emailValid = false;
+                this.isEmailValid = false;
             }
             if(!this.validatePassword()){
-                this.passwordValid = false;
+                this.isPasswordValid = false;
             }
 
-            if(this.nameValid && this.phoneValid && this.emailValid && this.passwordValid){
-                console.log("All inputs are valid! Creating user...");
+            if(this.isEmailValid && this.isPasswordValid){
+                console.log("All inputs are valid. Signing in...");
                 this.sendNewUserToServer();
             }
-        },
-        validateName(){
-            let regName = /^[a-zA-Z]+ [a-zA-Z]+$/;
-            return regName.test(this.nameValue);
-        },
-        validatePhone(){
-            let regPhone = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
-            return regPhone.test(this.phoneValue);
         },
         validateEmail() {
 
@@ -94,17 +63,20 @@ export default {
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(this.emailValue).toLowerCase());
         },
-        validatePassword(){
+        validatePassword() {
             return this.passwordValue.length >= 6 && this.passwordValue.length <= 16;
         },
-        sendNewUserToServer(){
+        sendNewUserToServer() {
             
         },
-        handleRegisterWithFacebook(){
+        handleLoginWithFacebook() {
             //Implement facebook compability
         },
-        handleRegisterWithGoogle(){
+        handleLoginWithGoogle() {
             //Implement google compability
+        },
+        closeWindow () {
+            
         }
     }
 }
@@ -112,9 +84,9 @@ export default {
 
 <style>
 
-.registration-box {
-    width: 563px;
-    height: 720px;
+.login-box {
+    width: 510px;
+    height: 600px;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
@@ -205,7 +177,7 @@ export default {
     outline: none;
 }
 
-#register-btn{
+#Login-btn{
     margin-top: 20px;
     font-family: "Mulish";
     font-size: 20px;
@@ -218,9 +190,17 @@ export default {
     outline: none;
 }
 
-#register-btn:hover{
+#Login-btn:hover{
     background-color: #efb03a;
     cursor: pointer;
+}
+
+#close-btn{
+    display: flex;
+    flex-direction: row;
+    background: none;
+    cursor: pointer;
+    outline: none;
 }
 
 </style>
