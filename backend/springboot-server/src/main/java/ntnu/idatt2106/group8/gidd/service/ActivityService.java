@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.service;
 
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
+import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
 import ntnu.idatt2106.group8.gidd.repository.ActivityRepo;
 import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepo;
 import org.slf4j.Logger;
@@ -95,6 +96,19 @@ public class ActivityService {
             }
         }catch (DataAccessException e) {
             log.info("Could not find the activity type for this activity");
+        }
+        return null;
+    }
+
+    public List<Equipment> getActivityEquipment(int id) {
+        Optional<Activity> activity;
+        try {
+            activity = activityRepo.findById(id);
+            if(activity.isPresent()) {
+                return activity.get().getEquipment();
+            }
+        }catch (DataAccessException e) {
+            log.info("Could not find any equipment for this activity");
         }
         return null;
     }
