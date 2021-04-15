@@ -1,6 +1,12 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +22,11 @@ public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private User creator;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private ActivityType activityType;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Level level;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Equipment> equipment;
@@ -50,6 +56,15 @@ public class Activity {
     }
 
     public Activity() {
+    }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getMaxParticipants() {

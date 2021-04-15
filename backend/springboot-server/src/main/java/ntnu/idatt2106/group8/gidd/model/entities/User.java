@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * A entity-class representing the user table in the database.
@@ -18,8 +19,11 @@ public class User {
     private String email;
     private String password;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private UserInfo userInfo;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Activity> createdActivities;
 
     public User() {
     }
@@ -35,6 +39,14 @@ public class User {
         this.email = email;
         this.password = password;
         this.userInfo = userInfo;
+    }
+
+    public List<Activity> getCreatedActivities() {
+        return createdActivities;
+    }
+
+    public void setCreatedActivities(List<Activity> createdActivities) {
+        this.createdActivities = createdActivities;
     }
 
     public int getId() {

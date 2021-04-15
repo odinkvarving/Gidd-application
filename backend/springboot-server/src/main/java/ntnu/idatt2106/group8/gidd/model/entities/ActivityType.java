@@ -1,7 +1,6 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,10 +14,11 @@ public class ActivityType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Activity> activities;
     private String type;
     private double pointFactor;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Activity> activitiesOfType;
 
     public ActivityType() {
     }
@@ -26,16 +26,20 @@ public class ActivityType {
     /**
      * Constructor for a new ActivityType-object.
      *
-     * @param activities  the list of activities the has this activity type. nullable.
      * @param type        the type of activity this is.
      * @param pointFactor the factor of points this activity gives.
      */
-    public ActivityType(List<Activity> activities, String type, double pointFactor) {
-        if (activities != null) this.activities = activities;
-        else this.activities = new ArrayList<>();
-
+    public ActivityType(String type, double pointFactor) {
         this.type = type;
         this.pointFactor = pointFactor;
+    }
+
+    public List<Activity> getActivitiesOfType() {
+        return activitiesOfType;
+    }
+
+    public void setActivitiesOfType(List<Activity> activitiesOfType) {
+        this.activitiesOfType = activitiesOfType;
     }
 
     public int getId() {
@@ -44,14 +48,6 @@ public class ActivityType {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public List<Activity> getActivities() {
-        return activities;
-    }
-
-    public void setActivities(List<Activity> activities) {
-        if (activities != null) this.activities = activities;
     }
 
     public String getType() {

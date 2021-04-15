@@ -13,8 +13,9 @@ public class Equipment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private String type;
-    @ManyToOne(cascade = CascadeType.ALL)
+    private String equipmentDescription;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
     private Activity activity;
 
     public Equipment() {
@@ -23,11 +24,17 @@ public class Equipment {
     /**
      * Constructor for a piece of equipment in a activity.
      *
-     * @param type     the type of equipment
-     * @param activity the activity that this equipment is part of
+     * @param equipmentDescription the description of the Equipment.
      */
-    public Equipment(String type, Activity activity) {
-        this.type = type;
+    public Equipment(String equipmentDescription) {
+        this.equipmentDescription = equipmentDescription;
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
         this.activity = activity;
     }
 
@@ -39,19 +46,11 @@ public class Equipment {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public String getEquipmentDescription() {
+        return equipmentDescription;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Activity getActivity() {
-        return activity;
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
+    public void setEquipmentDescription(String type) {
+        this.equipmentDescription = type;
     }
 }

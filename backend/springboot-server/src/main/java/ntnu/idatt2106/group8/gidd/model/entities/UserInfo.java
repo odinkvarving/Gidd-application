@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * A entity-class that represents the user-table of the database
@@ -11,31 +12,22 @@ import javax.persistence.*;
 public class UserInfo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn
-    @MapsId //same key as the user.
+    @OneToOne(cascade = CascadeType.REFRESH)
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Level userLevel;
+
     private String imageURL;
     private String firstname;
     private String surname;
     private String profileDescription;
     private int points;
+
     public UserInfo() {
-    }
-    private UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname,
-                     String profileDescription, int points) {
-        this.user = user;
-        this.userLevel = userLevel;
-        this.imageURL = imageURL;
-        this.firstname = firstname;
-        this.surname = surname;
-        this.profileDescription = profileDescription;
-        this.points = points;
     }
 
     public User getUser() {
@@ -44,6 +36,16 @@ public class UserInfo {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    private UserInfo(Level userLevel, String imageURL, String firstname, String surname,
+                     String profileDescription, int points) {
+        this.userLevel = userLevel;
+        this.imageURL = imageURL;
+        this.firstname = firstname;
+        this.surname = surname;
+        this.profileDescription = profileDescription;
+        this.points = points;
     }
 
     public int getId() {
@@ -108,7 +110,6 @@ public class UserInfo {
      * @author Endré Hadzalic
      */
     public static class Builder {
-        User user;
         Level userLevel;
         String imageURL;
         String firstname;
@@ -118,15 +119,12 @@ public class UserInfo {
 
         /**
          * All params in this constructor are mandatory for creating a new UserInfo-object.
-         *
-         * @param user the user that owns this userinfo, represented as a User-object.
          */
-        public Builder(User user) {
-            this.user = user;
+        public Builder() {
         }
 
         public UserInfo build() {
-            return new UserInfo(this.user, this.userLevel, this.imageURL, this.firstname, this.surname, this.profileDescription, this.points);
+            return new UserInfo(this.userLevel, this.imageURL, this.firstname, this.surname, this.profileDescription, this.points);
         }
 
         public Builder setUserLevel(Level userLevel) {

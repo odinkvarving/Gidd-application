@@ -1,7 +1,6 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,11 +16,11 @@ public class Level {
     private int id;
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Activity> activities;
+    @OneToMany
+    private List<UserInfo> userInfosAtLevel;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<UserInfo> userInfos;
+    @OneToMany
+    private List<Activity> activitiesAtLevel;
 
     public Level() {
     }
@@ -30,23 +29,29 @@ public class Level {
      * Used to create a new Level-object.
      *
      * @param description the description of the level.
-     * @param activities  the activities this level has a one to many relation to. null is passable.
-     * @param userInfos   the userinfos this level has a one to many relation to. null is passable.
      */
-    public Level(String description, List<Activity> activities, List<UserInfo> userInfos) {
+    public Level(String description) {
         this.description = description;
-
-        if (activities != null) this.activities = activities;
-        else this.activities = new ArrayList<>();
-
-        if (userInfos != null)
-            this.userInfos = userInfos;
-        else
-            this.activities = new ArrayList<>();
     }
 
     public int getId() {
         return id;
+    }
+
+    public List<UserInfo> getUserInfosAtLevel() {
+        return userInfosAtLevel;
+    }
+
+    public void setUserInfosAtLevel(List<UserInfo> userInfosAtLevel) {
+        this.userInfosAtLevel = userInfosAtLevel;
+    }
+
+    public List<Activity> getActivitiesAtLevel() {
+        return activitiesAtLevel;
+    }
+
+    public void setActivitiesAtLevel(List<Activity> activitiesAtLevel) {
+        this.activitiesAtLevel = activitiesAtLevel;
     }
 
     public void setId(int id) {
@@ -59,21 +64,5 @@ public class Level {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public List<Activity> getActivities() {
-        return activities;
-    }
-
-    public void setActivities(List<Activity> activities) {
-        if (activities != null) this.activities = activities;
-    }
-
-    public List<UserInfo> getUserInfos() {
-        return userInfos;
-    }
-
-    public void setUserInfos(List<UserInfo> userInfos) {
-        if (userInfos != null) this.userInfos = userInfos;
     }
 }
