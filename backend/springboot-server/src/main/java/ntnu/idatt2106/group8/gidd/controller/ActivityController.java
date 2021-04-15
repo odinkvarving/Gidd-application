@@ -10,6 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/activities")
 public class ActivityController {
+    /*
     @Autowired
     private ActivityService activityService;
 
@@ -26,5 +27,5 @@ public class ActivityController {
     @PostMapping
     public Activity addActivity(@RequestBody Activity activity) {
         return activityService.addActivity(activity);
-    }
+    }*/
 }
