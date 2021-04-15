@@ -11,7 +11,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/activities")
 public class ActivityController {
-   /* @Autowired
+    @Autowired
     private ActivityService activityService;
 
     @GetMapping
