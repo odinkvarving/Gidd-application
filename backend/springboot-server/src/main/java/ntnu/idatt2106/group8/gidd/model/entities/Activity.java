@@ -24,18 +24,23 @@ public class Activity {
     private Level level;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Equipment> equipment;
-    private String longitude;
-    private String latitude;
+
+    private String title;
+    private float longitude;
+    private float latitude;
     private LocalDateTime activityStart;
     private LocalDateTime activityEnd;
     private String description;
     private int maxParticipants;
 
-    private Activity(User creator, ActivityType activityType, Level level, List<Equipment> equipment, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description, int maxParticipants) {
+    private Activity(User creator, ActivityType activityType, Level level, List<Equipment> equipment, float longitude,
+                     float latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description,
+                     int maxParticipants, String title) {
         this.creator = creator;
         this.activityType = activityType;
         this.level = level;
         this.equipment = equipment;
+        this.title = title;
         this.longitude = longitude;
         this.latitude = latitude;
         this.activityStart = activityStart;
@@ -95,19 +100,19 @@ public class Activity {
         if (equipment != null) this.equipment = equipment;
     }
 
-    public String getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
 
-    public String getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(float latitude) {
         this.latitude = latitude;
     }
 
@@ -142,6 +147,7 @@ public class Activity {
      */
     public static class Builder {
 
+        private final String title;
         private final User creator;
         private final Level level;
         private final LocalDateTime activityStart;
@@ -149,8 +155,8 @@ public class Activity {
         private final int maxParticipants;
         private ActivityType activityType;
         private List<Equipment> equipment;
-        private String longitude;
-        private String latitude;
+        private float longitude;
+        private float latitude;
         private String description;
 
         /**
@@ -163,7 +169,9 @@ public class Activity {
          * @param activityEnd     the end-time of the activity represented as LocalDateTime-object.
          * @param maxParticipants the maximum amount of participants in the activity.
          */
-        public Builder(User creator, ActivityType activityType, Level level, LocalDateTime activityStart, LocalDateTime activityEnd, int maxParticipants) {
+        public Builder(String title, User creator, ActivityType activityType, Level level, LocalDateTime activityStart,
+                       LocalDateTime activityEnd, int maxParticipants) {
+            this.title = title;
             this.creator = creator;
             this.activityType = activityType;
             this.level = level;
@@ -178,7 +186,8 @@ public class Activity {
          * @return a new Activity-object.
          */
         public Activity build() {
-            return new Activity(creator, activityType, level, equipment, longitude, latitude, activityStart, activityEnd, description, maxParticipants);
+            return new Activity(creator, activityType, level, equipment, longitude, latitude, activityStart,
+                    activityEnd, description, maxParticipants, title);
         }
 
         /**
@@ -192,12 +201,12 @@ public class Activity {
             return this;
         }
 
-        public Builder setLongitude(String longitude) {
+        public Builder setLongitude(float longitude) {
             this.longitude = longitude;
             return this;
         }
 
-        public Builder setLatitude(String latitude) {
+        public Builder setLatitude(float latitude) {
             this.latitude = latitude;
             return this;
         }

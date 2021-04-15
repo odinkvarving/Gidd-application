@@ -18,7 +18,7 @@ public class User {
     private String email;
     private String password;
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserInfo userInfo;
 
     public User() {

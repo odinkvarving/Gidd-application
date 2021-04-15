@@ -20,25 +20,15 @@ public class UserInfo {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Level userLevel;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     private String imageURL;
     private String firstname;
     private String surname;
     private String profileDescription;
     private int points;
-
     public UserInfo() {
     }
-
-    private UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname, String profileDescription, int points) {
+    private UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname,
+                     String profileDescription, int points) {
         this.user = user;
         this.userLevel = userLevel;
         this.imageURL = imageURL;
@@ -46,6 +36,14 @@ public class UserInfo {
         this.surname = surname;
         this.profileDescription = profileDescription;
         this.points = points;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getId() {
