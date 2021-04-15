@@ -52,7 +52,7 @@ export default {
         }
     },
     methods: {
-        registerUser(){
+        async registerUser(){
             console.log("Register button clicked");
 
             this.nameValid = true;
@@ -65,7 +65,8 @@ export default {
             if(!this.validatePhone()){
                 this.phoneValid = false;
             }
-            if(!this.validateEmail()){
+            let emailValid = await this.validateEmail();
+            if(!emailValid){
                 this.emailValid = false;
             }
             if(!this.validatePassword()){

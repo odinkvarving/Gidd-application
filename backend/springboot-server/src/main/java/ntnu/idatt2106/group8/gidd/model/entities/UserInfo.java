@@ -11,10 +11,11 @@ import javax.persistence.*;
 public class UserInfo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @MapsId //same key as the user.
+    @OneToOne(mappedBy = "userInfo")
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -92,6 +93,14 @@ public class UserInfo {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**

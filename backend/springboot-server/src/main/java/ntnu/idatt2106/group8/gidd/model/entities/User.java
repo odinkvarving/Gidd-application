@@ -13,6 +13,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private int id;
 
     //hashed
@@ -20,7 +21,7 @@ public class User {
     private String password;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "user_info_id", referencedColumnName = "id")
     private UserInfo userInfo;
 
     public User() {
