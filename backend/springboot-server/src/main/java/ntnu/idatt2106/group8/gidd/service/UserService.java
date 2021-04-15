@@ -25,13 +25,14 @@ public class UserService {
         return users;
     }
 
-    public void save(User user){
-        userRepo.save(user);
+    public boolean save(User user){
+        User response = userRepo.save(user);
+        return user.equals(response);
     }
 
     public User findByEmail(String email){
         Optional<User> user = userRepo.findByEmail(email);
-        return user.orElse(null);
+        return user.orElse(new User());
     }
 
 }

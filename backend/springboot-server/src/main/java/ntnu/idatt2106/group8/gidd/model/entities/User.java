@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * A database-entity created by Endré
@@ -64,5 +65,23 @@ public class User {
 
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(userInfo, user.userInfo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, password, userInfo);
+    }
+
+    @Override
+    public String toString() {
+        return "user id: " + this.id + "\nemail: " + this.email + "\npassword: " + this.password + "\n";
     }
 }
