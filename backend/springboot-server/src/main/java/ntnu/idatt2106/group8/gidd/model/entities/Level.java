@@ -1,10 +1,13 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A database-entity created by Endré
+ * A entity-class that represents the level table in the database.
+ *
+ * @author Endré Hadzalic
  */
 @Entity
 public class Level {
@@ -23,10 +26,23 @@ public class Level {
     public Level() {
     }
 
+    /**
+     * Used to create a new Level-object.
+     *
+     * @param description the description of the level.
+     * @param activities  the activities this level has a one to many relation to. null is passable.
+     * @param userInfos   the userinfos this level has a one to many relation to. null is passable.
+     */
     public Level(String description, List<Activity> activities, List<UserInfo> userInfos) {
         this.description = description;
-        this.activities = activities;
-        this.userInfos = userInfos;
+
+        if (activities != null) this.activities = activities;
+        else this.activities = new ArrayList<>();
+
+        if (userInfos != null)
+            this.userInfos = userInfos;
+        else
+            this.activities = new ArrayList<>();
     }
 
     public int getId() {
@@ -50,7 +66,7 @@ public class Level {
     }
 
     public void setActivities(List<Activity> activities) {
-        this.activities = activities;
+        if (activities != null) this.activities = activities;
     }
 
     public List<UserInfo> getUserInfos() {
@@ -58,6 +74,6 @@ public class Level {
     }
 
     public void setUserInfos(List<UserInfo> userInfos) {
-        this.userInfos = userInfos;
+        if (userInfos != null) this.userInfos = userInfos;
     }
 }

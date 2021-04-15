@@ -9,7 +9,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A class that defines a table in the database with composite foreign primary keys
+ * A class that defines the user_activity table in the database with composite foreign primary keys from user and,
+ * activity.
  *
  * @author Endré Hadzalic
  */
@@ -28,6 +29,14 @@ public class UserActivity implements Serializable {
     public UserActivity() {
     }
 
+    /**
+     * Creates a binding between a user and an activity.
+     *
+     * @param userId        the id of the user to bind to the given activity
+     * @param activityId    the id of the activity to bind to the given user
+     * @param queuePosition should be 0 if the user is in in the activity. from 1 to n if the user is in queue for joining
+     *                      the activity
+     */
     public UserActivity(int userId, int activityId, int queuePosition) {
         this.userId = userId;
         this.activityId = activityId;
@@ -60,7 +69,7 @@ public class UserActivity implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this.equals(o)) return true;
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserActivity ua = (UserActivity) o;
         return this.activityId == ua.activityId && this.userId == ua.userId;
