@@ -1,5 +1,6 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
+import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
 import ntnu.idatt2106.group8.gidd.service.ActivityTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,14 @@ public class ActivityTypeController {
         return activityTypeService.addActivityType(activity);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ActivityType updateActivityType(@RequestBody ActivityType newActivityType, @PathVariable("id") int id) {
         return activityTypeService.updateActivityType(id, newActivityType);
+    }
+
+    @GetMapping("/{id}/activities")
+    public List<Activity> findActivitiesByType(@PathVariable("id") int id) {
+        return activityTypeService.findActivitiesByType(id);
     }
 
 

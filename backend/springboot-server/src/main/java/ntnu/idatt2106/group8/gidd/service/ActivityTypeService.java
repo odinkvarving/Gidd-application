@@ -1,6 +1,8 @@
 package ntnu.idatt2106.group8.gidd.service;
 
+import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
+import ntnu.idatt2106.group8.gidd.repository.ActivityRepo;
 import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,9 @@ public class ActivityTypeService {
 
     @Autowired
     private ActivityTypeRepo activityTypeRepo;
+
+    @Autowired
+    private ActivityRepo activityRepo;
 
     public List<ActivityType> getAllActivityTypes() {
         List<ActivityType> types = new ArrayList<>();
@@ -63,5 +68,18 @@ public class ActivityTypeService {
         }catch (DataAccessException e) {
             log.info("Could not delete activity type");
         }
+    }
+
+    public List<Activity> findActivitiesByType(int id) {
+        Optional<ActivityType> activityType;
+        try {
+            activityType = activityTypeRepo.findById(id);
+            if(activityType.isPresent()) {
+                return activityType.get().getActivities();
+            }
+        }catch (DataAccessException e) {
+            log.info("Could not find any activities of this type");
+        }
+        return null;
     }
 }
