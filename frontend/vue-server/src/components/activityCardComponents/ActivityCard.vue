@@ -1,9 +1,9 @@
 <template>
     <div id="container">
-        <Info></Info>
-        <Map></Map>
-        <Equipments></Equipments>
-        <Chat></Chat>
+        <Info :activity="activity" id="info"></Info>
+        <Map :activity="activity" id="map"></Map>
+        <Equipments :activity="activity" id="equipments"></Equipments>
+        <Chat :activity="activity" id="chat"></Chat>
     </div>
 </template>
 <script>
@@ -23,15 +23,36 @@
 
         props: {
             activity: {
-                type: Activity,
+                type: Object,
                 required: true
             },
         },
 
         data() {
             return {
-                activity: null,
+                //activity: null,
             }
         }
     }
 </script>
+<style scoped>
+    #container{
+        display: grid;
+        grid-template-areas: 
+        "info map"
+        "info equipments"
+        "chat chat";
+    }
+    #info{
+        grid-area: info;
+    }
+    #map{
+        grid-area: map;
+    }
+    #equipments{
+        grid-area: equipments;
+    }
+    #chat{
+        grid-area: chat;
+    }
+</style>

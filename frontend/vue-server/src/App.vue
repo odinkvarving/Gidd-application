@@ -1,33 +1,49 @@
 <template>
-  <!--<img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
-  <!--<ActivityCard></ActivityCard>-->
-  <ActivityFeed></ActivityFeed>
+  <div id="app">
+    <ActivityFeed v-show="isActivityFeedVisible" @activityClicked="onActivityClicked"/>
+    <ActivityCard v-show="isActivityCardVisible" :activity="selectedActivity"/>
+  </div>
 </template>
 
 <script>
-import Index from './router/index.vue'
+import ActivityFeed from './components/activityFeedComponents/ActivityFeed.vue'
+//import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
 
 
 export default {
   name: 'App',
+
   components: {
-    Index
+    //ActivityCard,
+    ActivityFeed
+  },
+
+  data() {
+    return {
+      selectedActivity: null,
+      isActivityFeedVisible: true,
+      isActivityCardVisible: false,
+    }
+  },
+
+  methods: {
+    onActivityClicked(activity) {
+      console.log(activity);
+      this.selectedActivity = activity;
+      this.isActivityFeedVisible = false;
+      this.isActivityCardVisible = true;
+    }
   }
 }
 </script>
 
-<style>
-
-@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
-
+<style scoped>
 #app {
   font-family: 'Mulish', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin: 0;
-  padding: 0;
+  background-color: #F6F6F6;
 }
 </style>
