@@ -1,7 +1,7 @@
 <template>
-        <div class="navigation-bar">
-            <button class="btn login"><span>Logg inn</span></button>
-        </div>
+    <div class="navigation-bar">
+        <button class="btn login"><span>Logg inn</span></button>
+    </div>
     <div class="front-page">
         <div class="reg-box" v-if="showRegisterBox">
             <registration-box />
@@ -66,7 +66,6 @@ export default {
     -o-background-size: cover;
     -webkit-overflow-scrolling: touch;
     background-size: cover;
-    
 }
 
 .header-container {
