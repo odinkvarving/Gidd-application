@@ -31,7 +31,6 @@ class ActivityRepoTest {
 
     @Test
     void getActivities() {
-        Activity testActivity1 = new Activity.Builder()
     }
 
     @Test
