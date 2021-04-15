@@ -1,7 +1,7 @@
 <template>
-        <div class="navigation-bar">
-            <button class="btn login"><span>Logg inn</span></button>
-        </div>
+    <div class="navigation-bar">
+        <button class="btn login"><span>Logg inn</span></button>
+    </div>
     <div class="front-page">
         <div class="header-container">
             <div class="title">GIDD</div>
@@ -40,7 +40,7 @@ export default {
 
 .front-page {
     height: 100vh;
-    width: 100vw;
+    width: 100%;
     display: flex;
     align-items: center;
     
@@ -51,7 +51,6 @@ export default {
     -o-background-size: cover;
     -webkit-overflow-scrolling: touch;
     background-size: cover;
-    
 }
 
 .header-container {
