@@ -25,11 +25,10 @@ public class UserInfo {
     private String surname;
     private String profileDescription;
     private int points;
-
     public UserInfo() {
     }
-
-    private UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname, String profileDescription, int points) {
+    private UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname,
+                     String profileDescription, int points) {
         this.user = user;
         this.userLevel = userLevel;
         this.imageURL = imageURL;
