@@ -121,6 +121,7 @@ export default {
     box-shadow: 2px 2px 4px #b8b3b3;
     margin: 0;
     padding: 0;
+    background: white;
 }
 
 #facebook-btn {
