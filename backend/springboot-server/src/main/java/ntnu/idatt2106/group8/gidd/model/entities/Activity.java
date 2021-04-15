@@ -16,13 +16,13 @@ public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private User creator;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private ActivityType activityType;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Level level;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Equipment> equipment;
     private String longitude;
     private String latitude;
@@ -143,15 +143,15 @@ public class Activity {
     public static class Builder {
 
         private final User creator;
-        private ActivityType activityType;
         private final Level level;
+        private final LocalDateTime activityStart;
+        private final LocalDateTime activityEnd;
+        private final int maxParticipants;
+        private ActivityType activityType;
         private List<Equipment> equipment;
         private String longitude;
         private String latitude;
-        private final LocalDateTime activityStart;
-        private final LocalDateTime activityEnd;
         private String description;
-        private final int maxParticipants;
 
         /**
          * All params in this constructor are mandatory fields for creating a new Activity-object.

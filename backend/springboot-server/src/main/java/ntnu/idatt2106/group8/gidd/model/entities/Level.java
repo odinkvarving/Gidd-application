@@ -14,14 +14,14 @@ public class Level {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
-    String description;
+    private int id;
+    private String description;
 
-    @OneToMany
-    List<Activity> activities;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Activity> activities;
 
-    @OneToMany
-    List<UserInfo> userInfos;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<UserInfo> userInfos;
 
     public Level() {
     }

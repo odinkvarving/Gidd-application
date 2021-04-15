@@ -14,11 +14,11 @@ public class ActivityType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
-    @OneToMany
-    List<Activity> activities;
-    String type;
-    double pointFactor;
+    private int id;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Activity> activities;
+    private String type;
+    private double pointFactor;
 
     public ActivityType() {
     }

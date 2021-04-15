@@ -13,17 +13,17 @@ public class UserInfo {
     @Id
     int id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @MapsId //same key as the user.
-    User user;
+    private User user;
 
-    @ManyToOne
-    Level userLevel;
-    String imageURL;
-    String firstname;
-    String surname;
-    String profileDescription;
-    int points;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Level userLevel;
+    private String imageURL;
+    private String firstname;
+    private String surname;
+    private String profileDescription;
+    private int points;
 
     public UserInfo() {
     }
