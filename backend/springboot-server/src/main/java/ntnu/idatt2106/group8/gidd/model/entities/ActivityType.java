@@ -5,29 +5,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A database-entity created by Endré
+ * A entity-class representing the activity_type table in the database.
+ *
+ * @author Endré Hadzalic
  */
 @Entity
 public class ActivityType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
-    @OneToMany
-    List<Activity> activities;
-    String type;
-    double pointFactor;
+    private int id;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Activity> activities;
+    private String type;
+    private double pointFactor;
 
     public ActivityType() {
     }
 
+    /**
+     * Constructor for a new ActivityType-object.
+     *
+     * @param activities  the list of activities the has this activity type. nullable.
+     * @param type        the type of activity this is.
+     * @param pointFactor the factor of points this activity gives.
+     */
     public ActivityType(List<Activity> activities, String type, double pointFactor) {
-        this.activities = activities;
+        if (activities != null) this.activities = activities;
+        else this.activities = new ArrayList<>();
+
         this.type = type;
         this.pointFactor = pointFactor;
-    }
-
-    public void test() {
     }
 
     public int getId() {
@@ -43,7 +51,7 @@ public class ActivityType {
     }
 
     public void setActivities(List<Activity> activities) {
-        this.activities = activities;
+        if (activities != null) this.activities = activities;
     }
 
     public String getType() {
