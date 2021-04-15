@@ -3,23 +3,37 @@
         <button class="btn login"><span>Logg inn</span></button>
     </div>
     <div class="front-page">
-        <div class="header-container">
+        <div class="reg-box" v-if="showRegisterBox">
+            <registration-box />
+        </div>
+        <div class="header-container" v-if="!showRegisterBox">
             <div class="title">GIDD</div>
             <div class="paragraph">Det er bare å gidde</div>
-            <button class="btn register"><span>Registrer deg</span></button>
+            <button class="btn register" @click="registerBtnClicked"><span>Registrer deg</span></button>
         </div>
     </div>
     <div class="test"></div>
 </template>
 
 <script>
+import RegistrationBox from "../components/UserComponents/RegistrationBox.vue"
+
 export default {
   name: 'index',
+  components: {
+      'registration-box': RegistrationBox
+  },
   data() {
       return {
-
+          showRegisterBox: false,
       }
-  }
+  },
+  methods: {
+      registerBtnClicked() {
+          console.log("Register button clicked");
+          this.showRegisterBox = true;
+      }
+  },
 }
 </script>
 
@@ -43,6 +57,7 @@ export default {
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
     
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)),
     url('~@/assets/frontpage_background.jpg') no-repeat center center fixed;
