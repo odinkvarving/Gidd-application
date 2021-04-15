@@ -26,8 +26,17 @@ public class Activity {
     private LocalDateTime activityStart;
     private LocalDateTime activityEnd;
     private String description;
+    private int maxParticipants;
 
-    private Activity(User creator, ActivityType activityType, Level level, List<Equipment> equipment, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description) {
+    public int getMaxParticipants() {
+        return maxParticipants;
+    }
+
+    public void setMaxParticipants(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
+
+    private Activity(User creator, ActivityType activityType, Level level, List<Equipment> equipment, String longitude, String latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description, int maxParticipants) {
         this.creator = creator;
         this.activityType = activityType;
         this.level = level;
@@ -37,6 +46,7 @@ public class Activity {
         this.activityStart = activityStart;
         this.activityEnd = activityEnd;
         this.description = description;
+        this.maxParticipants = maxParticipants;
     }
 
     public Activity() {
@@ -122,6 +132,9 @@ public class Activity {
         this.description = description;
     }
 
+    /**
+     *
+     */
     public static class Builder {
 
         private User creator;
@@ -133,17 +146,19 @@ public class Activity {
         private LocalDateTime activityStart;
         private LocalDateTime activityEnd;
         private String description;
+        private int maxParticipants;
 
         public Activity build() {
-            return new Activity(creator, activityType, level, equipment, longitude, latitude, activityStart, activityEnd, description);
+            return new Activity(creator, activityType, level, equipment, longitude, latitude, activityStart, activityEnd, description, maxParticipants);
         }
 
-        public Builder(User creator, ActivityType activityType, Level level, LocalDateTime activityStart, LocalDateTime activityEnd) {
+        public Builder(User creator, ActivityType activityType, Level level, LocalDateTime activityStart, LocalDateTime activityEnd, int maxParticipants) {
             this.creator = creator;
             this.activityType = activityType;
             this.level = level;
             this.activityStart = activityStart;
             this.activityEnd = activityEnd;
+            this.maxParticipants = maxParticipants;
         }
 
         public Builder setCreator(User creator) {
