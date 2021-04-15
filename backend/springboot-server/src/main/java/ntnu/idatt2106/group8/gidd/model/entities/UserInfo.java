@@ -13,7 +13,7 @@ public class UserInfo {
     @Id
     int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @MapsId //same key as the user.
     private User user;
 
