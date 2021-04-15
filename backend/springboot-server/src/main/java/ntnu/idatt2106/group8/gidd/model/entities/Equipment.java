@@ -12,10 +12,10 @@ public class Equipment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
-    String type;
-    @ManyToOne
-    Activity activity;
+    private int id;
+    private String type;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Activity activity;
 
     public Equipment() {
     }

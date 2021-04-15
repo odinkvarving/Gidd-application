@@ -12,15 +12,15 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    private int id;
 
     //hashed
-    String email;
-    String password;
+    private String email;
+    private String password;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-    UserInfo userInfo;
+    private UserInfo userInfo;
 
     public User() {
     }
