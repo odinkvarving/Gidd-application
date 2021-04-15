@@ -26,8 +26,7 @@ public class UserInfo {
     }
 
     //TODO: create UserInfoBuilder
-    public UserInfo(int id, User user, Level userLevel, String imageURL, String firstname, String surname, String profileDescription, int points) {
-        this.id = id;
+    public UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname, String profileDescription, int points) {
         this.user = user;
         this.userLevel = userLevel;
         this.imageURL = imageURL;

@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,11 +21,13 @@ public class ActivityType {
     public ActivityType() {
     }
 
-    public ActivityType(int id, List<Activity> activities, String type, double pointFactor) {
-        this.id = id;
+    public ActivityType(List<Activity> activities, String type, double pointFactor) {
         this.activities = activities;
         this.type = type;
         this.pointFactor = pointFactor;
+    }
+
+    public void test() {
     }
 
     public int getId() {

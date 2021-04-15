@@ -18,8 +18,7 @@ public class Equipment {
     public Equipment() {
     }
 
-    public Equipment(int id, String type, Activity activity) {
-        this.id = id;
+    public Equipment(String type, Activity activity) {
         this.type = type;
         this.activity = activity;
     }
