@@ -11,14 +11,23 @@ import javax.persistence.*;
 public class UserInfo {
 
     @Id
-    int id;
+    private int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @MapsId //same key as the user.
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Level userLevel;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     private String imageURL;
     private String firstname;
     private String surname;
