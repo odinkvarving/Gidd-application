@@ -25,7 +25,7 @@ import static org.mockito.Mockito.lenient;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class ActivityRepoTest {
+class ActivityServiceTest {
     @Autowired
     private ActivityRepo activityRepo;
 
