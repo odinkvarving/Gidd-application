@@ -14,6 +14,7 @@ public class UserInfo {
 
     @OneToOne
     User user;
+
     @ManyToOne
     Level userLevel;
     String imageURL;
@@ -25,8 +26,7 @@ public class UserInfo {
     public UserInfo() {
     }
 
-    //TODO: create UserInfoBuilder
-    public UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname, String profileDescription, int points) {
+    private UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname, String profileDescription, int points) {
         this.user = user;
         this.userLevel = userLevel;
         this.imageURL = imageURL;
@@ -42,14 +42,6 @@ public class UserInfo {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public Level getUserLevel() {
@@ -99,4 +91,49 @@ public class UserInfo {
     public void setPoints(int points) {
         this.points = points;
     }
+
+    public static class Builder {
+        User user;
+        Level userLevel;
+        String imageURL;
+        String firstname;
+        String surname;
+        String profileDescription;
+        int points;
+
+        public Builder(User user) {
+            this.user = user;
+        }
+
+        public Builder setUserLevel(Level level){
+            this.userLevel = userLevel;
+            return this;
+        }
+
+        public Builder setImageURL(String imageURL) {
+            this.imageURL = imageURL;
+            return this;
+        }
+
+        public Builder setFirstname(String firstname) {
+            this.firstname = firstname;
+            return this;
+        }
+
+        public Builder setSurname(String surname) {
+            this.surname = surname;
+            return this;
+        }
+
+        public Builder setProfileDescription(String profileDescription) {
+            this.profileDescription = profileDescription;
+            return this;
+        }
+
+        public Builder setPoints(int points) {
+            this.points = points;
+            return this;
+        }
+    }
+
 }
