@@ -14,6 +14,7 @@ public class UserInfo {
     private int id;
 
     @OneToOne
+    @PrimaryKeyJoinColumn
     @MapsId //same key as the user.
     private User user;
 

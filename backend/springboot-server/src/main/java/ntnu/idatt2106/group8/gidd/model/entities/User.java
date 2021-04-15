@@ -19,7 +19,6 @@ public class User {
     private String password;
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
     private UserInfo userInfo;
 
     public User() {
