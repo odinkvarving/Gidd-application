@@ -10,8 +10,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/activities")
 public class ActivityController {
-    /*
-    @Autowired
+
+   /* @Autowired
+>>>>>>> Database-implementation
     private ActivityService activityService;
 
     @GetMapping
