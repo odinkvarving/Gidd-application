@@ -23,4 +23,10 @@ export default {
   margin: 0;
   padding: 0;
 }
+
+header {
+  width: 100wv;
+  border: 1px solid black;
+  padding: 5px;
+}
 </style>
