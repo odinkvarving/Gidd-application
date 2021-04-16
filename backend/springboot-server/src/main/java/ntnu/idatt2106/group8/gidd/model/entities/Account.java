@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.validator.routines.EmailValidator;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -41,7 +42,7 @@ public class Account {
      * @param accountInfo the user-info of the new user, represented in a UserInfo-object.
      */
     public Account(String email, String password, AccountInfo accountInfo) {
-        this.email = email;
+        this.setEmail(email);
         this.password = password;
         this.accountInfo = accountInfo;
     }
@@ -63,6 +64,9 @@ public class Account {
     }
 
     public void setEmail(String email) {
+        if (!EmailValidator.getInstance().isValid(email))
+            throw new IllegalArgumentException("Invalid email: " + email);
+
         this.email = email;
     }
 
