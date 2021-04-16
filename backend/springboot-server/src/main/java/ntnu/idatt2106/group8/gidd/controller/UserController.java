@@ -7,34 +7,45 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
+@RequestMapping("/users")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    Logger logger = LoggerFactory.getLogger(UserController.class);
-
-
-    @GetMapping("/users/{email}")
-    public User getUserByEmail(@PathVariable String email){
-        User user = userService.findByEmail(email);
-        logger.info("Retrieving user with email: " + email);
-        logger.info(user.toString());
-        return user;
+    @GetMapping
+    public List<User> getUsers() {
+        return userService.getAllUsers();
     }
 
-;    @PostMapping("/users")
-    public boolean saveUser(@RequestBody User user){
-        logger.info("Trying to save user:\n" + user.toString());
-        boolean success = userService.save(user);
-        if(success){
-            logger.info("Success!");
-        }else{
-            logger.info("Something went wrong, couldn't save user to database.");
-        }
-        return userService.save(user);
+    @GetMapping("/{id}")
+    public Optional<User> getUser(@PathVariable("id")int id) {
+        return userService.getUser(id);
     }
 
+
+    @GetMapping("/{email}")
+    public Optional<User> getUserByEmail(@PathVariable String email){
+        return userService.findByEmail(email);
+    }
+
+    @PostMapping
+    public User addUser(@RequestBody User user){
+        return userService.addUser(user);
+    }
+
+    @PutMapping("/{id}")
+    public User updateUser(@RequestBody User newUser, @PathVariable("id")int id) {
+        return userService.updateUser(newUser, id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id")int id) {
+        userService.deleteUser(id);
+    }
 }
