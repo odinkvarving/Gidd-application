@@ -2,8 +2,8 @@ package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A database entity which represents the activity table in the database.
@@ -27,7 +27,7 @@ public class Activity {
     @JoinColumn(name = "level_id")
     private Level level;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity")
-    private List<Equipment> equipment;
+    private Set<Equipment> equipment = new HashSet<>();
 
     private String title;
     private float longitude;
@@ -39,7 +39,7 @@ public class Activity {
     private String description;
     private int maxParticipants;
 
-    private Activity(Account creator, ActivityType activityType, Level level, List<Equipment> equipment, float longitude,
+    private Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
                      float latitude, LocalDateTime startTime, LocalDateTime endTime, String description,
                      int maxParticipants, String title) {
         this.creator = creator;
@@ -107,11 +107,11 @@ public class Activity {
         this.level = level;
     }
 
-    public List<Equipment> getEquipment() {
+    public Set<Equipment> getEquipment() {
         return equipment;
     }
 
-    public void setEquipment(List<Equipment> equipment) {
+    public void setEquipment(Set<Equipment> equipment) {
         if (equipment != null) this.equipment = equipment;
     }
 
@@ -169,7 +169,7 @@ public class Activity {
         private final LocalDateTime activityEnd;
         private final int maxParticipants;
         private ActivityType activityType;
-        private List<Equipment> equipment;
+        private Set<Equipment> equipment;
         private float longitude;
         private float latitude;
         private String description;
@@ -209,10 +209,8 @@ public class Activity {
          * @param equipment nullable
          * @return this
          */
-        public Builder setEquipment(List<Equipment> equipment) {
+        public Builder setEquipment(Set<Equipment> equipment) {
             if (this.equipment != null) this.equipment = equipment;
-            else this.equipment = new ArrayList<>();
-
             return this;
         }
 

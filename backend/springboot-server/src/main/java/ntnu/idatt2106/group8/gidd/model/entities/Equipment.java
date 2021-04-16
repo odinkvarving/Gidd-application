@@ -38,6 +38,7 @@ public class Equipment {
     public Activity getActivity() {
         return activity;
     }
+
     public void setActivity(Activity activity) {
         this.activity = activity;
     }

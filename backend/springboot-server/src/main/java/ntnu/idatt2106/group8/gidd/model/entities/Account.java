@@ -3,8 +3,11 @@ package ntnu.idatt2106.group8.gidd.model.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+
+import java.util.HashSet;
 import java.util.Objects;
-import java.util.List;
+import java.util.Set;
+
 
 /**
  * A entity-class representing the user table in the database.
@@ -26,11 +29,11 @@ public class Account {
 
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL,mappedBy = "account",fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account", fetch = FetchType.LAZY)
     private AccountInfo accountInfo;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Activity> createdActivities;
+    private Set<Activity> createdActivities = new HashSet<>();
 
     public Account() {
     }
@@ -38,8 +41,8 @@ public class Account {
     /**
      * Creates a new user
      *
-     * @param email    the email of the new user.
-     * @param password the password of the new user.
+     * @param email       the email of the new user.
+     * @param password    the password of the new user.
      * @param accountInfo the user-info of the new user, represented in a UserInfo-object.
      */
     public Account(String email, String password, AccountInfo accountInfo) {
@@ -80,11 +83,11 @@ public class Account {
         this.accountInfo = accountInfo;
     }
 
-    public List<Activity> getCreatedActivities() {
+    public Set<Activity> getCreatedActivities() {
         return createdActivities;
     }
 
-    public void setCreatedActivities(List<Activity> createdActivities) {
+    public void setCreatedActivities(Set<Activity> createdActivities) {
         this.createdActivities = createdActivities;
     }
 
