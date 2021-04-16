@@ -1,9 +1,14 @@
 package ntnu.idatt2106.group8.gidd.service;
 
+
+import ntnu.idatt2106.group8.gidd.model.compositeentities.UserActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
+import ntnu.idatt2106.group8.gidd.model.entities.User;
 import ntnu.idatt2106.group8.gidd.repository.ActivityRepo;
 import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepo;
+import ntnu.idatt2106.group8.gidd.repository.UserActivityRepo;
+import ntnu.idatt2106.group8.gidd.repository.UserRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,12 @@ public class ActivityService {
 
     @Autowired
     private ActivityRepo activityRepo;
+
+    @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
+    private UserActivityRepo userActivityRepo;
 
     @Autowired
     private ActivityTypeRepo activityTypeRepo;
@@ -111,5 +122,24 @@ public class ActivityService {
             log.info("Could not find any equipment for this activity");
         }
         return null;
+    }
+
+    public Optional<User> addParticipantToActivity(int activityId, int participantId) {
+        Optional<Activity> activity;
+        Optional<User> participant;
+        try {
+            activity = activityRepo.findById(activityId);
+            participant = userRepo.findById(participantId);
+            if(activity.isPresent() && participant.isPresent()) {
+                UserActivity add = new UserActivity(participant.get().getId(), activity.get().getId(), 0);
+                userActivityRepo.save(add);
+                return participant;
+            }else {
+                log.info("Could not find the specified user or activity");
+            }
+        }catch (DataAccessException e) {
+            log.info("Could not add participant to activity");
+        }
+        return Optional.empty();
     }
 }
