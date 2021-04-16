@@ -5,6 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -90,57 +93,79 @@ class AccountTest {
     // Testing email validation
     // ------------------------
 
+    @Test
+    void createWithValidEmails() {
+        // TODO: Change to a more appropriate Exception-class
+
+        Executable[] createAccountsNoThrow = new Executable[VALID_EMAILS.length];
+        for (int i = 0; i < VALID_EMAILS.length; i++) {
+            String validEmail = VALID_EMAILS[i];
+            String debug = "Failed to create account with valid email: " + validEmail;
+            Executable createAccount = () -> new Account(validEmail, VALID_PASSWORD, validAccountInfo);
+            createAccountsNoThrow[i] = () -> assertDoesNotThrow(createAccount, debug);
+        }
+
+        assertAll(createAccountsNoThrow);
+    }
 
     @Test
     void createWithInvalidEmails() {
         // TODO: Change to a more appropriate Exception-class
 
-        Executable[] executables = new Executable[INVALID_EMAILS.length];
+        Executable[] createAccountsThrow = new Executable[INVALID_EMAILS.length];
         for (int i = 0; i < INVALID_EMAILS.length; i++) {
             String invalidEmail = INVALID_EMAILS[i];
-            executables[i] = () -> assertThrows(Exception.class, () -> new Account(invalidEmail, VALID_PASSWORD, validAccountInfo));
+            String debug = "Created account with invalid email: " + invalidEmail;
+            Executable createAccount = () -> new Account(invalidEmail, VALID_PASSWORD, validAccountInfo);
+            createAccountsThrow[i] = () -> assertThrows(Exception.class, createAccount, debug);
         }
 
-        assertAll(executables);
+        assertAll(createAccountsThrow);
     }
 
     @Test
     void setInvalidEmails() {
         // TODO: Change to a more appropriate Exception-class
 
-        Executable[] executables = new Executable[INVALID_EMAILS.length];
+        Executable[] setEmailsThrow = new Executable[INVALID_EMAILS.length];
         for (int i = 0; i < INVALID_EMAILS.length; i++) {
             String invalidEmail = INVALID_EMAILS[i];
-            executables[i] = () -> assertThrows(Exception.class, () -> validAccount.setEmail(invalidEmail));
+            String debug = "Set invalid email on account. Email: " + invalidEmail;
+            Executable setEmail = () -> validAccount.setEmail(invalidEmail);
+            setEmailsThrow[i] = () -> assertThrows(Exception.class, setEmail, debug);
         }
 
-        assertAll(executables);
+        assertAll(setEmailsThrow);
     }
 
     @Test
     void createWithEmptyEmail() {
         // TODO: Change to a more appropriate Exception-class
 
-        Executable[] executables = new Executable[TestUtils.EMPTY_STRINGS.length];
+        Executable[] createAccountsThrow = new Executable[TestUtils.EMPTY_STRINGS.length];
         for (int i = 0; i < TestUtils.EMPTY_STRINGS.length; i++) {
             String emptyEmail = TestUtils.EMPTY_STRINGS[i];
-            executables[i] = () -> assertThrows(Exception.class, () -> new Account(emptyEmail, VALID_PASSWORD, validAccountInfo));
+            String debug = "Created account with empty email: " + emptyEmail;
+            Executable createAccount = () -> new Account(emptyEmail, VALID_PASSWORD, validAccountInfo);
+            createAccountsThrow[i] = () -> assertThrows(Exception.class, createAccount, debug);
         }
 
-        assertAll(executables);
+        assertAll(createAccountsThrow);
     }
 
     @Test
     void setEmptyEmail() {
         // TODO: Change to a more appropriate Exception-class
 
-        Executable[] executables = new Executable[TestUtils.EMPTY_STRINGS.length];
+        Executable[] setEmailsThrow = new Executable[TestUtils.EMPTY_STRINGS.length];
         for (int i = 0; i < TestUtils.EMPTY_STRINGS.length; i++) {
             String emptyEmail = TestUtils.EMPTY_STRINGS[i];
-            executables[i] = () -> assertThrows(Exception.class, () -> validAccount.setEmail(emptyEmail));
+            String debug = "Set empty email on account.";
+            Executable setEmptyEmail = () -> validAccount.setEmail(emptyEmail);
+            setEmailsThrow[i] = () -> assertThrows(Exception.class, setEmptyEmail, debug);
         }
 
-        assertAll(executables);
+        assertAll(setEmailsThrow);
     }
 
 
@@ -163,25 +188,29 @@ class AccountTest {
     void createWithEmptyPasswords() {
         // TODO: Change to a more appropriate Exception-class
 
-        Executable[] executables = new Executable[TestUtils.EMPTY_STRINGS.length];
+        Executable[] createAccountsThrow = new Executable[TestUtils.EMPTY_STRINGS.length];
         for (int i = 0; i < TestUtils.EMPTY_STRINGS.length; i++) {
             String emptyPassword = TestUtils.EMPTY_STRINGS[i];
-            executables[i] = () -> assertThrows(Exception.class, () -> new Account(VALID_EMAILS[0], emptyPassword, validAccountInfo));
+            String debug = "Created account with empty password";
+            Executable createAccount = () -> new Account(VALID_EMAILS[0], emptyPassword, validAccountInfo);
+            createAccountsThrow[i] = () -> assertThrows(Exception.class, createAccount, debug);
         }
 
-        assertAll(executables);
+        assertAll(createAccountsThrow);
    }
 
    @Test
     void setEmptyPasswords() {
        // TODO: Change to a more appropriate Exception-class
 
-       Executable[] executables = new Executable[TestUtils.EMPTY_STRINGS.length];
+       Executable[] setPasswordsThrow = new Executable[TestUtils.EMPTY_STRINGS.length];
        for (int i = 0; i < TestUtils.EMPTY_STRINGS.length; i++) {
            String emptyPassword = TestUtils.EMPTY_STRINGS[i];
-           executables[i] = () -> assertThrows(Exception.class, () -> validAccount.setPassword(emptyPassword));
+           String debug = "Set empty password on account.";
+           Executable setEmptyPassword = () -> validAccount.setPassword(emptyPassword);
+           setPasswordsThrow[i] = () -> assertThrows(Exception.class, setEmptyPassword, debug);
        }
 
-       assertAll(executables);
+       assertAll(setPasswordsThrow);
    }
 }
