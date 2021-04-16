@@ -107,7 +107,7 @@ export default {
             return this.passwordValue.length >= 6 && this.passwordValue.length <= 16;
         },
         async checkIfEmailExists(){
-            let url = `http://localhost:8080/users/${this.emailValue}`;
+            let url = `http://localhost:8080/accounts/${this.emailValue}`;
 
             let data = await fetch(url)
                 .then(response => response.json());
@@ -128,7 +128,7 @@ export default {
                 }
             }
 
-            let url = "http://localhost:8080/users/register";
+            let url = "http://localhost:8080/accounts/register";
             let options = {
                 method: 'POST',
                 headers: {

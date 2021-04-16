@@ -35,12 +35,12 @@ public class ActivityTypeController {
     public ActivityType updateActivityType(@RequestBody ActivityType newActivityType, @PathVariable("id") int id) {
         return activityTypeService.updateActivityType(id, newActivityType);
     }
-
+/*
     @GetMapping("/{id}/activities")
     public List<Activity> findActivitiesByType(@PathVariable("id") int id) {
         return activityTypeService.findActivitiesByType(id);
     }
-
+*/
 
     @DeleteMapping("/{id}")
     public void deleteActivityType(@PathVariable("id") int id) {

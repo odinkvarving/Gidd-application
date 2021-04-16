@@ -69,7 +69,7 @@ export default {
                 password: this.passwordValue
             }
 
-            await fetch("http://localhost:8080/user/login", {
+            await fetch("http://localhost:8080/accounts/login", {
                 method: "POST",
                 headers: {"Content-Type" : "application/json"},
                 credentials: "include",

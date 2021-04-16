@@ -135,7 +135,7 @@ public class AccountInfo {
         }
 
         public Builder setUserLevel(Level userLevel) {
-            this.userLevel = userLevel;
+            userLevel = userLevel;
             return this;
         }
 
