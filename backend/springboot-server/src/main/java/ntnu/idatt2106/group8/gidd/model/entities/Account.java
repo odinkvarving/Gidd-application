@@ -43,7 +43,7 @@ public class Account {
      */
     public Account(String email, String password, AccountInfo accountInfo) {
         this.setEmail(email);
-        this.password = password;
+        this.setPassword(password);
         this.accountInfo = accountInfo;
     }
 
@@ -75,6 +75,9 @@ public class Account {
     }
 
     public void setPassword(String password) {
+        if (password == null || password.trim().length() == 0)
+            throw new IllegalArgumentException("Empty password");
+
         this.password = password;
     }
 
