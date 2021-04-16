@@ -1,5 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 /**
@@ -8,7 +10,7 @@ import javax.persistence.*;
  * @author Endré Hadzalic
  */
 @Entity
-@Table(name = "userinfo")
+@Table(name = "account_info")
 public class AccountInfo {
 
     @Id
@@ -16,8 +18,8 @@ public class AccountInfo {
     @Column(name = "id")
     int id;
 
-    @OneToOne
-    @MapsId
+    @JsonBackReference
+    @OneToOne(mappedBy = "accountInfo")
     private Account account;
 
     @ManyToOne

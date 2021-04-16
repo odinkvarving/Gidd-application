@@ -75,8 +75,14 @@ export default {
                 credentials: "include",
                 body: JSON.stringify(loginData)
             })
-
-            await this.$router.push("/dashboard");
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+            
+            await fetch("http://localhost:8080/accounts", {
+                headers: {"Content-Type" : "application/json"},
+                credentials: "include"
+            })
+            //await this.$router.push("/dashboard");
         },
         handleLoginWithFacebook() {
             //Implement facebook compability

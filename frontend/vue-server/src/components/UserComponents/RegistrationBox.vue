@@ -67,8 +67,7 @@ export default {
             if(!this.validatePhone()){
                 this.phoneValid = false;
             }
-            let emailValid = await this.validateEmail();
-            if(!emailValid){
+            if(!this.validateEmail()){
                 this.emailValid = false;
             }
             if(!this.validatePassword()){
@@ -92,28 +91,11 @@ export default {
 
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-            if(re.test(String(this.emailValue).toLowerCase())){
-                let emailExists = await this.checkIfEmailExists();
-                if(!emailExists){
-                    console.log("email is truly valid");
-                    return true;
-                }
-            }
-
-            return false;
+            return re.test(String(this.emailValue).toLowerCase());
 
         },
         validatePassword(){
             return this.passwordValue.length >= 6 && this.passwordValue.length <= 16;
-        },
-        async checkIfEmailExists(){
-            let url = `http://localhost:8080/accounts/${this.emailValue}`;
-
-            let data = await fetch(url)
-                .then(response => response.json());
-
-            return data.email !== null;
-                     
         },
         async sendNewUserToServer(){
 
@@ -122,13 +104,13 @@ export default {
             let user = {
                 email: this.emailValue,
                 password: this.passwordValue,
-                userInfo: {
+                accountInfo: {
                     firstname: name[0],
                     surname: name[1]
                 }
             }
 
-            let url = "http://localhost:8080/accounts/register";
+            let url = "http://localhost:8080/accounts";
             let options = {
                 method: 'POST',
                 headers: {
