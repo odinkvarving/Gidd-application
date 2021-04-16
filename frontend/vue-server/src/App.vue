@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <Index/>
     <ActivityFeed v-show="isActivityFeedVisible" @activityClicked="onActivityClicked"/>
     <ActivityCard v-show="isActivityCardVisible" :activity="selectedActivity"/>
   </div>
