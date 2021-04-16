@@ -33,7 +33,10 @@ public class ActivityRepoTest {
         User testUser = new User("testEmail", "testPassword", null);
         ActivityType testActivityType = new ActivityType(null, "Fotball", 2.5);
         Level testLevel = new Level("testLevel", null, null);
-        this.testActivity = new Activity.Builder("Test Activity", testUser, testActivityType, testLevel, null, null, 25).build();
+        this.testActivity = new Activity
+                .Builder("Test Activity", testUser, testActivityType, testLevel, null, null, 25)
+                .setDescription("test")
+                .build();
     }
 
     @Test
