@@ -2,6 +2,7 @@ package ntnu.idatt2106.group8.gidd.repository;
 
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
+import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,6 @@ public interface AccountActivityRepo extends CrudRepository<AccountActivity, Acc
     Set<AccountActivity> findByUserId(int userId);
 
     Set<AccountActivity> findByActivityId(int activityId);
+
+    AccountActivity findAccountActivitiesByActivityId(int activityId);
 }

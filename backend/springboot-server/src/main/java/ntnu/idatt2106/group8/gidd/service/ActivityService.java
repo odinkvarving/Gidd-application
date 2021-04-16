@@ -16,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivityService {
@@ -130,14 +128,31 @@ public class ActivityService {
         Optional<Activity> activity;
         Optional<Account> participant;
         Set<AccountActivity> participantList;
+        AccountActivity addedParticipant;
         try {
             activity = activityRepo.findById(activityId);
             participant = accountRepo.findById(participantId);
             if(activity.isPresent() && participant.isPresent()) {
                 //find number of participants first to get queueposition
-                participantList = accountActivityRepo.findByActivityId(activityId);
-                AccountActivity add = new AccountActivity(participant.get().getId(), activity.get().getId(), 0);
-                accountActivityRepo.save(add);
+                participantList = accountActivityRepo.findByActivityId(activityId).stream()
+                        .filter(accountActivity -> accountActivity.getQueuePosition()==0)
+                        .collect(Collectors.toCollection(HashSet::new));
+
+                int participatingSize = participantList.size();
+                if(participatingSize < activity.get().getMaxParticipants()) {
+                    log.info("There are " + participatingSize + " participants in this activity");
+                    addedParticipant = new AccountActivity(participantId, activityId, 0);
+                    accountActivityRepo.save(addedParticipant);
+                    log.info("Added as participant to activity.");
+                }else{
+                    ArrayList<AccountActivity> queueList = accountActivityRepo.findByActivityId(activityId).stream()
+                            .filter(accountActivity -> accountActivity.getQueuePosition() != 0)
+                            .collect(Collectors.toCollection(ArrayList::new));
+                    int queueSize = queueList.size();
+                    addedParticipant = new AccountActivity(participant.get().getId(), activity.get().getId(), (queueSize + 1));
+                    accountActivityRepo.save(addedParticipant);
+                    log.info("The activity is full. Participant added to queue with position: " + (queueSize + 1));
+                }
                 return participant;
             }else {
                 log.info("Could not find the specified user or activity");
