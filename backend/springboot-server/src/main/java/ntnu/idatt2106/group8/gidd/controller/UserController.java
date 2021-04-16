@@ -48,4 +48,6 @@ public class UserController {
     public void deleteUser(@PathVariable("id")int id) {
         userService.deleteUser(id);
     }
+
+    //TODO make method for getting all activities that specified user is participating on (via UserActivityRepo)
 }
