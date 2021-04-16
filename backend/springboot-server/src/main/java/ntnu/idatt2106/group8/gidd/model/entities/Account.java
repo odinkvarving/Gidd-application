@@ -1,7 +1,10 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A entity-class representing the user table in the database.
@@ -9,7 +12,8 @@ import java.util.List;
  * @author Endré Hadzalic
  */
 @Entity
-public class User {
+@Table(name = "account")
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,33 +23,34 @@ public class User {
     private String email;
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private UserInfo userInfo;
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account", fetch = FetchType.LAZY)
+    private AccountInfo accountInfo;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Activity> createdActivities;
+    private Set<Activity> createdActivities = new HashSet<>();
 
-    public User() {
+    public Account() {
     }
 
     /**
      * Creates a new user
      *
-     * @param email    the email of the new user.
-     * @param password the password of the new user.
-     * @param userInfo the user-info of the new user, represented in a UserInfo-object.
+     * @param email       the email of the new user.
+     * @param password    the password of the new user.
+     * @param accountInfo the user-info of the new user, represented in a UserInfo-object.
      */
-    public User(String email, String password, UserInfo userInfo) {
+    public Account(String email, String password, AccountInfo accountInfo) {
         this.email = email;
         this.password = password;
-        this.userInfo = userInfo;
+        this.accountInfo = accountInfo;
     }
 
-    public List<Activity> getCreatedActivities() {
+    public Set<Activity> getCreatedActivities() {
         return createdActivities;
     }
 
-    public void setCreatedActivities(List<Activity> createdActivities) {
+    public void setCreatedActivities(Set<Activity> createdActivities) {
         this.createdActivities = createdActivities;
     }
 
@@ -73,11 +78,11 @@ public class User {
         this.password = password;
     }
 
-    public UserInfo getUserInfo() {
-        return userInfo;
+    public AccountInfo getUserInfo() {
+        return accountInfo;
     }
 
-    public void setUserInfo(UserInfo userInfo) {
-        this.userInfo = userInfo;
+    public void setUserInfo(AccountInfo accountInfo) {
+        this.accountInfo = accountInfo;
     }
 }

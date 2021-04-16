@@ -50,7 +50,7 @@ CREATE TABLE activity(
 
     CONSTRAINT FK_creator FOREIGN KEY(creator_id)
     REFERENCES login(id),
-    CONSTRAINT FK_level_activity FOREIGN KEY(level_id)
+   CONSTRAINT FK_level_activity FOREIGN KEY(level_id)
     REFERENCES level(id),
     CONSTRAINT FK_activity_type FOREIGN KEY(type_id)
     REFERENCES activity_type(id)
@@ -65,7 +65,7 @@ CREATE TABLE participant(
 
     CONSTRAINT FK_m2m_user FOREIGN KEY(user_id)
     REFERENCES login(id),
-    CONSTRAINT FK_m2m_activity FOREIGN KEY(activity_id)
+   CONSTRAINT FK_m2m_activity FOREIGN KEY(activity_id)
     REFERENCES activity(id)
 );
 

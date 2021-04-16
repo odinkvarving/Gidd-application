@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 INSERT INTO login(email,password)
 VALUES('john.doe@gmail.com','secret'),
     ('xXedgelordXx@hotmail.com','swordfish'),
