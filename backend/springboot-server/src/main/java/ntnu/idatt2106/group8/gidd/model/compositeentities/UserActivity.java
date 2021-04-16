@@ -26,7 +26,7 @@ public class UserActivity implements Serializable {
 
     private int queuePosition;
 
-    public UserActivity() {
+    protected UserActivity() {
     }
 
     /**
@@ -47,16 +47,8 @@ public class UserActivity implements Serializable {
         return userId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
     public int getActivityId() {
         return activityId;
-    }
-
-    public void setActivityId(int activityId) {
-        this.activityId = activityId;
     }
 
     public int getQueuePosition() {

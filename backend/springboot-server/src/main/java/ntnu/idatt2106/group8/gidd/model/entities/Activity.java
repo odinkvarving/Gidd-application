@@ -42,7 +42,7 @@ public class Activity {
     private String description;
     private int maxParticipants;
 
-    private Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
+    protected Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
                      float latitude, LocalDateTime startTime, LocalDateTime endTime, String description,
                      int maxParticipants, String title) {
         this.creator = creator;
@@ -58,8 +58,7 @@ public class Activity {
         this.maxParticipants = maxParticipants;
     }
 
-    public Activity() {
-    }
+    protected Activity() { }
 
 
     public String getTitle() {
@@ -82,16 +81,8 @@ public class Activity {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Account getCreator() {
         return creator;
-    }
-
-    public void setCreator(Account creator) {
-        this.creator = creator;
     }
 
     public ActivityType getActivityType() {

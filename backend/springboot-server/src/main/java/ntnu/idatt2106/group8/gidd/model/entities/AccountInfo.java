@@ -28,7 +28,7 @@ public class AccountInfo {
     private String profileDescription;
     private int points;
 
-    public AccountInfo() {
+    protected AccountInfo() {
     }
 
     private AccountInfo(Level userLevel, String imageURL, String firstname, String surname,
@@ -45,16 +45,8 @@ public class AccountInfo {
         return account;
     }
 
-    public void setUser(Account account) {
-        this.account = account;
-    }
-
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Level getUserLevel() {

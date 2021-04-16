@@ -30,7 +30,7 @@ public class Account {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Activity> createdActivities = new HashSet<>();
 
-    public Account() {
+    protected Account() {
     }
 
     /**
@@ -56,10 +56,6 @@ public class Account {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getEmail() {
