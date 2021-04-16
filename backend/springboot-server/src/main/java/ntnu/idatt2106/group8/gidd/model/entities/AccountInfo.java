@@ -1,7 +1,6 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
  * A entity-class that represents the user-table of the database
@@ -9,16 +8,18 @@ import java.util.List;
  * @author Endré Hadzalic
  */
 @Entity
-public class UserInfo {
+@Table(name = "userinfo")
+public class AccountInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @OneToOne(cascade = CascadeType.REFRESH)
-    private User user;
+    @OneToOne
+    @MapsId
+    private Account account;
 
     @ManyToOne
+    @JoinColumn(name = "level_id")
     private Level userLevel;
 
     private String imageURL;
@@ -27,19 +28,19 @@ public class UserInfo {
     private String profileDescription;
     private int points;
 
-    public UserInfo() {
+    public AccountInfo() {
     }
 
-    public User getUser() {
-        return user;
+    public Account getUser() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Account account) {
+        this.account = account;
     }
 
-    private UserInfo(Level userLevel, String imageURL, String firstname, String surname,
-                     String profileDescription, int points) {
+    private AccountInfo(Level userLevel, String imageURL, String firstname, String surname,
+                        String profileDescription, int points) {
         this.userLevel = userLevel;
         this.imageURL = imageURL;
         this.firstname = firstname;
@@ -123,8 +124,8 @@ public class UserInfo {
         public Builder() {
         }
 
-        public UserInfo build() {
-            return new UserInfo(this.userLevel, this.imageURL, this.firstname, this.surname, this.profileDescription, this.points);
+        public AccountInfo build() {
+            return new AccountInfo(this.userLevel, this.imageURL, this.firstname, this.surname, this.profileDescription, this.points);
         }
 
         public Builder setUserLevel(Level userLevel) {

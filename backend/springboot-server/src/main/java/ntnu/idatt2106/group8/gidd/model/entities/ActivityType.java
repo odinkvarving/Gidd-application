@@ -1,7 +1,9 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A entity-class representing the activity_type table in the database.
@@ -9,16 +11,18 @@ import java.util.List;
  * @author Endré Hadzalic
  */
 @Entity
+@Table(name = "activity_type")
 public class ActivityType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String type;
+    @Column(name = "point_factor")
     private double pointFactor;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Activity> activitiesOfType;
+    @OneToMany(mappedBy = "activity_type", cascade = CascadeType.ALL)
+    private Set<Activity> activitiesOfType = new HashSet<>();
 
     public ActivityType() {
     }
@@ -34,20 +38,20 @@ public class ActivityType {
         this.pointFactor = pointFactor;
     }
 
-    public List<Activity> getActivitiesOfType() {
-        return activitiesOfType;
-    }
-
-    public void setActivitiesOfType(List<Activity> activitiesOfType) {
-        this.activitiesOfType = activitiesOfType;
-    }
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Set<Activity> getActivitiesOfType() {
+        return activitiesOfType;
+    }
+
+    public void setActivitiesOfType(Set<Activity> activitiesOfType) {
+        this.activitiesOfType = activitiesOfType;
     }
 
     public String getType() {

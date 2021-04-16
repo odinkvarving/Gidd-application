@@ -1,7 +1,10 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A entity-class that represents the level table in the database.
@@ -9,6 +12,7 @@ import java.util.List;
  * @author Endré Hadzalic
  */
 @Entity
+@Table(name = "level")
 public class Level {
 
     @Id
@@ -16,11 +20,13 @@ public class Level {
     private int id;
     private String description;
 
-    @OneToMany
-    private List<UserInfo> userInfosAtLevel;
+    @JsonIgnore
+    @OneToMany(mappedBy = "level", cascade = CascadeType.ALL)
+    private Set<AccountInfo> accountInfosAtLevel = new HashSet<>();
 
-    @OneToMany
-    private List<Activity> activitiesAtLevel;
+    @JsonIgnore
+    @OneToMany(mappedBy = "level", cascade = CascadeType.ALL)
+    private Set<Activity> activitiesAtLevel = new HashSet<>();
 
     public Level() {
     }
@@ -34,24 +40,24 @@ public class Level {
         this.description = description;
     }
 
-    public int getId() {
-        return id;
+    public Set<AccountInfo> getUserInfosAtLevel() {
+        return accountInfosAtLevel;
     }
 
-    public List<UserInfo> getUserInfosAtLevel() {
-        return userInfosAtLevel;
-    }
-
-    public void setUserInfosAtLevel(List<UserInfo> userInfosAtLevel) {
-        this.userInfosAtLevel = userInfosAtLevel;
-    }
-
-    public List<Activity> getActivitiesAtLevel() {
+    public Set<Activity> getActivitiesAtLevel() {
         return activitiesAtLevel;
     }
 
-    public void setActivitiesAtLevel(List<Activity> activitiesAtLevel) {
+    public void setUserInfosAtLevel(Set<AccountInfo> accountInfosAtLevel) {
+        this.accountInfosAtLevel = accountInfosAtLevel;
+    }
+
+    public void setActivitiesAtLevel(Set<Activity> activitiesAtLevel) {
         this.activitiesAtLevel = activitiesAtLevel;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {

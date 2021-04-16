@@ -1,7 +1,7 @@
 CREATE SCHEMA IF NOT EXISTS gidddb;
 use gidddb;
 
-CREATE TABLE user(
+CREATE TABLE account(
     id INT AUTO_INCREMENT PRIMARY KEY,
     info_id INT NOT NULL,
     email VARCHAR(32) NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE level(
 
 );
 
-CREATE TABLE User_info(
+CREATE TABLE user_info(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
     imageUrl VARCHAR(32),
@@ -27,10 +27,10 @@ CREATE TABLE User_info(
     points INT NOT NULL,
 
     CONSTRAINT FK_info_to_user FOREIGN KEY (id)
-    REFERENCES user(id),
+    REFERENCES account(id),
 );
 
-CREATE TABLE ActivityType(
+CREATE TABLE activity_type(
     id INT AUTO_INCREMENT PRIMARY KEY,
     type VARCHAR(12),
     point_factor DECIMAL(5,2)
@@ -52,7 +52,7 @@ CREATE TABLE activity(
     max_participants INT,
 
     CONSTRAINT FK_creator FOREIGN KEY (creator_id)
-    REFERENCES user(id),
+    REFERENCES account(id),
     CONSTRAINT FK_level_activity FOREIGN KEY(level_id)
     REFERENCES level(id),
     CONSTRAINT FK_activity_type FOREIGN KEY(type_id)
@@ -67,7 +67,7 @@ CREATE TABLE participant(
     CONSTRAINT PK_user_activity PRIMARY KEY(user_id,activity_id),
 
     CONSTRAINT FK_m2m_user FOREIGN KEY(user_id)
-    REFERENCES user(id),
+    REFERENCES account(id),
     CONSTRAINT FK_m2m_activity FOREIGN KEY(activity_id)
     REFERENCES activity(id)
 );

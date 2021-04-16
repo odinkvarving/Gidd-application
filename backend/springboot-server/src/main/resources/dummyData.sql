@@ -1,4 +1,4 @@
-INSERT INTO user(info_id,email,password)
+INSERT INTO account(info_id,email,password)
 VALUES(1,'john.doe@gmail.com','secret'),
     (2,'xXedgelordXx@hotmail.com','swordfish'),
     (3,'ådun@æøå.no','æøåæøå');
