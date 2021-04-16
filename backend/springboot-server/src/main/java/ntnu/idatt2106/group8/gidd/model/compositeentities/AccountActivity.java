@@ -1,6 +1,6 @@
 package ntnu.idatt2106.group8.gidd.model.compositeentities;
 
-import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.UserActivityId;
+import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,8 +15,8 @@ import java.util.Objects;
  * @author Endré Hadzalic
  */
 @Entity
-@IdClass(UserActivityId.class)
-public class UserActivity implements Serializable {
+@IdClass(AccountActivityId.class)
+public class AccountActivity implements Serializable {
 
     @Id
     private int userId;
@@ -26,7 +26,7 @@ public class UserActivity implements Serializable {
 
     private int queuePosition;
 
-    public UserActivity() {
+    public AccountActivity() {
     }
 
     /**
@@ -37,7 +37,7 @@ public class UserActivity implements Serializable {
      * @param queuePosition should be 0 if the user is in in the activity. from 1 to n if the user is in queue for joining
      *                      the activity
      */
-    public UserActivity(int userId, int activityId, int queuePosition) {
+    public AccountActivity(int userId, int activityId, int queuePosition) {
         this.userId = userId;
         this.activityId = activityId;
         this.queuePosition = queuePosition;
@@ -71,7 +71,7 @@ public class UserActivity implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserActivity ua = (UserActivity) o;
+        AccountActivity ua = (AccountActivity) o;
         return this.activityId == ua.activityId && this.userId == ua.userId;
     }
 
