@@ -1,25 +1,27 @@
 <template>
-  <index/>
+  <div id="app">
+    <header>
+      <NavBar />
+    </header>
+  </div>
 </template>
 
 <script>
-import Index from './router/index.vue'
-
+import NavBar from "./components/Nav/NavBar.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Index
-  }
-}
+    NavBar,
+  },
+};
 </script>
 
 <style>
-
-@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Mulish&display=swap");
 
 #app {
-  font-family: 'Mulish', Helvetica, Arial, sans-serif;
+  font-family: "Mulish", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
