@@ -8,3 +8,8 @@
         name: "Chat"
     }
 </script>
+<style scoped>
+    #container{
+        height: 30vh;
+    }
+</style>
