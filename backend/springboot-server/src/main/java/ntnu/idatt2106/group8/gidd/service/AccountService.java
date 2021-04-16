@@ -1,7 +1,8 @@
 package ntnu.idatt2106.group8.gidd.service;
 
-import ntnu.idatt2106.group8.gidd.model.entities.User;
-import ntnu.idatt2106.group8.gidd.repository.UserRepo;
+
+import ntnu.idatt2106.group8.gidd.model.entities.Account;
+import ntnu.idatt2106.group8.gidd.repository.AccountRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,53 +14,53 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class AccountService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    private static final Logger log = LoggerFactory.getLogger(AccountService.class);
 
     @Autowired
-    private UserRepo userRepo;
+    private AccountRepo accountRepo;
 
-    public List<User> getAllUsers(){
-        List<User> users = new ArrayList<>();
+    public List<Account> getAllUsers(){
+        List<Account> accounts = new ArrayList<>();
         try {
-            userRepo.findAll().forEach(users::add);
+            accountRepo.findAll().forEach(accounts::add);
         }catch (DataAccessException e) {
             log.info("Users not found");
         }
-        return users;
+        return accounts;
     }
 
-    public Optional<User> getUser(int id) {
+    public Optional<Account> getUser(int id) {
         try {
-            return userRepo.findById(id);
+            return accountRepo.findById(id);
         }catch (DataAccessException e) {
             log.info("Could not find user");
         }
         return Optional.empty();
     }
 
-    public User addUser(User user){
+    public Account addUser(Account account){
         try {
-            return userRepo.save(user);
+            return accountRepo.save(account);
         }catch (DataAccessException e) {
             log.info("Could not add user");
         }
         return null;
     }
 
-    public Optional<User> findByEmail(String email){
+    public Optional<Account> findByEmail(String email){
         try {
-            return userRepo.findByEmail(email);
+            return accountRepo.findByEmail(email);
         }catch (DataAccessException e) {
             log.info("Could not find user with this email");
         }
         return Optional.empty();
     }
 
-    public User updateUser(User user, int id) {
+    public Account updateUser(Account account, int id) {
         try {
-            return userRepo.save(user);
+            return accountRepo.save(account);
         }catch (DataAccessException e) {
             log.info("Could not update user");
         }
@@ -68,7 +69,7 @@ public class UserService {
 
     public void deleteUser(int id) {
         try {
-            userRepo.deleteById(id);
+            accountRepo.deleteById(id);
         }catch (DataAccessException e) {
             log.info("Could not delete user");
         }

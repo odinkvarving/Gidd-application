@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.repository;
 
-import ntnu.idatt2106.group8.gidd.model.entities.User;
+
+import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,22 +9,20 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class UserRepoTest {
+class AccountRepoTest {
 
     @Autowired
-    UserRepo userRepo;
+    AccountRepo accountRepo;
 
-    private User testUser;
+    private Account testAccount;
 
     @BeforeEach
     void setUp() {
-        this.userRepo.deleteAll(this.userRepo.findAll());
-        this.testUser = new User("testEmail", "testPassword", null);
+        this.accountRepo.deleteAll(this.accountRepo.findAll());
+        this.testAccount = new Account("testEmail", "testPassword", null);
     }
 
     @Test

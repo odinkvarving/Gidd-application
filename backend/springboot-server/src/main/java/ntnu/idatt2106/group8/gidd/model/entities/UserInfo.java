@@ -13,7 +13,7 @@ public class UserInfo {
     int id;
 
     @OneToOne
-    User user;
+    Account account;
     @ManyToOne
     Level userLevel;
     String imageURL;
@@ -26,9 +26,9 @@ public class UserInfo {
     }
 
     //TODO: create UserInfoBuilder
-    public UserInfo(int id, User user, Level userLevel, String imageURL, String firstname, String surname, String profileDescription, int points) {
+    public UserInfo(int id, Account account, Level userLevel, String imageURL, String firstname, String surname, String profileDescription, int points) {
         this.id = id;
-        this.user = user;
+        this.account = account;
         this.userLevel = userLevel;
         this.imageURL = imageURL;
         this.firstname = firstname;
@@ -45,12 +45,12 @@ public class UserInfo {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public Level getUserLevel() {

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ActivityTypeService {
@@ -70,7 +71,7 @@ public class ActivityTypeService {
         }
     }
 
-    public List<Activity> findActivitiesByType(int id) {
+    public Set<Activity> findActivitiesByType(int id) {
         Optional<ActivityType> activityType;
         try {
             activityType = activityTypeRepo.findById(id);

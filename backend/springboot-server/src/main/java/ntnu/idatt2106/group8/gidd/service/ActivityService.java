@@ -2,13 +2,14 @@ package ntnu.idatt2106.group8.gidd.service;
 
 
 import ntnu.idatt2106.group8.gidd.model.compositeentities.UserActivity;
+import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
-import ntnu.idatt2106.group8.gidd.model.entities.User;
+import ntnu.idatt2106.group8.gidd.repository.AccountRepo;
 import ntnu.idatt2106.group8.gidd.repository.ActivityRepo;
 import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepo;
 import ntnu.idatt2106.group8.gidd.repository.UserActivityRepo;
-import ntnu.idatt2106.group8.gidd.repository.UserRepo;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ActivityService {
@@ -28,7 +30,7 @@ public class ActivityService {
     private ActivityRepo activityRepo;
 
     @Autowired
-    private UserRepo userRepo;
+    private AccountRepo accountRepo;
 
     @Autowired
     private UserActivityRepo userActivityRepo;
@@ -111,7 +113,7 @@ public class ActivityService {
         return null;
     }
 
-    public List<Equipment> getActivityEquipment(int id) {
+    public Set<Equipment> getActivityEquipment(int id) {
         Optional<Activity> activity;
         try {
             activity = activityRepo.findById(id);
@@ -124,12 +126,12 @@ public class ActivityService {
         return null;
     }
 
-    public Optional<User> addParticipantToActivity(int activityId, int participantId) {
+    public Optional<Account> addParticipantToActivity(int activityId, int participantId) {
         Optional<Activity> activity;
-        Optional<User> participant;
+        Optional<Account> participant;
         try {
             activity = activityRepo.findById(activityId);
-            participant = userRepo.findById(participantId);
+            participant = accountRepo.findById(participantId);
             if(activity.isPresent() && participant.isPresent()) {
                 UserActivity add = new UserActivity(participant.get().getId(), activity.get().getId(), 0);
                 userActivityRepo.save(add);

@@ -1,15 +1,16 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
+
+import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
-import ntnu.idatt2106.group8.gidd.model.entities.User;
 import ntnu.idatt2106.group8.gidd.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/activities")
@@ -49,12 +50,12 @@ public class ActivityController {
     }
 
     @GetMapping("/{id}/equipment")
-    public List<Equipment> getActivityEquipment(@PathVariable("id")int id) {
+    public Set<Equipment> getActivityEquipment(@PathVariable("id")int id) {
         return activityService.getActivityEquipment(id);
     }
 
     @PostMapping("/{id}/users/{id}")
-    public Optional<User> addParticipantToActivity(@PathVariable("id")int activityId, @PathVariable("id")int participantId) {
+    public Optional<Account> addParticipantToActivity(@PathVariable("id")int activityId, @PathVariable("id")int participantId) {
         return activityService.addParticipantToActivity(activityId, participantId);
     }
 

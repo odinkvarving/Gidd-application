@@ -1,9 +1,10 @@
 package ntnu.idatt2106.group8.gidd.repository;
 
+import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
 import ntnu.idatt2106.group8.gidd.model.entities.Level;
-import ntnu.idatt2106.group8.gidd.model.entities.User;
+import ntnu.idatt2106.group8.gidd.service.AccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +26,28 @@ public class ActivityRepoTest {
     @Autowired
     private ActivityRepo activityRepo;
 
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private ActivityTypeRepo activityTypeRepo;
+
+    @Autowired
+    private LevelRepo levelRepo;
+
     private Activity testActivity;
 
     @BeforeEach
     void setUp() {
         this.activityRepo.deleteAll(this.activityRepo.findAll());
-        User testUser = new User("testEmail", "testPassword", null);
-        ActivityType testActivityType = new ActivityType(null, "Fotball", 2.5);
-        Level testLevel = new Level("testLevel", null, null);
+        Account testAccount = new Account("testEmail", "testPassword", null);
+        accountService.addUser(testAccount);
+        ActivityType testActivityType = new ActivityType("testType", 2.5);
+        activityTypeRepo.save(testActivityType);
+        Level testLevel = new Level("testDescription");
+        levelRepo.save(testLevel);
         this.testActivity = new Activity
-                .Builder("Test Activity", testUser, testActivityType, testLevel, null, null, 25)
+                .Builder("Test Activity", testAccount, testActivityType, testLevel, null, null, 25)
                 .setDescription("test")
                 .build();
     }
@@ -43,7 +56,7 @@ public class ActivityRepoTest {
     void testSpecificMethods() {
         try {
             this.activityRepo.save(testActivity);
-            Activity activityFound = activityRepo.findById(1).orElseThrow(NoSuchElementException::new);
+            Activity activityFound = activityRepo.findById(4).orElseThrow(NoSuchElementException::new);
             assertEquals(this.testActivity.getActivityType().getType(), activityFound.getActivityType().getType());
         }catch (Exception e) {
             fail(e.toString());
@@ -59,7 +72,7 @@ public class ActivityRepoTest {
 
             assertEquals(1, activities.size());
 
-            Activity activityFound = activityRepo.findById(1).orElseThrow(NoSuchElementException::new); //hvorfor blir ID så stor?
+            Activity activityFound = activityRepo.findById(4).orElseThrow(NoSuchElementException::new); //hvorfor blir ID så stor?
             assertEquals(this.testActivity.getMaxParticipants(), activityFound.getMaxParticipants());
         }catch (Exception e) {
             fail(e.toString());
@@ -70,14 +83,14 @@ public class ActivityRepoTest {
     void testDeleteFunctionality() {
         try {
             this.activityRepo.save(testActivity);
-
-            this.activityRepo.deleteById(1);
+            System.out.println(this.testActivity.getId());
+            this.activityRepo.deleteById(4);
             List<Activity> activities = new ArrayList<>();
             this.activityRepo.findAll().forEach(activities::add);
             assertTrue(activities.isEmpty());
 
             try {
-                this.activityRepo.findById(1).orElseThrow(NoSuchElementException::new);
+                this.activityRepo.findById(4).orElseThrow(NoSuchElementException::new);
                 fail("should not be reached");
             } catch (Exception e) {
                 e.printStackTrace();
