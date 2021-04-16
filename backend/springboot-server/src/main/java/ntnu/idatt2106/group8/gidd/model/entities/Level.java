@@ -44,12 +44,12 @@ public class Level {
         return accountInfosAtLevel;
     }
 
-    public Set<Activity> getActivitiesAtLevel() {
-        return activitiesAtLevel;
-    }
-
     public void setUserInfosAtLevel(Set<AccountInfo> accountInfosAtLevel) {
         this.accountInfosAtLevel = accountInfosAtLevel;
+    }
+
+    public Set<Activity> getActivitiesAtLevel() {
+        return activitiesAtLevel;
     }
 
     public void setActivitiesAtLevel(Set<Activity> activitiesAtLevel) {

@@ -31,14 +31,6 @@ public class AccountInfo {
     public AccountInfo() {
     }
 
-    public Account getUser() {
-        return account;
-    }
-
-    public void setUser(Account account) {
-        this.account = account;
-    }
-
     private AccountInfo(Level userLevel, String imageURL, String firstname, String surname,
                         String profileDescription, int points) {
         this.userLevel = userLevel;
@@ -47,6 +39,14 @@ public class AccountInfo {
         this.surname = surname;
         this.profileDescription = profileDescription;
         this.points = points;
+    }
+
+    public Account getUser() {
+        return account;
+    }
+
+    public void setUser(Account account) {
+        this.account = account;
     }
 
     public int getId() {
