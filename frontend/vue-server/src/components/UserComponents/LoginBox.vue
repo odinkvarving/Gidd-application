@@ -53,21 +53,30 @@ export default {
 
             if(this.isEmailValid && this.isPasswordValid){
                 console.log("All inputs are valid. Signing in...");
-                this.sendNewUserToServer();
+                this.login();
             }
         },
         validateEmail() {
-
-            //Check if email already exists method. Only run if the test underneath passes
-
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(this.emailValue).toLowerCase());
         },
         validatePassword() {
             return this.passwordValue.length >= 6 && this.passwordValue.length <= 16;
         },
-        sendNewUserToServer() {
-            
+        async login() {
+            let loginData = {
+                email: this.emailValue,
+                password: this.passwordValue
+            }
+
+            await fetch("http://localhost:8080/user/login", {
+                method: "POST",
+                headers: {"Content-Type" : "application/json"},
+                credentials: "include",
+                body: JSON.stringify(loginData)
+            })
+
+            await this.$router.push("/dashboard");
         },
         handleLoginWithFacebook() {
             //Implement facebook compability

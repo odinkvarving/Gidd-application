@@ -128,7 +128,7 @@ export default {
                 }
             }
 
-            let url = "http://localhost:8080/users";
+            let url = "http://localhost:8080/users/register";
             let options = {
                 method: 'POST',
                 headers: {
@@ -137,10 +137,12 @@ export default {
                 body: JSON.stringify(user)
             }
 
-            fetch(url, options)
+            await fetch(url, options)
                 .then(response => response.json())
                 .then(data => console.log(data))
                 .catch(error => console.log(error));
+
+            await this.$router.push("/login");
         },
         handleRegisterWithFacebook(){
             //Implement facebook compability
