@@ -111,12 +111,12 @@ public class AccountInfo {
      * @author Endré Hadzalic
      */
     public static class Builder {
-        Level userLevel;
-        String imageURL;
-        String firstname;
-        String surname;
-        String profileDescription;
-        int points = 0;
+        private Level userLevel;
+        private String imageURL;
+        private String firstname;
+        private String surname;
+        private String profileDescription;
+        private int points = 0;
 
         /**
          * All params in this constructor are mandatory for creating a new UserInfo-object.
