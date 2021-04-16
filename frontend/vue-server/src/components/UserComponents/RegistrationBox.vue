@@ -1,7 +1,7 @@
 <template>
     <div class="registration-box">
 
-        <button class="close" @click="$emit('close')">x</button>
+        <router-link to="/"><button id="close-btn"><span>x</span></button></router-link>
         <h2>Registrer deg hos GIDD idag<br />Det er bare å GIDDE</h2>
 
         <div id="facebook-btn">

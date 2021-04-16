@@ -1,6 +1,6 @@
 <template>
     <div class="login-box">
-        <button id="close-btn" @click="$emit('close')"><span>x</span></button>
+        <router-link to="/"><button id="close-btn"><span>x</span></button></router-link>
         <h2>GIDD og logg deg inn da</h2>
 
         <div id="facebook-btn">

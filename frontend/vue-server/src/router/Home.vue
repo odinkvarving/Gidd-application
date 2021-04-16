@@ -1,55 +1,23 @@
 <template>
-    <div class="navigation-bar">
-        <button class="btn login" @click="showLoginBox"><span>Logg inn</span></button>
-    </div>
+    <FrontPageNav />
     <div class="front-page">
-        <div class="header-container" v-if="!isRegistrationBoxVisible && !isLoginBoxVisible">
+        <div class="header-container">
             <div class="title">GIDD</div>
             <div class="paragraph">Det er bare å gidde</div>
-            <button class="btn register" @click="showRegistrationBox"><span>Registrer deg</span></button>
+            <router-link to="/register"><button class="btn register"><span>Registrer deg</span></button></router-link>
         </div>
-        <login-box v-show="isLoginBoxVisible" @close="closeLoginBox"/>
-        <registration-box v-show="isRegistrationBoxVisible" @close="closeRegistrationBox"/>
     </div>
     <div class="test"></div>
 </template>
 
 <script>
-import LoginBox from '../components/UserComponents/LoginBox.vue';
-import RegistrationBox from "../components/UserComponents/RegistrationBox.vue"
+import FrontPageNav from "../components/Nav/FrontPageNav.vue"
 
 export default {
-  name: 'index',
+  name: 'Home',
   components: {
-      'registration-box': RegistrationBox,
-      'login-box': LoginBox,
-  },
-  data() {
-      return {
-          isRegistrationBoxVisible: false,
-          isLoginBoxVisible: false,
-      }
-  },
-  methods: {
-      showRegistrationBox() {
-          this.isRegistrationBoxVisible = true;
-          console.log("Registration Box Clicked");
-      },
-      closeRegistrationBox() {
-          this.isRegistrationBoxVisible = false;
-          console.log("Close Registration Box Clicked");
-      },
-      showLoginBox() {
-          if (this.isRegistrationBoxVisible)
-            this.isRegistrationBoxVisible = false;
-            this.isLoginBoxVisible = true;
-          console.log("Login Box Clicked");
-      },
-      closeLoginBox() {
-          this.isLoginBoxVisible = false;
-          console.log('Close Login Box Clicked');
-      },
-  },
+      FrontPageNav
+  }
 }
 </script>
 
@@ -57,15 +25,6 @@ export default {
 
 .test {
     height: 1000px;
-}
-
-.navigation-bar {
-    display: flex;
-    justify-content: flex-end;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 8vh;
 }
 
 .front-page {
@@ -147,12 +106,6 @@ export default {
 .btn:hover::after {
     opacity: 1;
     transform: scale(1, 1);
-}
-
-.login {
-    margin: 20px 40px 0 0;
-    height: 40px;
-    width: 120px;
 }
 
 .register {
