@@ -8,7 +8,7 @@ import javax.persistence.*;
  * @author Endré Hadzalic
  */
 @Entity
-@Table(name = "userinfo")
+@Table(name = "accountinfo")
 public class AccountInfo {
 
     @Id
@@ -41,8 +41,12 @@ public class AccountInfo {
         this.points = points;
     }
 
-    public Account getUser() {
+    public Account getAccount() {
         return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public int getId() {

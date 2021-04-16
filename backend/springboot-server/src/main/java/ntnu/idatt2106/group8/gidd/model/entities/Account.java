@@ -78,7 +78,7 @@ public class Account {
         this.password = password;
     }
 
-    public AccountInfo getUserInfo() {
+    public AccountInfo getAccountInfo() {
         return accountInfo;
     }
 
