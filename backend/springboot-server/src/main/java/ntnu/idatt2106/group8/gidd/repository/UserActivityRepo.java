@@ -7,10 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * @author Endré Hadzalic
+ */
 @Repository
 public interface UserActivityRepo extends CrudRepository<UserActivity, UserActivityId> {
 
-    Optional<UserActivity> findByUserID(int userId);
+    Optional<UserActivity> findByUserId(int userId);
 
     Optional<UserActivity> findByActivityId(int activityId);
 }

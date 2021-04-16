@@ -1,9 +1,12 @@
 package ntnu.idatt2106.group8.gidd.repository;
 
-import ntnu.idatt2106.group8.gidd.model.entities.Activity;
+import ntnu.idatt2106.group8.gidd.model.entities.Level;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author Endré Hadzalic
+ */
 @Repository
-public interface ActivityRepo extends CrudRepository<Activity, Integer> {
+public interface LevelRepo extends CrudRepository<Level, Integer> {
 }

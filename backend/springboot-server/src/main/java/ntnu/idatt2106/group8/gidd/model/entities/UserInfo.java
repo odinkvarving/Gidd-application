@@ -3,30 +3,32 @@ package ntnu.idatt2106.group8.gidd.model.entities;
 import javax.persistence.*;
 
 /**
- * A database-entity created by Endré
+ * A entity-class that represents the user-table of the database
+ *
+ * @author Endré Hadzalic
  */
 @Entity
 public class UserInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     int id;
 
-    @OneToOne
-    User user;
+    @OneToOne(mappedBy = "userInfo")
+    private User user;
 
-    @ManyToOne
-    Level userLevel;
-    String imageURL;
-    String firstname;
-    String surname;
-    String profileDescription;
-    int points;
-
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Level userLevel;
+    private String imageURL;
+    private String firstname;
+    private String surname;
+    private String profileDescription;
+    private int points;
     public UserInfo() {
     }
-
-    private UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname, String profileDescription, int points) {
+    private UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname,
+                     String profileDescription, int points) {
         this.user = user;
         this.userLevel = userLevel;
         this.imageURL = imageURL;
@@ -92,6 +94,19 @@ public class UserInfo {
         this.points = points;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * A class used to build a new UserInfo-object.
+     *
+     * @author Endré Hadzalic
+     */
     public static class Builder {
         User user;
         Level userLevel;
@@ -99,13 +114,22 @@ public class UserInfo {
         String firstname;
         String surname;
         String profileDescription;
-        int points;
+        int points = 0;
 
+        /**
+         * All params in this constructor are mandatory for creating a new UserInfo-object.
+         *
+         * @param user the user that owns this userinfo, represented as a User-object.
+         */
         public Builder(User user) {
             this.user = user;
         }
 
-        public Builder setUserLevel(Level level){
+        public UserInfo build() {
+            return new UserInfo(this.user, this.userLevel, this.imageURL, this.firstname, this.surname, this.profileDescription, this.points);
+        }
+
+        public Builder setUserLevel(Level userLevel) {
             this.userLevel = userLevel;
             return this;
         }

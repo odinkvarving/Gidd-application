@@ -1,32 +1,39 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
- * A database-entity created by Endré
+ * A entity-class representing the user table in the database.
+ *
+ * @author Endré Hadzalic
  */
 @Entity
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    @Column(name = "id")
+    private int id;
 
     //hashed
-    String email;
-    String password;
+    private String email;
+    private String password;
 
-    @OneToOne
-    UserInfo userInfo;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_info_id", referencedColumnName = "id")
+    private UserInfo userInfo;
 
-    //TODO: compositetable with Activity
-
-    /**
-     * Default constructor
-     */
     public User() {
     }
 
+    /**
+     * Creates a new user
+     *
+     * @param email    the email of the new user.
+     * @param password the password of the new user.
+     * @param userInfo the user-info of the new user, represented in a UserInfo-object.
+     */
     public User(String email, String password, UserInfo userInfo) {
         this.email = email;
         this.password = password;
@@ -63,5 +70,23 @@ public class User {
 
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(userInfo, user.userInfo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, password, userInfo);
+    }
+
+    @Override
+    public String toString() {
+        return "user id: " + this.id + "\nemail: " + this.email + "\npassword: " + this.password + "\n";
     }
 }

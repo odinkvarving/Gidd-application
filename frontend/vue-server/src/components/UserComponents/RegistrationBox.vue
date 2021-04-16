@@ -1,7 +1,7 @@
 <template>
     <div class="registration-box">
 
-        <button class="close" @click="$emit('close')">x</button>
+        <router-link to="/"><button id="close-btn"><span>x</span></button></router-link>
         <h2>Registrer deg hos GIDD idag<br />Det er bare å GIDDE</h2>
 
         <div id="facebook-btn">
@@ -54,7 +54,7 @@ export default {
         }
     },
     methods: {
-        registerUser(){
+        async registerUser(){
             console.log("Register button clicked");
 
             this.nameValid = true;
@@ -67,7 +67,8 @@ export default {
             if(!this.validatePhone()){
                 this.phoneValid = false;
             }
-            if(!this.validateEmail()){
+            let emailValid = await this.validateEmail();
+            if(!emailValid){
                 this.emailValid = false;
             }
             if(!this.validatePassword()){
@@ -87,18 +88,59 @@ export default {
             let regPhone = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
             return regPhone.test(this.phoneValue);
         },
-        validateEmail() {
-
-            //Check if email already exists method. Only run if the test underneath passes
+        async validateEmail() {
 
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(this.emailValue).toLowerCase());
+
+            if(re.test(String(this.emailValue).toLowerCase())){
+                let emailExists = await this.checkIfEmailExists();
+                if(!emailExists){
+                    console.log("email is truly valid");
+                    return true;
+                }
+            }
+
+            return false;
+
         },
         validatePassword(){
             return this.passwordValue.length >= 6 && this.passwordValue.length <= 16;
         },
-        sendNewUserToServer(){
-            
+        async checkIfEmailExists(){
+            let url = `http://localhost:8080/users/${this.emailValue}`;
+
+            let data = await fetch(url)
+                .then(response => response.json());
+
+            return data.email !== null;
+                     
+        },
+        async sendNewUserToServer(){
+
+            let name = this.nameValue.split(" ");
+
+            let user = {
+                email: this.emailValue,
+                password: this.passwordValue,
+                userInfo: {
+                    firstname: name[0],
+                    surname: name[1]
+                }
+            }
+
+            let url = "http://localhost:8080/users";
+            let options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user)
+            }
+
+            fetch(url, options)
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.log(error));
         },
         handleRegisterWithFacebook(){
             //Implement facebook compability
