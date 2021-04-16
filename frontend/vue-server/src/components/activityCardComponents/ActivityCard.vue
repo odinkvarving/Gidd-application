@@ -1,15 +1,15 @@
 <template>
-    <div id="container">
-        <Info :activity="activity" id="info"></Info>
-        <Map :activity="activity" id="map"></Map>
-        <Equipments :activity="activity" id="equipments"></Equipments>
-        <Chat :activity="activity" id="chat"></Chat>
+    <div id="container" v-if="activity != null">
+        <Info class="comp" id="info" :activity="activity"/>
+        <Map class="comp alt" id="map" :activity="activity"/>
+        <Equipment class="comp alt" id="equipment" :activity="activity"/>
+        <Chat class="comp chat" id="chat" :activity="activity"/>
     </div>
 </template>
 <script>
     import Info from './Info.vue'
     import Map from './Map.vue'
-    import Equipments from './Equipments.vue'
+    import Equipment from './Equipment.vue'
     import Chat from './Chat.vue'
 
     export default {
@@ -17,7 +17,7 @@
         components: {
             Info,
             Map,
-            Equipments,
+            Equipment,
             Chat
         },
 
@@ -30,7 +30,7 @@
 
         data() {
             return {
-                //activity: null,
+
             }
         }
     }
@@ -40,17 +40,28 @@
         display: grid;
         grid-template-areas: 
         "info map"
-        "info equipments"
+        "info equipment"
         "chat chat";
+        background-color: #F6F6F6;
+        height: 100%;
+    }
+    .comp{
+        background-color: white;
+        width: 30vw;
+        box-shadow: 0px 4px 4px 0px #00000040;
+    }
+    .alt{
+        height: 30vh;
     }
     #info{
         grid-area: info;
+        height: 80vh;
     }
     #map{
         grid-area: map;
     }
-    #equipments{
-        grid-area: equipments;
+    #equipment{
+        grid-area: equipment;
     }
     #chat{
         grid-area: chat;

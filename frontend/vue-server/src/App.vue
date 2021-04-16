@@ -7,14 +7,14 @@
 
 <script>
 import ActivityFeed from './components/activityFeedComponents/ActivityFeed.vue'
-//import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
+import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
 
 
 export default {
   name: 'App',
 
   components: {
-    //ActivityCard,
+    ActivityCard,
     ActivityFeed
   },
 
@@ -28,7 +28,6 @@ export default {
 
   methods: {
     onActivityClicked(activity) {
-      console.log(activity);
       this.selectedActivity = activity;
       this.isActivityFeedVisible = false;
       this.isActivityCardVisible = true;
