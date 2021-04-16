@@ -1,7 +1,11 @@
 <template>
     <div id="container">
-        <h3>Utstyr:</h3>
-        <p>{{ activity.equipment }}</p>
+        <div id="list">
+            <h3>Utstyr:</h3>
+            <ul v-for="e in activity.equipment" :key="e.equipmentType">
+                <li>{{ e.equipmentType }}</li>
+            </ul>
+        </div>
     </div>
 </template>
 <script>
@@ -18,6 +22,6 @@
 </script>
 <style scoped>
     #container{
-        float: left;
+        margin-left: 100px;
     }
 </style>

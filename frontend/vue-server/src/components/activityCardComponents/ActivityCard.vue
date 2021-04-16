@@ -2,7 +2,7 @@
     <div id="container" v-if="activity != null">
         <Info class="comp" id="info" :activity="activity"/>
         <Map class="comp alt" id="map" :activity="activity"/>
-        <Equipment class="comp alt" id="equipment" :activity="activity"/>
+        <Equipment class="comp" id="equipment" :activity="activity"/><!-- alt-->
         <Chat class="comp chat" id="chat" :activity="activity"/>
     </div>
 </template>
@@ -47,7 +47,7 @@
     }
     .comp{
         background-color: white;
-        width: 30vw;
+        width: 40vw;
         box-shadow: 0px 4px 4px 0px #00000040;
     }
     .alt{
@@ -62,6 +62,8 @@
     }
     #equipment{
         grid-area: equipment;
+        text-align: left;
+        padding-left: 2%;
     }
     #chat{
         grid-area: chat;

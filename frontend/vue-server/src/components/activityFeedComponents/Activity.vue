@@ -1,8 +1,10 @@
 <template>
     <div id="card">
         <h1>{{ activity.name }}</h1>
-        <img :src="activity.ownerImage">
-        <h3>{{ activity.ownerName }}</h3>
+        <div id="ownerInfo">
+            <img :src="require('@/assets/' + activity.ownerImage)">
+            <h3>{{ activity.ownerName }}</h3>
+        </div>
         <p>{{ activity.time }}</p>
         <p>Kategori: {{ activity.type }}</p>
         <p>Sted: {{ activity.location }}</p>
@@ -10,7 +12,7 @@
         <div>
             <img v-for="image in images" :key="image.url" :src="image.url">
         </div>
-        <button id="btn" :class="{ full: isFull }" @click="handleButtonClick()"><span>{{ checkIfFull() }}</span></button>
+        <button id="btn" :class="{ full: isFull }" @click.stop="handleButtonClick()"><span>{{ checkIfFull() }}</span></button>
     </div>
 </template>
 <script>
@@ -32,11 +34,9 @@
 
         methods: {
             checkIfFull() {
-                if (this.activity.currentParticipants < this.activity.totalParticipants) { 
-                    //document.getElementById("btn").classList.add("notFull"); 
+                if (this.activity.currentParticipants < this.activity.totalParticipants) {
                     return "Bli med";
                 } else {
-                    //document.getElementById("btn").classList.add("full"); 
                     this.isFull = true;
                     return "Fullt";
                 }
@@ -44,11 +44,8 @@
 
             handleButtonClick() {
                 //Open login/register window or add the user to "participants"
+                console.log("Button clicked");
             },
-
-            /*addClass(className) {
-                document.getElementById("btn").classList.add(className);
-            },*/
         }
     }
 </script>
@@ -63,6 +60,22 @@
     #card p{
         font-size: 20px;
     }
+    #ownerInfo{
+        display: grid;
+        grid-template-areas: "image name";
+        margin: auto;
+        width: 50%;
+    }
+    #ownerInfo img{
+        grid-area: image;
+        width: 70px;
+        height: 70px;
+        border-radius: 35px;
+        box-shadow: 0px 4px 4px 0px #0000001A;
+    }
+    #ownerInfo h3{
+        grid-area: name;
+    }
     #btn{
         height: 5vh;
         width: 8vw;
@@ -72,6 +85,7 @@
         background-color: #FFBD3E;
         color: white;
         border: 0;
+        outline: none;
     }
     #btn.full{
         background-color: #FF5B3E;

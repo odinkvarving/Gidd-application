@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <Index/>
+    <!--<Index id="index"/>-->  
     <ActivityFeed v-show="isActivityFeedVisible" @activityClicked="onActivityClicked"/>
     <ActivityCard v-show="isActivityCardVisible" :activity="selectedActivity"/>
   </div>
 </template>
 
 <script>
-  import Index from './router/index.vue'
+  //import Index from './router/index.vue'
   import ActivityFeed from './components/activityFeedComponents/ActivityFeed.vue'
   import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
 
@@ -15,7 +15,7 @@ export default {
   name: 'App',
 
   components: {
-    Index,
+    //Index,
     ActivityCard,
     ActivityFeed
   },
@@ -37,10 +37,9 @@ export default {
   }
 }
 </script>
-
-@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
-
 <style scoped>
+  @import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
   #app {
     font-family: 'Mulish', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
