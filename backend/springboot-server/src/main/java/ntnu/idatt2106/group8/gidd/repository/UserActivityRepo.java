@@ -5,7 +5,7 @@ import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.UserActivityId;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Endré Hadzalic
@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserActivityRepo extends CrudRepository<UserActivity, UserActivityId> {
 
-    Optional<UserActivity> findByUserId(int userId);
+    Set<UserActivity> findByUserId(int userId);
 
-    Optional<UserActivity> findByActivityId(int activityId);
+    Set<UserActivity> findByActivityId(int activityId);
 }

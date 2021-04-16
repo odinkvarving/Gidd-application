@@ -8,28 +8,41 @@ import javax.persistence.*;
  * @author Endré Hadzalic
  */
 @Entity
-public class UserInfo {
+@Table(name = "userinfo")
+public class AccountInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     int id;
 
-    @OneToOne(mappedBy = "userInfo")
-    private User user;
+    @OneToOne
+    @MapsId
+    private Account account;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "level_id")
     private Level userLevel;
+
     private String imageURL;
     private String firstname;
     private String surname;
     private String profileDescription;
     private int points;
-    public UserInfo() {
+
+    public AccountInfo() {
     }
-    private UserInfo(User user, Level userLevel, String imageURL, String firstname, String surname,
-                     String profileDescription, int points) {
-        this.user = user;
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setUser(Account account) {
+        this.account = account;
+    }
+
+    private AccountInfo(Level userLevel, String imageURL, String firstname, String surname,
+                        String profileDescription, int points) {
         this.userLevel = userLevel;
         this.imageURL = imageURL;
         this.firstname = firstname;
@@ -44,6 +57,10 @@ public class UserInfo {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public Level getUserLevel() {
@@ -94,21 +111,12 @@ public class UserInfo {
         this.points = points;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     /**
      * A class used to build a new UserInfo-object.
      *
      * @author Endré Hadzalic
      */
     public static class Builder {
-        User user;
         Level userLevel;
         String imageURL;
         String firstname;
@@ -118,15 +126,12 @@ public class UserInfo {
 
         /**
          * All params in this constructor are mandatory for creating a new UserInfo-object.
-         *
-         * @param user the user that owns this userinfo, represented as a User-object.
          */
-        public Builder(User user) {
-            this.user = user;
+        public Builder() {
         }
 
-        public UserInfo build() {
-            return new UserInfo(this.user, this.userLevel, this.imageURL, this.firstname, this.surname, this.profileDescription, this.points);
+        public AccountInfo build() {
+            return new AccountInfo(this.userLevel, this.imageURL, this.firstname, this.surname, this.profileDescription, this.points);
         }
 
         public Builder setUserLevel(Level userLevel) {
