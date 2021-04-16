@@ -20,12 +20,15 @@ public class Activity {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private Account creator;
+
     @ManyToOne
     @JoinColumn(name = "type_id")
     private ActivityType activityType;
+
     @ManyToOne
     @JoinColumn(name = "level_id")
     private Level level;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity")
     private Set<Equipment> equipment = new HashSet<>();
 

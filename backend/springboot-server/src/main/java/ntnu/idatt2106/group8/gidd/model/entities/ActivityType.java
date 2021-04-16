@@ -1,5 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,8 +22,9 @@ public class ActivityType {
     @Column(name = "point_factor")
     private double pointFactor;
 
-    @OneToMany(mappedBy = "activity_type", cascade = CascadeType.ALL)
-    private Set<Activity> activitiesOfType = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Activity> activities = new HashSet<>();
 
     public ActivityType() {
     }
@@ -45,12 +48,12 @@ public class ActivityType {
         this.id = id;
     }
 
-    public Set<Activity> getActivitiesOfType() {
-        return activitiesOfType;
+    public Set<Activity> getActivities() {
+        return activities;
     }
 
-    public void setActivitiesOfType(Set<Activity> activitiesOfType) {
-        this.activitiesOfType = activitiesOfType;
+    public void setActivities(Set<Activity> activitiesOfType) {
+        this.activities = activitiesOfType;
     }
 
     public String getType() {

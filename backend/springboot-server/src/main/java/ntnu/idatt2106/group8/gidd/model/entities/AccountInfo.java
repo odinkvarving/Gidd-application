@@ -22,7 +22,7 @@ public class AccountInfo {
 
     @ManyToOne
     @JoinColumn(name = "level_id")
-    private Level userLevel;
+    private Level level;
 
     private String imageURL;
     private String firstname;
@@ -35,7 +35,7 @@ public class AccountInfo {
 
     private AccountInfo(Level userLevel, String imageURL, String firstname, String surname,
                         String profileDescription, int points) {
-        this.userLevel = userLevel;
+        this.level = userLevel;
         this.imageURL = imageURL;
         this.firstname = firstname;
         this.surname = surname;
@@ -60,11 +60,11 @@ public class AccountInfo {
     }
 
     public Level getUserLevel() {
-        return userLevel;
+        return level;
     }
 
     public void setUserLevel(Level userLevel) {
-        this.userLevel = userLevel;
+        this.level = userLevel;
     }
 
     public String getImageURL() {
