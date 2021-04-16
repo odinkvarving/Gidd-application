@@ -82,7 +82,6 @@ export default {
     -o-background-size: cover;
     -webkit-overflow-scrolling: touch;
     background-size: cover;
-    
 }
 
 .header-container {

@@ -14,6 +14,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/activities")
 public class ActivityController {
+
     @Autowired
     private ActivityService activityService;
 
@@ -32,7 +33,7 @@ public class ActivityController {
         return activityService.addActivity(activity);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public Activity updateActivity(@RequestBody Activity newActivity, @PathVariable("id") int id) {
         return activityService.updateActivity(id, newActivity);
     }
