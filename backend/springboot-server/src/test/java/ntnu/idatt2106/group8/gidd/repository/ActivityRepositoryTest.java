@@ -21,31 +21,31 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-public class ActivityRepoTest {
+public class ActivityRepositoryTest {
 
     @Autowired
-    private ActivityRepo activityRepo;
+    private ActivityRepository activityRepository;
 
     @Autowired
     private AccountService accountService;
 
     @Autowired
-    private ActivityTypeRepo activityTypeRepo;
+    private ActivityTypeRepository activityTypeRepo;
 
     @Autowired
-    private LevelRepo levelRepo;
+    private LevelRepository levelRepository;
 
     private Activity testActivity;
 
     @BeforeEach
     void setUp() {
-        this.activityRepo.deleteAll(this.activityRepo.findAll());
-        Account testAccount = new Account("testEmail", "testPassword", null);
-        accountService.addUser(testAccount);
+        this.activityRepository.deleteAll(this.activityRepository.findAll());
+        Account testAccount = new Account("testEmail", "testPassword");
+        accountService.saveAccount(testAccount);
         ActivityType testActivityType = new ActivityType("testType", 2.5);
         activityTypeRepo.save(testActivityType);
         Level testLevel = new Level("testDescription");
-        levelRepo.save(testLevel);
+        levelRepository.save(testLevel);
         this.testActivity = new Activity
                 .Builder("Test Activity", testAccount, testActivityType, testLevel, null, null, 25)
                 .setDescription("test")
@@ -55,8 +55,8 @@ public class ActivityRepoTest {
     @Test
     void testSpecificMethods() {
         try {
-            this.activityRepo.save(testActivity);
-            Activity activityFound = activityRepo.findById(4).orElseThrow(NoSuchElementException::new);
+            this.activityRepository.save(testActivity);
+            Activity activityFound = activityRepository.findById(4).orElseThrow(NoSuchElementException::new);
             assertEquals(this.testActivity.getActivityType().getType(), activityFound.getActivityType().getType());
         }catch (Exception e) {
             fail(e.toString());
@@ -66,13 +66,13 @@ public class ActivityRepoTest {
     @Test
     void testSaveAndFindFunctionality() {
         try {
-            this.activityRepo.save(testActivity);
+            this.activityRepository.save(testActivity);
             List<Activity> activities = new ArrayList<>();
-            this.activityRepo.findAll().forEach(activities::add);
+            this.activityRepository.findAll().forEach(activities::add);
 
             assertEquals(1, activities.size());
 
-            Activity activityFound = activityRepo.findById(4).orElseThrow(NoSuchElementException::new); //hvorfor blir ID så stor?
+            Activity activityFound = activityRepository.findById(4).orElseThrow(NoSuchElementException::new); //hvorfor blir ID så stor?
             assertEquals(this.testActivity.getMaxParticipants(), activityFound.getMaxParticipants());
         }catch (Exception e) {
             fail(e.toString());
@@ -82,15 +82,15 @@ public class ActivityRepoTest {
     @Test
     void testDeleteFunctionality() {
         try {
-            this.activityRepo.save(testActivity);
+            this.activityRepository.save(testActivity);
             System.out.println(this.testActivity.getId());
-            this.activityRepo.deleteById(4);
+            this.activityRepository.deleteById(4);
             List<Activity> activities = new ArrayList<>();
-            this.activityRepo.findAll().forEach(activities::add);
+            this.activityRepository.findAll().forEach(activities::add);
             assertTrue(activities.isEmpty());
 
             try {
-                this.activityRepo.findById(4).orElseThrow(NoSuchElementException::new);
+                this.activityRepository.findById(4).orElseThrow(NoSuchElementException::new);
                 fail("should not be reached");
             } catch (Exception e) {
                 e.printStackTrace();

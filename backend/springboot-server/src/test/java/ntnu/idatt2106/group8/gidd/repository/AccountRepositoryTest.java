@@ -12,17 +12,17 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class AccountRepoTest {
+class AccountRepositoryTest {
 
     @Autowired
-    AccountRepo accountRepo;
+    AccountRepository accountRepository;
 
     private Account testAccount;
 
     @BeforeEach
     void setUp() {
-        this.accountRepo.deleteAll(this.accountRepo.findAll());
-        this.testAccount = new Account("testEmail", "testPassword", null);
+        this.accountRepository.deleteAll(this.accountRepository.findAll());
+        this.testAccount = new Account("testEmail", "testPassword");
     }
 
     @Test

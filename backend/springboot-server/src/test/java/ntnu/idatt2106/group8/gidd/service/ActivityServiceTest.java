@@ -5,13 +5,10 @@ import ntnu.idatt2106.group8.gidd.model.entities.*;
 import ntnu.idatt2106.group8.gidd.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
@@ -29,19 +26,19 @@ class ActivityServiceTest {
     private AccountService accountService;
 
     @Autowired
-    private ActivityRepo activityRepo;
+    private ActivityRepository activityRepository;
 
     @Autowired
-    private ActivityTypeRepo activityTypeRepo;
+    private ActivityTypeRepository activityTypeRepository;
 
     @Autowired
-    private LevelRepo levelRepo;
+    private LevelRepository levelRepository;
 
     @Autowired
-    private AccountActivityRepo accountActivityRepo;
+    private AccountActivityRepository accountActivityRepository;
 
     @Autowired
-    private EquipmentRepo equipmentRepo;
+    private EquipmentRepository equipmentRepository;
 
     private Activity testActivity;
 
@@ -51,13 +48,13 @@ class ActivityServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.activityRepo.deleteAll(this.activityRepo.findAll());
-        Account testAccount = new Account("testEmail", "testPassword", null);
-        accountService.addUser(testAccount);
+        this.activityRepository.deleteAll(this.activityRepository.findAll());
+        Account testAccount = new Account("test@hotmail.com", "testPassword");
+        accountService.saveAccount(testAccount);
         ActivityType testActivityType = new ActivityType("testType", 2.5);
-        activityTypeRepo.save(testActivityType);
+        activityTypeRepository.save(testActivityType);
         Level testLevel = new Level("testDescription");
-        levelRepo.save(testLevel);
+        levelRepository.save(testLevel);
         Equipment testEquipment1 = new Equipment("testEquipment1");
         Equipment testEquipment2 = new Equipment("testEquipment2");
         Set<Equipment> testEquipment = new HashSet<>(Arrays.asList(testEquipment1, testEquipment2));
@@ -70,10 +67,10 @@ class ActivityServiceTest {
 
         activityService.addActivity(testActivity);
         AccountActivity test = new AccountActivity(testAccount.getId(), testActivity.getId(), 0);
-        accountActivityRepo.save(test);
+        accountActivityRepository.save(test);
 
-        dummyAccount = new Account("dummyEmail", "dummyPassword", null);
-        accountService.addUser(dummyAccount);
+        dummyAccount = new Account("dummy@hotmail.com", "dummyPassword");
+        accountService.saveAccount(dummyAccount);
 
         dummyActivity = new Activity
                 .Builder("Dummy activity", dummyAccount, testActivityType, testLevel, null, null, 2)
@@ -103,18 +100,18 @@ class ActivityServiceTest {
     @Test
     void updateActivity() {
         activityService.addActivity(this.dummyActivity);
-        assertEquals("Dummytest", activityRepo.findById(dummyActivity.getId()).get().getDescription());
+        assertEquals("Dummytest", activityRepository.findById(dummyActivity.getId()).get().getDescription());
         this.dummyActivity.setDescription("New description");
         activityService.updateActivity(this.dummyActivity.getId(), this.dummyActivity);
-        assertEquals("New description", activityRepo.findById(dummyActivity.getId()).get().getDescription());
+        assertEquals("New description", activityRepository.findById(dummyActivity.getId()).get().getDescription());
     }
 
     @Test
     void deleteActivity() {
         activityService.addActivity(this.dummyActivity);
-        assertEquals(6, activityRepo.findById(this.dummyActivity.getId()).get().getId());
+        assertEquals(8, activityRepository.findById(this.dummyActivity.getId()).get().getId());
         activityService.deleteActivity(this.dummyActivity.getId());
-        assertEquals(Optional.empty(), activityRepo.findById(dummyActivity.getId()));
+        assertEquals(Optional.empty(), activityRepository.findById(dummyActivity.getId()));
     }
 
     @Test
@@ -140,9 +137,9 @@ class ActivityServiceTest {
     @Test
     void addParticipantToActivity() {
         activityService.addParticipantToActivity(testActivity.getId(), dummyAccount.getId());
-        Set<AccountActivity> participants = accountActivityRepo.findByActivityId(testActivity.getId());
+        Set<AccountActivity> participants = accountActivityRepository.findByActivityId(testActivity.getId());
         for (AccountActivity a: participants) {
-            if(a.getUserId() == dummyAccount.getId()) {
+            if(a.getAccountId() == dummyAccount.getId()) {
                 assertNotEquals(0, a.getQueuePosition());
             }
         }

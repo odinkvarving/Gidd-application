@@ -4,13 +4,11 @@ import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
-import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
-import ntnu.idatt2106.group8.gidd.repository.AccountInfoRepository;
-import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
-import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
+import ntnu.idatt2106.group8.gidd.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -45,6 +43,13 @@ public class AccountService {
      * @param account     the new account to save in the database.
      * @param accountInfo the info of the new account.
      */
+
+    public Set<Account> findAllAccounts(){
+        Set<Account> result = new HashSet<>();
+        this.accountRepository.findAll().forEach(result::add);
+        return result;
+    }
+
     public void saveAccountWithInfo(Account account, AccountInfo accountInfo) {
         this.accountRepository.save(account);
         accountInfo.setAccount(account);
@@ -79,6 +84,23 @@ public class AccountService {
      */
     public void saveAccount(Account account) {
         this.accountRepository.save(account);
+    }
+
+    /**
+     * Updates an account
+     *
+     * @param id the id of the account (not used)
+     * @param account the account-object to save
+     * @return the account that was updated
+     */
+
+    public Account updateAccount(int id, Account account) {
+        try {
+            return accountRepository.save(account);
+        }catch (DataAccessException e) {
+            logger.info("Could not update account");
+        }
+        return null;
     }
 
     /**
@@ -208,7 +230,7 @@ public class AccountService {
     }
 
     /**
-     * Binds a given account ot a given activity. If there is space in the activity the account is immediately bound
+     * Binds a given account to a given activity. If there is space in the activity the account is immediately bound
      * to the activity. Otherwise the account is put to the back of the queue.
      *
      * @param activityId the id of the activity to add the account to.
@@ -253,6 +275,19 @@ public class AccountService {
             logger.error("Error during parsing of highest queue position", npe);
         }
         return wasQueued;
+    }
+
+    /**
+     * Deletes a specifiec account using the account's ID
+     * @param id the ID of the account
+     */
+
+    public void deleteAccount(int id) {
+        try {
+            accountRepository.deleteById(id);
+        }catch (DataAccessException e) {
+            logger.info("Could not delete activity");
+        }
     }
 
 }

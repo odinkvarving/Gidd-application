@@ -2,8 +2,8 @@ package ntnu.idatt2106.group8.gidd.service;
 
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
-import ntnu.idatt2106.group8.gidd.repository.ActivityRepo;
-import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepo;
+import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
+import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,10 @@ public class ActivityTypeService {
     private static final Logger log = LoggerFactory.getLogger(ActivityTypeService.class);
 
     @Autowired
-    private ActivityTypeRepo activityTypeRepo;
+    private ActivityTypeRepository activityTypeRepo;
 
     @Autowired
-    private ActivityRepo activityRepo;
+    private ActivityRepository activityRepository;
 
     public List<ActivityType> getAllActivityTypes() {
         List<ActivityType> types = new ArrayList<>();
