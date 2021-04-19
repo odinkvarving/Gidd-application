@@ -31,12 +31,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     // TODO: add error handling if email doesn't exist
-
+    // TODO: fix this method being called twice, WHYYYY????
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Account account = accountService.findByEmail(email);
-        logger.info(account.getEmail());
-        logger.info(account.getPassword());
+        logger.info("Account email: " + account.getEmail());
+        logger.info("Encrypted password: " + account.getPassword());
         if(account.getEmail() == null){
             return null;
         }

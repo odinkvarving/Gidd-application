@@ -77,6 +77,8 @@ public class AccountController {
         return success;
     }
 
+
+    // TODO: move this to service ????
     /**
      * Important method that is necessary to authenticate a
      * user login and generate a JWT token if the login is successful.
