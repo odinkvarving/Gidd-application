@@ -76,7 +76,11 @@ public class Activity {
         return maxParticipants;
     }
 
+    // Should allow 0 if the *system* is able to generate new activities
     public void setMaxParticipants(int maxParticipants) {
+        if (maxParticipants < 1)
+            throw new IllegalArgumentException("Participants must be greater than 1");
+
         this.maxParticipants = maxParticipants;
     }
 
