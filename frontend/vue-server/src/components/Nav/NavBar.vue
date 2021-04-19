@@ -1,19 +1,25 @@
 <template>
   <nav class="nav-bar">
-    <div class="menu-item"><a href="#">Søk</a></div>
-    <div class="menu-item"><a href="#">Opprett Aktivitet</a></div>
-    <Dropdown title="Varslinger" :items="notifications" />
-    <Dropdown title="Bruker" :items="user" />
+    <div v-click-outside="onClickOutside"></div>
+    <div class="search-field"><input class="search-box" placeholder="Søk"></div>
+    <div class="menu-item create-activity"><a href="#">Opprett Aktivitet</a></div>
+    <Dropdown icon="Varslinger" :items="notifications" />
+    <Dropdown icon="Bruker" :items="user"/>
   </nav>
 </template>
 
 <script>
+import vClickOutside from "v-click-outside";
 import Dropdown from "./Dropdown.vue";
+
 export default {
   name: "navbar",
   components: {
     Dropdown,
   },
+  directives: {
+      clickOutside: vClickOutside.directive
+    },
   data() {
     return {
       user: [
@@ -33,6 +39,11 @@ export default {
       notifications: [{}],
     };
   },
+  methods: {
+      onClickOutside (event) {
+        console.log('Clicked outside. Event: ', event)
+      }
+    }
 };
 </script>
 
@@ -49,6 +60,7 @@ nav .menu-item {
   position: relative;
   text-align: center;
   display: flex;
+  margin: 0 10px;
 }
 
 nav .menu-item:active,
@@ -59,5 +71,35 @@ nav .menu-item:hover {
 nav .menu-item a {
   color: inherit;
   text-decoration: none;
+}
+
+nav .search-field {
+    padding: 0px 20px;
+    display: flex;
+    align-content: center;
+}
+
+nav .search-box {
+    background-color: #D1D1D1;
+    opacity: 0.5;
+    border: none;
+    border-radius: 6px;
+    height: 30px;
+    outline: none;
+    padding-left: 10px;
+}
+
+nav .search-box::placeholder {
+    color: rgb(50, 50, 50);
+}
+
+nav .create-activity {
+    background-color: #FFBD3E;
+    border-radius: 6px;
+    padding: 6px 20px;
+}
+
+nav .create-activity a {
+    color: white;
 }
 </style>
