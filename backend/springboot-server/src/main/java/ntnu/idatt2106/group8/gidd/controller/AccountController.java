@@ -31,12 +31,6 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
     Logger logger = LoggerFactory.getLogger(AccountController.class);
 
 
@@ -89,18 +83,7 @@ public class AccountController {
      * @throws Exception
      */
     @PostMapping("/accounts/login")
-    public JWTResponse generateToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) throws Exception {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
-            );
-        }catch (Exception exception){
-            logger.info("Bad credentials! Username/password is wrong");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return new JWTResponse(null);
-        }
-        String token = jwtUtil.generateToken(authRequest.getEmail());
-
-        return new JWTResponse(token);
+    public JWTResponse login(@RequestBody AuthRequest authRequest, HttpServletResponse response) throws Exception {
+        return accountService.login(authRequest, response);
     }
 }

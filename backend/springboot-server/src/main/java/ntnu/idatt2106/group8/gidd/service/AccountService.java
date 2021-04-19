@@ -1,14 +1,21 @@
 package ntnu.idatt2106.group8.gidd.service;
 
+import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
+import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.repository.AccountInfoRepo;
 import ntnu.idatt2106.group8.gidd.repository.AccountRepo;
+import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +31,12 @@ public class AccountService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private AccountInfoRepo accountInfoRepo;
@@ -48,6 +61,21 @@ public class AccountService {
             accountRepo.save(account);
             return true;
         }
+    }
+
+    public JWTResponse login(AuthRequest authRequest, HttpServletResponse response) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
+            );
+        }catch (Exception exception){
+            logger.info("Bad credentials! Username/password is wrong");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return new JWTResponse(null);
+        }
+        String token = jwtUtil.generateToken(authRequest.getEmail());
+
+        return new JWTResponse(token);
     }
 
     public Account findByEmail(String email){
