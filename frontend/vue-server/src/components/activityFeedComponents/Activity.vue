@@ -12,7 +12,7 @@
         <div>
             <img v-for="image in images" :key="image.url" :src="image.url">
         </div>
-        <button id="btn" :class="{ full: isFull }" @click.stop="handleButtonClick()"><span>{{ checkIfFull() }}</span></button>
+        <button id="btn" :class="{ full: isFull }" @click.stop="handleButtonClick()"><span>{{ getButtonStatus() }}</span></button>
     </div>
 </template>
 <script>
@@ -33,6 +33,20 @@
         },
 
         methods: {
+            handleButtonClick() {
+                //Open login/register window or add the user to "participants"
+                console.log("Button clicked");
+            },
+
+            getButtonStatus() {
+                let accountId = 0; //Here we will find the account Id for the account which is logged on
+                if (this.ifParticipating(accountId)) { 
+                    return "Påmeldt";
+                } else { //If we could not find the ID in accountActivity database, we check if the activity is full or not
+                    return this.checkIfFull();
+                }
+            },
+
             checkIfFull() {
                 if (this.activity.currentParticipants < this.activity.totalParticipants) {
                     return "Bli med";
@@ -42,10 +56,12 @@
                 }
             },
 
-            handleButtonClick() {
-                //Open login/register window or add the user to "participants"
-                console.log("Button clicked");
-            },
+            ifParticipating(accountId) {
+                if (accountId === 0) {
+                    return false;
+                }
+                return true;
+            }
         }
     }
 </script>
