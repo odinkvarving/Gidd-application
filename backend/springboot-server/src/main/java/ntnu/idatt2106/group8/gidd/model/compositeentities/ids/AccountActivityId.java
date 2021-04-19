@@ -11,14 +11,14 @@ import java.util.Objects;
  */
 public class AccountActivityId implements Serializable {
 
-    private int userId;
+    private int accountId;
     private int activityId;
 
     public AccountActivityId() {
     }
 
-    public AccountActivityId(int userId, int activityId) {
-        this.userId = userId;
+    public AccountActivityId(int accountId, int activityId) {
+        this.accountId = accountId;
         this.activityId = activityId;
     }
 
@@ -27,11 +27,11 @@ public class AccountActivityId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccountActivityId id = (AccountActivityId) o;
-        return this.activityId == id.activityId && this.userId == id.userId;
+        return this.activityId == id.activityId && this.accountId == id.accountId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.activityId, this.userId);
+        return Objects.hash(this.activityId, this.accountId);
     }
 }

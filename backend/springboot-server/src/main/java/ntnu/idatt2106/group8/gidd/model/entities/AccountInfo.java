@@ -7,15 +7,21 @@ import javax.persistence.*;
  *
  * @author Endré Hadzalic
  */
+
+// TODO: Refactor to embedded(?)
+//  - Any security reasons?
+//  - Does not have it's own life cycle,    it's dependent on Account
+//  - Does not have it's own identity,      ''
+//  - Does not have any shared dependents, 
+
 @Entity
-@Table(name = "userinfo")
+@Table(name = "accountinfo")
 public class AccountInfo {
 
     @Id
     private int id;
 
     @OneToOne
-    @MapsId
     private Account account;
 
     @ManyToOne
@@ -28,7 +34,7 @@ public class AccountInfo {
     private String profileDescription;
     private int points;
 
-    public AccountInfo() {
+    protected AccountInfo() {
     }
 
     private AccountInfo(Level userLevel, String imageURL, String firstname, String surname,
@@ -41,20 +47,17 @@ public class AccountInfo {
         this.points = points;
     }
 
-    public Account getUser() {
+    public Account getAccount() {
         return account;
     }
 
-    public void setUser(Account account) {
+    public void setAccount(Account account) {
         this.account = account;
+        this.id = account.getId();
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Level getUserLevel() {
@@ -111,12 +114,12 @@ public class AccountInfo {
      * @author Endré Hadzalic
      */
     public static class Builder {
-        Level userLevel;
-        String imageURL;
-        String firstname;
-        String surname;
-        String profileDescription;
-        int points = 0;
+        private Level userLevel;
+        private String imageURL;
+        private String firstname;
+        private String surname;
+        private String profileDescription;
+        private int points = 0;
 
         /**
          * All params in this constructor are mandatory for creating a new UserInfo-object.

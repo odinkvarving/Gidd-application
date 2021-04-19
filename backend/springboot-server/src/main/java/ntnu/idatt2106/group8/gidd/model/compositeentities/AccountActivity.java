@@ -19,44 +19,36 @@ import java.util.Objects;
 public class AccountActivity implements Serializable {
 
     @Id
-    private int userId;
+    private int accountId;
 
     @Id
     private int activityId;
 
     private int queuePosition;
 
-    public AccountActivity() {
+    protected AccountActivity() {
     }
 
     /**
      * Creates a binding between a user and an activity.
      *
-     * @param userId        the id of the user to bind to the given activity
+     * @param accountId     the id of the user to bind to the given activity
      * @param activityId    the id of the activity to bind to the given user
      * @param queuePosition should be 0 if the user is in in the activity. from 1 to n if the user is in queue for joining
      *                      the activity
      */
-    public AccountActivity(int userId, int activityId, int queuePosition) {
-        this.userId = userId;
+    public AccountActivity(int accountId, int activityId, int queuePosition) {
+        this.accountId = accountId;
         this.activityId = activityId;
         this.queuePosition = queuePosition;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public int getAccountId() {
+        return accountId;
     }
 
     public int getActivityId() {
         return activityId;
-    }
-
-    public void setActivityId(int activityId) {
-        this.activityId = activityId;
     }
 
     public int getQueuePosition() {
@@ -67,16 +59,22 @@ public class AccountActivity implements Serializable {
         this.queuePosition = queuePosition;
     }
 
+    public void decrementQueuePosition() {
+        if (this.queuePosition > 0) {
+            this.queuePosition--;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccountActivity ua = (AccountActivity) o;
-        return this.activityId == ua.activityId && this.userId == ua.userId;
+        return this.activityId == ua.activityId && this.accountId == ua.accountId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.activityId, this.userId);
+        return Objects.hash(this.activityId, this.accountId);
     }
 }

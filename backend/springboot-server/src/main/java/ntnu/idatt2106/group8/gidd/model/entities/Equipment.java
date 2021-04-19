@@ -23,8 +23,7 @@ public class Equipment {
     @JoinColumn(name = "activity_id")
     private Activity activity;
 
-    public Equipment() {
-    }
+    protected Equipment() { }
 
     /**
      * Constructor for a piece of equipment in a activity.
@@ -39,16 +38,8 @@ public class Equipment {
         return activity;
     }
 
-    public void setActivity(Activity activity) {
-        this.activity = activity;
-    }
-
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getDescription() {

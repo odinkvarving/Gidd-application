@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.validator.routines.EmailValidator;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -24,13 +25,13 @@ public class Account {
     private String password;
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
     private AccountInfo accountInfo;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Activity> createdActivities = new HashSet<>();
 
-    public Account() {
+    protected Account() {
     }
 
     /**
@@ -38,12 +39,10 @@ public class Account {
      *
      * @param email       the email of the new user.
      * @param password    the password of the new user.
-     * @param accountInfo the user-info of the new user, represented in a UserInfo-object.
      */
-    public Account(String email, String password, AccountInfo accountInfo) {
-        this.email = email;
-        this.password = password;
-        this.accountInfo = accountInfo;
+    public Account(String email, String password) {
+        this.setEmail(email);
+        this.setPassword(password);
     }
 
     public Set<Activity> getCreatedActivities() {
@@ -58,15 +57,14 @@ public class Account {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
+        if (!EmailValidator.getInstance().isValid(email))
+            throw new IllegalArgumentException("Invalid email: " + email);
+
         this.email = email;
     }
 
@@ -75,10 +73,13 @@ public class Account {
     }
 
     public void setPassword(String password) {
+        if (password == null || password.trim().length() == 0)
+            throw new IllegalArgumentException("Empty password");
+
         this.password = password;
     }
 
-    public AccountInfo getUserInfo() {
+    public AccountInfo getAccountInfo() {
         return accountInfo;
     }
 

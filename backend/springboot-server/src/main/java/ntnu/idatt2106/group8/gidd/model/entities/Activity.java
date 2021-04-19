@@ -17,6 +17,7 @@ public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private Account creator;
@@ -32,17 +33,19 @@ public class Activity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity", fetch = FetchType.LAZY)
     private Set<Equipment> equipment = new HashSet<>();
 
-    private String title;
-    private float longitude;
-    private float latitude;
     @Column(name = "start_time")
     private LocalDateTime startTime;
+
     @Column(name = "end_time")
     private LocalDateTime endTime;
+
+    private String title;
     private String description;
+    private float longitude;
+    private float latitude;
     private int maxParticipants;
 
-    private Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
+    protected Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
                      float latitude, LocalDateTime startTime, LocalDateTime endTime, String description,
                      int maxParticipants, String title) {
         this.creator = creator;
@@ -58,8 +61,7 @@ public class Activity {
         this.maxParticipants = maxParticipants;
     }
 
-    public Activity() {
-    }
+    protected Activity() { }
 
 
     public String getTitle() {
@@ -74,7 +76,11 @@ public class Activity {
         return maxParticipants;
     }
 
+    // Should allow 0 if the *system* is able to generate new activities
     public void setMaxParticipants(int maxParticipants) {
+        if (maxParticipants < 1)
+            throw new IllegalArgumentException("Participants must be greater than 1");
+
         this.maxParticipants = maxParticipants;
     }
 
@@ -82,16 +88,8 @@ public class Activity {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Account getCreator() {
         return creator;
-    }
-
-    public void setCreator(Account creator) {
-        this.creator = creator;
     }
 
     public ActivityType getActivityType() {
@@ -118,11 +116,18 @@ public class Activity {
         if (equipment != null) this.equipment = equipment;
     }
 
+    public void setLocation(float latitude, float longitude) {
+        setLatitude(latitude);
+        setLongitude(longitude);
+    }
+
     public float getLongitude() {
         return longitude;
     }
 
     public void setLongitude(float longitude) {
+        if (longitude < -180 || longitude > 180)
+            throw new IllegalArgumentException(String.format("Longitude == %f. Valid range is [-180, 180]", longitude));
         this.longitude = longitude;
     }
 
@@ -131,6 +136,8 @@ public class Activity {
     }
 
     public void setLatitude(float latitude) {
+        if (latitude < -90 || latitude > 90)
+            throw new IllegalArgumentException(String.format("Latitude == %f. Valid range is [-90, 90]", latitude));
         this.latitude = latitude;
     }
 
@@ -139,6 +146,11 @@ public class Activity {
     }
 
     public void setStartTime(LocalDateTime activityStart) {
+        if (activityStart == null)
+            throw new IllegalArgumentException("start cannot be null");
+        if (!activityStart.isBefore(this.endTime))
+            throw new IllegalArgumentException("start must be before end");
+
         this.startTime = activityStart;
     }
 
@@ -147,6 +159,11 @@ public class Activity {
     }
 
     public void setEndTime(LocalDateTime activityEnd) {
+        if (activityEnd == null)
+            throw new IllegalArgumentException("end cannot be null");
+        if (!activityEnd.isAfter(this.startTime))
+            throw new IllegalArgumentException("end must be after start");
+
         this.endTime = activityEnd;
     }
 
@@ -155,6 +172,8 @@ public class Activity {
     }
 
     public void setDescription(String description) {
+        if (description == null)
+            description = "";
         this.description = description;
     }
 
@@ -172,7 +191,7 @@ public class Activity {
         private final LocalDateTime activityEnd;
         private final int maxParticipants;
         private ActivityType activityType;
-        private Set<Equipment> equipment;
+        private Set<Equipment> equipment = new HashSet<>();
         private float longitude;
         private float latitude;
         private String description;
@@ -213,7 +232,12 @@ public class Activity {
          * @return this
          */
         public Builder setEquipment(Set<Equipment> equipment) {
-            if (this.equipment != null) this.equipment = equipment;
+            this.equipment = equipment;
+            return this;
+        }
+
+        public Builder addEquipment(Equipment equipment){
+            this.equipment.add(equipment);
             return this;
         }
 
