@@ -34,13 +34,20 @@
 
         <button id="register-btn" @click="registerUser">Register</button>
         
+        <ConfirmModal header="Success!" info="Registration was successful!" buttonText="OK" />
     </div>
 </template>
 
 <script>
 
+import ConfirmModal from "../PopUpComponents/ConfirmModal.vue"
+
+
 export default {
     name: "RegistrationBox",
+    components: {
+        ConfirmModal
+    },
     data(){
         return {
             nameValid: true,
@@ -50,7 +57,8 @@ export default {
             nameValue: '',
             phoneValue: '',
             emailValue: '',
-            passwordValue: ''
+            passwordValue: '',
+            showModal: false
         }
     },
     methods: {
@@ -121,10 +129,16 @@ export default {
 
             await fetch(url, options)
                 .then(response => response.json())
-                .then(data => console.log(data))
+                .then(data => {
+                    if(data){
+                        console.log("showing success modal");
+                        this.$bvModal.show("success-modal");
+                    }
+                })
                 .catch(error => console.log(error));
 
-            await this.$router.push("/login");
+
+            // await this.$router.push("/login");
         },
         handleRegisterWithFacebook(){
             //Implement facebook compability
@@ -165,6 +179,7 @@ export default {
 }
 
 #facebook-btn p {
+    margin-top: 15px;
     margin-right: 80px;
 }
 #facebook-btn img {
@@ -182,7 +197,6 @@ export default {
     height: 51px;
     border-radius: 6px;
     border: 1px solid #dfdfe8;
-
     
     display: flex;
     flex-flow: row nowrap;
@@ -195,6 +209,7 @@ export default {
 }
 
 #google-btn p{
+    margin-top: 15px;
     margin-right: 85px;
 }
 
