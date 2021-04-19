@@ -126,6 +126,8 @@ public class Activity {
     }
 
     public void setLongitude(float longitude) {
+        if (longitude < -180 || longitude > 180)
+            throw new IllegalArgumentException(String.format("Longitude == %f. Valid range is [-180, 180]", longitude));
         this.longitude = longitude;
     }
 
@@ -134,6 +136,8 @@ public class Activity {
     }
 
     public void setLatitude(float latitude) {
+        if (latitude < -90 || latitude > 90)
+            throw new IllegalArgumentException(String.format("Latitude == %f. Valid range is [-90, 90]", latitude));
         this.latitude = latitude;
     }
 
