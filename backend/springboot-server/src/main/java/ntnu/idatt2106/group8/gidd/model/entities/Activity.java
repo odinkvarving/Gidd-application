@@ -17,6 +17,7 @@ public class Activity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private Account creator;
@@ -32,14 +33,16 @@ public class Activity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity")
     private Set<Equipment> equipment = new HashSet<>();
 
-    private String title;
-    private float longitude;
-    private float latitude;
     @Column(name = "start_time")
     private LocalDateTime startTime;
+
     @Column(name = "end_time")
     private LocalDateTime endTime;
+
+    private String title;
     private String description;
+    private float longitude;
+    private float latitude;
     private int maxParticipants;
 
     protected Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
@@ -107,6 +110,11 @@ public class Activity {
 
     public void setEquipment(Set<Equipment> equipment) {
         if (equipment != null) this.equipment = equipment;
+    }
+
+    public void setLocation(float latitude, float longitude) {
+        setLatitude(latitude);
+        setLongitude(longitude);
     }
 
     public float getLongitude() {
