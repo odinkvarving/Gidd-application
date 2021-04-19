@@ -37,8 +37,8 @@ public class Account {
     /**
      * Creates a new user
      *
-     * @param email       the email of the new user.
-     * @param password    the password of the new user.
+     * @param email    the email of the new user.
+     * @param password the password of the new user.
      */
     public Account(String email, String password) {
         this.setEmail(email);
@@ -83,7 +83,7 @@ public class Account {
         return accountInfo;
     }
 
-    public void setUserInfo(AccountInfo accountInfo) {
+    public void seAccountInfo(AccountInfo accountInfo) {
         this.accountInfo = accountInfo;
     }
 }

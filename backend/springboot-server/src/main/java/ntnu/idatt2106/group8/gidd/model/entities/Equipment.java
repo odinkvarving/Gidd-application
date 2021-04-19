@@ -23,7 +23,8 @@ public class Equipment {
     @JoinColumn(name = "activity_id")
     private Activity activity;
 
-    protected Equipment() { }
+    protected Equipment() {
+    }
 
     /**
      * Constructor for a piece of equipment in a activity.

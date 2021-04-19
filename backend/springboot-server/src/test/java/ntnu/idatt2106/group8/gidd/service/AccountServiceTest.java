@@ -7,10 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AccountServiceTest {
 
     @Autowired
@@ -73,13 +75,29 @@ class AccountServiceTest {
 
     @Test
     void addAndGetUser() {
-
         this.accountService.saveAccountWithInfo(this.testAccount1, this.testInfo1);
         assertNotNull(this.accountService.findAccountById(this.testAccount1.getId()),
                 "failed retrieving account");
         assertNotNull(this.accountService.findAccountById(this.testAccount1.getId()).getAccountInfo()
                 , "failed retrieving the account info");
 
+        assertNotNull(this.accountService.findAccountByCredentials(this.testAccount1.getEmail(), this.testAccount1.getPassword())
+                , "could not retrieve account by credentials");
+
+        assertTrue(this.accountService.accountExistsById(this.testAccount1.getId())
+                ,"account did not exist even though it should.");
     }
+
+    @Test
+    void deleteUser() {
+        this.accountService.saveAccountWithInfo(this.testAccount1, this.testInfo1);
+        this.accountService.deleteAccount(this.testAccount1.getId());
+        assertNull(this.accountService.findAccountById(this.testAccount1.getId())
+                , "null was not found after deleting account");
+        assertTrue(this.accountService.findAllAccounts().isEmpty()
+                , "The account database was not empty after deleting the only account");
+
+    }
+
 
 }

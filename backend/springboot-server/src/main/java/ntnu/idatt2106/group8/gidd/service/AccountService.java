@@ -51,6 +51,32 @@ public class AccountService {
         this.accountInfoRepository.save(accountInfo);
     }
 
+
+    /**
+     * Deletes a account from the database
+     *
+     * @param accountId the id of the account to delete.
+     */
+    public void deleteAccount(int accountId) {
+        try {
+            this.accountRepository.deleteById(accountId);
+        } catch (IllegalArgumentException iae) {
+            logger.error("null was passed as argument while trying to delete account", iae);
+        }
+
+    }
+
+    /**
+     * Getter for all the current accounts in the repository.
+     *
+     * @return a Set<Account> containing all the current accounts in the database.
+     */
+    public Set<Account> findAllAccounts() {
+        Set<Account> result = new HashSet<>();
+        this.accountRepository.findAll().forEach(result::add);
+        return result;
+    }
+
     /**
      * Updates the account info related to a given account id.
      *
@@ -177,10 +203,7 @@ public class AccountService {
      * @return true if the account exists in the database, false if not.
      */
     public boolean accountExistByCredentials(String email, String password) {
-        boolean didExist = false;
-        if (findAccountByCredentials(email, password) != null) {
-            didExist = true;
-        }
+        boolean didExist = findAccountByCredentials(email, password) != null;
         return didExist;
     }
 
