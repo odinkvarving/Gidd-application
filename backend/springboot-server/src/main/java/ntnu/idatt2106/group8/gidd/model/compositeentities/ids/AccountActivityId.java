@@ -9,16 +9,16 @@ import java.util.Objects;
  *
  * @author Endré Hadzalic
  */
-public class UserActivityId implements Serializable {
+public class AccountActivityId implements Serializable {
 
-    private int userId;
+    private int accountId;
     private int activityId;
 
-    public UserActivityId() {
+    public AccountActivityId() {
     }
 
-    public UserActivityId(int userId, int activityId) {
-        this.userId = userId;
+    public AccountActivityId(int accountId, int activityId) {
+        this.accountId = accountId;
         this.activityId = activityId;
     }
 
@@ -26,12 +26,12 @@ public class UserActivityId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserActivityId id = (UserActivityId) o;
-        return this.activityId == id.activityId && this.userId == id.userId;
+        AccountActivityId id = (AccountActivityId) o;
+        return this.activityId == id.activityId && this.accountId == id.accountId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.activityId, this.userId);
+        return Objects.hash(this.activityId, this.accountId);
     }
 }

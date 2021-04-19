@@ -187,7 +187,7 @@ public class Activity {
         private final LocalDateTime activityEnd;
         private final int maxParticipants;
         private ActivityType activityType;
-        private Set<Equipment> equipment;
+        private Set<Equipment> equipment = new HashSet<>();
         private float longitude;
         private float latitude;
         private String description;
@@ -228,7 +228,12 @@ public class Activity {
          * @return this
          */
         public Builder setEquipment(Set<Equipment> equipment) {
-            if (this.equipment != null) this.equipment = equipment;
+            this.equipment = equipment;
+            return this;
+        }
+
+        public Builder addEquipment(Equipment equipment){
+            this.equipment.add(equipment);
             return this;
         }
 
