@@ -1,7 +1,8 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
+import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.AuthRequest;
+import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
 import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -23,7 +25,7 @@ import java.util.List;
  */
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8081", allowedHeaders = "*", allowCredentials = "true")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AccountController {
 
     @Autowired
@@ -65,7 +67,7 @@ public class AccountController {
      * @param account
      * @return true or false whether the user was created successfully or not
      */
-    @PostMapping("/accounts")
+    @PostMapping("/accounts/register")
     public boolean saveUser(@RequestBody Account account){
         logger.info("Trying to save user:\n" + account.toString());
         boolean success = accountService.save(account);
@@ -85,15 +87,18 @@ public class AccountController {
      * @throws Exception
      */
     @PostMapping("/accounts/login")
-    public String generateToken(@RequestBody AuthRequest authRequest) throws Exception {
+    public JWTResponse generateToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) throws Exception {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
             );
         }catch (Exception exception){
-            throw new Exception("invalid username/password");
+            logger.info("Bad credentials! Username/password is wrong");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return new JWTResponse(null);
         }
+        String token = jwtUtil.generateToken(authRequest.getEmail());
 
-        return jwtUtil.generateToken(authRequest.getEmail());
+        return new JWTResponse(token);
     }
 }

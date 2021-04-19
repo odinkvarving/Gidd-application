@@ -110,7 +110,7 @@ export default {
                 }
             }
 
-            let url = "http://localhost:8080/accounts";
+            let url = "http://localhost:8080/accounts/register";
             let options = {
                 method: 'POST',
                 headers: {

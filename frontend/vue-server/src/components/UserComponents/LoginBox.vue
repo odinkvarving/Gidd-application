@@ -23,10 +23,13 @@
         </div>
 
         <button id="Login-btn" @click="loginUser">Logg inn</button>
-    </div>
+        </div>
 </template>
 
 <script>
+
+import { userService } from "../../services/UserService.js"
+
 
 export default {
     name: "LoginBox",
@@ -35,7 +38,8 @@ export default {
             isEmailValid: true,
             isPasswordValid: true,
             emailValue: '',
-            passwordValue: ''
+            passwordValue: '',
+            accountDetails: {}
         }
     },
     methods: {
@@ -43,16 +47,11 @@ export default {
             console.log("Login button clicked");
 
             this.isEmailValid = true;
-            this.isPasswordValid = true;
             if(!this.validateEmail()){
                 this.isEmailValid = false;
             }
-            if(!this.validatePassword()){
-                this.isPasswordValid = false;
-            }
-
-            if(this.isEmailValid && this.isPasswordValid){
-                console.log("All inputs are valid. Signing in...");
+            if(this.isEmailValid){
+                console.log("All inputs are valid. Trying to sign in...");
                 this.login();
             }
         },
@@ -60,29 +59,46 @@ export default {
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(this.emailValue).toLowerCase());
         },
-        validatePassword() {
-            return this.passwordValue.length >= 6 && this.passwordValue.length <= 16;
-        },
         async login() {
-            let loginData = {
-                email: this.emailValue,
-                password: this.passwordValue
-            }
+            
+            await userService.login(this.emailValue, this.passwordValue);
+
+            console.log(userService.getAll());
+
+
+            this.accountDetails = await userService.getAccountDetails();
+
+            console.log(this.accountDetails);
+/*
+            let token;
 
             await fetch("http://localhost:8080/accounts/login", {
                 method: "POST",
                 headers: {"Content-Type" : "application/json"},
-                credentials: "include",
                 body: JSON.stringify(loginData)
             })
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
-            
-            await fetch("http://localhost:8080/accounts", {
-                headers: {"Content-Type" : "application/json"},
-                credentials: "include"
+            .then(response => response.json())
+            .then(data => {
+                token = data.jwtToken
             })
+            .catch(error => {
+                // TODO: create error pop-up here, wrong username/password
+                console.log(`Error when logging in: ${error}`)
+            });
+            
+            console.log(token);
+            
+            
+            await fetch("http://localhost:8080/accounts",{
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.log(error));
             //await this.$router.push("/dashboard");
+            */
         },
         handleLoginWithFacebook() {
             //Implement facebook compability

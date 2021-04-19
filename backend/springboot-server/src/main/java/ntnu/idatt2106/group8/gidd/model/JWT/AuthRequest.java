@@ -1,4 +1,4 @@
-package ntnu.idatt2106.group8.gidd.model.entities;
+package ntnu.idatt2106.group8.gidd.model.JWT;
 
 
 import java.util.Objects;
