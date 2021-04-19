@@ -1,6 +1,6 @@
 <template>
     <div class="login-box">
-        <router-link to="/"><button id="close-btn"><span>x</span></button></router-link>
+        <router-link to="/"><p class="close-btn-p"><b-icon class="text-muted" id="close-btn" icon="x"></b-icon></p></router-link>
         <h2>GIDD og logg deg inn da</h2>
 
         <div id="facebook-btn">
@@ -23,6 +23,7 @@
         </div>
 
         <button id="Login-btn" @click="loginUser">Logg inn</button>
+        <router-link to="/register"><p class="register-text">Har du ikke bruker? Klikk her for å registrere deg</p></router-link>
     </div>
 </template>
 
@@ -62,39 +63,8 @@ export default {
             
             await userService.login(this.emailValue, this.passwordValue);
 
-            console.log(userService.getAll());
-
-            console.log(userService.getAccountDetails());
-/*
-            let token;
-
-            await fetch("http://localhost:8080/accounts/login", {
-                method: "POST",
-                headers: {"Content-Type" : "application/json"},
-                body: JSON.stringify(loginData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                token = data.jwtToken
-            })
-            .catch(error => {
-                // TODO: create error pop-up here, wrong username/password
-                console.log(`Error when logging in: ${error}`)
-            });
-            
-            console.log(token);
-            
-            
-            await fetch("http://localhost:8080/accounts",{
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.log(error));
-            //await this.$router.push("/dashboard");
-            */
+            // TODO: create error when wrong username and password, and redirect to either profile
+            // or activity dashboard
         },
         handleLoginWithFacebook() {
             //Implement facebook compability
@@ -109,9 +79,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 .login-box {
+    position: relative;
     width: 510px;
     height: 600px;
     display: flex;
@@ -181,6 +152,7 @@ export default {
 .or-text {
     font-size: 13px;
     opacity: 75%;
+    margin-top: 17px;
 }
 
 .input-container{
@@ -225,11 +197,24 @@ export default {
 }
 
 #close-btn{
-    display: flex;
-    flex-direction: row;
-    background: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.close-btn-p{
+    font-size: 50px;
+}
+
+.register-text {
+    opacity: 75%;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.register-text:hover{
     cursor: pointer;
-    outline: none;
+    text-decoration: underline;
 }
 
 </style>

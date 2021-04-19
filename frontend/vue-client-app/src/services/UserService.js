@@ -2,6 +2,7 @@ import VueJwtDecode from "vue-jwt-decode"
 
 export const userService = {
     login,
+    getAccountByEmail,
     logout,
     getAll,
     getAccountDetails
@@ -25,10 +26,25 @@ function login(email, password){
         });
 }
 
+function getAccountByEmail(){
+
+    try{
+        let account = getAccountDetails();
+        const requestOptions ={
+            method: 'GET',
+            headers: authorizationHeader()
+        }
+        return fetch(`http://localhost:8080/accounts/${account.sub}`, requestOptions).then(handleResponse);
+    }catch(error){
+        console.log("User is not logged in, redirecting to login page...");
+        return null;
+    }   
+
+}
+
 function logout(){
     // remove user from local storage to log user out
     localStorage.removeItem('user');
-    this.$router.push("/login");
 }
 
 function getAll(){
@@ -76,7 +92,6 @@ function getAccountDetails(){
     
     // get token from localstorage
     let token = JSON.parse(localStorage.getItem("user"));
-    console.log(token);
     try{
         // decode token and attach to account object
         let decoded = VueJwtDecode.decode(token.jwtToken);

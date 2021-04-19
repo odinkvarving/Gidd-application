@@ -1,7 +1,7 @@
 <template>
     <div class="registration-box">
 
-        <router-link to="/"><button id="close-btn"><span>x</span></button></router-link>
+        <router-link to="/"><p class="close-btn-p"><b-icon class="text-muted" id="close-btn" icon="x"></b-icon></p></router-link>
         <h2 style="text-align: center">Registrer deg hos GIDD idag<br />Det er bare å GIDDE</h2>
 
         <div id="facebook-btn">
@@ -31,11 +31,11 @@
             <p v-if="!passwordValid">Passord må være mellom 5 og 16 tegn</p>
             <input type="password" class="input" id="password" placeholder="Passord" v-model="passwordValue">
         </div>
-
+        
         <button id="register-btn" @click="registerUser">Register</button>
         
-        <ConfirmModal header="Success!" info="Registration was successful!" buttonText="OK" />
-        <ErrorModal header="Error" info="Registration not successfull, email already exists." buttonText="OK" />
+        <ConfirmModal name="success-modal" header="Success!" info="Registration was successful!" buttonText="OK" />
+        <ErrorModal name="error-modal" header="Error" info="Registration not successfull, email already exists." buttonText="OK" />
 
     </div>
 </template>
@@ -147,7 +147,7 @@ export default {
                 });
 
 
-            // await this.$router.push("/login");
+            await this.$router.push("/login");
         },
         handleRegisterWithFacebook(){
             //Implement facebook compability
@@ -159,11 +159,12 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 .registration-box {
+    position: relative;
     width: 563px;
-    height: 720px;
+    height: 80%;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
@@ -230,6 +231,7 @@ export default {
 .or-text {
     font-size: 13px;
     opacity: 75%;
+    margin-top: 17px;
 }
 
 .input-container{
@@ -272,5 +274,16 @@ export default {
     background-color: #efb03a;
     cursor: pointer;
 }
+
+#close-btn{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.close-btn-p{
+    font-size: 50px;
+}
+
 
 </style>

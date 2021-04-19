@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-modal id="success-modal" v-model="modalShow" size="sm" hide-footer hide-header title="BootstrapVue">
+        <b-modal :id="name" v-model="modalShow" size="sm" hide-footer hide-header title="BootstrapVue">
             <div class="container">
                 <div class="confirm-circle">
                     <p style="font-size: 4rem; margin-top: 14px;"><b-icon icon="check2" variant="light"></b-icon></p>
@@ -22,6 +22,7 @@ export default {
         }
     },
     props: {
+        name: String,
         header: String,
         info: String,
         buttonText: String,
