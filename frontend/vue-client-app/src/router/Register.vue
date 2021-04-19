@@ -11,12 +11,11 @@
 import RegistrationBox from "../components/UserComponents/RegistrationBox.vue"
 import FrontPageNav from "../components/Nav/FrontPageNav.vue"
 
-
 export default {
     name: "Register",
     components: {
         RegistrationBox,
-        FrontPageNav
+        FrontPageNav,
     }
 }
 </script>

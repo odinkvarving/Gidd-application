@@ -38,8 +38,7 @@ export default {
             isEmailValid: true,
             isPasswordValid: true,
             emailValue: '',
-            passwordValue: '',
-            accountDetails: {}
+            passwordValue: ''
         }
     },
     methods: {
@@ -65,10 +64,7 @@ export default {
 
             console.log(userService.getAll());
 
-
-            this.accountDetails = await userService.getAccountDetails();
-
-            console.log(this.accountDetails);
+            console.log(userService.getAccountDetails());
 /*
             let token;
 
@@ -142,6 +138,7 @@ export default {
 }
 
 #facebook-btn p {
+    margin-top: 15px;
     margin-right: 80px;
 }
 #facebook-btn img {
@@ -172,6 +169,7 @@ export default {
 }
 
 #google-btn p{
+    margin-top: 15px;
     margin-right: 85px;
 }
 
