@@ -25,7 +25,7 @@ public class Account {
     private String password;
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
     private AccountInfo accountInfo;
 
     @OneToMany(cascade = CascadeType.ALL)

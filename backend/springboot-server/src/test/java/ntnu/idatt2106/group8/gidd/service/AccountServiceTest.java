@@ -79,6 +79,7 @@ class AccountServiceTest {
                 "failed retrieving account");
         assertNotNull(this.accountService.findAccountById(this.testAccount1.getId()).getAccountInfo()
                 , "failed retrieving the account info");
+
     }
 
 }
