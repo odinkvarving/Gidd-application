@@ -7,6 +7,13 @@ import javax.persistence.*;
  *
  * @author Endré Hadzalic
  */
+
+// TODO: Refactor to embedded(?)
+//  - Any security reasons?
+//  - Does not have it's own life cycle,    it's dependent on Account
+//  - Does not have it's own identity,      ''
+//  - Does not have any shared dependents, 
+
 @Entity
 @Table(name = "accountinfo")
 public class AccountInfo {
