@@ -1,14 +1,22 @@
 <template>
   <nav class="nav-bar">
-    <div class="search-field"><input class="search-box" placeholder="Søk"></div>
-    <div class="menu-item create-activity"><a href="#">Opprett Aktivitet</a></div>
-    <Dropdown icon="Varslinger" :items="notifications" />
-    <Dropdown icon="Bruker" :items="user"/>
+    <div class="search-field">
+      <input class="search-box" placeholder="Søk" />
+    </div>
+    <div class="menu-item create-activity">
+      <a href="#">Opprett Aktivitet</a>
+    </div>
+    <Dropdown
+      class="notification-icon"
+      icon="bell.png"
+      :items="notifications"
+    />
+    <Dropdown icon="berit.jpg" :items="user" />
   </nav>
 </template>
 
 <script>
-import Dropdown from "./Dropdown.vue"; 
+import Dropdown from "./Dropdown.vue";
 
 export default {
   name: "navbar",
@@ -42,6 +50,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  border: 1px solid black;
 }
 
 nav .menu-item {
@@ -53,9 +62,16 @@ nav .menu-item {
   margin: 0 10px;
 }
 
-nav .menu-item:active,
+nav .notification-icon {
+  margin-right: -10px;
+}
+
 nav .menu-item:hover {
-  background-color: rgb(219, 219, 219);
+  cursor: pointer;
+}
+
+nav .notification-icon:hover {
+  background-color: none;
 }
 
 nav .create-activity:hover {
@@ -70,32 +86,39 @@ nav .menu-item a {
 }
 
 nav .search-field {
-    padding: 0px 20px;
-    display: flex;
-    align-content: center;
+  padding: 0px 20px;
+  display: flex;
+  align-content: center;
 }
 
 nav .search-box {
-    background-color: #D1D1D1;
-    opacity: 0.5;
-    border: none;
-    border-radius: 6px;
-    height: 30px;
-    outline: none;
-    padding-left: 10px;
+  background-color: #d1d1d1;
+  opacity: 0.5;
+  border: none;
+  border-radius: 6px;
+  height: 30px;
+  width: 180px;
+  outline: none;
+  padding-left: 10px;
 }
 
 nav .search-box::placeholder {
-    color: rgb(50, 50, 50);
+  color: rgb(50, 50, 50);
 }
 
 nav .create-activity {
-    background-color: #FFBD3E;
-    border-radius: 6px;
-    padding: 6px 20px;
+  background-color: #ffbd3e;
+  border-radius: 6px;
+  padding: 6px 20px;
+  height: 30px;
+  min-width: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
 }
 
 nav .create-activity a {
-    color: white;
+  color: white;
 }
 </style>

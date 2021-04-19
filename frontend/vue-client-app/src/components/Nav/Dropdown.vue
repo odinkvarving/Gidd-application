@@ -4,9 +4,7 @@
     @click="isVisible = !isVisible"
     v-on-clickaway="hideDropdown"
   >
-    <a xlink:href="#">
-      {{ icon }}
-    </a>
+    <img :src="require('@/assets/' + icon + '')" class="profile-picture" :style="'width:' + width + '; height:' + height + ''">
     <transition name="fade">
       <div class="sub-menu" v-if="isVisible">
         <div v-for="(item, i) in items" :key="i" class="menu-item">
@@ -22,7 +20,7 @@ import { mixin as clickaway } from "vue-clickaway";
 
 export default {
   name: "dropdown",
-  props: ["icon", "items"],
+  props: ["icon", "items", "width", "height"],
   mixins: [clickaway],
   data() {
     return {
@@ -43,11 +41,11 @@ export default {
 <style>
 nav .menu-item .sub-menu {
   position: absolute;
-  top: calc(100% + 5px);
-  left: 50%;
+  top: calc(100%);
+  left: 40%;
   transform: translateX(-60%);
   width: max-content;
-  border: 1px solid black;
+  border: 1px solid rgba(0, 0, 0, 0.245)
 }
 
 .fade-enter-active, .fade-leave-active {
@@ -56,5 +54,15 @@ nav .menu-item .sub-menu {
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+
+.profile-picture {
+  height: 40px;
+  width: 40px;
+  object-fit: cover;
+  border-radius: 100%;
+}
+
+img:hover {
 }
 </style>
