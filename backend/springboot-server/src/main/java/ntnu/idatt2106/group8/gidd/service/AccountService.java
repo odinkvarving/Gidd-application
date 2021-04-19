@@ -6,6 +6,7 @@ import ntnu.idatt2106.group8.gidd.repository.AccountRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -20,6 +21,9 @@ public class AccountService {
 
     @Autowired
     private AccountRepo accountRepo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private AccountInfoRepo accountInfoRepo;
@@ -40,6 +44,7 @@ public class AccountService {
             logger.info("Error! Could not create user, email already exists");
             return false;
         }else{
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
             accountRepo.save(account);
             return true;
         }
