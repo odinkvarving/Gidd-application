@@ -35,18 +35,22 @@
         <button id="register-btn" @click="registerUser">Register</button>
         
         <ConfirmModal header="Success!" info="Registration was successful!" buttonText="OK" />
+        <ErrorModal header="Error" info="Registration not successfull, email already exists." buttonText="OK" />
+
     </div>
 </template>
 
 <script>
 
 import ConfirmModal from "../PopUpComponents/ConfirmModal.vue"
+import ErrorModal from "../PopUpComponents/ErrorModal.vue"
 
 
 export default {
     name: "RegistrationBox",
     components: {
-        ConfirmModal
+        ConfirmModal,
+        ErrorModal
     },
     data(){
         return {
@@ -133,9 +137,14 @@ export default {
                     if(data){
                         console.log("showing success modal");
                         this.$bvModal.show("success-modal");
+                    }else{
+                        console.log("email already exists, showing error modal");
+                        this.$bvModal.show("error-modal");    
                     }
                 })
-                .catch(error => console.log(error));
+                .catch(error => {
+                    console.log(error)
+                });
 
 
             // await this.$router.push("/login");
