@@ -45,7 +45,7 @@ class ActivityTest {
                 .setProfileDescription(null)
                 .setPoints(0)
                 .build();
-        Account creator = new Account("foo@bar.com", "password", accountInfo);
+        Account creator = new Account("foo@bar.com", "password");
         ActivityType type = new ActivityType();
         Level level = new Level("Low");
         LocalDateTime start = LocalDateTime.now().plusDays(2);

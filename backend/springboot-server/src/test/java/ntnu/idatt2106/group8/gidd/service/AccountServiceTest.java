@@ -6,9 +6,11 @@ import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@SpringBootTest
 class AccountServiceTest {
 
     @Autowired
@@ -36,7 +38,7 @@ class AccountServiceTest {
                 .setProfileDescription("testprofile1")
                 .setImageURL("imageURL1")
                 .build();
-        this.testAccount1 = new Account("email1", "password1");
+        this.testAccount1 = new Account("email1@email.com", "password1");
 
         //set up the second account and info
         this.testInfo2 = new
@@ -47,7 +49,7 @@ class AccountServiceTest {
                 .setProfileDescription("testprofile2")
                 .setImageURL("imageURL2")
                 .build();
-        this.testAccount1 = new Account("email2", "password2");
+        this.testAccount1 = new Account("email2@email.com", "password2");
 
         //set up the first activity
         this.testActivity1 = new
@@ -70,11 +72,13 @@ class AccountServiceTest {
     }
 
     @Test
-    void addAndGetUser(){
+    void addAndGetUser() {
 
-        this.accountService.saveAccountWithInfo(this.testAccount1,this.testInfo1);
-        assertNotNull(this.accountService.findAccountById(this.testAccount1.getId()),"failed getting ");
-        assertNotNull(this.accountService.findAccountById(this.testAccount1.getId()).getAccountInfo());
+        this.accountService.saveAccountWithInfo(this.testAccount1, this.testInfo1);
+        assertNotNull(this.accountService.findAccountById(this.testAccount1.getId()),
+                "failed retrieving account");
+        assertNotNull(this.accountService.findAccountById(this.testAccount1.getId()).getAccountInfo()
+                , "failed retrieving the account info");
     }
 
 }
