@@ -3,7 +3,6 @@ package ntnu.idatt2106.group8.gidd.service;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
 import ntnu.idatt2106.group8.gidd.repository.*;
 
@@ -143,7 +142,7 @@ public class ActivityService {
 
                 int participatingSize = participantList.size();
                 if(participatingSize < activity.get().getMaxParticipants()) {
-                    log.info("There are " + participatingSize + " participants in this activity");
+                    log.info("There are " + participatingSize + " participants in this activity. ");
                     addedParticipant = new AccountActivity(participantId, activityId, 0);
                     accountActivityRepo.save(addedParticipant);
                     log.info("Added as participant to activity.");

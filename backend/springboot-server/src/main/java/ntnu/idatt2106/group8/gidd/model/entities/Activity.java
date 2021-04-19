@@ -29,7 +29,7 @@ public class Activity {
     @JoinColumn(name = "level_id")
     private Level level;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity", fetch = FetchType.LAZY)
     private Set<Equipment> equipment = new HashSet<>();
 
     private String title;
