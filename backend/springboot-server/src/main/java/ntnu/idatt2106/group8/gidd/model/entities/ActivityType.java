@@ -1,8 +1,10 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A entity-class representing the activity_type table in the database.
@@ -10,15 +12,19 @@ import java.util.List;
  * @author Endré Hadzalic
  */
 @Entity
+@Table(name = "activity_type")
 public class ActivityType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Activity> activities;
     private String type;
+    @Column(name = "point_factor")
     private double pointFactor;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Activity> activities = new HashSet<>();
 
     public ActivityType() {
     }
@@ -26,14 +32,10 @@ public class ActivityType {
     /**
      * Constructor for a new ActivityType-object.
      *
-     * @param activities  the list of activities the has this activity type. nullable.
      * @param type        the type of activity this is.
      * @param pointFactor the factor of points this activity gives.
      */
-    public ActivityType(List<Activity> activities, String type, double pointFactor) {
-        if (activities != null) this.activities = activities;
-        else this.activities = new ArrayList<>();
-
+    public ActivityType(String type, double pointFactor) {
         this.type = type;
         this.pointFactor = pointFactor;
     }
@@ -46,12 +48,12 @@ public class ActivityType {
         this.id = id;
     }
 
-    public List<Activity> getActivities() {
+    public Set<Activity> getActivities() {
         return activities;
     }
 
-    public void setActivities(List<Activity> activities) {
-        if (activities != null) this.activities = activities;
+    public void setActivities(Set<Activity> activitiesOfType) {
+        this.activities = activitiesOfType;
     }
 
     public String getType() {

@@ -101,16 +101,4 @@ public class ActivityService {
         return null;
     }
 
-    public List<Equipment> getActivityEquipment(int id) {
-        Optional<Activity> activity;
-        try {
-            activity = activityRepo.findById(id);
-            if(activity.isPresent()) {
-                return activity.get().getEquipment();
-            }
-        }catch (DataAccessException e) {
-            log.info("Could not find any equipment for this activity");
-        }
-        return null;
-    }
 }

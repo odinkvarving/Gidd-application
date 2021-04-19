@@ -1,8 +1,10 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A entity-class that represents the level table in the database.
@@ -10,6 +12,7 @@ import java.util.List;
  * @author Endré Hadzalic
  */
 @Entity
+@Table(name = "level")
 public class Level {
 
     @Id
@@ -17,11 +20,13 @@ public class Level {
     private int id;
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Activity> activities;
+    @JsonIgnore
+    @OneToMany(mappedBy = "level", cascade = CascadeType.ALL)
+    private Set<AccountInfo> accountInfosAtLevel = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<UserInfo> userInfos;
+    @JsonIgnore
+    @OneToMany(mappedBy = "level", cascade = CascadeType.ALL)
+    private Set<Activity> activitiesAtLevel = new HashSet<>();
 
     public Level() {
     }
@@ -30,19 +35,25 @@ public class Level {
      * Used to create a new Level-object.
      *
      * @param description the description of the level.
-     * @param activities  the activities this level has a one to many relation to. null is passable.
-     * @param userInfos   the userinfos this level has a one to many relation to. null is passable.
      */
-    public Level(String description, List<Activity> activities, List<UserInfo> userInfos) {
+    public Level(String description) {
         this.description = description;
+    }
 
-        if (activities != null) this.activities = activities;
-        else this.activities = new ArrayList<>();
+    public Set<AccountInfo> getUserInfosAtLevel() {
+        return accountInfosAtLevel;
+    }
 
-        if (userInfos != null)
-            this.userInfos = userInfos;
-        else
-            this.activities = new ArrayList<>();
+    public void setUserInfosAtLevel(Set<AccountInfo> accountInfosAtLevel) {
+        this.accountInfosAtLevel = accountInfosAtLevel;
+    }
+
+    public Set<Activity> getActivitiesAtLevel() {
+        return activitiesAtLevel;
+    }
+
+    public void setActivitiesAtLevel(Set<Activity> activitiesAtLevel) {
+        this.activitiesAtLevel = activitiesAtLevel;
     }
 
     public int getId() {
@@ -59,21 +70,5 @@ public class Level {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public List<Activity> getActivities() {
-        return activities;
-    }
-
-    public void setActivities(List<Activity> activities) {
-        if (activities != null) this.activities = activities;
-    }
-
-    public List<UserInfo> getUserInfos() {
-        return userInfos;
-    }
-
-    public void setUserInfos(List<UserInfo> userInfos) {
-        if (userInfos != null) this.userInfos = userInfos;
     }
 }

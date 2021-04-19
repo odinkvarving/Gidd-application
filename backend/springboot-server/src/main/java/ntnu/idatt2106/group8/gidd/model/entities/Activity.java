@@ -2,8 +2,8 @@ package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A database entity which represents the activity table in the database.
@@ -11,30 +11,39 @@ import java.util.List;
  * @author Endré Hadzalic
  */
 @Entity
+@Table(name = "activity")
 public class Activity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private User creator;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private Account creator;
+
+    @ManyToOne
+    @JoinColumn(name = "type_id")
     private ActivityType activityType;
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToOne
+    @JoinColumn(name = "level_id")
     private Level level;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Equipment> equipment;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity")
+    private Set<Equipment> equipment = new HashSet<>();
 
     private String title;
     private float longitude;
     private float latitude;
-    private LocalDateTime activityStart;
-    private LocalDateTime activityEnd;
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
     private String description;
     private int maxParticipants;
 
-    private Activity(User creator, ActivityType activityType, Level level, List<Equipment> equipment, float longitude,
-                     float latitude, LocalDateTime activityStart, LocalDateTime activityEnd, String description,
+    private Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
+                     float latitude, LocalDateTime startTime, LocalDateTime endTime, String description,
                      int maxParticipants, String title) {
         this.creator = creator;
         this.activityType = activityType;
@@ -43,13 +52,22 @@ public class Activity {
         this.title = title;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.activityStart = activityStart;
-        this.activityEnd = activityEnd;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.description = description;
         this.maxParticipants = maxParticipants;
     }
 
     public Activity() {
+    }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getMaxParticipants() {
@@ -68,11 +86,11 @@ public class Activity {
         this.id = id;
     }
 
-    public User getCreator() {
+    public Account getCreator() {
         return creator;
     }
 
-    public void setCreator(User creator) {
+    public void setCreator(Account creator) {
         this.creator = creator;
     }
 
@@ -92,11 +110,11 @@ public class Activity {
         this.level = level;
     }
 
-    public List<Equipment> getEquipment() {
+    public Set<Equipment> getEquipment() {
         return equipment;
     }
 
-    public void setEquipment(List<Equipment> equipment) {
+    public void setEquipment(Set<Equipment> equipment) {
         if (equipment != null) this.equipment = equipment;
     }
 
@@ -116,20 +134,20 @@ public class Activity {
         this.latitude = latitude;
     }
 
-    public LocalDateTime getActivityStart() {
-        return activityStart;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public void setActivityStart(LocalDateTime activityStart) {
-        this.activityStart = activityStart;
+    public void setStartTime(LocalDateTime activityStart) {
+        this.startTime = activityStart;
     }
 
-    public LocalDateTime getActivityEnd() {
-        return activityEnd;
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
-    public void setActivityEnd(LocalDateTime activityEnd) {
-        this.activityEnd = activityEnd;
+    public void setEndTime(LocalDateTime activityEnd) {
+        this.endTime = activityEnd;
     }
 
     public String getDescription() {
@@ -148,13 +166,13 @@ public class Activity {
     public static class Builder {
 
         private final String title;
-        private final User creator;
+        private final Account creator;
         private final Level level;
         private final LocalDateTime activityStart;
         private final LocalDateTime activityEnd;
         private final int maxParticipants;
         private ActivityType activityType;
-        private List<Equipment> equipment;
+        private Set<Equipment> equipment;
         private float longitude;
         private float latitude;
         private String description;
@@ -169,7 +187,7 @@ public class Activity {
          * @param activityEnd     the end-time of the activity represented as LocalDateTime-object.
          * @param maxParticipants the maximum amount of participants in the activity.
          */
-        public Builder(String title, User creator, ActivityType activityType, Level level, LocalDateTime activityStart,
+        public Builder(String title, Account creator, ActivityType activityType, Level level, LocalDateTime activityStart,
                        LocalDateTime activityEnd, int maxParticipants) {
             this.title = title;
             this.creator = creator;
@@ -194,10 +212,8 @@ public class Activity {
          * @param equipment nullable
          * @return this
          */
-        public Builder setEquipment(List<Equipment> equipment) {
+        public Builder setEquipment(Set<Equipment> equipment) {
             if (this.equipment != null) this.equipment = equipment;
-            else this.equipment = new ArrayList<>();
-
             return this;
         }
 

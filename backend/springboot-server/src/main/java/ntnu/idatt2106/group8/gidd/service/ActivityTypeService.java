@@ -69,7 +69,7 @@ public class ActivityTypeService {
             log.info("Could not delete activity type");
         }
     }
-
+/*
     public List<Activity> findActivitiesByType(int id) {
         Optional<ActivityType> activityType;
         try {
@@ -81,5 +81,5 @@ public class ActivityTypeService {
             log.info("Could not find any activities of this type");
         }
         return null;
-    }
+    }*/
 }

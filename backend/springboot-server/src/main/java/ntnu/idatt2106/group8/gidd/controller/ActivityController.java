@@ -1,7 +1,6 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
 import ntnu.idatt2106.group8.gidd.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @RequestMapping("/activities")
@@ -47,10 +49,6 @@ public class ActivityController {
         return activityService.getActivityType(id);
     }
 
-    @GetMapping("/{id}/equipment")
-    public List<Equipment> getActivityEquipment(@PathVariable("id")int id) {
-        return activityService.getActivityEquipment(id);
-    }
 
 
     @DeleteMapping("/{id}")
