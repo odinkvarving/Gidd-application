@@ -1,6 +1,5 @@
 <template>
   <nav class="nav-bar">
-    <div v-click-outside="onClickOutside"></div>
     <div class="search-field"><input class="search-box" placeholder="Søk"></div>
     <div class="menu-item create-activity"><a href="#">Opprett Aktivitet</a></div>
     <Dropdown icon="Varslinger" :items="notifications" />
@@ -9,17 +8,13 @@
 </template>
 
 <script>
-import vClickOutside from "v-click-outside";
-import Dropdown from "./Dropdown.vue";
+import Dropdown from "./Dropdown.vue"; 
 
 export default {
   name: "navbar",
   components: {
     Dropdown,
   },
-  directives: {
-      clickOutside: vClickOutside.directive
-    },
   data() {
     return {
       user: [
@@ -39,11 +34,6 @@ export default {
       notifications: [{}],
     };
   },
-  methods: {
-      onClickOutside (event) {
-        console.log('Clicked outside. Event: ', event)
-      }
-    }
 };
 </script>
 
@@ -68,9 +58,15 @@ nav .menu-item:hover {
   background-color: rgb(219, 219, 219);
 }
 
+nav .create-activity:hover {
+  background-color: #eca82b;
+  transition: 0.1s;
+}
+
 nav .menu-item a {
   color: inherit;
   text-decoration: none;
+  cursor: pointer;
 }
 
 nav .search-field {
