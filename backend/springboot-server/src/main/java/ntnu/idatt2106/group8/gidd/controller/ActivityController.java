@@ -64,4 +64,19 @@ public class ActivityController {
         activityService.deleteActivity(id);
     }
 
+    @GetMapping("/{id}/accounts")
+    public List<Account> getAllAccountsInActivity(@PathVariable("id")int id) {
+        return activityService.getAllAccountsInActivity(id);
+    }
+
+    @GetMapping("/{id}/account/{id}")
+    public boolean checkIfAccountIsInActivity(@PathVariable("id")int activityId, @PathVariable("id")int accountId) {
+        return activityService.checkIfAccountIsInActivity(activityId, accountId);
+    }
+
+    @GetMapping("/{id}/accounts/queue")
+    public List<Account> getAllAccountsInQueue(@PathVariable("id")int id) {
+        return activityService.getAllAccountsInQueue(id);
+    }
+
 }

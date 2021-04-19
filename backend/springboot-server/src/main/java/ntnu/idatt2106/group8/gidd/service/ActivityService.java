@@ -1,14 +1,11 @@
 package ntnu.idatt2106.group8.gidd.service;
 
-
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
+import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
-import ntnu.idatt2106.group8.gidd.repository.AccountRepo;
-import ntnu.idatt2106.group8.gidd.repository.ActivityRepo;
-import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepo;
-import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepo;
+import ntnu.idatt2106.group8.gidd.repository.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+/**
+ * @author Odin Kvarving
+ */
 
 @Service
 public class ActivityService {
@@ -35,6 +36,9 @@ public class ActivityService {
 
     @Autowired
     private ActivityTypeRepo activityTypeRepo;
+
+    @Autowired
+    private EquipmentRepo equipmentRepo;
 
     public List<Activity> getAllActivities() {
         List<Activity> activities = new ArrayList<>();
@@ -133,7 +137,6 @@ public class ActivityService {
             activity = activityRepo.findById(activityId);
             participant = accountRepo.findById(participantId);
             if(activity.isPresent() && participant.isPresent()) {
-                //find number of participants first to get queueposition
                 participantList = accountActivityRepo.findByActivityId(activityId).stream()
                         .filter(accountActivity -> accountActivity.getQueuePosition()==0)
                         .collect(Collectors.toCollection(HashSet::new));
@@ -161,5 +164,56 @@ public class ActivityService {
             log.info("Could not add participant to activity");
         }
         return Optional.empty();
+    }
+
+    public List<Account> getAllAccountsInActivity(int id) {
+        List<Account> participatingAccounts = new ArrayList<>();
+        try {
+            List<AccountActivity> list = accountActivityRepo.findByActivityId(id)
+                    .stream()
+                    .filter(accountActivity -> accountActivity.getQueuePosition() != 0)
+                    .collect(Collectors.toList());
+            for (AccountActivity a : list) {
+                participatingAccounts.add(accountRepo.findById(a.getUserId()).orElseThrow(NoSuchElementException::new));
+            }
+            return participatingAccounts;
+        }catch (NoSuchElementException e) {
+            log.info("Could not find any participants in this activity");
+        }
+        return null;
+    }
+
+    public boolean checkIfAccountIsInActivity(int activityId, int accountId) {
+        try {
+            List<Integer> list = accountActivityRepo.findByActivityId(activityId)
+                    .stream()
+                    .map(AccountActivity::getUserId)
+                    .collect(Collectors.toList());
+            for(Integer i : list) {
+                if(accountRepo.findById(i).isPresent() && accountRepo.findById(i).get().getId() == accountId) {
+                    return true;
+                }
+            }
+        }catch (DataAccessException e) {
+            log.info("Could not find this account in this activity");
+        }
+        return false;
+    }
+
+    public List<Account> getAllAccountsInQueue(int id) {
+        List<Account> queueAccounts = new ArrayList<>();
+        try {
+            List<AccountActivity> list = accountActivityRepo.findByActivityId(id)
+                    .stream()
+                    .filter(accountActivity -> accountActivity.getQueuePosition() == 0)
+                    .collect(Collectors.toList());
+            for (AccountActivity a : list) {
+                queueAccounts.add(accountRepo.findById(a.getUserId()).orElseThrow(NoSuchElementException::new));
+            }
+            return queueAccounts;
+        }catch (NoSuchElementException e) {
+            log.info("Could not find any participants in this activity");
+        }
+        return null;
     }
 }
