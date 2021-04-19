@@ -15,7 +15,7 @@ body{
     width: 100vw;
 }
 
-.profile_buttons{
+#profile_buttons{
     position:absolute;
     left:50vw;
     bottom:20vh;
