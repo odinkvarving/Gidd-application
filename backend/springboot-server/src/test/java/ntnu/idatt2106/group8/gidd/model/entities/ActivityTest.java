@@ -88,7 +88,7 @@ class ActivityTest {
                 ),
                 () -> assertThrows(
                         IllegalArgumentException.class,
-                        () -> validActivity.setEndTime(invalidStartTime.plusSeconds(1)),
+                        () -> validActivity.setStartTime(invalidStartTime.plusSeconds(1)),
                         "Set activity start after end"
                 )
         );

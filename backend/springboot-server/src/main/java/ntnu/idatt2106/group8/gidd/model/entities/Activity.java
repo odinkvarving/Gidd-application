@@ -138,6 +138,11 @@ public class Activity {
     }
 
     public void setStartTime(LocalDateTime activityStart) {
+        if (activityStart == null)
+            throw new IllegalArgumentException("start cannot be null");
+        if (!activityStart.isBefore(this.endTime))
+            throw new IllegalArgumentException("start must be before end");
+
         this.startTime = activityStart;
     }
 
@@ -146,6 +151,11 @@ public class Activity {
     }
 
     public void setEndTime(LocalDateTime activityEnd) {
+        if (activityEnd == null)
+            throw new IllegalArgumentException("end cannot be null");
+        if (!activityEnd.isAfter(this.startTime))
+            throw new IllegalArgumentException("end must be after start");
+
         this.endTime = activityEnd;
     }
 
