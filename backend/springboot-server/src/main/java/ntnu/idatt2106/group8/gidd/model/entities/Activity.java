@@ -164,6 +164,8 @@ public class Activity {
     }
 
     public void setDescription(String description) {
+        if (description == null)
+            description = "";
         this.description = description;
     }
 
