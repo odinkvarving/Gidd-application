@@ -39,12 +39,10 @@ public class Account {
      *
      * @param email       the email of the new user.
      * @param password    the password of the new user.
-     * @param accountInfo the user-info of the new user, represented in a UserInfo-object.
      */
-    public Account(String email, String password, AccountInfo accountInfo) {
+    public Account(String email, String password) {
         this.setEmail(email);
         this.setPassword(password);
-        this.accountInfo = accountInfo;
     }
 
     public Set<Activity> getCreatedActivities() {

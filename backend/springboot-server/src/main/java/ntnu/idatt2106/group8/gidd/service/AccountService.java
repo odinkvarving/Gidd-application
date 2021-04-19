@@ -4,7 +4,10 @@ import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
-import ntnu.idatt2106.group8.gidd.repository.*;
+import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
+import ntnu.idatt2106.group8.gidd.repository.AccountInfoRepository;
+import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
+import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +28,16 @@ public class AccountService {
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
-    AccountInfoRepository accountInfoRepository;
+    private AccountInfoRepository accountInfoRepository;
 
     @Autowired
-    LevelRepository levelRepository;
+    private AccountActivityRepository accountActivityRepository;
 
     @Autowired
-    AccountActivityRepository accountActivityRepository;
-
-    @Autowired
-    ActivityRepository activityRepository;
+    private ActivityRepository activityRepository;
 
     /**
      * Saves a new account to the database along with its account information.
@@ -73,7 +73,7 @@ public class AccountService {
     }
 
     /**
-     * Saves a account to the datebase.
+     * Saves a account to the database.
      *
      * @param account the account object to save.
      */
@@ -165,7 +165,7 @@ public class AccountService {
      * @param accountID the id of the account.
      * @return true if the account exists in the database, false if not.
      */
-    public boolean existsById(int accountID) {
+    public boolean accountExistsById(int accountID) {
         return this.accountRepository.existsById(accountID);
     }
 
@@ -176,7 +176,7 @@ public class AccountService {
      * @param password the password of the account.
      * @return true if the account exists in the database, false if not.
      */
-    public boolean existByCredentials(String email, String password) {
+    public boolean accountExistByCredentials(String email, String password) {
         boolean didExist = false;
         if (findAccountByCredentials(email, password) != null) {
             didExist = true;
@@ -184,12 +184,20 @@ public class AccountService {
         return didExist;
     }
 
+    /**
+     * Removes the binding between a account and a activity, while decrementing the queue position of the accounts
+     * above in queue (if any).
+     *
+     * @param activityId the id of the activity to remove the binding from the account to.
+     * @param accountId  the id of the account to remove the binding from the activity from.
+     */
     public void removeAccountFromActivity(int activityId, int accountId) {
-        if (existsById(accountId) && this.activityRepository.existsById(activityId)) {
+        if (accountExistsById(accountId) && this.activityRepository.existsById(activityId)) {
             int queuePosition =
                     this.accountActivityRepository
                             .findById(new AccountActivityId(accountId, activityId))
-                            .orElseThrow(NoSuchElementException::new).getQueuePosition();
+                            .orElseThrow(NoSuchElementException::new)
+                            .getQueuePosition();
             this.accountActivityRepository.deleteById(new AccountActivityId(accountId, activityId));
             Set<AccountActivity> aboveInQueue = this.accountActivityRepository.findByActivityId(activityId).stream()
                     .filter(accountActivity -> accountActivity.getQueuePosition() > queuePosition)
@@ -200,7 +208,8 @@ public class AccountService {
     }
 
     /**
-     * Binds a given account ot a given activity.
+     * Binds a given account ot a given activity. If there is space in the activity the account is immediately bound
+     * to the activity. Otherwise the account is put to the back of the queue.
      *
      * @param activityId the id of the activity to add the account to.
      * @param accountId  the id of the account to add to the activity.
@@ -213,7 +222,7 @@ public class AccountService {
         try {
             AccountActivity accountActivityToAdd;
 
-            if (existsById(accountId) && this.activityRepository.existsById(activityId)) {
+            if (accountExistsById(accountId) && this.activityRepository.existsById(activityId)) {
                 int activitySize = this.activityRepository
                         .findById(activityId)
                         .orElseThrow(NoSuchElementException::new)
