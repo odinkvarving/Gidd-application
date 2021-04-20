@@ -6,7 +6,9 @@ export const userService = {
     logout,
     getAll,
     getAccountDetails,
-    isLoggedIn
+    isLoggedIn,
+    authorizationHeader,
+    getTokenString
 }
 
 
@@ -89,6 +91,16 @@ function authorizationHeader(){
         return { 'Authorization': `Bearer ${user.jwtToken}`};
     } else {
         return {};
+    }
+}
+
+function getTokenString(){
+    let user = JSON.parse(localStorage.getItem('user'));
+
+    if(user && user.jwtToken){
+        return `Bearer ${user.jwtToken}`;
+    } else {
+        return null;
     }
 }
 

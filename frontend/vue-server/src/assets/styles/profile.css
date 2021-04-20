@@ -1,0 +1,42 @@
+.headshot{
+    position: absolute;
+    left:240px;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+
+}
+
+.profile_container{
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+}
+
+#profile_buttons{
+    position:absolute;
+    left:50vw;
+    bottom:20vh;
+
+}
+
+#cover_photo{
+    width:100vw;
+    height:180px;
+}
+
+#profile_photo{
+    position:absolute;
+    top:90px;
+    left:24px;
+    border-radius:45%;
+}
+
+#info_list{
+    position:absolute;
+    left:7.5vw;
+    top:360px;
+    list-style-type:none
+}

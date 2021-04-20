@@ -28,7 +28,7 @@ public class Level {
     @OneToMany(mappedBy = "level", cascade = CascadeType.ALL)
     private Set<Activity> activitiesAtLevel = new HashSet<>();
 
-    public Level() {
+    protected Level() {
     }
 
     /**
@@ -58,10 +58,6 @@ public class Level {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getDescription() {

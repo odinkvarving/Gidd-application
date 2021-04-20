@@ -1,18 +1,20 @@
 <template>
-  <router-view />
+    <router-view/>
 </template>
 
 <script>
 
 export default {
-  name: "App",
-  components: {
+  name: 'App',
+
+  data() {
+    return {
+    }
   },
-};
+}
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Mulish&display=swap");
 
 #app {
   font-family: "Mulish", Helvetica, Arial, sans-serif;
