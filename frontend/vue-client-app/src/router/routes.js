@@ -1,6 +1,7 @@
 import Home from "./Home.vue";
 import Register from "./Register.vue";
 import Login from "./Login.vue"
+import ForgotPasswordPage from "./ForgotPasswordPage.vue"
 import ProfilePage from "./ProfilePage.vue"
 
 const routes = [
@@ -18,7 +19,12 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
-  },    
+  },
+  {
+    path: "/forgotPassword",
+    name: "forgotPassword",
+    component: ForgotPasswordPage
+  },
   {
     path:'/accounts/:userId',
     name:'Profile',

@@ -1,14 +1,12 @@
 <template>
-    <CreateActivity />
+    <router-view />
 </template>
 
 <script>
-import CreateActivity from "./components/createActivityComponents/CreateActivity.vue"
 
 export default {
   name: "App",
   components: {
-    CreateActivity,
   },
 };
 </script>
