@@ -4,6 +4,12 @@
             <div v-for="a in activities" :key="a.id" @click="handleActivityClicked(a)">
                 <Activity :activity="a"/>
             </div>
+            <div v-for="a in activities" :key="a.id" @click="handleActivityClicked(a)">
+                <Activity :activity="a"/>
+            </div>
+        </div>
+        <div id="calendar">
+            
         </div>
     </div>
 </template>
@@ -128,16 +134,20 @@
         background-color: #F6F6F6;
     }
     #feed{
+        border: 1px solid black;
         margin-left: 4vw;
         width: 70vw;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        justify-content: center;
         background-color: #F6F6F6;
-        padding: 5vh 0;
+        padding: 200px 0;
         /*display: flex;
         flex-direction: column;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;*/
     }
+
 </style>

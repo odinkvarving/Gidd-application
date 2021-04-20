@@ -1,10 +1,10 @@
 <template>
     <div id="container" v-if="activity != null">
         <Info class="comp" id="info" :activity="activity"/>
-        <Map class="comp alt" id="map" :activity="activity"/>
-        <Equipment class="comp" id="equipment" :activity="activity"/><!-- class="comp alt"-->
-        <button class="comp" id="btn" @click="isChatVisible = !isChatVisible">Åpne chat</button>
-        <Chat class="comp chat" id="chat" :activity="activity" /><!-- v-show="isChatVisible" -->
+        <Map class="comp" id="map" :activity="activity"/>
+        <Equipment class="comp" id="equipment" :activity="activity"/>
+        <button class="comp" id="btnVisible" @click="isChatVisible = !isChatVisible">Åpne chat</button>
+        <Chat class="comp chat" id="chat" :activity="activity" v-show="isChatVisible"/><!-- v-show="isChatVisible" -->
     </div>
 </template>
 <script>
@@ -45,39 +45,37 @@
         "btn equipment"
         "chat chat";
         background-color: #F6F6F6;
-        height: 100%;
     }
     .comp{
         background-color: white;
         width: 40vw;
         box-shadow: 0px 4px 4px 0px #00000040;
     }
-    .alt{
-        height: 30vh;
-    }
     #info{
         grid-area: info;
-        height: 95%;
+        height: 90%;
         text-align: center;
     }
     #map{
         grid-area: map;
-        border: 1px solid black;
-        height: 350px;
+        height: 380px;
     }
     #equipment{
         grid-area: equipment;
         text-align: left;
         padding-left: 2%;
-        height: 75%;
-        margin-top: 5%;
+        height: 80%;
+        margin-top: 2%;
     }
-    #btn{
+    #btnVisible{
         grid-area: btn;
+        border: none;
+        background-color: #FFBD3E;
+        color: white;
     }
     #chat{
         grid-area: chat;
-        width: 87.5;
-        margin-top: 2%;
+        width: 87vw;
+        margin-top: 1%;
     }
 </style>

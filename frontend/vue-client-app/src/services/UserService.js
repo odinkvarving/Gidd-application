@@ -45,8 +45,7 @@ function getAccountByEmail(){
     }catch(error){
         console.log("User is not logged in, redirecting to login page...");
         return null;
-    }   
-
+    }  
 }
 
 function logout(){

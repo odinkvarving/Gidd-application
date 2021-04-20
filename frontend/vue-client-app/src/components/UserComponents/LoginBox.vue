@@ -72,13 +72,12 @@ export default {
             if(response.jwtToken){
                 console.log("Login successfull! Token: ");
                 console.log(response.jwtToken);
+                this.$router.push("/dashboard");
             }else{
                 console.log("Invalid login credentials.");
                 this.showLoginError = true;
             }
 
-            // TODO: create error when wrong username and password, and redirect to either profile
-            // or activity dashboard
         },
         handleLoginWithFacebook() {
             //Implement facebook compability

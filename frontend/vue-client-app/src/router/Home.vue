@@ -6,8 +6,14 @@
         <div class="title">GIDD</div>
         <div class="paragraph">Det er bare å gidde</div>
         <router-link to="/register"
-          ><button class="btn register">
+          ><button class="button register">
             <span>Registrer deg</span>
+          </button></router-link
+        >
+        <br/>
+        <router-link to="/dashboard">
+          <button class="button register">
+            <span>Se aktiviteter!</span>
           </button></router-link
         >
       </div>
@@ -93,7 +99,7 @@ export default {
   color: white;
 }
 
-.btn {
+.button {
   background: none;
   color: #fff;
   cursor: pointer;
@@ -104,7 +110,7 @@ export default {
   outline: none;
 }
 
-.btn::before {
+.button::before {
   content: "";
   position: absolute;
   top: 0;
@@ -116,12 +122,12 @@ export default {
   transition: all 0.3s;
 }
 
-.btn:hover::before {
+.button:hover::before {
   opacity: 0;
   transform: scale(0.5, 0.5);
 }
 
-.btn::after {
+.button::after {
   content: "";
   position: absolute;
   top: 0;
@@ -135,7 +141,7 @@ export default {
   transform: scale(1.2, 1.2);
 }
 
-.btn:hover::after {
+.button:hover::after {
   opacity: 1;
   transform: scale(1, 1);
 }

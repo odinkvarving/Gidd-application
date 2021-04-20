@@ -1,7 +1,7 @@
 <template>
     <div id="container">
+        <h3>Utstyr:</h3>
         <div id="list">
-            <h3>Utstyr:</h3>
             <ul v-for="e in activity.equipment" :key="e.equipmentType">
                 <li>{{ e.equipmentType }}</li>
             </ul>
@@ -25,7 +25,6 @@
         display: flex;
         flex-wrap: wrap;
         flex-direction: column;
-        border: 1px solid black;
-        height: 100%;
+        height: 80%;
     }
 </style>
