@@ -12,6 +12,7 @@ import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -46,6 +47,13 @@ public class AccountService {
      * @param account     the new account to save in the database.
      * @param accountInfo the info of the new account.
      */
+
+    public Set<Account> findAllAccounts(){
+        Set<Account> result = new HashSet<>();
+        this.accountRepository.findAll().forEach(result::add);
+        return result;
+    }
+
     public void saveAccountWithInfo(Account account, AccountInfo accountInfo) {
         this.accountRepository.save(account);
         accountInfo.setAccount(account);
@@ -101,6 +109,23 @@ public class AccountService {
      */
     public void saveAccount(Account account) {
         this.accountRepository.save(account);
+    }
+
+    /**
+     * Updates an account
+     *
+     * @param id the id of the account (not used)
+     * @param account the account-object to save
+     * @return the account that was updated
+     */
+
+    public Account updateAccount(int id, Account account) {
+        try {
+            return accountRepository.save(account);
+        }catch (DataAccessException e) {
+            logger.info("Could not update account");
+        }
+        return null;
     }
 
     /**
@@ -226,7 +251,7 @@ public class AccountService {
     }
 
     /**
-     * Binds a given account ot a given activity. If there is space in the activity the account is immediately bound
+     * Binds a given account to a given activity. If there is space in the activity the account is immediately bound
      * to the activity. Otherwise the account is put to the back of the queue.
      *
      * @param activityId the id of the activity to add the account to.
