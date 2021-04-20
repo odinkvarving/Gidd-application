@@ -47,13 +47,6 @@ public class AccountService {
      * @param account     the new account to save in the database.
      * @param accountInfo the info of the new account.
      */
-
-    public Set<Account> findAllAccounts(){
-        Set<Account> result = new HashSet<>();
-        this.accountRepository.findAll().forEach(result::add);
-        return result;
-    }
-
     public void saveAccountWithInfo(Account account, AccountInfo accountInfo) {
         this.accountRepository.save(account);
         accountInfo.setAccount(account);
