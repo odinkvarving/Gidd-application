@@ -1,17 +1,14 @@
 <template>
-  <div>
-    <NavBar />
-    <router-view />
-  </div>
+    <CreateActivity />
 </template>
 
 <script>
-import NavBar from "./components/Nav/NavBar.vue";
+import CreateActivity from "./components/createActivityComponents/CreateActivity.vue"
 
 export default {
   name: "App",
   components: {
-    NavBar,
+    CreateActivity,
   },
 };
 </script>
