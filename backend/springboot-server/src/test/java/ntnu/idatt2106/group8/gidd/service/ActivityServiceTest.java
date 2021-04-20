@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,7 +52,7 @@ class ActivityServiceTest {
     void setUp() {
         this.activityRepository.deleteAll(this.activityRepository.findAll());
         Account testAccount = new Account("test@hotmail.com", "testPassword");
-        accountService.saveAccount(testAccount);
+        accountService.save(testAccount);
         ActivityType testActivityType = new ActivityType("testType", 2.5);
         activityTypeRepository.save(testActivityType);
         Level testLevel = new Level("testDescription");
@@ -66,14 +68,14 @@ class ActivityServiceTest {
                 .build();
 
         activityService.addActivity(testActivity);
-        AccountActivity test = new AccountActivity(testAccount.getId(), testActivity.getId(), 0);
-        accountActivityRepository.save(test);
+
+        activityService.addParticipantToActivity(testActivity.getId(), testAccount.getId());
 
         dummyAccount = new Account("dummy@hotmail.com", "dummyPassword");
-        accountService.saveAccount(dummyAccount);
+        accountService.save(dummyAccount);
 
         dummyActivity = new Activity
-                .Builder("Dummy activity", dummyAccount, testActivityType, testLevel, null, null, 2)
+                .Builder("Dummy activity", dummyAccount, testActivityType, testLevel, null, null, 3)
                 .setDescription("Dummytest")
                 .build();
     }
@@ -143,5 +145,39 @@ class ActivityServiceTest {
                 assertNotEquals(0, a.getQueuePosition());
             }
         }
+        assertEquals(2, accountActivityRepository.findByActivityId(testActivity.getId()).size());
+    }
+
+    /**
+     * Test for fetching all accounts in specific activity.
+     * Should return only 1 activity even when another is added, because maxParticipants is 1.
+     */
+    @Test
+    void getAllAccountsInActivity() {
+        Account retrieved;
+        activityService.addParticipantToActivity(testActivity.getId(), dummyAccount.getId());
+        Set<AccountActivity> test = accountActivityRepository.findByActivityId(testActivity.getId());
+        System.out.println(test.size());
+        List<AccountActivity> participants = accountActivityRepository
+                .findByActivityId(testActivity.getId())
+                .stream()
+                .filter(accountActivity -> accountActivity.getAccountId() == dummyAccount.getId())
+                .collect(Collectors.toList());
+
+        for (AccountActivity account : participants) {
+            assertEquals(1, account.getQueuePosition(), "Queue-position of added account");
+            retrieved = accountService.findAccountById(account.getAccountId());
+            assertEquals("dummy@hotmail.com", retrieved.getEmail());
+
+        }
+        assertEquals(1, activityService.getAllAccountsInActivity(testActivity.getId()).size());
+        assertEquals(1, activityService.getAllAccountsInQueue(testActivity.getId()).size());
+    }
+
+    @Test
+    void getAllAccountsInQueue() {
+        activityService.addParticipantToActivity(testActivity.getId(), dummyAccount.getId());
+        assertEquals(1, activityService.getAllAccountsInQueue(testActivity.getId()).size());
+        assertEquals(1, activityService.getAllAccountsInActivity(testActivity.getId()).size());
     }
 }

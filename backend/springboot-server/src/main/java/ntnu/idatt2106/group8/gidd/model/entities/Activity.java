@@ -46,8 +46,8 @@ public class Activity {
     private int maxParticipants;
 
     protected Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
-                     float latitude, LocalDateTime startTime, LocalDateTime endTime, String description,
-                     int maxParticipants, String title) {
+                       float latitude, LocalDateTime startTime, LocalDateTime endTime, String description,
+                       int maxParticipants, String title) {
         this.creator = creator;
         this.activityType = activityType;
         this.level = level;
@@ -61,7 +61,8 @@ public class Activity {
         this.maxParticipants = maxParticipants;
     }
 
-    protected Activity() { }
+    protected Activity() {
+    }
 
 
     public String getTitle() {
@@ -236,7 +237,7 @@ public class Activity {
             return this;
         }
 
-        public Builder addEquipment(Equipment equipment){
+        public Builder addEquipment(Equipment equipment) {
             this.equipment.add(equipment);
             return this;
         }

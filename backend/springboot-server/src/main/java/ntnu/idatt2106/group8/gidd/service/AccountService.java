@@ -119,7 +119,6 @@ public class AccountService {
         this.accountInfoRepository.save(accountInfo);
     }
 
-
     /**
      * Deletes a account from the database
      *
@@ -131,26 +130,8 @@ public class AccountService {
         } catch (IllegalArgumentException iae) {
             logger.error("null was passed as argument while trying to delete account", iae);
         }
-
     }
 
-    /**
-     * Getter for all the current accounts in the repository.
-     *
-     * @return a Set<Account> containing all the current accounts in the database.
-     */
-    public Set<Account> findAllAccounts() {
-        Set<Account> result = new HashSet<>();
-        this.accountRepository.findAll().forEach(result::add);
-        return result;
-    }
-
-    /**
-     * Updates the account info related to a given account id.
-     *
-     * @param accountId the id of the account to update the info of.
-     * @param info      the new info to the account.
-     */
     public void setAccountInfo(int accountId, AccountInfo info) {
         try{
             Account account = this.accountRepository.findById(accountId).orElseThrow(NoSuchElementException::new);
@@ -158,7 +139,6 @@ public class AccountService {
         } catch (Exception e){
             logger.error("could not find account with id:" + accountId,e);
         }
-
     }
 
     /**
