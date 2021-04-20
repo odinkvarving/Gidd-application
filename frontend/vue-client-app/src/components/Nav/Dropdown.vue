@@ -40,9 +40,9 @@ export default {
 
 <style>
 nav .menu-item .sub-menu {
+  background-color: white;
   position: absolute;
   top: calc(100%);
-  left: 40%;
   transform: translateX(-60%);
   width: max-content;
   border: 1px solid rgba(0, 0, 0, 0.245)
@@ -61,8 +61,5 @@ nav .menu-item .sub-menu {
   width: 40px;
   object-fit: cover;
   border-radius: 100%;
-}
-
-img:hover {
 }
 </style>

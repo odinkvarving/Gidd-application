@@ -1,18 +1,22 @@
 <template>
-  <nav class="nav-bar">
-    <div class="search-field">
-      <input class="search-box" placeholder="Søk" />
+  <b-navbar class="bg-white" fixed="top" v-show="homePage">
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ml-auto">
+        <div class="search-field">
+          <input class="search-box" placeholder="Søk" />
+        </div>
+        <div class="menu-item create-activity">
+          <a href="#">Opprett Aktivitet</a>
+        </div>
+        <Dropdown
+          class="notification-icon"
+          icon="bell.png"
+          :items="notifications"
+        />
+        <Dropdown icon="user.png" :items="user" />
+      </ul>
     </div>
-    <div class="menu-item create-activity">
-      <a href="#">Opprett Aktivitet</a>
-    </div>
-    <Dropdown
-      class="notification-icon"
-      icon="bell.png"
-      :items="notifications"
-    />
-    <Dropdown icon="berit.jpg" :items="user" />
-  </nav>
+  </b-navbar>
 </template>
 
 <script>
@@ -36,62 +40,51 @@ export default {
         },
         {
           title: "Logg Ut",
-          link: "#",
+          link: "/",
         },
       ],
       notifications: [{}],
     };
   },
+  computed: {
+    homePage() {
+      if (this.$route.path==='/' || this.$route.path==='/register' || this.$route.path==='/login') {
+        return false
+      } else {
+        return true
+      }
+    }
+  },
 };
 </script>
 
 <style>
-.nav-bar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  border: 1px solid black;
-}
-
-nav .menu-item {
-  color: #000;
-  padding: 10px 20px;
-  position: relative;
-  text-align: center;
-  display: flex;
+.menu-item {
   margin: 0 10px;
 }
 
-nav .notification-icon {
-  margin-right: -10px;
-}
-
-nav .menu-item:hover {
+.menu-item:hover {
   cursor: pointer;
 }
 
-nav .notification-icon:hover {
-  background-color: none;
-}
-
-nav .create-activity:hover {
+.create-activity:hover {
   background-color: #eca82b;
-  transition: 0.1s;
+  transition: 0.2s;
 }
 
-nav .menu-item a {
-  color: inherit;
+.menu-item a {
   text-decoration: none;
   cursor: pointer;
 }
 
-nav .search-field {
+.search-field {
   padding: 0px 20px;
   display: flex;
   align-content: center;
+  align-self: center;
 }
 
-nav .search-box {
+.search-box {
   background-color: #d1d1d1;
   opacity: 0.5;
   border: none;
@@ -102,11 +95,11 @@ nav .search-box {
   padding-left: 10px;
 }
 
-nav .search-box::placeholder {
+.search-box::placeholder {
   color: rgb(50, 50, 50);
 }
 
-nav .create-activity {
+.create-activity {
   background-color: #ffbd3e;
   border-radius: 6px;
   padding: 6px 20px;
@@ -116,6 +109,7 @@ nav .create-activity {
   justify-content: center;
   align-items: center;
   overflow: auto;
+  align-self: center;
 }
 
 nav .create-activity a {
