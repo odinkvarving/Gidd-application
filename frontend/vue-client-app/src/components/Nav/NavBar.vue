@@ -1,5 +1,5 @@
 <template>
-  <b-navbar fixed="top">
+  <b-navbar class="bg-white" fixed="top" v-show="homePage">
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav ml-auto">
         <div class="search-field">
@@ -46,11 +46,19 @@ export default {
       notifications: [{}],
     };
   },
+  computed: {
+    homePage() {
+      if (this.$route.path==='/' || this.$route.path==='/register' || this.$route.path==='/login') {
+        return false
+      } else {
+        return true
+      }
+    }
+  },
 };
 </script>
 
 <style>
-
 .menu-item {
   margin: 0 10px;
 }

@@ -40,6 +40,7 @@ export default {
 
 <style>
 nav .menu-item .sub-menu {
+  background-color: white;
   position: absolute;
   top: calc(100%);
   transform: translateX(-60%);
