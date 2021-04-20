@@ -20,8 +20,12 @@
         }
     }
 </script>
-<style scoped>
-    #container{
-        margin-left: 100px;
+<style>
+    #list{
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        border: 1px solid black;
+        height: 100%;
     }
 </style>

@@ -1,7 +1,9 @@
 <template>
     <div id="container">
-        <div v-for="a in activities" :key="a.id">
-            <Activity :activity="a" @click="handleActivityClicked(a)"/>
+        <div id="feed">
+            <div v-for="a in activities" :key="a.id" @click="handleActivityClicked(a)">
+                <Activity :activity="a"/>
+            </div>
         </div>
     </div>
 </template>
@@ -17,19 +19,8 @@
 
         data() {
             return {
-                testing: [
-                    {
-                        title: "Hei",
-                    },
-                    {
-                        title: "på",
-                    },
-                    {
-                        title: "deg",
-                    }
-                ],
                 selectedActivity: null,
-                //activities: null,
+                //activities: getActivities(),
                 activities: [
                     {
                         id: 0,
@@ -116,7 +107,7 @@
 
         methods: {
             async getActivities() {
-                await fetch("localhost:8080/activities")
+                return await fetch("localhost:8080/activities")
                 .then(data => {
                     console.log(data);
                     this.activities = data;
@@ -127,14 +118,26 @@
                 this.selectedActivity = activity;
                 console.log(this.selectedActivity.name);
                 this.$emit('activityClicked', this.selectedActivity);
+                this.$router.push({ name: 'Activity', params: { id: activity.id }});
             },
         }
     }
 </script>
-<style scoped>
+<style>
     #container{
+        background-color: #F6F6F6;
+    }
+    #feed{
+        margin-left: 4vw;
         width: 70vw;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
+        background-color: #F6F6F6;
+        padding: 5vh 0;
+        /*display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;*/
     }
 </style>

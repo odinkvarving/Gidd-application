@@ -72,6 +72,10 @@
         background: #FFFFFF;
         box-shadow: 0px 4px 4px 0px #0000001A;
         cursor: pointer;
+        padding-left: 20px;
+        text-align: center;
+        font-size: 20px;
+        margin-bottom: 20px;
     }
     #card p{
         font-size: 20px;
@@ -91,6 +95,8 @@
     }
     #ownerInfo h3{
         grid-area: name;
+        font-size: 20px;
+        margin: auto;
     }
     #btn{
         height: 5vh;

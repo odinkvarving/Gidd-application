@@ -5,11 +5,6 @@
 </template>
 <script>
     export default {
-        name: "Chat"
+        name: "Map"
     }
 </script>
-<style scoped>
-    #container{
-        height: 30vh;
-    }
-</style>

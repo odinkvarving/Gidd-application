@@ -1,5 +1,5 @@
 <template>
-    <div id="container" v-if="activity != null">
+    <div id="infobox" v-if="activity != null">
         <div class="box" id="top">
             <h1>{{ activity.name }}</h1>
             <div id="ownerInfo">
@@ -68,13 +68,14 @@
         }
     }
 </script>
-<style scoped>
-    #container{
+<style>
+    #infobox{
         display: grid;
         grid-template-areas: 
         "top"
         "bottom";
         height: 50vh;
+        text-align: center;
     }
     /*.box{
         margin: 2vh 2vw 2vh 2vw;

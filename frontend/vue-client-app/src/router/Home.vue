@@ -22,7 +22,7 @@
         occaecat cupidatat non proident, sunt in culpa qui officia deserunt
         mollit anim id est laborum.
       </div>
-      <router-link to="#" class="btn-dashboard">
+      <router-link to="/dashboard" class="btn-dashboard">
         Se aktiviteter
       </router-link>
     </div>
