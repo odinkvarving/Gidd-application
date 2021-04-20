@@ -4,6 +4,7 @@ import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
+import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
 import ntnu.idatt2106.group8.gidd.repository.AccountInfoRepository;
 import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
@@ -84,18 +85,13 @@ public class AccountService {
      * @param info      the new info to the account.
      */
     public void setAccountInfo(int accountId, AccountInfo info) {
-        try {
-            Account foundAccount = this.accountRepository
-                    .findById(accountId).orElseThrow(NoSuchElementException::new);
-
-            info.setAccount(foundAccount);
-            this.accountInfoRepository.save(info);
-
-        } catch (NoSuchElementException nee) {
-            logger.error("could not find account with id " + accountId);
-        } catch (IllegalArgumentException iae) {
-            logger.error(iae.toString());
+        try{
+            Account account = this.accountRepository.findById(accountId).orElseThrow(NoSuchElementException::new);
+            saveAccountWithInfo(account,info);
+        } catch (Exception e){
+            logger.error("could not find account with id:" + accountId,e);
         }
+
     }
 
     /**
@@ -203,8 +199,7 @@ public class AccountService {
      * @return true if the account exists in the database, false if not.
      */
     public boolean accountExistByCredentials(String email, String password) {
-        boolean didExist = findAccountByCredentials(email, password) != null;
-        return didExist;
+        return findAccountByCredentials(email, password) != null;
     }
 
     /**
@@ -243,9 +238,8 @@ public class AccountService {
         boolean wasQueued = false;
 
         try {
-            AccountActivity accountActivityToAdd;
-
             if (accountExistsById(accountId) && this.activityRepository.existsById(activityId)) {
+                AccountActivity accountActivityToAdd;
                 int activitySize = this.activityRepository
                         .findById(activityId)
                         .orElseThrow(NoSuchElementException::new)
@@ -253,23 +247,25 @@ public class AccountService {
                 Set<AccountActivity> allAccountActivities = this.accountActivityRepository.findByActivityId(activityId);
                 if (allAccountActivities.size() < activitySize) { //there was space in the activity!
                     accountActivityToAdd = new AccountActivity(accountId, activityId, 0);
-                } else {                         //there was not space in the activity, the account must be queued!
-                    int highestCurrentPosition =
+                } else if (allAccountActivities.size() == activitySize) {                         //there was not space in the activity, the account must be queued!
+                    accountActivityToAdd = new AccountActivity(accountId, activityId, 1);
+                    wasQueued = true;
+                } else {
+                    int highestQueuePosition =
                             allAccountActivities.stream()
-                                    .filter(accountActivity -> accountActivity.getQueuePosition() != 0)
+                                    .filter(accountActivity -> accountActivity.getQueuePosition() > 0)
                                     .max(Comparator.comparing(AccountActivity::getQueuePosition))
-                                    .orElseThrow(NullPointerException::new)
-                                    .getQueuePosition();
-
-                    accountActivityToAdd = new AccountActivity(accountId, activityId, highestCurrentPosition + 1);
+                                    .orElseThrow(NoSuchElementException::new).getQueuePosition();
+                    accountActivityToAdd = new AccountActivity(accountId, activityId, highestQueuePosition + 1);
                     wasQueued = true;
                 }
+                this.accountActivityRepository.save(accountActivityToAdd);
             } else {
                 throw new NoSuchElementException("Either the given account id or the given activity " +
                         "id was not found in the database");
             }
 
-            this.accountActivityRepository.save(accountActivityToAdd);
+
         } catch (NoSuchElementException nse) {
             logger.info(nse.getMessage());
         } catch (NullPointerException npe) {
@@ -278,4 +274,45 @@ public class AccountService {
         return wasQueued;
     }
 
+    /**
+     * Gets a specific account-activity binding from the database.
+     *
+     * @param activityId the id of the activity that is bound to a account.
+     * @param accountId  the id of the account that is bound to a activity.
+     * @return null if no account-activity matching the given parameters was found.
+     */
+    public AccountActivity findAccountActivity(int activityId, int accountId) {
+        return this.accountActivityRepository
+                .findById(new AccountActivityId(accountId, activityId)).orElse(null);
+    }
+
+    /**
+     * Getter for all activities a account is related to.
+     *
+     * @param accountID the id of the account to find the activities for.
+     * @return a empty set if no activities was found for the given user, otherwise a set with the activities.
+     */
+    public Set<Activity> findAccountsActivities(int accountID) {
+        Set<Activity> result = new HashSet<>();
+        try {
+            this.accountActivityRepository.findByAccountId(accountID)
+                    .forEach(accountActivity -> result.add(this.activityRepository
+                            .findById(accountActivity.getActivityId())
+                            .orElseThrow(NoSuchElementException::new)));
+        } catch (NoSuchElementException nse) {
+            logger.error("Something went wrong while trying to fetch activity", nse);
+        }
+        return result;
+    }
+
+    /**
+     * Getter for all the activities created by a user in the database.
+     *
+     * @param accountId the id of the account to find the created activities of.
+     * @return a set containing the activities that has the given account as creator.
+     */
+    public Set<Activity> findAccountsCreatedActivities(int accountId) {
+        Account creator = this.accountRepository.findById(accountId).orElseThrow(NoSuchElementException::new);
+        return this.activityRepository.findActivitiesByCreator(creator);
+    }
 }
