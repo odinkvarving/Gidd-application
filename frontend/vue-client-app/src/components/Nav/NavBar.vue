@@ -6,7 +6,7 @@
           <input class="search-box" placeholder="Søk" />
         </div>
         <div class="menu-item create-activity">
-          <a href="#">Opprett Aktivitet</a>
+          Opprett Aktivitet
         </div>
         <Dropdown
           class="notification-icon"
@@ -101,6 +101,7 @@ export default {
 
 .create-activity {
   background-color: #ffbd3e;
+  color: white;
   border-radius: 6px;
   padding: 6px 20px;
   height: 30px;
