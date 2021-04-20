@@ -201,15 +201,15 @@ public class ActivityService {
         try {
             List<AccountActivity> list = accountActivityRepository.findByActivityId(id)
                     .stream()
-                    .filter(accountActivity -> accountActivity.getQueuePosition() != 0)
+                    .filter(accountActivity -> accountActivity.getQueuePosition() > 0)
                     .collect(Collectors.toList());
             for (AccountActivity a : list) {
-                queueAccounts.add(accountRepository.findById(a.getActivityId()).orElseThrow(NoSuchElementException::new));
+                queueAccounts.add(accountRepository.findById(a.getAccountId()).orElseThrow(NoSuchElementException::new));
             }
             return queueAccounts;
         }catch (NoSuchElementException e) {
             log.info("Could not find any participants in this activity");
         }
-        return null;
+        return queueAccounts;
     }
 }

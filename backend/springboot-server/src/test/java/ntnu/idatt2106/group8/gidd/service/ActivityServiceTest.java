@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -155,21 +156,28 @@ class ActivityServiceTest {
     void getAllAccountsInActivity() {
         Account retrieved;
         activityService.addParticipantToActivity(testActivity.getId(), dummyAccount.getId());
-        List<Account> participants = activityService.getAllAccountsInActivity(testActivity.getId());
+        Set<AccountActivity> test = accountActivityRepository.findByActivityId(testActivity.getId());
+        System.out.println(test.size());
+        List<AccountActivity> participants = accountActivityRepository
+                .findByActivityId(testActivity.getId())
+                .stream()
+                .filter(accountActivity -> accountActivity.getAccountId() == dummyAccount.getId())
+                .collect(Collectors.toList());
 
-        for (Account account : participants) {
-            if (account.getId() == dummyAccount.getId()) {
-                retrieved = account;
-                assertEquals("dummy@hotmail.com", retrieved.getEmail());
-                AccountActivity ac = accountActivityRepository.findByAccountId(dummyAccount.getId()).stream()
-                        .filter(accountActivity -> accountActivity
-                                .getAccountId() == dummyAccount.getId()).findFirst().orElseThrow(NoSuchElementException::new);
-
-                assertEquals(0, ac.getQueuePosition());
-            }
+        for (AccountActivity account : participants) {
+            assertEquals(1, account.getQueuePosition(), "Queue-position of added account");
+            retrieved = accountService.findAccountById(account.getAccountId());
+            assertEquals("dummy@hotmail.com", retrieved.getEmail());
 
         }
         assertEquals(1, activityService.getAllAccountsInActivity(testActivity.getId()).size());
-        assertEquals(1, activityService.getAllAccountsInQueue(testActivity.getId()).size(), "No accounts in queue");
+        assertEquals(1, activityService.getAllAccountsInQueue(testActivity.getId()).size());
+    }
+
+    @Test
+    void getAllAccountsInQueue() {
+        activityService.addParticipantToActivity(testActivity.getId(), dummyAccount.getId());
+        assertEquals(1, activityService.getAllAccountsInQueue(testActivity.getId()).size());
+        assertEquals(1, activityService.getAllAccountsInActivity(testActivity.getId()).size());
     }
 }
