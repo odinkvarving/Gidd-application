@@ -30,7 +30,7 @@ public class ActivityTypeService {
         List<ActivityType> types = new ArrayList<>();
         try {
             activityTypeRepo.findAll().forEach(types::add);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Activity types not found");
         }
         return types;
@@ -39,7 +39,7 @@ public class ActivityTypeService {
     public Optional<ActivityType> getActivityType(int id) {
         try {
             return activityTypeRepo.findById(id);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not find activity type");
         }
         return Optional.empty();
@@ -48,7 +48,7 @@ public class ActivityTypeService {
     public ActivityType addActivityType(ActivityType activityType) {
         try {
             return activityTypeRepo.save(activityType);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not add activity type");
         }
         return null;
@@ -57,7 +57,7 @@ public class ActivityTypeService {
     public ActivityType updateActivityType(int id, ActivityType activityType) {
         try {
             return activityTypeRepo.save(activityType);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not update activity type");
         }
         return null;
@@ -66,7 +66,7 @@ public class ActivityTypeService {
     public void deleteActivityType(int id) {
         try {
             activityTypeRepo.deleteById(id);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not delete activity type");
         }
     }
@@ -75,10 +75,10 @@ public class ActivityTypeService {
         Optional<ActivityType> activityType;
         try {
             activityType = activityTypeRepo.findById(id);
-            if(activityType.isPresent()) {
+            if (activityType.isPresent()) {
                 return activityType.get().getActivities();
             }
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not find any activities of this type");
         }
         return null;

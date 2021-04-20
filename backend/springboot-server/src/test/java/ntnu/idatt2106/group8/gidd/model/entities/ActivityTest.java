@@ -64,15 +64,15 @@ class ActivityTest {
     void setInvalidEndTime() {
         LocalDateTime invalidEndTime = validActivity.getStartTime();
         assertAll(
-                () -> assertThrows (
-                    IllegalArgumentException.class,
-                    () -> validActivity.setEndTime(invalidEndTime),
-                    "Set activity end at the same time as start"
+                () -> assertThrows(
+                        IllegalArgumentException.class,
+                        () -> validActivity.setEndTime(invalidEndTime),
+                        "Set activity end at the same time as start"
                 ),
                 () -> assertThrows(
-                    IllegalArgumentException.class,
-                    () -> validActivity.setEndTime(invalidEndTime.minusSeconds(1)),
-                    "Set activity end before start"
+                        IllegalArgumentException.class,
+                        () -> validActivity.setEndTime(invalidEndTime.minusSeconds(1)),
+                        "Set activity end before start"
                 )
         );
     }
@@ -81,7 +81,7 @@ class ActivityTest {
     void setInvalidStartTime() {
         LocalDateTime invalidStartTime = validActivity.getEndTime();
         assertAll(
-                () -> assertThrows (
+                () -> assertThrows(
                         IllegalArgumentException.class,
                         () -> validActivity.setStartTime(invalidStartTime),
                         "Set activity start at the same time as end"
@@ -103,10 +103,10 @@ class ActivityTest {
     @Test
     void setInvalidMaxParticipants() {
         Executable assertThrowsNegativeParticipants = () ->
-            assertThrows(
-                    IllegalArgumentException.class,
-                    () -> validActivity.setMaxParticipants(-1),
-                    "Set negative participants");
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> validActivity.setMaxParticipants(-1),
+                        "Set negative participants");
 
         Executable assertThrowsZeroParticipants = () ->
                 assertThrows(

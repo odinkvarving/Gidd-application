@@ -86,11 +86,11 @@ public class AccountService {
      * @param info      the new info to the account.
      */
     public void setAccountInfo(int accountId, AccountInfo info) {
-        try{
+        try {
             Account account = this.accountRepository.findById(accountId).orElseThrow(NoSuchElementException::new);
-            saveAccountWithInfo(account,info);
-        } catch (Exception e){
-            logger.error("could not find account with id:" + accountId,e);
+            saveAccountWithInfo(account, info);
+        } catch (Exception e) {
+            logger.error("could not find account with id:" + accountId, e);
         }
 
     }
@@ -107,7 +107,7 @@ public class AccountService {
     /**
      * Updates an account
      *
-     * @param id the id of the account (not used)
+     * @param id      the id of the account (not used)
      * @param account the account-object to save
      * @return the account that was updated
      */
@@ -115,7 +115,7 @@ public class AccountService {
     public Account updateAccount(int id, Account account) {
         try {
             return accountRepository.save(account);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             logger.info("Could not update account");
         }
         return null;

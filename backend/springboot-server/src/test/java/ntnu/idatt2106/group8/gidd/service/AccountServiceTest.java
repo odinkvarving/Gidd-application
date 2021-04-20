@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,13 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 class AccountServiceTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(AccountServiceTest.class);
     @Autowired
     private AccountService accountService;
-
-    private static final Logger logger = LoggerFactory.getLogger(AccountServiceTest.class);
-
     @Autowired
     private ActivityRepository activityRepository;
 
@@ -85,11 +85,11 @@ class AccountServiceTest {
     }
 
     @Test
-    void accountsCreatedActivities(){
+    void accountsCreatedActivities() {
         this.accountService.saveAccount(this.testAccount1);
         this.activityRepository.save(this.testActivity1);
 
-        assertEquals(1,this.accountService.findAccountsCreatedActivities(this.testAccount1.getId()).size());
+        assertEquals(1, this.accountService.findAccountsCreatedActivities(this.testAccount1.getId()).size());
     }
 
     @Test
@@ -99,16 +99,16 @@ class AccountServiceTest {
         this.accountService.updateAccountPassword(this.testAccount1.getId(), "newPassword");
 
         assertEquals("newEmail@email.no", this.accountService.findAccountById(this.testAccount1.getId()).getEmail()
-        , "the new email for account1 is wrong");
+                , "the new email for account1 is wrong");
         assertEquals("newPassword", this.accountService.findAccountById(this.testAccount1.getId()).getPassword()
-        ,"the new password of account1 is wrong");
+                , "the new password of account1 is wrong");
 
         this.accountService.setAccountInfo(this.testAccount1.getId(), this.testInfo2);
         assertEquals("firstname2", this.accountService.findAccountInfo(this.testAccount1.getId()).getFirstname()
-        ,"the new account info is wrong");
+                , "the new account info is wrong");
         this.accountService.setAccountInfo(this.testAccount1.getId(), this.testInfo1);
         assertEquals("firstname1", this.accountService.findAccountInfo(this.testAccount1.getId()).getFirstname()
-        ,"the new account info is wrong");
+                , "the new account info is wrong");
 
     }
 
@@ -146,7 +146,6 @@ class AccountServiceTest {
         assertTrue(this.accountService.findAllAccounts().isEmpty()
                 , "The account database was not empty after deleting the one and only account");
     }
-
 
 
     @Test
