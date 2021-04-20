@@ -4,15 +4,15 @@ import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
-import ntnu.idatt2106.group8.gidd.repository.*;
-
+import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
+import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
+import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,7 +41,7 @@ public class ActivityService {
         List<Activity> activities = new ArrayList<>();
         try {
             activityRepository.findAll().forEach(activities::add);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Activities not found");
         }
         return activities;
@@ -50,7 +50,7 @@ public class ActivityService {
     public Optional<Activity> getActivity(int id) {
         try {
             return activityRepository.findById(id);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Activity not found");
         }
         return Optional.empty();
@@ -59,7 +59,7 @@ public class ActivityService {
     public Activity addActivity(Activity activity) {
         try {
             return activityRepository.save(activity);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not add activity");
         }
         return null;
@@ -68,7 +68,7 @@ public class ActivityService {
     public Activity updateActivity(int id, Activity activity) {
         try {
             return activityRepository.save(activity);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not update activity");
         }
         return null;
@@ -77,7 +77,7 @@ public class ActivityService {
     public void deleteActivity(int id) {
         try {
             activityRepository.deleteById(id);
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not delete activity");
         }
     }
@@ -87,13 +87,13 @@ public class ActivityService {
         List<Activity> byType = new ArrayList<>();
         try {
             activityRepository.findAll().forEach(activities::add);
-            for (Activity a: activities) {
-                if(a.getActivityType().getType().equals(type)) {
+            for (Activity a : activities) {
+                if (a.getActivityType().getType().equals(type)) {
                     byType.add(a);
                 }
             }
             return byType;
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not find any activities of this type");
         }
         return null;
@@ -103,10 +103,10 @@ public class ActivityService {
         Optional<Activity> activity;
         try {
             activity = activityRepository.findById(id);
-            if(activity.isPresent()) {
+            if (activity.isPresent()) {
                 return activity.get().getActivityType().getType();
             }
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not find the activity type for this activity");
         }
         return null;
@@ -116,10 +116,10 @@ public class ActivityService {
         Optional<Activity> activity;
         try {
             activity = activityRepository.findById(id);
-            if(activity.isPresent()) {
+            if (activity.isPresent()) {
                 return activity.get().getEquipment();
             }
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not find any equipment for this activity");
         }
         return null;
@@ -173,7 +173,7 @@ public class ActivityService {
                 participatingAccounts.add(accountRepository.findById(a.getAccountId()).orElseThrow(NoSuchElementException::new));
             }
             return participatingAccounts;
-        }catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             log.info("Could not find any participants in this activity");
         }
         return null;
@@ -185,12 +185,12 @@ public class ActivityService {
                     .stream()
                     .map(AccountActivity::getActivityId)
                     .collect(Collectors.toList());
-            for(Integer i : list) {
-                if(accountRepository.findById(i).isPresent() && accountRepository.findById(i).get().getId() == accountId) {
+            for (Integer i : list) {
+                if (accountRepository.findById(i).isPresent() && accountRepository.findById(i).get().getId() == accountId) {
                     return true;
                 }
             }
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not find this account in this activity");
         }
         return false;
@@ -207,7 +207,7 @@ public class ActivityService {
                 queueAccounts.add(accountRepository.findById(a.getAccountId()).orElseThrow(NoSuchElementException::new));
             }
             return queueAccounts;
-        }catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             log.info("Could not find any participants in this activity");
         }
         return queueAccounts;

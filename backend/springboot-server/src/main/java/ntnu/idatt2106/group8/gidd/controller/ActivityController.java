@@ -51,12 +51,12 @@ public class ActivityController {
     }
 
     @GetMapping("/{id}/equipment")
-    public Set<Equipment> getActivityEquipment(@PathVariable("id")int id) {
+    public Set<Equipment> getActivityEquipment(@PathVariable("id") int id) {
         return activityService.getActivityEquipment(id);
     }
 
     @PostMapping("/{id}/users/{id}")
-    public Optional<Account> addParticipantToActivity(@PathVariable("id")int activityId, @PathVariable("id")int participantId) {
+    public Optional<Account> addParticipantToActivity(@PathVariable("id") int activityId, @PathVariable("id") int participantId) {
         return activityService.addParticipantToActivity(activityId, participantId);
     }
 
@@ -67,7 +67,7 @@ public class ActivityController {
     }
 
     @GetMapping("/{id}/accounts")
-    public List<Account> getAllAccountsInActivity(@PathVariable("id")int id) {
+    public List<Account> getAllAccountsInActivity(@PathVariable("id") int id) {
         return activityService.getAllAccountsInActivity(id);
     }
 
@@ -77,7 +77,7 @@ public class ActivityController {
     }
 
     @GetMapping("/{id}/accounts/queue")
-    public List<Account> getAllAccountsInQueue(@PathVariable("id")int id) {
+    public List<Account> getAllAccountsInQueue(@PathVariable("id") int id) {
         return activityService.getAllAccountsInQueue(id);
     }
 

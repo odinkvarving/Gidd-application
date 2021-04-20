@@ -5,16 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests the business logic in the User-class
- *
+ * <p>
  * test vectors for valid / invalid emails are taken from:
- *  -- https://gist.github.com/cjaoude/fd9910626629b53c4d25
+ * -- https://gist.github.com/cjaoude/fd9910626629b53c4d25
  *
  * @author Torstein Øvstedal
  */
@@ -29,51 +26,50 @@ class AccountTest {
     //  - Refactor code duplication and remove redundant tests if time / possible
 
     private static final String[] VALID_EMAILS = {
-        "email@example.com",
-        "firstname.lastname@example.com",
-        "email@subdomain.example.com",
-        "firstname+lastname@example.com",
-        //"email@123.123.123.123",                                                      // throws, 16.04
-        "email@[123.123.123.123]",
-        "\"email\"@example.com",
-        "1234567890@example.com",
-        "email@example-one.com",
-        "_______@example.com",
-        "email@example.name",
-        "email@example.museum",
-        "email@example.co.jp",
-        "firstname-lastname@example.com",
-        "much.”more\\ unusual”@example.com"
-        // "very.unusual.”@”.unusual.com@example.com",                                  // throws, 16.04
-        //"very.”(),:;<>[]”.VERY.”very@\\\\ \"very”.unusual@strange.example.com"        // throws, 16.04
+            "email@example.com",
+            "firstname.lastname@example.com",
+            "email@subdomain.example.com",
+            "firstname+lastname@example.com",
+            //"email@123.123.123.123",                                                      // throws, 16.04
+            "email@[123.123.123.123]",
+            "\"email\"@example.com",
+            "1234567890@example.com",
+            "email@example-one.com",
+            "_______@example.com",
+            "email@example.name",
+            "email@example.museum",
+            "email@example.co.jp",
+            "firstname-lastname@example.com",
+            "much.”more\\ unusual”@example.com"
+            // "very.unusual.”@”.unusual.com@example.com",                                  // throws, 16.04
+            //"very.”(),:;<>[]”.VERY.”very@\\\\ \"very”.unusual@strange.example.com"        // throws, 16.04
     };
 
     private static final String[] INVALID_EMAILS = {
-        "plainaddress",
-        "#@%^%#$@#$@#.com",
-        "@example.com",
-        "Joe Smith <email@example.com>",
-        "email.example.com",
-        "email@example@example.com",
-        ".email@example.com",
-        "email.@example.com",
-        "email..email@example.com",
-        // "あいうえお@example.com",                                                         // no throw, 16.04
-        "email@example.com (Joe Smith)",
-        "email@example",
-        "email@-example.com",
-        "email@example.web",
-        "email@111.222.333.44444",
-        "email@example..com",
-        "Abc..123@example.com",
-        "”(),:;<>[\\]@example.com",
-        // "just”not”right@example.com",                                                // no throw, 16.04
-        "this\\ is\"really\"not\\allowed@example.com"
+            "plainaddress",
+            "#@%^%#$@#$@#.com",
+            "@example.com",
+            "Joe Smith <email@example.com>",
+            "email.example.com",
+            "email@example@example.com",
+            ".email@example.com",
+            "email.@example.com",
+            "email..email@example.com",
+            // "あいうえお@example.com",                                                         // no throw, 16.04
+            "email@example.com (Joe Smith)",
+            "email@example",
+            "email@-example.com",
+            "email@example.web",
+            "email@111.222.333.44444",
+            "email@example..com",
+            "Abc..123@example.com",
+            "”(),:;<>[\\]@example.com",
+            // "just”not”right@example.com",                                                // no throw, 16.04
+            "this\\ is\"really\"not\\allowed@example.com"
     };
-
-    private AccountInfo  validAccountInfo;
-    private Account      validAccount;
     private final String VALID_PASSWORD = "password";
+    private AccountInfo validAccountInfo;
+    private Account validAccount;
 
     @BeforeEach
     void setUp() {
@@ -88,7 +84,8 @@ class AccountTest {
     }
 
     @AfterEach
-    void tearDown() {}
+    void tearDown() {
+    }
 
 
     // ------------------------
@@ -203,20 +200,20 @@ class AccountTest {
         }
 
         assertAll(createAccountsThrow);
-   }
+    }
 
-   @Test
+    @Test
     void setEmptyPasswords() {
-       // TODO: Change to a more appropriate Exception-class
+        // TODO: Change to a more appropriate Exception-class
 
-       Executable[] setPasswordsThrow = new Executable[TestUtils.EMPTY_STRINGS.length];
-       for (int i = 0; i < TestUtils.EMPTY_STRINGS.length; i++) {
-           String emptyPassword = TestUtils.EMPTY_STRINGS[i];
-           String debug = "Set empty password on account.";
-           Executable setEmptyPassword = () -> validAccount.setPassword(emptyPassword);
-           setPasswordsThrow[i] = () -> assertThrows(Exception.class, setEmptyPassword, debug);
-       }
+        Executable[] setPasswordsThrow = new Executable[TestUtils.EMPTY_STRINGS.length];
+        for (int i = 0; i < TestUtils.EMPTY_STRINGS.length; i++) {
+            String emptyPassword = TestUtils.EMPTY_STRINGS[i];
+            String debug = "Set empty password on account.";
+            Executable setEmptyPassword = () -> validAccount.setPassword(emptyPassword);
+            setPasswordsThrow[i] = () -> assertThrows(Exception.class, setEmptyPassword, debug);
+        }
 
-       assertAll(setPasswordsThrow);
-   }
+        assertAll(setPasswordsThrow);
+    }
 }
