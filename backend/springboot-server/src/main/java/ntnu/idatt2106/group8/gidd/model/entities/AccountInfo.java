@@ -1,7 +1,5 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 
 /**
@@ -14,19 +12,16 @@ import javax.persistence.*;
 //  - Any security reasons?
 //  - Does not have it's own life cycle,    it's dependent on Account
 //  - Does not have it's own identity,      ''
-//  - Does not have any shared dependents, 
+//  - Does not have any shared dependents,
 
 @Entity
-@Table(name = "account_info")
+@Table(name = "accountinfo")
 public class AccountInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    int id;
+    private int id;
 
-    @JsonBackReference
-    @OneToOne(mappedBy = "accountInfo")
+    @OneToOne
     private Account account;
 
     @ManyToOne
@@ -52,20 +47,17 @@ public class AccountInfo {
         this.points = points;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Account getAccount() {
         return account;
     }
 
     public void setAccount(Account account) {
         this.account = account;
+        this.id = account.getId();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Level getUserLevel() {
@@ -140,7 +132,7 @@ public class AccountInfo {
         }
 
         public Builder setUserLevel(Level userLevel) {
-            userLevel = userLevel;
+            this.userLevel = userLevel;
             return this;
         }
 

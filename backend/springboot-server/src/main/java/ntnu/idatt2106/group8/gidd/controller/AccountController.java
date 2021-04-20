@@ -24,7 +24,7 @@ import java.util.Set;
  */
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RestController("/accounts")
+@RestController
 public class AccountController {
 
     @Autowired

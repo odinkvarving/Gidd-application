@@ -21,14 +21,15 @@ public class ActivityTypeService {
     private static final Logger log = LoggerFactory.getLogger(ActivityTypeService.class);
 
     @Autowired
-    private ActivityRepository activityRepository;
+    private ActivityTypeRepository activityTypeRepo;
 
-    @Autowired ActivityTypeRepository activityTypeRepository;
+    @Autowired
+    private ActivityRepository activityRepository;
 
     public List<ActivityType> getAllActivityTypes() {
         List<ActivityType> types = new ArrayList<>();
         try {
-            activityTypeRepository.findAll().forEach(types::add);
+            activityTypeRepo.findAll().forEach(types::add);
         }catch (DataAccessException e) {
             log.info("Activity types not found");
         }
@@ -37,7 +38,7 @@ public class ActivityTypeService {
 
     public Optional<ActivityType> getActivityType(int id) {
         try {
-            return activityTypeRepository.findById(id);
+            return activityTypeRepo.findById(id);
         }catch (DataAccessException e) {
             log.info("Could not find activity type");
         }
@@ -46,7 +47,7 @@ public class ActivityTypeService {
 
     public ActivityType addActivityType(ActivityType activityType) {
         try {
-            return activityTypeRepository.save(activityType);
+            return activityTypeRepo.save(activityType);
         }catch (DataAccessException e) {
             log.info("Could not add activity type");
         }
@@ -55,7 +56,7 @@ public class ActivityTypeService {
 
     public ActivityType updateActivityType(int id, ActivityType activityType) {
         try {
-            return activityTypeRepository.save(activityType);
+            return activityTypeRepo.save(activityType);
         }catch (DataAccessException e) {
             log.info("Could not update activity type");
         }
@@ -64,9 +65,22 @@ public class ActivityTypeService {
 
     public void deleteActivityType(int id) {
         try {
-            activityTypeRepository.deleteById(id);
+            activityTypeRepo.deleteById(id);
         }catch (DataAccessException e) {
             log.info("Could not delete activity type");
         }
+    }
+
+    public Set<Activity> findActivitiesByType(int id) {
+        Optional<ActivityType> activityType;
+        try {
+            activityType = activityTypeRepo.findById(id);
+            if(activityType.isPresent()) {
+                return activityType.get().getActivities();
+            }
+        }catch (DataAccessException e) {
+            log.info("Could not find any activities of this type");
+        }
+        return null;
     }
 }

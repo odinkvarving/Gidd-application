@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+
 @RestController
 @RequestMapping("/activityType")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ActivityTypeController {
 
     @Autowired
@@ -37,15 +37,16 @@ public class ActivityTypeController {
     public ActivityType updateActivityType(@RequestBody ActivityType newActivityType, @PathVariable("id") int id) {
         return activityTypeService.updateActivityType(id, newActivityType);
     }
-/*
+
     @GetMapping("/{id}/activities")
     public Set<Activity> findActivitiesByType(@PathVariable("id") int id) {
         return activityTypeService.findActivitiesByType(id);
     }
-*/
+
 
     @DeleteMapping("/{id}")
     public void deleteActivityType(@PathVariable("id") int id) {
         activityTypeService.deleteActivityType(id);
     }
 }
+

@@ -1,11 +1,11 @@
 package ntnu.idatt2106.group8.gidd.service;
 
-
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
 import ntnu.idatt2106.group8.gidd.repository.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +34,7 @@ public class ActivityService {
     private AccountActivityRepository accountActivityRepository;
 
     @Autowired
-    private ActivityTypeRepository activityTypeRepo;
-
-    @Autowired
-    private EquipmentRepository equipmentRepository;
+    private AccountService accountService;
 
     public List<Activity> getAllActivities() {
         List<Activity> activities = new ArrayList<>();
@@ -128,39 +125,38 @@ public class ActivityService {
     }
 
     public Optional<Account> addParticipantToActivity(int activityId, int participantId) {
-        Optional<Activity> activity;
-        Optional<Account> participant;
-        Set<AccountActivity> participantList;
-        AccountActivity addedParticipant;
-        try {
-            activity = activityRepository.findById(activityId);
-            participant = accountRepository.findById(participantId);
-            if(activity.isPresent() && participant.isPresent()) {
-                participantList = accountActivityRepository.findByActivityId(activityId).stream()
-                        .filter(accountActivity -> accountActivity.getQueuePosition()==0)
-                        .collect(Collectors.toCollection(HashSet::new));
+        boolean wasQueued = false;
 
-                int participatingSize = participantList.size();
-                if(participatingSize < activity.get().getMaxParticipants()) {
-                    log.info("There are " + participatingSize + " participants in this activity. ");
-                    addedParticipant = new AccountActivity(participantId, activityId, 0);
-                    accountActivityRepository.save(addedParticipant);
-                    log.info("Added as participant to activity.");
-                }else{
-                    ArrayList<AccountActivity> queueList = accountActivityRepository.findByActivityId(activityId).stream()
-                            .filter(accountActivity -> accountActivity.getQueuePosition() != 0)
-                            .collect(Collectors.toCollection(ArrayList::new));
-                    int queueSize = queueList.size();
-                    addedParticipant = new AccountActivity(participant.get().getId(), activity.get().getId(), (queueSize + 1));
-                    accountActivityRepository.save(addedParticipant);
-                    log.info("The activity is full. Participant added to queue with position: " + (queueSize + 1));
+        try {
+
+            if (accountService.accountExistsById(participantId) && this.activityRepository.existsById(activityId)) {
+                AccountActivity accountActivityToAdd;
+                int activitySize = this.activityRepository
+                        .findById(activityId)
+                        .orElseThrow(NoSuchElementException::new)
+                        .getMaxParticipants();
+                Set<AccountActivity> allAccountActivities = this.accountActivityRepository.findByActivityId(activityId);
+                if (allAccountActivities.size() < activitySize) { //there was space in the activity!
+                    accountActivityToAdd = new AccountActivity(participantId, activityId, 0);
+                } else if (allAccountActivities.size() == activitySize) {                         //there was not space in the activity, the account must be queued!
+                    accountActivityToAdd = new AccountActivity(participantId, activityId, 1);
+                    wasQueued = true;
+                } else {
+                    int highestQueuePosition =
+                            allAccountActivities.stream()
+                                    .filter(accountActivity -> accountActivity.getQueuePosition() > 0)
+                                    .max(Comparator.comparing(AccountActivity::getQueuePosition))
+                                    .orElseThrow(NoSuchElementException::new).getQueuePosition();
+                    accountActivityToAdd = new AccountActivity(participantId, activityId, highestQueuePosition + 1);
+                    wasQueued = true;
                 }
-                return participant;
-            }else {
-                log.info("Could not find the specified user or activity");
+                this.accountActivityRepository.save(accountActivityToAdd);
+            } else {
+                throw new NoSuchElementException("Either the given account id or the given activity " +
+                        "id was not found in the database");
             }
-        }catch (DataAccessException e) {
-            log.info("Could not add participant to activity");
+        } catch (DataAccessException e) {
+            log.info("Could not add account to activity");
         }
         return Optional.empty();
     }
@@ -170,10 +166,10 @@ public class ActivityService {
         try {
             List<AccountActivity> list = accountActivityRepository.findByActivityId(id)
                     .stream()
-                    .filter(accountActivity -> accountActivity.getQueuePosition() != 0)
+                    .filter(accountActivity -> accountActivity.getQueuePosition() == 0)
                     .collect(Collectors.toList());
             for (AccountActivity a : list) {
-                participatingAccounts.add(accountRepository.findById(a.getActivityId()).orElseThrow(NoSuchElementException::new));
+                participatingAccounts.add(accountRepository.findById(a.getAccountId()).orElseThrow(NoSuchElementException::new));
             }
             return participatingAccounts;
         }catch (NoSuchElementException e) {
@@ -204,15 +200,15 @@ public class ActivityService {
         try {
             List<AccountActivity> list = accountActivityRepository.findByActivityId(id)
                     .stream()
-                    .filter(accountActivity -> accountActivity.getQueuePosition() == 0)
+                    .filter(accountActivity -> accountActivity.getQueuePosition() > 0)
                     .collect(Collectors.toList());
             for (AccountActivity a : list) {
-                queueAccounts.add(accountRepository.findById(a.getActivityId()).orElseThrow(NoSuchElementException::new));
+                queueAccounts.add(accountRepository.findById(a.getAccountId()).orElseThrow(NoSuchElementException::new));
             }
             return queueAccounts;
         }catch (NoSuchElementException e) {
             log.info("Could not find any participants in this activity");
         }
-        return null;
+        return queueAccounts;
     }
 }
