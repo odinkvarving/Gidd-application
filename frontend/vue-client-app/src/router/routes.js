@@ -1,6 +1,7 @@
 import Home from "./Home.vue";
 import Register from "./Register.vue";
 import Login from "./Login.vue"
+import ProfilePage from "./ProfilePage.vue"
 
 const routes = [
   {
@@ -17,7 +18,13 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
-  },
+  },    
+  {
+    path:'/accounts/:userId',
+    name:'Profile',
+    component:ProfilePage
+  }
+
 ];
 
 export default routes;

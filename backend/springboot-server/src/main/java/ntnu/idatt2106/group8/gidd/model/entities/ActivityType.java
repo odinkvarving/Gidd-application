@@ -26,7 +26,7 @@ public class ActivityType {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Activity> activities = new HashSet<>();
 
-    public ActivityType() {
+    protected ActivityType() {
     }
 
     /**
@@ -44,10 +44,6 @@ public class ActivityType {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Set<Activity> getActivities() {
         return activities;
     }
@@ -58,10 +54,6 @@ public class ActivityType {
 
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public double getPointFactor() {

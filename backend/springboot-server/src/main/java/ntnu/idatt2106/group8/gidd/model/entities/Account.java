@@ -43,35 +43,36 @@ public class Account {
      *
      * @param email       the email of the new user.
      * @param password    the password of the new user.
-     * @param accountInfo the user-info of the new user, represented in a UserInfo-object.
      */
-    public Account(String email, String password, AccountInfo accountInfo) {
-        this.email = email;
-        this.password = password;
-        this.accountInfo = accountInfo;
+    public Account(String email, String password) {
+        this.setEmail(email);
+        this.setPassword(password);
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getEmail() {
         return email;
     }
 
+    /*
     public void setEmail(String email) {
+        if (!EmailValidator.getInstance().isValid(email))
+            throw new IllegalArgumentException("Invalid email: " + email);
+
         this.email = email;
-    }
+    }*/
 
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
+        if (password == null || password.trim().length() == 0)
+            throw new IllegalArgumentException("Empty password");
+
         this.password = password;
     }
 
@@ -89,6 +90,14 @@ public class Account {
 
     public void setCreatedActivities(Set<Activity> createdActivities) {
         this.createdActivities = createdActivities;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override

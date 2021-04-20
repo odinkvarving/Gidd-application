@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/activityType")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ActivityTypeController {
 
     @Autowired
@@ -37,7 +39,7 @@ public class ActivityTypeController {
     }
 /*
     @GetMapping("/{id}/activities")
-    public List<Activity> findActivitiesByType(@PathVariable("id") int id) {
+    public Set<Activity> findActivitiesByType(@PathVariable("id") int id) {
         return activityTypeService.findActivitiesByType(id);
     }
 */
