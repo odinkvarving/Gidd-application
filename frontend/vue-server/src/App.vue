@@ -1,17 +1,13 @@
 <template>
   <!--<img alt="Vue logo" src="./assets/logo.png">-->
-  <ProfilePage /><!--userInfo="{telephone:'4874562',address:'Sweet home alabama',email:'mail@mail.com'}"-->
+  <router-view /><!--userInfo="{telephone:'4874562',address:'Sweet home alabama',email:'mail@mail.com'}"-->
 </template>
 
 <script>
 //import HelloWorld from './components/HelloWorld.vue'
-import ProfilePage from "./components/ProfilePage";
 
 export default {
-  name: 'App',
-  components: {
-    ProfilePage
-  }
+  name: 'App'
 }
 </script>
 

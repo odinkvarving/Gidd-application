@@ -1,6 +1,6 @@
 <template>
   <div class="profile_container">
-    <img src="../assets/Default_cover.jpg" alt="Cover photo"
+    <img src="../../assets/Default_cover.jpg" alt="Cover photo"
          id="cover_photo"/>
     <img src={{userInfo.imageURL}} alt="Profile photo"
          width="170" height="170"
@@ -30,18 +30,25 @@
 </template>
 
 <script>
-import '../assets/styles/profile.css';
+import '../../assets/styles/profile.css';
 import fetch from "node-fetch";
 
 export default {
   name: "ProfilePage",
   el:'#info_list',
+  methods:{
+    getImgUrl(imgName){
+      let image=require.context('../../assets/',false,/\.png$/);
+      console.log(image('./'+imgName+'.png'))
+      return image('./'+imgName+'.png');
+    }
+  },
   data(){
     return{
     userInfo:{
       firstname:"No first name",
       surname:"No last name",
-      imageURL:"../assets/Default_profile.png",
+      imageURL:this.getImgUrl('Default_profile'),
       telephone:"No telephone number found",
       address:"No address found",
       email:"No email found",
@@ -49,8 +56,10 @@ export default {
       }
     }
   },
+
   mounted() {
-    fetch('http://localhost:8081/users/1',{
+    console.log(this.$route.params.userId)
+    fetch('http://localhost:8081/users/'+this.$route.params.userId,{
         method:'get',
       headers:{
           'Content-Type':'application/json'
@@ -62,16 +71,27 @@ export default {
     .then(data=>{
       console.log('Getting account')
       console.log(data);
+
+      if(data.firstname!==null||typeof data.firstname !== 'undefined'){
+        this.userInfo.firstname=data.firstname;
+      }
+      if(data.telephone!==null||typeof data.telephone !== 'undefined'){
+        this.userInfo.surname=data.surname;
+      }
+      if(data.imageURL!==null||typeof data.imageURL !== 'undefined'){
+        this.userInfo.imageURL=this.getImgUrl(data.imageURL);
+      }
       if(data.telephone!==null||typeof data.telephone !== 'undefined'){
         this.userInfo.telephone=data.telephone;
       }
-
       if(data.address!==null||typeof data.address !== 'undefined') {
         this.userInfo.address = data.address;
       }
-
       if(data.email!==null||typeof data.email !== 'undefined') {
         this.userInfo.email = data.email;
+      }
+      if(data.description!==null||typeof data.description !== 'undefined'){
+        this.userInfo.description=data.description;
       }
 
     })
