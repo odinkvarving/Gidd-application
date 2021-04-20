@@ -99,7 +99,7 @@ export default {
             let regPhone = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
             return regPhone.test(this.phoneValue);
         },
-        async validateEmail() {
+        validateEmail() {
 
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -137,6 +137,10 @@ export default {
                     if(data){
                         console.log("showing success modal");
                         this.$bvModal.show("success-modal");
+                        this.nameValue = "";
+                        this.phoneValue = "";
+                        this.emailValue = "";
+                        this.passwordValue = "";
                     }else{
                         console.log("email already exists, showing error modal");
                         this.$bvModal.show("error-modal");    
@@ -146,8 +150,8 @@ export default {
                     console.log(error)
                 });
 
-
-            await this.$router.push("/login");
+            //TODO: make it possible to redirect to login page AND show modal
+           // await this.$router.push("/login");
         },
         handleRegisterWithFacebook(){
             //Implement facebook compability
@@ -164,7 +168,6 @@ export default {
 .registration-box {
     position: relative;
     width: 563px;
-    height: 80%;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
@@ -268,6 +271,7 @@ export default {
     border: none;
     border-radius: 6px;
     outline: none;
+    margin-bottom: 50px;
 }
 
 #register-btn:hover{

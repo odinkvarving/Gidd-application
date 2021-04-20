@@ -17,7 +17,11 @@ function login(email, password){
     };
 
     return fetch("http://localhost:8080/accounts/login", requestOptions)
-        .then(handleResponse)
+        .then(response => response.text())
+        .then(text => {
+            const data = text && JSON.parse(text);
+            return data;
+        })
         .then(jwtResponse => {
             if(jwtResponse.jwtToken){
                 localStorage.setItem('user', JSON.stringify(jwtResponse))
