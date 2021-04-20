@@ -5,7 +5,8 @@ export const userService = {
     getAccountByEmail,
     logout,
     getAll,
-    getAccountDetails
+    getAccountDetails,
+    isLoggedIn
 }
 
 
@@ -105,4 +106,27 @@ function getAccountDetails(){
         console.log(error, "error from decoding token");
         return null;
     }
+}
+
+function isLoggedIn(){
+    
+    // get token from localstorage
+    let user = JSON.parse(localStorage.getItem("user"));
+    if(!user || !user.jwtToken){
+        return false;
+    }
+
+    console.log(JSON.stringify(user.jwtToken));
+
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.jwtToken}`
+        },
+        body: JSON.stringify({jwtToken: user.jwtToken}) 
+    }
+
+    return fetch("http://localhost:8080/accounts/validateToken", requestOptions)
+        .then(handleResponse);
 }

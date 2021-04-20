@@ -76,6 +76,7 @@ export default {
                 console.log("Invalid login credentials.");
                 this.showLoginError = true;
             }
+
             // TODO: create error when wrong username and password, and redirect to either profile
             // or activity dashboard
         },

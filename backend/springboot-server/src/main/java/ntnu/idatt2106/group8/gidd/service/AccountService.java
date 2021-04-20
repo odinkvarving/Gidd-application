@@ -11,12 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +36,9 @@ public class AccountService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private AccountInfoRepo accountInfoRepo;
@@ -76,6 +78,12 @@ public class AccountService {
         String token = jwtUtil.generateToken(authRequest.getEmail());
 
         return new JWTResponse(token);
+    }
+
+    public boolean isValidToken(String jwtToken){
+        final String email = jwtUtil.extractUsername(jwtToken);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+        return (email.equals(userDetails.getUsername()) && !jwtUtil.isTokenExpired(jwtToken));
     }
 
     public Account findByEmail(String email){

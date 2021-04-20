@@ -4,12 +4,9 @@ import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
-import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -84,5 +81,10 @@ public class AccountController {
     @PostMapping("/accounts/login")
     public JWTResponse login(@RequestBody AuthRequest authRequest, HttpServletResponse response) throws Exception {
         return accountService.login(authRequest, response);
+    }
+
+    @PostMapping("/accounts/validateToken")
+    public boolean isValidToken(@RequestBody JWTResponse jwtResponse){
+        return accountService.isValidToken(jwtResponse.getJwtToken());
     }
 }
