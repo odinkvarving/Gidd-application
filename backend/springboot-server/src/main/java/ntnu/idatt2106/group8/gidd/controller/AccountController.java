@@ -4,12 +4,9 @@ import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
-import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,12 +27,6 @@ public class AccountController {
 
     @Autowired
     private AccountService accountService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     Logger logger = LoggerFactory.getLogger(AccountController.class);
 
@@ -77,6 +68,7 @@ public class AccountController {
         return success;
     }
 
+
     /**
      * Important method that is necessary to authenticate a
      * user login and generate a JWT token if the login is successful.
@@ -87,18 +79,12 @@ public class AccountController {
      * @throws Exception
      */
     @PostMapping("/accounts/login")
-    public JWTResponse generateToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) throws Exception {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
-            );
-        }catch (Exception exception){
-            logger.info("Bad credentials! Username/password is wrong");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return new JWTResponse(null);
-        }
-        String token = jwtUtil.generateToken(authRequest.getEmail());
+    public JWTResponse login(@RequestBody AuthRequest authRequest, HttpServletResponse response) throws Exception {
+        return accountService.login(authRequest, response);
+    }
 
-        return new JWTResponse(token);
+    @PostMapping("/accounts/validateToken")
+    public boolean isValidToken(@RequestBody JWTResponse jwtResponse){
+        return accountService.isValidToken(jwtResponse.getJwtToken());
     }
 }

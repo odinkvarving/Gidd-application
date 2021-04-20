@@ -1,14 +1,21 @@
 package ntnu.idatt2106.group8.gidd.service;
 
+import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
+import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.repository.AccountInfoRepo;
 import ntnu.idatt2106.group8.gidd.repository.AccountRepo;
+import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +27,18 @@ public class AccountService {
 
     @Autowired
     private AccountRepo accountRepo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private AccountInfoRepo accountInfoRepo;
@@ -40,9 +59,31 @@ public class AccountService {
             logger.info("Error! Could not create user, email already exists");
             return false;
         }else{
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
             accountRepo.save(account);
             return true;
         }
+    }
+
+    public JWTResponse login(AuthRequest authRequest, HttpServletResponse response) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
+            );
+        }catch (Exception exception){
+            logger.info("Bad credentials! Username/password is wrong");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return new JWTResponse(null);
+        }
+        String token = jwtUtil.generateToken(authRequest.getEmail());
+
+        return new JWTResponse(token);
+    }
+
+    public boolean isValidToken(String jwtToken){
+        final String email = jwtUtil.extractUsername(jwtToken);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+        return (email.equals(userDetails.getUsername()) && !jwtUtil.isTokenExpired(jwtToken));
     }
 
     public Account findByEmail(String email){

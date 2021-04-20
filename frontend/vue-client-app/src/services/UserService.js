@@ -2,9 +2,11 @@ import VueJwtDecode from "vue-jwt-decode"
 
 export const userService = {
     login,
+    getAccountByEmail,
     logout,
     getAll,
-    getAccountDetails
+    getAccountDetails,
+    isLoggedIn
 }
 
 
@@ -16,7 +18,11 @@ function login(email, password){
     };
 
     return fetch("http://localhost:8080/accounts/login", requestOptions)
-        .then(handleResponse)
+        .then(response => response.text())
+        .then(text => {
+            const data = text && JSON.parse(text);
+            return data;
+        })
         .then(jwtResponse => {
             if(jwtResponse.jwtToken){
                 localStorage.setItem('user', JSON.stringify(jwtResponse))
@@ -25,10 +31,25 @@ function login(email, password){
         });
 }
 
+function getAccountByEmail(){
+
+    try{
+        let account = getAccountDetails();
+        const requestOptions ={
+            method: 'GET',
+            headers: authorizationHeader()
+        }
+        return fetch(`http://localhost:8080/accounts/${account.sub}`, requestOptions).then(handleResponse);
+    }catch(error){
+        console.log("User is not logged in, redirecting to login page...");
+        return null;
+    }   
+
+}
+
 function logout(){
     // remove user from local storage to log user out
     localStorage.removeItem('user');
-    this.$router.push("/login");
 }
 
 function getAll(){
@@ -76,7 +97,6 @@ function getAccountDetails(){
     
     // get token from localstorage
     let token = JSON.parse(localStorage.getItem("user"));
-    console.log(token);
     try{
         // decode token and attach to account object
         let decoded = VueJwtDecode.decode(token.jwtToken);
@@ -86,4 +106,27 @@ function getAccountDetails(){
         console.log(error, "error from decoding token");
         return null;
     }
+}
+
+function isLoggedIn(){
+    
+    // get token from localstorage
+    let user = JSON.parse(localStorage.getItem("user"));
+    if(!user || !user.jwtToken){
+        return false;
+    }
+
+    console.log(JSON.stringify(user.jwtToken));
+
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.jwtToken}`
+        },
+        body: JSON.stringify({jwtToken: user.jwtToken}) 
+    }
+
+    return fetch("http://localhost:8080/accounts/validateToken", requestOptions)
+        .then(handleResponse);
 }

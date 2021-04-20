@@ -2,8 +2,8 @@
     <div>
         <b-modal :id="name" v-model="modalShow" size="sm" hide-footer hide-header title="BootstrapVue">
             <div class="container">
-                <div class="confirm-circle">
-                    <p style="font-size: 4rem; margin-top: 14px;"><b-icon icon="check2" variant="light"></b-icon></p>
+                <div class="error-circle">
+                    <p style="font-size: 4rem; margin-top: 7px;"><b-icon icon="x" variant="danger"></b-icon></p>
                 </div>
                 <h2>{{ header }}</h2>
                 <p>{{ info }}</p>
@@ -15,7 +15,7 @@
 
 <script>
 export default {
-    name: "ConfirmModal",
+    name: "ErrorModal",
     data(){
         return{
             modalShow: this.display
@@ -37,8 +37,7 @@ export default {
 </script>
 
 <style scoped>
-
-    
+        
     .container{
         font-family: "Mulish";
         width: 100%;
@@ -47,19 +46,18 @@ export default {
         flex-flow: column;
         align-items: center;
         justify-content: center;
+        text-align: center;
     }
 
-    .confirm-circle{
+    .error-circle{
         width: 100px;
         height: 100px;
-        border:solid 2px #81cc34;
-        background-color: #81cc34;
+        border:solid 3px #f15e5e;
         border-radius: 100%;
         margin-bottom: 25px;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0px 0px 3px #616161;
     }
 
     h2, p {
@@ -73,13 +71,13 @@ export default {
         width: 80%;
         height: 40px;
         color: white;
-        background-color: #81cc34;
+        background-color: #f15e5e;
         border: none;
         transition: 0.2s;
     }
 
     .button:hover{
         transition: 0.2s;
-        background-color: #70b02c;
+        background-color: #f15e5e;
     }
 </style>

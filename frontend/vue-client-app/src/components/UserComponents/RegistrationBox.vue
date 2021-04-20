@@ -1,7 +1,7 @@
 <template>
     <div class="registration-box">
 
-        <router-link to="/"><button id="close-btn"><span>x</span></button></router-link>
+        <router-link to="/"><p class="close-btn-p"><b-icon class="text-muted" id="close-btn" icon="x"></b-icon></p></router-link>
         <h2 style="text-align: center">Registrer deg hos GIDD idag<br />Det er bare å GIDDE</h2>
 
         <div id="facebook-btn">
@@ -31,22 +31,26 @@
             <p v-if="!passwordValid">Passord må være mellom 5 og 16 tegn</p>
             <input type="password" class="input" id="password" placeholder="Passord" v-model="passwordValue">
         </div>
-
+        
         <button id="register-btn" @click="registerUser">Register</button>
         
-        <ConfirmModal header="Success!" info="Registration was successful!" buttonText="OK" />
+        <ConfirmModal name="success-modal" header="Success!" info="Registration was successful!" buttonText="OK" />
+        <ErrorModal name="error-modal" header="Error" info="Registration not successfull, email already exists." buttonText="OK" />
+
     </div>
 </template>
 
 <script>
 
 import ConfirmModal from "../PopUpComponents/ConfirmModal.vue"
+import ErrorModal from "../PopUpComponents/ErrorModal.vue"
 
 
 export default {
     name: "RegistrationBox",
     components: {
-        ConfirmModal
+        ConfirmModal,
+        ErrorModal
     },
     data(){
         return {
@@ -95,7 +99,7 @@ export default {
             let regPhone = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
             return regPhone.test(this.phoneValue);
         },
-        async validateEmail() {
+        validateEmail() {
 
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -133,12 +137,21 @@ export default {
                     if(data){
                         console.log("showing success modal");
                         this.$bvModal.show("success-modal");
+                        this.nameValue = "";
+                        this.phoneValue = "";
+                        this.emailValue = "";
+                        this.passwordValue = "";
+                    }else{
+                        console.log("email already exists, showing error modal");
+                        this.$bvModal.show("error-modal");    
                     }
                 })
-                .catch(error => console.log(error));
+                .catch(error => {
+                    console.log(error)
+                });
 
-
-            // await this.$router.push("/login");
+            //TODO: make it possible to redirect to login page AND show modal
+           // await this.$router.push("/login");
         },
         handleRegisterWithFacebook(){
             //Implement facebook compability
@@ -150,11 +163,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 .registration-box {
+    position: relative;
     width: 563px;
-    height: 720px;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
@@ -221,6 +234,7 @@ export default {
 .or-text {
     font-size: 13px;
     opacity: 75%;
+    margin-top: 17px;
 }
 
 .input-container{
@@ -257,11 +271,23 @@ export default {
     border: none;
     border-radius: 6px;
     outline: none;
+    margin-bottom: 50px;
 }
 
 #register-btn:hover{
     background-color: #efb03a;
     cursor: pointer;
 }
+
+#close-btn{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.close-btn-p{
+    font-size: 50px;
+}
+
 
 </style>

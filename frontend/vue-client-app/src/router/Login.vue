@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="body">
         <FrontPageNav />
         <div class="front-page">
             <LoginBox />

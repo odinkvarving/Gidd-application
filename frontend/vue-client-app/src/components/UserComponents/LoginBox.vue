@@ -1,7 +1,7 @@
 <template>
     <div class="login-box">
-        <router-link to="/"><button id="close-btn"><span>x</span></button></router-link>
-        <h2>GIDD og logg deg inn da</h2>
+        <router-link to="/"><p class="close-btn-p"><b-icon class="text-muted" id="close-btn" icon="x"></b-icon></p></router-link>
+        <h2 class="header">GIDD og logg deg inn da</h2>
 
         <div id="facebook-btn">
             <img src="../../assets/facebook.png" alt="facebook logo" style="width: 32px; height: 32px">
@@ -23,6 +23,12 @@
         </div>
 
         <button id="Login-btn" @click="loginUser">Logg inn</button>
+        <router-link to="/register"><p class="register-text">Har du ikke bruker? Klikk her for å registrere deg</p></router-link>
+        <div v-if="showLoginError" class="invalid-login">
+            <p class="invalid-login-text">Email or password is not correct, please try again</p>
+            <p @click="closeInvalidLoginError" class="x-icon"><b-icon icon="x"></b-icon></p>
+        </div>
+        <div class="spacing" v-if="!showLoginError"></div>
     </div>
 </template>
 
@@ -38,7 +44,8 @@ export default {
             isEmailValid: true,
             isPasswordValid: true,
             emailValue: '',
-            passwordValue: ''
+            passwordValue: '',
+            showLoginError: false
         }
     },
     methods: {
@@ -60,41 +67,18 @@ export default {
         },
         async login() {
             
-            await userService.login(this.emailValue, this.passwordValue);
+            let response = await userService.login(this.emailValue, this.passwordValue);
 
-            console.log(userService.getAll());
+            if(response.jwtToken){
+                console.log("Login successfull! Token: ");
+                console.log(response.jwtToken);
+            }else{
+                console.log("Invalid login credentials.");
+                this.showLoginError = true;
+            }
 
-            console.log(userService.getAccountDetails());
-/*
-            let token;
-
-            await fetch("http://localhost:8080/accounts/login", {
-                method: "POST",
-                headers: {"Content-Type" : "application/json"},
-                body: JSON.stringify(loginData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                token = data.jwtToken
-            })
-            .catch(error => {
-                // TODO: create error pop-up here, wrong username/password
-                console.log(`Error when logging in: ${error}`)
-            });
-            
-            console.log(token);
-            
-            
-            await fetch("http://localhost:8080/accounts",{
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.log(error));
-            //await this.$router.push("/dashboard");
-            */
+            // TODO: create error when wrong username and password, and redirect to either profile
+            // or activity dashboard
         },
         handleLoginWithFacebook() {
             //Implement facebook compability
@@ -102,18 +86,22 @@ export default {
         handleLoginWithGoogle() {
             //Implement google compability
         },
-        closeWindow () {
-            
+        closeInvalidLoginError(){
+            this.showLoginError = false;
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
+
+.header {
+    margin-top: 50px;
+}
 
 .login-box {
+    position: relative;
     width: 510px;
-    height: 600px;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
@@ -181,6 +169,7 @@ export default {
 .or-text {
     font-size: 13px;
     opacity: 75%;
+    margin-top: 17px;
 }
 
 .input-container{
@@ -225,11 +214,56 @@ export default {
 }
 
 #close-btn{
-    display: flex;
-    flex-direction: row;
-    background: none;
-    cursor: pointer;
-    outline: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
 
+.close-btn-p{
+    font-size: 50px;
+}
+
+.register-text {
+    opacity: 75%;
+    margin-top: 15px;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.register-text:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.invalid-login{
+    width: 75%;
+    height: 50px;
+    background-color: #ffdbdf;
+    border: solid 1px #b7666a;
+    margin: 20px 0 40px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.invalid-login .invalid-login-text{
+    color: #91595c;
+    font-size: 13px;
+    margin: 0 0 0 20px;
+
+}
+
+.x-icon {
+    font-size: 20px;
+    color: #492728;
+    margin: 0 10px 0 0;
+}
+
+.x-icon:hover {
+    cursor: pointer;
+}
+
+.spacing {
+    margin-bottom: 40px;
+}
 </style>

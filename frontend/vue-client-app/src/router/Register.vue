@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="body">
         <FrontPageNav />
         <div class="front-page">
             <RegistrationBox />
@@ -22,6 +22,7 @@ export default {
 
 <style>
 
+  
     .front-page {
         height: 100vh;
         width: 100%;
