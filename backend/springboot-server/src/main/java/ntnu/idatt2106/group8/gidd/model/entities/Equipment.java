@@ -3,25 +3,17 @@ package ntnu.idatt2106.group8.gidd.model.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * A entity-class defining the equipment table in the database.
  *
  * @author Endré Hadzalic
  */
-@Entity
-@Table(name = "equipment")
+@Embeddable
 public class Equipment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
     private String description;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "activity_id")
-    private Activity activity;
 
     protected Equipment() {
     }
@@ -35,19 +27,24 @@ public class Equipment {
         this.description = description;
     }
 
-    public Activity getActivity() {
-        return activity;
-    }
-
-    public int getId() {
-        return id;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String type) {
         this.description = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Equipment equipment = (Equipment) o;
+        return Objects.equals(description, equipment.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description);
     }
 }

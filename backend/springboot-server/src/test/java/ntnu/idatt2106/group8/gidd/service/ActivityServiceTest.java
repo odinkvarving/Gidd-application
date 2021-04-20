@@ -42,14 +42,11 @@ class ActivityServiceTest {
     @Autowired
     private AccountActivityRepository accountActivityRepository;
 
-    @Autowired
-    private EquipmentRepository equipmentRepository;
-
     private Activity testActivity;
 
     private Account dummyAccount;
 
-   private Activity dummyActivity;
+    private Activity dummyActivity;
 
     @BeforeEach
     void setUp() {
@@ -114,7 +111,7 @@ class ActivityServiceTest {
     @Test
     void deleteActivity() {
         activityService.addActivity(this.dummyActivity);
-        assertEquals(8, activityRepository.findById(this.dummyActivity.getId()).get().getId());
+        assertEquals(6, activityRepository.findById(this.dummyActivity.getId()).get().getId());
         activityService.deleteActivity(this.dummyActivity.getId());
         assertEquals(Optional.empty(), activityRepository.findById(dummyActivity.getId()));
     }
@@ -134,11 +131,11 @@ class ActivityServiceTest {
     }
 
     //FIXME: fix the entity relationship between equipment and activity.
-//    @Test
-//    void getActivityEquipment() {
-//        Set<Equipment> equipmentList = activityService.getActivityEquipment(this.testActivity.getId());
-//        assertEquals(2, equipmentList.size());
-//    }
+    @Test
+    void getActivityEquipment() {
+        Set<Equipment> equipmentList = activityService.getActivityEquipment(this.testActivity.getId());
+        assertEquals(2, equipmentList.size());
+    }
 
     @Test
     void addParticipantToActivity() {
