@@ -84,7 +84,7 @@ class AccountTest {
                 .setProfileDescription("Lorem ipsum")
                 .setPoints(0)
                 .build();
-        validAccount = new Account(VALID_EMAILS[0], VALID_PASSWORD, validAccountInfo);
+        validAccount = new Account(VALID_EMAILS[0], VALID_PASSWORD);
     }
 
     @AfterEach
@@ -122,7 +122,7 @@ class AccountTest {
         for (int i = 0; i < INVALID_EMAILS.length; i++) {
             String invalidEmail = INVALID_EMAILS[i];
             String debug = "Created account with invalid email: " + invalidEmail;
-            Executable createAccount = () -> new Account(invalidEmail, VALID_PASSWORD, validAccountInfo);
+            Executable createAccount = () -> new Account(invalidEmail, VALID_PASSWORD);
             createAccountsThrow[i] = () -> assertThrows(Exception.class, createAccount, debug);
         }
 
@@ -152,7 +152,7 @@ class AccountTest {
         for (int i = 0; i < TestUtils.EMPTY_STRINGS.length; i++) {
             String emptyEmail = TestUtils.EMPTY_STRINGS[i];
             String debug = "Created account with empty email: " + emptyEmail;
-            Executable createAccount = () -> new Account(emptyEmail, VALID_PASSWORD, validAccountInfo);
+            Executable createAccount = () -> new Account(emptyEmail, VALID_PASSWORD);
             createAccountsThrow[i] = () -> assertThrows(Exception.class, createAccount, debug);
         }
 
@@ -198,7 +198,7 @@ class AccountTest {
         for (int i = 0; i < TestUtils.EMPTY_STRINGS.length; i++) {
             String emptyPassword = TestUtils.EMPTY_STRINGS[i];
             String debug = "Created account with empty password";
-            Executable createAccount = () -> new Account(VALID_EMAILS[0], emptyPassword, validAccountInfo);
+            Executable createAccount = () -> new Account(VALID_EMAILS[0], emptyPassword);
             createAccountsThrow[i] = () -> assertThrows(Exception.class, createAccount, debug);
         }
 

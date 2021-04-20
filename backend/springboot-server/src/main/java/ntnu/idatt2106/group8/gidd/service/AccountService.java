@@ -8,6 +8,7 @@ import ntnu.idatt2106.group8.gidd.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -25,19 +26,16 @@ public class AccountService {
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
-    AccountInfoRepository accountInfoRepository;
+    private AccountInfoRepository accountInfoRepository;
 
     @Autowired
-    LevelRepository levelRepository;
+    private AccountActivityRepository accountActivityRepository;
 
     @Autowired
-    AccountActivityRepository accountActivityRepository;
-
-    @Autowired
-    ActivityRepository activityRepository;
+    private ActivityRepository activityRepository;
 
     /**
      * Saves a new account to the database along with its account information.
@@ -45,6 +43,13 @@ public class AccountService {
      * @param account     the new account to save in the database.
      * @param accountInfo the info of the new account.
      */
+
+    public Set<Account> findAllAccounts(){
+        Set<Account> result = new HashSet<>();
+        this.accountRepository.findAll().forEach(result::add);
+        return result;
+    }
+
     public void saveAccountWithInfo(Account account, AccountInfo accountInfo) {
         this.accountRepository.save(account);
         accountInfo.setAccount(account);
@@ -73,12 +78,29 @@ public class AccountService {
     }
 
     /**
-     * Saves a account to the datebase.
+     * Saves a account to the database.
      *
      * @param account the account object to save.
      */
     public void saveAccount(Account account) {
         this.accountRepository.save(account);
+    }
+
+    /**
+     * Updates an account
+     *
+     * @param id the id of the account (not used)
+     * @param account the account-object to save
+     * @return the account that was updated
+     */
+
+    public Account updateAccount(int id, Account account) {
+        try {
+            return accountRepository.save(account);
+        }catch (DataAccessException e) {
+            logger.info("Could not update account");
+        }
+        return null;
     }
 
     /**
@@ -165,7 +187,7 @@ public class AccountService {
      * @param accountID the id of the account.
      * @return true if the account exists in the database, false if not.
      */
-    public boolean existsById(int accountID) {
+    public boolean accountExistsById(int accountID) {
         return this.accountRepository.existsById(accountID);
     }
 
@@ -176,7 +198,7 @@ public class AccountService {
      * @param password the password of the account.
      * @return true if the account exists in the database, false if not.
      */
-    public boolean existByCredentials(String email, String password) {
+    public boolean accountExistByCredentials(String email, String password) {
         boolean didExist = false;
         if (findAccountByCredentials(email, password) != null) {
             didExist = true;
@@ -184,12 +206,20 @@ public class AccountService {
         return didExist;
     }
 
+    /**
+     * Removes the binding between a account and a activity, while decrementing the queue position of the accounts
+     * above in queue (if any).
+     *
+     * @param activityId the id of the activity to remove the binding from the account to.
+     * @param accountId  the id of the account to remove the binding from the activity from.
+     */
     public void removeAccountFromActivity(int activityId, int accountId) {
-        if (existsById(accountId) && this.activityRepository.existsById(activityId)) {
+        if (accountExistsById(accountId) && this.activityRepository.existsById(activityId)) {
             int queuePosition =
                     this.accountActivityRepository
                             .findById(new AccountActivityId(accountId, activityId))
-                            .orElseThrow(NoSuchElementException::new).getQueuePosition();
+                            .orElseThrow(NoSuchElementException::new)
+                            .getQueuePosition();
             this.accountActivityRepository.deleteById(new AccountActivityId(accountId, activityId));
             Set<AccountActivity> aboveInQueue = this.accountActivityRepository.findByActivityId(activityId).stream()
                     .filter(accountActivity -> accountActivity.getQueuePosition() > queuePosition)
@@ -200,7 +230,8 @@ public class AccountService {
     }
 
     /**
-     * Binds a given account ot a given activity.
+     * Binds a given account to a given activity. If there is space in the activity the account is immediately bound
+     * to the activity. Otherwise the account is put to the back of the queue.
      *
      * @param activityId the id of the activity to add the account to.
      * @param accountId  the id of the account to add to the activity.
@@ -213,7 +244,7 @@ public class AccountService {
         try {
             AccountActivity accountActivityToAdd;
 
-            if (existsById(accountId) && this.activityRepository.existsById(activityId)) {
+            if (accountExistsById(accountId) && this.activityRepository.existsById(activityId)) {
                 int activitySize = this.activityRepository
                         .findById(activityId)
                         .orElseThrow(NoSuchElementException::new)
@@ -244,6 +275,19 @@ public class AccountService {
             logger.error("Error during parsing of highest queue position", npe);
         }
         return wasQueued;
+    }
+
+    /**
+     * Deletes a specifiec account using the account's ID
+     * @param id the ID of the account
+     */
+
+    public void deleteAccount(int id) {
+        try {
+            accountRepository.deleteById(id);
+        }catch (DataAccessException e) {
+            logger.info("Could not delete activity");
+        }
     }
 
 }

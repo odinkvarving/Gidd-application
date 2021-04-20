@@ -30,7 +30,7 @@ public class Activity {
     @JoinColumn(name = "level_id")
     private Level level;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "activity", fetch = FetchType.LAZY)
     private Set<Equipment> equipment = new HashSet<>();
 
     @Column(name = "start_time")
@@ -76,7 +76,11 @@ public class Activity {
         return maxParticipants;
     }
 
+    // Should allow 0 if the *system* is able to generate new activities
     public void setMaxParticipants(int maxParticipants) {
+        if (maxParticipants < 1)
+            throw new IllegalArgumentException("Participants must be greater than 1");
+
         this.maxParticipants = maxParticipants;
     }
 
@@ -122,6 +126,8 @@ public class Activity {
     }
 
     public void setLongitude(float longitude) {
+        if (longitude < -180 || longitude > 180)
+            throw new IllegalArgumentException(String.format("Longitude == %f. Valid range is [-180, 180]", longitude));
         this.longitude = longitude;
     }
 
@@ -130,6 +136,8 @@ public class Activity {
     }
 
     public void setLatitude(float latitude) {
+        if (latitude < -90 || latitude > 90)
+            throw new IllegalArgumentException(String.format("Latitude == %f. Valid range is [-90, 90]", latitude));
         this.latitude = latitude;
     }
 
@@ -138,6 +146,11 @@ public class Activity {
     }
 
     public void setStartTime(LocalDateTime activityStart) {
+        if (activityStart == null)
+            throw new IllegalArgumentException("start cannot be null");
+        if (!activityStart.isBefore(this.endTime))
+            throw new IllegalArgumentException("start must be before end");
+
         this.startTime = activityStart;
     }
 
@@ -146,6 +159,11 @@ public class Activity {
     }
 
     public void setEndTime(LocalDateTime activityEnd) {
+        if (activityEnd == null)
+            throw new IllegalArgumentException("end cannot be null");
+        if (!activityEnd.isAfter(this.startTime))
+            throw new IllegalArgumentException("end must be after start");
+
         this.endTime = activityEnd;
     }
 
@@ -154,6 +172,8 @@ public class Activity {
     }
 
     public void setDescription(String description) {
+        if (description == null)
+            description = "";
         this.description = description;
     }
 

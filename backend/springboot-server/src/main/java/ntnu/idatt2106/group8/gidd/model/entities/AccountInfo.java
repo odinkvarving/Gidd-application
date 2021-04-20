@@ -22,7 +22,6 @@ public class AccountInfo {
     private int id;
 
     @OneToOne
-    @MapsId
     private Account account;
 
     @ManyToOne
@@ -54,6 +53,7 @@ public class AccountInfo {
 
     public void setAccount(Account account) {
         this.account = account;
+        this.id = account.getId();
     }
 
     public int getId() {
