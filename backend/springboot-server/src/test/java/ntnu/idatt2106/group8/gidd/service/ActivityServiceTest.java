@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,14 +67,14 @@ class ActivityServiceTest {
                 .build();
 
         activityService.addActivity(testActivity);
-        AccountActivity test = new AccountActivity(testAccount.getId(), testActivity.getId(), 0);
-        accountActivityRepository.save(test);
+
+        activityService.addParticipantToActivity(testActivity.getId(), testAccount.getId());
 
         dummyAccount = new Account("dummy@hotmail.com", "dummyPassword");
         accountService.saveAccount(dummyAccount);
 
         dummyActivity = new Activity
-                .Builder("Dummy activity", dummyAccount, testActivityType, testLevel, null, null, 2)
+                .Builder("Dummy activity", dummyAccount, testActivityType, testLevel, null, null, 3)
                 .setDescription("Dummytest")
                 .build();
     }
@@ -143,5 +144,32 @@ class ActivityServiceTest {
                 assertNotEquals(0, a.getQueuePosition());
             }
         }
+        assertEquals(2, accountActivityRepository.findByActivityId(testActivity.getId()).size());
+    }
+
+    /**
+     * Test for fetching all accounts in specific activity.
+     * Should return only 1 activity even when another is added, because maxParticipants is 1.
+     */
+    @Test
+    void getAllAccountsInActivity() {
+        Account retrieved;
+        activityService.addParticipantToActivity(testActivity.getId(), dummyAccount.getId());
+        List<Account> participants = activityService.getAllAccountsInActivity(testActivity.getId());
+
+        for (Account account : participants) {
+            if (account.getId() == dummyAccount.getId()) {
+                retrieved = account;
+                assertEquals("dummy@hotmail.com", retrieved.getEmail());
+                AccountActivity ac = accountActivityRepository.findByAccountId(dummyAccount.getId()).stream()
+                        .filter(accountActivity -> accountActivity
+                                .getAccountId() == dummyAccount.getId()).findFirst().orElseThrow(NoSuchElementException::new);
+
+                assertEquals(0, ac.getQueuePosition());
+            }
+
+        }
+        assertEquals(1, activityService.getAllAccountsInActivity(testActivity.getId()).size());
+        assertEquals(1, activityService.getAllAccountsInQueue(testActivity.getId()).size(), "No accounts in queue");
     }
 }
