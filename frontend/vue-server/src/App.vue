@@ -1,28 +1,13 @@
 <template>
-  <!--<img alt="Vue logo" src="./assets/logo.png">-->
-  <!--<router-view />--><!--userInfo="{telephone:'4874562',address:'Sweet home alabama',email:'mail@mail.com'}"-->
-
   <div id="app">
-    <Index/>
-    <ActivityFeed v-show="isActivityFeedVisible" @activityClicked="onActivityClicked"/>
-    <ActivityCard v-show="isActivityCardVisible" :activity="selectedActivity"/>
+    <router-view/>
   </div>
 </template>
 
 <script>
-  import Index from './router/index.vue'
-  import ActivityFeed from './components/activityFeedComponents/ActivityFeed.vue'
-  import ActivityCard from './components/activityCardComponents/ActivityCard.vue'
-
 
 export default {
   name: 'App',
-
-  components: {
-    Index,
-    ActivityCard,
-    ActivityFeed
-  },
 
   data() {
     return {

@@ -2,7 +2,7 @@
   <div class="profile_container">
     <img src="../../assets/Default_cover.jpg" alt="Cover photo"
          id="cover_photo"/>
-    <img src={{userInfo.imageURL}} alt="Profile photo"
+    <img :src=userInfo.imageURL alt="Profile photo"
          width="170" height="170"
          class="headshot" id="profile_photo">
     <div class="headshot">
@@ -33,9 +33,15 @@
 import '../../assets/styles/profile.css';
 import fetch from "node-fetch";
 
+let path_to_db='http://localhost:8081/';
+/**
+ * @Author Kevin Andre Helgeland
+ * Component for displaying the profile page
+ * @method getImgUrl(String)
+ * This is a method for creating an image url that is accessible for the user
+ */
 export default {
   name: "ProfilePage",
-  el:'#info_list',
   methods:{
     getImgUrl(imgName){
       let image=require.context('../../assets/',false,/\.png$/);
@@ -59,7 +65,7 @@ export default {
 
   mounted() {
     console.log(this.$route.params.userId)
-    fetch('http://localhost:8081/users/'+this.$route.params.userId,{
+    fetch(path_to_db+'users/'+this.$route.params.userId,{
         method:'get',
       headers:{
           'Content-Type':'application/json'
