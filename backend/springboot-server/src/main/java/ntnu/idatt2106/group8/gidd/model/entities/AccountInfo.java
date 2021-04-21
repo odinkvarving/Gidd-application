@@ -1,5 +1,7 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 /**
@@ -22,6 +24,7 @@ public class AccountInfo {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "accountInfo")
     private Account account;
 

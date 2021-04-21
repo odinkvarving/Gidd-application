@@ -131,9 +131,9 @@ public class AccountController {
         return accountService.accountExistByCredentials(email, password);
     }
 
-    @DeleteMapping("accounts/{id}/activity/{id}")
-    public void removeAccountFromActivity(@PathVariable("id")int accountId, @PathVariable("id")int activityId) {
-        accountService.removeAccountFromActivity(activityId, accountId);
+    @DeleteMapping("accounts/{account_id}/activities/{activity_id}")
+    public boolean removeAccountFromActivity(@PathVariable("account_id")int accountId, @PathVariable("activity_id")int activityId) {
+        return accountService.removeAccountFromActivity(activityId, accountId);
     }
 
     @PutMapping("accounts/{id}/activity/{id}")

@@ -14,7 +14,6 @@
         </div>
         <div class="menu-item create-activity">
           <div v-if="isLoggedIn" @click="toggleCreateActivity">Opprett aktivitet</div>
-          
           <router-link to="/login" v-else>Logg inn</router-link>          
         </div>
         <CreateActivity v-show="isCreateActivityVisible" />
@@ -31,7 +30,7 @@
 
 <script>
 import Dropdown from "./Dropdown.vue";
-//import { userService } from "../../services/UserService.js"
+import { userService } from "../../services/UserService.js"
 import CreateActivity from "../createActivityComponents/CreateActivity.vue"
 
 export default {
@@ -58,7 +57,7 @@ export default {
         },
       ],
       notifications: [{}],
-      isLoggedIn: true
+      isLoggedIn: userService.isLoggedIn()
     };
   },
   computed: {

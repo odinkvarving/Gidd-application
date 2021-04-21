@@ -265,7 +265,7 @@ public class AccountService {
      * @param activityId the id of the activity to remove the binding from the account to.
      * @param accountId  the id of the account to remove the binding from the activity from.
      */
-    public void removeAccountFromActivity(int activityId, int accountId) {
+    public boolean removeAccountFromActivity(int activityId, int accountId) {
         if (accountExistsById(accountId) && this.activityRepository.existsById(activityId)) {
             int queuePosition =
                     this.accountActivityRepository
@@ -278,6 +278,9 @@ public class AccountService {
                     .collect(Collectors.toCollection(HashSet::new));
             aboveInQueue.forEach(AccountActivity::decrementQueuePosition);
             this.accountActivityRepository.saveAll(aboveInQueue);
+            return true;
+        }else{
+            return false;
         }
     }
 

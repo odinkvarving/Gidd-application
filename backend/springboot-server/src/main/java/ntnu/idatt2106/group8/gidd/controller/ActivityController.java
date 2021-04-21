@@ -1,5 +1,6 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
+import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
@@ -14,65 +15,70 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/activities")
+@RequestMapping
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ActivityController {
 
     @Autowired
     private ActivityService activityService;
 
-    @GetMapping
+    @GetMapping("/activities")
     public List<Activity> getActivities() {
         return activityService.getAllActivities();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/activities/{id}")
     public Optional<Activity> getActivity(@PathVariable("id") int id) {
         return activityService.getActivity(id);
     }
 
-    @PostMapping
+    @PostMapping("/activities")
     public Activity addActivity(@RequestBody Activity activity) {
         return activityService.addActivity(activity);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/activities/{id}")
     public Activity updateActivity(@RequestBody Activity newActivity, @PathVariable("id") int id) {
         return activityService.updateActivity(id, newActivity);
     }
 
-    @GetMapping("/{type}")
+    @GetMapping("/activities/{type}")
     public List<Activity> getActivitiesByType(@PathVariable String type) {
         return activityService.getActivitiesByType(type);
     }
 
-    @GetMapping("/{id}/type")
+    @GetMapping("/activities/{id}/type")
     public String getActivityType(@PathVariable("id") int id) {
         return activityService.getActivityType(id);
     }
 
-    @GetMapping("/{id}/equipment")
+    @GetMapping("/activities/{id}/equipment")
     public Set<Equipment> getActivityEquipment(@PathVariable("id") int id) {
         return activityService.getActivityEquipment(id);
     }
 
-    @PostMapping("/{id}/users/{id}")
-    public Optional<Account> addParticipantToActivity(@PathVariable("id") int activityId, @PathVariable("id") int participantId) {
+    @PostMapping("/activities/{activity_id}/accounts/{participant_id}")
+    public Optional<AccountActivity> addParticipantToActivity(@PathVariable("activity_id") int activityId, @PathVariable("participant_id") int participantId) {
         return activityService.addParticipantToActivity(activityId, participantId);
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/activities/{id}")
     public void deleteActivity(@PathVariable("id") int id) {
         activityService.deleteActivity(id);
     }
 
-    @GetMapping("/{id}/accounts")
+    @GetMapping("/activities/{id}/accounts")
     public List<Account> getAllAccountsInActivity(@PathVariable("id") int id) {
         return activityService.getAllAccountsInActivity(id);
     }
 
-    @GetMapping("/{activity_id}/account/{account_id}")
+    @GetMapping("/activities/{activity_id}/accounts/count")
+    public Integer countAllAccountsInActivity(@PathVariable("activity_id") int id){
+        return activityService.countAllAccountsInActivity(id);
+    }
+
+    @GetMapping("/activities/{activity_id}/accounts/{account_id}")
     public boolean checkIfAccountIsInActivity(@PathVariable("activity_id")int activityId, @PathVariable("account_id")int accountId) {
         return activityService.checkIfAccountIsInActivity(activityId, accountId);
     }

@@ -1,5 +1,6 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ public class Account {
     private String email;
     private String password;
 
+    @JsonBackReference
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="accountInfo", referencedColumnName = "id")
     private AccountInfo accountInfo;
@@ -81,5 +83,16 @@ public class Account {
 
     public void seAccountInfo(AccountInfo accountInfo) {
         this.accountInfo = accountInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", accountInfo=" + accountInfo +
+                ", createdActivities=" + createdActivities +
+                '}';
     }
 }

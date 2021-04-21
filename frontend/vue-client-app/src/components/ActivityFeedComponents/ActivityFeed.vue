@@ -4,17 +4,19 @@
             <div v-for="a in activities" :key="a.id" @click="handleActivityClicked(a)">
                 <Activity :activity="a"/>
             </div>
-            <div v-for="a in activities" :key="a.id" @click="handleActivityClicked(a)">
-                <Activity :activity="a"/>
-            </div>
         </div>
-        <div id="calendar">
-            
+        <div id="calendar-mini">
+            <p class="header">Kommende aktiviteter</p>
+            <div class="horizontal-line"/>
+            <div id="coming-activities">
+                <!-- list med brukerens aktiviteter -->
+            </div>
         </div>
     </div>
 </template>
 <script>
     import Activity from './Activity.vue'
+    import { userService } from "../../services/UserService.js"
 
     export default {
         name: "ActivityFeed",
@@ -26,100 +28,30 @@
         data() {
             return {
                 selectedActivity: null,
-                //activities: getActivities(),
-                activities: [
-                    {
-                        id: 0,
-                        name: "Fotball i Dødens dal",
-                        ownerImage: "ola.jpg",
-                        ownerName: "Ola Nordmann",
-                        description: "Fotballllllllll",
-                        time: "01.07.2021, kl 18:00",
-                        duration: "90 min",
-                        type: "Fotball",
-                        location: "Dødens dal",
-                        weather: "Sol, 20 C°",
-                        currentParticipants: 10,
-                        totalParticipants: 22,
-                        equipment: [{
-                            equipmentType: "Fotballsko",
-                        },
-                        {
-                            equipmentType: "T-skjorte",
-                        },
-                        {
-                            equipmentType: "Shorts",
-                        },
-                        {
-                            equipmentType: "Drikkeflaske",
-                        },
-                        {
-                            equipmentType: "Godt humør",
-                        }],
-                    },
-                    {
-                        id: 1,
-                        name: "Gåtur i Bymarka",
-                        ownerImage: "kari.jpg",
-                        ownerName: "Kari Nordmann",
-                        description: "Tuuuuuuur",
-                        time: "01.06.2021, kl 12:00",
-                        duration: "60 min",
-                        type: "Tur",
-                        location: "Bymarka",
-                        weather: "Sol, 20 C°",
-                        currentParticipants: 6,
-                        totalParticipants: 6,
-                        equipment: [{
-                            equipmentType: "Tursko",
-                        },
-                        {
-                            equipmentType: "Turjakke",
-                        },
-                        {
-                            equipmentType: "Turbukse",
-                        }],
-                    },
-                    {
-                        id: 2,
-                        name: "Skitur i Vassdalen",
-                        ownerImage: "berit.jpg",
-                        ownerName: "Berit Nordmann",
-                        description: "Skituuuuur",
-                        time: "01.01.2021, kl 10:00",
-                        duration: "120 min",
-                        type: "Skitur",
-                        location: "Jonsvatnet",
-                        weather: "Sol, 20 C°",
-                        currentParticipants: 5,
-                        totalParticipants: 10,
-                        equipment: [{
-                            equipmentType: "Skiutstyr",
-                        },
-                        {
-                            equipmentType: "Ull",
-                        },
-                        {
-                            equipmentType: "Kvikk-Lunsj",
-                        },
-                        {
-                            equipmentType: "Drikke",
-                        }],
-                    }
-                ],
+                activities: {},
                 sortKey: "",
             }
         },
-
+        mounted(){
+            this.getActivities();
+            
+        },
         methods: {
-            async getActivities() {
-                return await fetch("localhost:8080/activities")
-                .then(data => {
-                    console.log(data);
-                    this.activities = data;
-                })
-            },
+            getActivities() {
+                const requestOptions ={
+                    method: 'GET',
+                    headers: userService.authorizationHeader()
+                }
 
+                // Get all registered activites from database
+                fetch("http://localhost:8080/activities/", requestOptions)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.activities = data;
+                        console.log(data[0]);
+                    })
+                    .catch(error => console.log(error))
+            },
             handleActivityClicked(activity) {
                 this.selectedActivity = activity;
                 console.log(this.selectedActivity.name);
@@ -132,10 +64,12 @@
 <style>
     #container{
         background-color: #F6F6F6;
+        position: relative;
+        font-family: "Mulish";
+
     }
     #feed{
-        border: 1px solid black;
-        margin-left: 4vw;
+        margin-left: 0;
         width: 70vw;
         display: flex;
         flex-flow: row wrap;
@@ -148,6 +82,23 @@
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;*/
+    }
+    #calendar-mini {
+        position: fixed;
+        width: 340px;
+        height: 625px;
+        top: 200px;
+        right: 100px;
+        background: white;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+    }
+
+    #calendar-mini .header{
+        font-size: 25px;
+        opacity: 80%;
+        margin-top: 15px;
     }
 
 </style>

@@ -95,7 +95,7 @@
           </div>
         </li>
         <li class="menu-item btn">
-          <button><span>Opprett Aktivitet</span></button>
+          <button @click="createButtonClicked()"><span>Opprett Aktivitet</span></button>
         </li>
       </ul>
     </div>
@@ -103,6 +103,8 @@
 </template>
 
 <script>
+import { userService } from "../../services/UserService.js"
+
 export default {
   name: "CreateActivity",
   data() {
@@ -120,6 +122,47 @@ export default {
       isVisible: false,
     };
   },
+  methods: {
+    createButtonClicked(){
+      //DOUBLE CHECK IF USER IS LOGGED IN HERE WITH isLoggedIn()
+
+      this.createActivity();
+    },
+    async createActivity(){
+
+      let accountDetails = await userService.getAccountByEmail();
+
+      let activity = {
+        title: this.name,
+        description: this.description,
+        endTime: this.endTime,
+        latitude: "63.41893", //temporary until map is implemented
+        longitude: "10.40658", //temporary until map is implemented
+        maxParticipants: this.participants,
+        startTime: this.startTime,
+        activityType: {
+          type: this.category
+        },
+        creator: accountDetails
+      }
+
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': userService.getTokenString()
+        },
+        body: JSON.stringify(activity) 
+      }
+
+      fetch("http://localhost:8080/activities/", requestOptions)
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.log(error));
+
+
+    }
+  }
 };
 </script>
 

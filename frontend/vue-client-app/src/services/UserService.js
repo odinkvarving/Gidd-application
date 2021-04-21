@@ -34,7 +34,6 @@ function login(email, password){
 }
 
 function getAccountByEmail(){
-
     try{
         let account = getAccountDetails();
         const requestOptions ={

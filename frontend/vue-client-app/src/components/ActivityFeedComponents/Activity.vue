@@ -1,37 +1,53 @@
 <template>
     <div id="card">
-        <h1 style="margin-top: 15px; opacity: 75%;">{{ activity.name }}</h1>
+        <h1 style="margin-top: 15px; opacity: 75%;">{{ activity.title }}</h1>
         <div id="ownerInfo">
-            <img alt="Activity host profile picture" :src="require('@/assets/' + activity.ownerImage) ">
+            <img alt="Activity host profile picture" :src="require('@/assets/kari.jpg') ">
+            <!-- Add profile pic! -->
             <div class="owner-time">
-                <h3>{{ activity.ownerName }}</h3>
-                <p>{{ activity.time }}</p>
+                <h3>{{ activity.creator.email }}</h3>
+                <p>{{ activity.startTime }}</p>
+                <!-- Add start time with date!! -->
             </div>
         </div>
         <div class="mini-details">
             <div class="detail-container">
                 <p class="detail-header">Sted</p> 
-                <p class="detail-value" style="font-size:18px;">{{ activity.location }}</p>
+                <!-- <p class="detail-value" style="font-size:18px;">{{ activity.location }}</p> This when we can find location from longitude and latitude -->
+                <p class="detail-value" style="font-size:18px;">Dødens dal</p>
             </div>
             <div class="vertical-line"/>
             <div class="detail-container">
                 <p class="detail-header">Varighet</p> 
-                <p class="detail-value" style="font-size:18px;">{{ activity.duration }}</p>
+                <!-- <p class="detail-value" style="font-size:18px;">{{ activity.duration }}</p>  regne ut tiden fra datoer --> 
+                <p class="detail-value" style="font-size:18px;">2 timer</p>
             </div>
             <div class="vertical-line"/>
             <div class="detail-container">
                 <p class="detail-header">Kategori</p> 
-                <p class="detail-value" style="font-size:18px;">{{ activity.type }}</p>
+                <p class="detail-value" style="font-size:18px;">{{ activity.activityType.type }}</p>
             </div>
         </div>
         <div id="map-preview">
             <img src="../../assets/map-preview-example.png" alt="Activity location map preview"/>
         </div>
-        <p>Deltakere: {{ activity.currentParticipants }} / {{ activity.totalParticipants }}</p>
+        <p>Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
         <!--<div>
             <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
         </div>-->
-        <button id="btn" :class="{ full: isFull }" @click.stop="handleButtonClick()"><span>{{ getButtonStatus() }}</span></button>
+        <button v-if="!isFull && !alreadyParticipating" id="btn" class="join" @click.stop="joinButtonClicked()">
+            <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <span v-else >{{ getButtonStatus() }}</span>
+        </button>
+        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="handleButtonClick()"><span>{{ getButtonStatus() }}</span></button>
+        <button v-else id="btn" class="participating" @click.stop="removeParticipantClicked()">
+            <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <span v-else>{{ getButtonStatus() }}</span>
+        </button>
     </div>
 </template>
 <script>
@@ -49,25 +65,42 @@ import { userService } from '../../services/UserService';
         data() {
             return {
                 isFull: false,
+                alreadyParticipating: false,
+                currentParticipants: 0,
+                showJoinSpinner: false,
+                showRemoveSpinner: false,
             }
         },
-
+        mounted(){
+            this.getCurrentParticipantsNumber();
+            this.isAlreadyParticipating();
+        },
         methods: {
             handleButtonClick() {
+                
                 //Open login/register window or add the user to "participants"
                 console.log("Button clicked");
 
+                if(this.isFull){
+                    // Put on wait list
+                }
+            },
+            joinButtonClicked(){
+                this.showJoinSpinner = true;
                 if(!userService.isLoggedIn()){
                     console.log("Tried to join activity without being logged in.\nRedirecting to login page");
                     this.$router.push("/login");
+                }else{
+                    this.addParticipantToActivity();
                 }
-
-                
             },
-
+            removeParticipantClicked(){
+                // TODO: Lage alert boks som spør om bruker er sikker
+                this.showRemoveSpinner = true;
+                this.removeParticipantFromActivity();
+            },
             getButtonStatus() {
-                let accountId = 0; //Here we will find the account Id for the account which is logged on
-                if (this.ifParticipating(accountId)) { 
+                if (this.alreadyParticipating) { 
                     return "Påmeldt";
                 } else { //If we could not find the ID in accountActivity database, we check if the activity is full or not
                     return this.checkIfFull();
@@ -75,20 +108,103 @@ import { userService } from '../../services/UserService';
             },
 
             checkIfFull() {
-                if (this.activity.currentParticipants < this.activity.totalParticipants) {
+                if (this.currentParticipants < this.activity.maxParticipants) {
                     return "Bli med";
                 } else {
                     this.isFull = true;
                     return "Fullt";
                 }
             },
+            async isAlreadyParticipating() {
 
-            ifParticipating(accountId) {
-                if (accountId === 0) {
-                    return false;
+                let accountId;
+                await userService.getAccountByEmail().then(data => accountId = data.id);
+
+                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/${accountId}/`;
+
+                const requestOptions ={
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': userService.getTokenString()
+                    }
                 }
-                return true;
+
+                await fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.alreadyParticipating = data)
+                    .catch(error => console.log(error));
+
+                console.log(`You are already participating: ${this.alreadyParticipating}`);
+
+            },
+            async getCurrentParticipantsNumber(){
+                // Get number of participators on this activity
+                let url =  `http://localhost:8080/activities/${this.activity.id}/accounts/count`
+
+                const requestOptions ={
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': userService.getTokenString()
+                    }
+                }
+
+                await fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.currentParticipants = data)
+                    .catch(error => console.log(error));
+
+                console.log(`${this.activity.title} got current participants: ${this.currentParticipants}.`);
+
+            },
+            async addParticipantToActivity(){
+
+                let accountId;
+                await userService.getAccountByEmail().then(data => accountId = data.id);
+
+                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/${accountId}/`;
+
+                const requestOptions ={
+                    method: 'POST',
+                    headers: userService.authorizationHeader()
+                }
+
+                fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.activityId === this.activity.id && data.accountId === accountId){
+                            console.log("Joining activity was successful! Changing button style");
+                            this.currentParticipants++;
+                            this.alreadyParticipating = true;
+                            this.showJoinSpinner = false;
+                        }
+                    })
+                    .catch(error => console.log(error));
+            },
+            async removeParticipantFromActivity(){
+                let accountId;
+                await userService.getAccountByEmail().then(data => accountId = data.id);
+
+                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}/`;
+
+                const requestOptions ={
+                    method: 'DELETE',
+                    headers: userService.authorizationHeader()
+                }
+
+                fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data){
+                            this.currentParticipants--;
+                            this.alreadyParticipating = false;
+                            this.showRemoveSpinner = false;
+                        }
+                    })
+                    .catch(error => console.log(error))
             }
+
         }
     }
 </script>
@@ -108,7 +224,7 @@ import { userService } from '../../services/UserService';
     }
     
     #card:hover {
-        background: #ffffff00;
+        background: #ffffff42;
         transition: 0.3s;
     }
 
@@ -159,14 +275,14 @@ import { userService } from '../../services/UserService';
         display: flex;
         flex-flow: row;
         width: 90%;
-        height: 75px;
+        height: 70px;
         justify-content: space-around;
         margin-top: 40px;
     }
 
     .vertical-line {
         width: 1px;
-        height: 71px;
+        height: 64px;
         opacity: 45%;
         background-color: black;
     }
@@ -205,6 +321,7 @@ import { userService } from '../../services/UserService';
         background-color: #eca82b;
         transition: 0.2s;
     }
+    
     #btn.full{
         background-color: #FF5B3E;
     }
@@ -217,5 +334,20 @@ import { userService } from '../../services/UserService';
     }
     #btn.full:hover:before{
         content: "Venteliste";
+    }
+
+    #btn.participating{
+        background-color: #4a934a;
+        transition: 0.2s;
+    }
+    #btn.participating:hover{
+        background-color: #408140;
+        transition: 0.2s;
+    }
+    #btn.participating:hover span{
+        display: none;
+    }
+    #btn.participating:hover:before{
+        content: "Meld av";
     }
 </style>

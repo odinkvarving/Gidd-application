@@ -172,6 +172,24 @@ public class Activity {
         this.description = description;
     }
 
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "id=" + id +
+                ", creator=" + creator +
+                ", activityType=" + activityType +
+                ", level=" + level +
+                ", equipment=" + equipment +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", maxParticipants=" + maxParticipants +
+                '}';
+    }
+
     /**
      * A class used to build a new Activity object.
      *

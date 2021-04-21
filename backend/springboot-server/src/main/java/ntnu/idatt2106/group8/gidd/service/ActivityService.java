@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.service;
 
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
+import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
@@ -62,10 +63,14 @@ public class ActivityService {
     }
 
     public Activity addActivity(Activity activity) {
+        log.info(activity.toString());
+        log.info(activity.getCreator().toString());
         try {
             ActivityType activityType = activityTypeRepository.findActivityTypeByType(activity.getActivityType().getType());
             activity.setActivityType(activityType);
-            return activityRepository.save(activity);
+            Activity result = activityRepository.save(activity);
+            addParticipantToActivity(result.getId(), activity.getCreator().getId());
+            return result;
         } catch (DataAccessException e) {
             e.printStackTrace();
             log.info("Could not add activity");
@@ -133,7 +138,7 @@ public class ActivityService {
         return null;
     }
 
-    public Optional<Account> addParticipantToActivity(int activityId, int participantId) {
+    public Optional<AccountActivity> addParticipantToActivity(int activityId, int participantId) {
         boolean wasQueued = false;
 
         try {
@@ -159,7 +164,7 @@ public class ActivityService {
                     accountActivityToAdd = new AccountActivity(participantId, activityId, highestQueuePosition + 1);
                     wasQueued = true;
                 }
-                this.accountActivityRepository.save(accountActivityToAdd);
+                return Optional.of(this.accountActivityRepository.save(accountActivityToAdd));
             } else {
                 throw new NoSuchElementException("Either the given account id or the given activity " +
                         "id was not found in the database");
@@ -187,17 +192,23 @@ public class ActivityService {
         return null;
     }
 
+    public int countAllAccountsInActivity(int id){
+        List<Account> participatingAccounts = new ArrayList<>();
+        try{
+            List<AccountActivity> list = accountActivityRepository.findByActivityId(id)
+                    .stream()
+                    .filter(accountActivity -> accountActivity.getQueuePosition() == 0)
+                    .collect(Collectors.toList());
+            return list.size();
+        }catch (NoSuchElementException e){
+            log.info("Could not find any participants in this activity");
+        }
+        return 0;
+    }
+
     public boolean checkIfAccountIsInActivity(int activityId, int accountId) {
         try {
-            List<Integer> list = accountActivityRepository.findByActivityId(activityId)
-                    .stream()
-                    .map(AccountActivity::getActivityId)
-                    .collect(Collectors.toList());
-            for (Integer i : list) {
-                if (accountRepository.findById(i).isPresent() && accountRepository.findById(i).get().getId() == accountId) {
-                    return true;
-                }
-            }
+            return accountActivityRepository.findById(new AccountActivityId(accountId,activityId)).isPresent();
         } catch (DataAccessException e) {
             log.info("Could not find this account in this activity");
         }
