@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A controller class handling requests from client regarding
@@ -121,9 +120,14 @@ public class AccountController {
         accountService.updateAccountEmail(id, email);
     }
 
-    @PutMapping("accounts/{id}/password")
-    public void updateAccountPassword(@PathVariable("id")int id, @RequestParam String password) {
-        accountService.updateAccountPassword(id, password);
+    @PutMapping("/reset/{suffix}")
+    public boolean updateAccountPassword(@PathVariable("suffix")String suffix, @RequestParam String newPassword) {
+        return this.accountService.resetAccountPassword(suffix, newPassword);
+    }
+
+    @PostMapping("/reset/{mail}")
+    public void requestPasswordReset(@PathVariable("mail")String mail){
+        this.accountService.generatePasswordReset(mail);
     }
 
     @GetMapping("accounts/{id}/byId")

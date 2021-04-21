@@ -97,7 +97,7 @@ class AccountServiceTest {
     void updateAccount() {
         this.accountService.save(this.testAccount1);
         this.accountService.updateAccountEmail(this.testAccount1.getId(), "newEmail@email.no");
-        this.accountService.updateAccountPassword(this.testAccount1.getId(), "newPassword");
+       // this.accountService.updateAccountPassword(this.testAccount1.getId(), "newPassword");
 
         assertEquals("newEmail@email.no", this.accountService.findAccountById(this.testAccount1.getId()).getEmail()
                 , "the new email for account1 is wrong");

@@ -7,10 +7,8 @@ import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
-import ntnu.idatt2106.group8.gidd.repository.AccountInfoRepository;
-import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
-import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
+import ntnu.idatt2106.group8.gidd.model.entities.PasswordReset;
+import ntnu.idatt2106.group8.gidd.repository.*;
 import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,16 +50,22 @@ public class AccountService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private PasswordResetRepository passwordResetRepository;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
+    private MailService mailService;
+
+    @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
 
-    public List<Account> findAll(){
+    public List<Account> findAll() {
         Iterable<Account> itAccounts = accountRepository.findAll();
         List<Account> accounts = new ArrayList<>();
 
@@ -68,13 +74,13 @@ public class AccountService {
         return accounts;
     }
 
-    public boolean save(Account account){
+    public boolean save(Account account) {
         //Check if email already exists
         Optional<Account> acc = accountRepository.findByEmail(account.getEmail());
-        if(acc.isPresent()){
+        if (acc.isPresent()) {
             logger.info("Error! Could not create user, email already exists");
             return false;
-        }else{
+        } else {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
             accountRepository.save(account);
             return true;
@@ -86,7 +92,7 @@ public class AccountService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
             );
-        }catch (Exception exception){
+        } catch (Exception exception) {
             logger.info("Bad credentials! Username/password is wrong");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return new JWTResponse(null);
@@ -96,7 +102,7 @@ public class AccountService {
         return new JWTResponse(token);
     }
 
-    public boolean isValidToken(String jwtToken){
+    public boolean isValidToken(String jwtToken) {
         final String email = jwtUtil.extractUsername(jwtToken);
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
         return (email.equals(userDetails.getUsername()) && !jwtUtil.isTokenExpired(jwtToken));
@@ -194,13 +200,75 @@ public class AccountService {
      * @param accountId   the id of the account that should change password.
      * @param newPassword the new password of the account.
      */
-    public void updateAccountPassword(int accountId, String newPassword) {
+    private boolean updateAccountPassword(int accountId, String newPassword) {
         Account accountToUpdate = findAccountById(accountId);
         if (accountToUpdate != null) {
             accountToUpdate.setPassword(newPassword);
             this.accountRepository.save(accountToUpdate);
+            return true;
+        } else {
+            return false;
         }
+    }
 
+    /**
+     * Resets the password for a account in the database provided the given suffix is valid.
+     *
+     * @param urlSuffix a valid suffix to reset a accounts password.
+     * @param newPassword the new password to the account.
+     * @return
+     */
+    public boolean resetAccountPassword(String urlSuffix, String newPassword) {
+        try {
+            updatePasswordResetRepo();
+            PasswordReset passwordReset =
+                    this.passwordResetRepository.findByResetUrlSuffix(urlSuffix).orElseThrow(NoSuchElementException::new);
+            Account accountToReset =
+                    this.accountRepository.findById(passwordReset.getId()).orElseThrow(NoSuchElementException::new);
+            updateAccountPassword(accountToReset.getId(), newPassword);
+            return true;
+        } catch (NoSuchElementException nee) {
+            return false;
+        }
+    }
+
+    /**
+     * Goes trough the repo and deletes the entities that is past expiration time.
+     */
+    private void updatePasswordResetRepo() {
+        final int TIME_LIMIT = 30;
+        Set<PasswordReset> resetsToDelete = new HashSet<>();
+        LocalDateTime now = LocalDateTime.now();
+        this.passwordResetRepository.findAll().forEach(passwordReset -> {
+            if (ChronoUnit.MINUTES.between(passwordReset.getTimeProduced(), now) > TIME_LIMIT) {
+                resetsToDelete.add(passwordReset);
+            }
+        });
+        this.passwordResetRepository.deleteAll(resetsToDelete);
+    }
+
+    public void generatePasswordReset(String mailToReset) {
+        try {
+            Account foundAccount = accountRepository.findByEmail(mailToReset).orElseThrow(NoSuchElementException::new);
+            String randomUrlSuffix = generateRandomAlphanumericString(75);
+            PasswordReset passwordReset = new PasswordReset(foundAccount.getId(), randomUrlSuffix, LocalDateTime.now());
+            passwordResetRepository.save(passwordReset);
+            mailService.sendPasswordResetMail(mailToReset, randomUrlSuffix);
+        } catch (NoSuchElementException nee) {
+            logger.info("A password reset was requested for a user that does not exist in the database: " + mailToReset);
+        }
+    }
+
+    private String generateRandomAlphanumericString(int length) {
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        Random random = new Random();
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(length)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
     /**

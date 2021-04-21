@@ -25,13 +25,7 @@ public class MailService {
     //Sender address details
     private static final String MAIL_ADDRESS = "giddteam@gmail.com";
     private static final String PASSWORD = "02YWD29BDP5ZaladZApqWaZtJ0f8voZo11V";
-
-    //for testing purposes
-    public static void main(String[] args) {
-
-        MailService mailService = new MailService();
-        mailService.sendPasswordResetMail(MAIL_ADDRESS, "www.example.com");
-    }
+    private static final String BASE_URL = "www.example.com"; //TODO: implement a real frontend-reset website.
 
 
     /**
@@ -52,12 +46,12 @@ public class MailService {
      * Sends a password reset message to a given recipient with a provided reset-url.
      *
      * @param recipient the recipient to send the message to.
-     * @param resetURL the url to send the message to. can be any url.
+     * @param urlSuffix the url to send the message to. can be any url.
      * @return true if the message was successfully sent.
      */
-    private boolean sendPasswordResetMail(String recipient, String resetURL) {
+    public boolean sendPasswordResetMail(String recipient, String urlSuffix) {
         try {
-            Transport.send(getPasswordResetMessage(getGmailSession(), recipient, resetURL));
+            Transport.send(getPasswordResetMessage(getGmailSession(), recipient, urlSuffix));
             logger.info("Sendt password reset message to: " + recipient);
             return true;
         } catch (Exception e) {
@@ -66,14 +60,14 @@ public class MailService {
         }
     }
 
-    private Message getPasswordResetMessage(Session session, String recipient, String resetURL) {
+    private Message getPasswordResetMessage(Session session, String recipient, String urlSuffix) {
         logger.info("Preparing a new password reset message to: " + recipient);
         Message message = new MimeMessage(session);
         String textMessage =
                 "<H2>GIDD Password reset</H2> </br>" +
                         "<p>Hi, we received a password-reset request for your account</p> </br>" +
                         "<p>Please use the following link to reset your password: </br>" +
-                        "<a href=" + resetURL + "><h3>Reset password</h3></a> </br>" +
+                        "<a href=" + BASE_URL + urlSuffix + "><h3>Reset password</h3></a> </br>" +
                         "<p></p> </br>" +
                         "<p>If it was not you who sent the request you can ignore this message</p> </br>" +
                         "<h3>Best regards -The Gidd team.</h3>";
