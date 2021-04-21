@@ -1,6 +1,5 @@
 package ntnu.idatt2106.group8.gidd.service;
 
-import ntnu.idatt2106.group8.gidd.config.SecurityConfig;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.*;
 import ntnu.idatt2106.group8.gidd.repository.*;
@@ -15,8 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -130,7 +128,6 @@ class ActivityServiceTest {
         assertEquals("testType", activityService.getActivityType(dummyActivity.getId()));
     }
 
-    //FIXME: fix the entity relationship between equipment and activity.
     @Test
     void getActivityEquipment() {
         Set<Equipment> equipmentList = activityService.getActivityEquipment(this.testActivity.getId());
@@ -180,5 +177,13 @@ class ActivityServiceTest {
         activityService.addParticipantToActivity(testActivity.getId(), dummyAccount.getId());
         assertEquals(1, activityService.getAllAccountsInQueue(testActivity.getId()).size());
         assertEquals(1, activityService.getAllAccountsInActivity(testActivity.getId()).size());
+    }
+
+    @Test
+    void cancelActivity() {
+        activityService.addParticipantToActivity(testActivity.getId(), dummyAccount.getId());
+        assertEquals(2, accountActivityRepository.findByActivityId(testActivity.getId()).size());
+        activityService.cancelActivity(testActivity.getId());
+        assertEquals(0, accountActivityRepository.findByActivityId(testActivity.getId()).size());
     }
 }

@@ -288,7 +288,9 @@ public class ActivityService {
                 accountActivities = new ArrayList<>(accountActivityRepository.findByActivityId(activity.get().getId()));
                 for (AccountActivity a : accountActivities) {
                     accountActivityRepository.delete(a);
-                    return true;
+                    if(accountActivityRepository.findByActivityId(activity.get().getId()).size() == 0) {
+                        return true;
+                    }
                 }
             }else{
                 log.info("No activity with this ID registered");
