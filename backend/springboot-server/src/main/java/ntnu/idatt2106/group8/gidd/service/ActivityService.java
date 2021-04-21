@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -298,6 +299,38 @@ public class ActivityService {
             }
         }catch (DataAccessException e) {
             log.info("Could not find the specified activity");
+        }
+        return false;
+    }
+
+    /**
+     * Method for deleting a specific Equipment from a specific Activity
+     * @param id the id of the Activity
+     * @param equipment a String of the description for the Equipment
+     * @return true or false
+     */
+    @Transactional
+    public boolean deleteEquipmentFromActivity(int id, String equipment) {
+        Optional<Activity> activity;
+        List<Equipment> equipmentList;
+        try {
+            activity = activityRepository.findById(id);
+            if(activity.isPresent()) {
+                equipmentList = activity.get().getEquipment()
+                        .stream()
+                        .filter(equipment1 -> equipment1.getDescription().equals(equipment))
+                        .collect(Collectors.toList());
+                for (Equipment e : equipmentList) {
+                    if (activity.get().getEquipment().remove(e))
+                        System.out.println("Removed equipment "+ e.getDescription() + ", from activity");
+                }
+                return true;
+            }else {
+                log.info("Could not find activity with the specified ID");
+                return false;
+            }
+        }catch (DataAccessException e) {
+            e.printStackTrace();
         }
         return false;
     }

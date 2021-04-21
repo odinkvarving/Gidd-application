@@ -186,4 +186,14 @@ class ActivityServiceTest {
         activityService.cancelActivity(testActivity.getId());
         assertEquals(0, accountActivityRepository.findByActivityId(testActivity.getId()).size());
     }
+
+    @Test
+    void deleteEquipmentFromActivity() {
+        assertEquals(2, activityService.getActivityEquipment(testActivity.getId()).size());
+        activityService.deleteEquipmentFromActivity(testActivity.getId(), "testEquipment1");
+
+        assertEquals(1, activityService.getActivityEquipment(testActivity.getId()).size());
+        assertEquals("testEquipment2", activityService.getActivityEquipment(testActivity.getId()).iterator().next().getDescription());
+
+    }
 }

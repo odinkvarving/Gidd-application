@@ -144,9 +144,25 @@ public class ActivityController {
         return activityService.getAllAccountsInQueue(id);
     }
 
+    /**
+     * PutMapping for cancelling a specific Activity
+     * @param id the PathVariable for the id of the Activity
+     * @return true or false
+     */
     @PutMapping("/{id}/cancel")
     public boolean cancelActivity(@PathVariable("id")int id) {
         return activityService.cancelActivity(id);
+    }
+
+    /**
+     * DeleteMapping for deleting an Equipment from a specific Activity
+     * @param id the PathVariable for the id of the Activity
+     * @param equipment requesting a String parameter for the description of the Equipment
+     * @return true or false
+     */
+    @DeleteMapping("/{id}/equipment")
+    public boolean deleteEquipmentFromActivity(@PathVariable("id")int id, @RequestParam String equipment) {
+        return activityService.deleteEquipmentFromActivity(id, equipment);
     }
 
 }
