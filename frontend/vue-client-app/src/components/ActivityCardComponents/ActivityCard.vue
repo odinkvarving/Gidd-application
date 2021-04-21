@@ -1,10 +1,10 @@
 <template>
-    <div id="container" v-if="activity != null">
+    <div id="activity" v-if="activity != null">
         <Info class="comp" id="info" :activity="activity"/>
         <Map class="comp" id="map" :activity="activity"/>
         <Equipment class="comp" id="equipment" :activity="activity"/>
-        <button class="comp" id="btnVisible" @click="isChatVisible = !isChatVisible">Åpne chat</button>
-        <Chat class="comp chat" id="chat" :activity="activity" v-show="isChatVisible"/><!-- v-show="isChatVisible" -->
+        <button class="comp" id="btnVisible" @click="changeChatVisibility">Åpne chat</button>
+        <Chat class="comp chat" id="chat" :activity="activity" v-show="isChatVisible"/>
     </div>
 </template>
 <script>
@@ -33,18 +33,33 @@
             return {
                 isChatVisible: false,
             }
+        },
+
+        methods: {
+            changeChatVisibility() {
+                this.isChatVisible = !this.isChatVisible;
+                const btn = document.getElementById('btnVisible');
+                if (this.isChatVisible) {
+                    btn.childNodes[0].nodeValue = "Skjul chat";
+                } else {
+                    btn.childNodes[0].nodeValue = "Åpne chat";
+                }
+            }
         }
     }
 </script>
 <style>
-    #container{
+    #activity{
         display: grid;
         grid-template-areas: 
         "info map"
         "info equipment"
         "btn equipment"
         "chat chat";
-        background-color: #F6F6F6;
+        /*display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        background-color: #F6F6F6;*/
     }
     .comp{
         background-color: white;

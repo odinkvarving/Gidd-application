@@ -1,24 +1,29 @@
 <template>
     <div id="card">
-        <ActivityCard :activity="activity"/>
+        <NavBar/>
+        <ActivityCard id="card" :activity="activity"/>
     </div>
 </template>
 <script>
     import ActivityCard from '../components/ActivityCardComponents/ActivityCard.vue'
-
-    //import selectedActivity from './Dashboard.vue'
-    //import selectedActivity  from '../components/ActivityFeedComponents/ActivityFeed.vue'
+    import NavBar from '../components/Nav/NavBar.vue'
+    import WeatherService from '../services/WeatherService.js'
     
     export default {
         name: "Activity",
         components: {
+            NavBar,
             ActivityCard
         },
         data() {
             return {
                 test: [1,2,3],
                 activity: this.findActivity(),
-                
+                /*weather: {
+                    name: WeatherService.getName,
+                    temp: WeatherService.getTemp,
+                    description: WeatherService.getDescription
+                }*/
             }
         },
 
@@ -31,11 +36,15 @@
                         ownerImage: "ola.jpg",
                         ownerName: "Ola Nordmann",
                         description: "Fotballllllllll",
-                        time: "01.07.2021, kl 18:00",
+                        //time: "01.07.2021, kl 18:00",
+                        time: "2021-07-01T18:00:00",
                         duration: "90 min",
                         type: "Fotball",
                         location: "Dødens dal",
-                        weather: "Sol, 20 C°",
+                        latitude: 63.419213,
+                        longitude: 10.406178,
+                        //weather: "Sol, 20 C°",
+                        weather: WeatherService.getWeather(this.latitude, this.longitude, this.time),
                         currentParticipants: 10,
                         totalParticipants: 22,
                         equipment: [{
@@ -60,11 +69,15 @@
                         ownerImage: "kari.jpg",
                         ownerName: "Kari Nordmann",
                         description: "Tuuuuuuur",
-                        time: "01.06.2021, kl 12:00",
+                        //time: "01.06.2021, kl 12:00",
+                        time: "2021-06-01T12:00:00",
                         duration: "60 min",
                         type: "Tur",
                         location: "Bymarka",
-                        weather: "Sol, 20 C°",
+                        latitude: 63.417873,
+                        longitude: 10.240582,
+                        //weather: "Sol, 20 C°",
+                        weather: WeatherService.getWeather(this.latitude, this.longitude, this.time),
                         currentParticipants: 6,
                         totalParticipants: 6,
                         equipment: [{
@@ -83,11 +96,15 @@
                         ownerImage: "berit.jpg",
                         ownerName: "Berit Nordmann",
                         description: "Skituuuuur",
-                        time: "01.01.2021, kl 10:00",
+                        //time: "01.01.2021, kl 10:00",
+                        time: "2021-01-01T10:00:00",
                         duration: "120 min",
                         type: "Skitur",
                         location: "Jonsvatnet",
-                        weather: "Sol, 20 C°",
+                        latitude: 63.398937,
+                        longitude: 10.577261,
+                        // weather: "Sol, 20 C°",
+                        weather: WeatherService.getWeather(this.latitude, this.longitude, this.time),
                         currentParticipants: 5,
                         totalParticipants: 10,
                         equipment: [{
@@ -128,5 +145,6 @@
     #card{
         background-color: #F6F6F6;
         padding: 2% 5%;
+        margin-top: 2%;
     }
 </style>
