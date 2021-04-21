@@ -37,6 +37,10 @@ public class ActivityService {
     @Autowired
     private AccountService accountService;
 
+    /**
+     * Method for finding all registered activities
+     * @return a list of all activities
+     */
     public List<Activity> getAllActivities() {
         List<Activity> activities = new ArrayList<>();
         try {
@@ -47,6 +51,11 @@ public class ActivityService {
         return activities;
     }
 
+    /**
+     * Method for getting an activity with the specified id
+     * @param id the id of the activity
+     * @return the activity matching the id
+     */
     public Optional<Activity> getActivity(int id) {
         try {
             return activityRepository.findById(id);
@@ -56,6 +65,11 @@ public class ActivityService {
         return Optional.empty();
     }
 
+    /**
+     * Method for adding a new activity
+     * @param activity the activity to be added
+     * @return the activity that was added
+     */
     public Activity addActivity(Activity activity) {
         try {
             return activityRepository.save(activity);
@@ -65,6 +79,12 @@ public class ActivityService {
         return null;
     }
 
+    /**
+     * Method for updating an activity
+     * @param id the id of the activity to be updated
+     * @param activity the updated version of the activity
+     * @return the updated activity
+     */
     public Activity updateActivity(int id, Activity activity) {
         try {
             return activityRepository.save(activity);
@@ -74,6 +94,10 @@ public class ActivityService {
         return null;
     }
 
+    /**
+     * Method for deleting an activity
+     * @param id the id of the activity to be deleted
+     */
     public void deleteActivity(int id) {
         try {
             activityRepository.deleteById(id);
@@ -82,6 +106,11 @@ public class ActivityService {
         }
     }
 
+    /**
+     * Method for finding activities with the specified Activity-type
+     * @param type a String with the type you want to find activities by
+     * @return a list of Activities with this Activity-type
+     */
     public List<Activity> getActivitiesByType(String type) {
         List<Activity> activities = new ArrayList<>();
         List<Activity> byType = new ArrayList<>();
@@ -99,6 +128,11 @@ public class ActivityService {
         return null;
     }
 
+    /**
+     * Method for finding the Activity-type of a specified Activity
+     * @param id the id of the Activity
+     * @return a String specifying which Activity-type the Activity is
+     */
     public String getActivityType(int id) {
         Optional<Activity> activity;
         try {
@@ -112,6 +146,11 @@ public class ActivityService {
         return null;
     }
 
+    /**
+     * Method for finding the Equipment for a specified Activity
+     * @param id the id of the Activity
+     * @return a Set of Equipment
+     */
     public Set<Equipment> getActivityEquipment(int id) {
         Optional<Activity> activity;
         try {
@@ -125,6 +164,12 @@ public class ActivityService {
         return null;
     }
 
+    /**
+     * Method for adding an account as a participant in the specified Activity
+     * @param activityId the id of the Activity
+     * @param participantId the id of the Account
+     * @return the Account that was added to the Activity
+     */
     public Optional<Account> addParticipantToActivity(int activityId, int participantId) {
         boolean wasQueued = false;
 
@@ -137,9 +182,9 @@ public class ActivityService {
                         .orElseThrow(NoSuchElementException::new)
                         .getMaxParticipants();
                 Set<AccountActivity> allAccountActivities = this.accountActivityRepository.findByActivityId(activityId);
-                if (allAccountActivities.size() < activitySize) { //there was space in the activity!
+                if (allAccountActivities.size() < activitySize) {
                     accountActivityToAdd = new AccountActivity(participantId, activityId, 0);
-                } else if (allAccountActivities.size() == activitySize) {                         //there was not space in the activity, the account must be queued!
+                } else if (allAccountActivities.size() == activitySize) {
                     accountActivityToAdd = new AccountActivity(participantId, activityId, 1);
                     wasQueued = true;
                 } else {
@@ -162,6 +207,11 @@ public class ActivityService {
         return Optional.empty();
     }
 
+    /**
+     * Method for finding all Accounts registered to a specified Activity
+     * @param id the id of the Activity
+     * @return a list of Accounts registered to an Activity
+     */
     public List<Account> getAllAccountsInActivity(int id) {
         List<Account> participatingAccounts = new ArrayList<>();
         try {
@@ -179,6 +229,12 @@ public class ActivityService {
         return null;
     }
 
+    /**
+     * Method for checking if a specified Account is registered to a specific Activity
+     * @param activityId the id of the activity
+     * @param accountId the id of the Account
+     * @return true or false
+     */
     public boolean checkIfAccountIsInActivity(int activityId, int accountId) {
         try {
             List<Integer> list = accountActivityRepository.findByActivityId(activityId)
@@ -196,6 +252,11 @@ public class ActivityService {
         return false;
     }
 
+    /**
+     * Method for finding all Accounts in queue for a specific Activity
+     * @param id the id of the Activity
+     * @return a list of Accounts in queue for the Activity
+     */
     public List<Account> getAllAccountsInQueue(int id) {
         List<Account> queueAccounts = new ArrayList<>();
         try {
