@@ -7,7 +7,7 @@
 <script>
     import ActivityCard from '../components/ActivityCardComponents/ActivityCard.vue'
     import NavBar from '../components/Nav/NavBar.vue'
-    import WeatherService from '../services/WeatherService.js'
+    import {weatherService} from '../services/WeatherService.js'
     
     export default {
         name: "Activity",
@@ -37,14 +37,15 @@
                         ownerName: "Ola Nordmann",
                         description: "Fotballllllllll",
                         //time: "01.07.2021, kl 18:00",
-                        time: "2021-07-01T18:00:00",
+                        time: "2021-05-01T18:00:00",
                         duration: "90 min",
                         type: "Fotball",
                         location: "Dødens dal",
                         latitude: 63.419213,
                         longitude: 10.406178,
                         //weather: "Sol, 20 C°",
-                        weather: WeatherService.getWeather(this.latitude, this.longitude, this.time),
+                        //weather: WeatherService.getWeather(this.latitude, this.longitude, this.time),
+                        weather: this.getWeather(),
                         currentParticipants: 10,
                         totalParticipants: 22,
                         equipment: [{
@@ -77,7 +78,8 @@
                         latitude: 63.417873,
                         longitude: 10.240582,
                         //weather: "Sol, 20 C°",
-                        weather: WeatherService.getWeather(this.latitude, this.longitude, this.time),
+                        //weather: WeatherService.getWeather(this.latitude, this.longitude, this.time),
+                        weather: this.getWeather(),
                         currentParticipants: 6,
                         totalParticipants: 6,
                         equipment: [{
@@ -104,7 +106,8 @@
                         latitude: 63.398937,
                         longitude: 10.577261,
                         // weather: "Sol, 20 C°",
-                        weather: WeatherService.getWeather(this.latitude, this.longitude, this.time),
+                        //weather: WeatherService.getWeather(this.latitude, this.longitude, this.time),
+                        weather: this.getWeather(),
                         currentParticipants: 5,
                         totalParticipants: 10,
                         equipment: [{
@@ -128,6 +131,10 @@
                     console.log(data);
                     this.activities = data;
                 })*/
+            },
+
+            async getWeather() {
+                return await weatherService.getWeather(this.latitude, this.longitude, this.time);
             },
 
             findActivity() { //async when we will use getActivities

@@ -23,7 +23,8 @@
                 <li class="txt">{{ activity.location }}</li>
                 <li class="txt">{{ activity.time }}</li>
                 <li class="txt">{{ activity.duration }}</li>
-                <li class="txt">{{ activity.weather }}</li>
+                <li class="txt" v-if="activity.weather != null">{{ activity.weather.temp }}</li>
+                <li class="txt" v-else>Ingen værmelding</li>
                 <li class="txt">{{ activity.currentParticipants }} / {{ activity.totalParticipants }}</li>
             </ul>
             <button id="btn" :class="{ full: isFull }" @click="handleButtonClick()"><span>{{ checkIfFull() }}</span></button>

@@ -1,13 +1,22 @@
 export const weatherService = {
     getWeather,
+    hello
 }
 
 let weather = null;
 
+function hello(text) {
+    console.log(text);
+}
+
 function getWeather(latitude, longitude, time) {
+    console.log("TIME: " + time);
     const startTime = new Date(time);
+    console.log("Start time: " + startTime);
     const startDate = new Date(startTime.getFullYear, startTime.getMonth, startTime.getDate);
+    console.log("Start date: " + startDate);
     const currentTime = Date.now();
+    console.log("Current time: " + currentTime);
     /*const current = new Date();
     const currentDate = current.getFullYear() + "-" 
         + (current.getMonth() + 1) + "-" 
@@ -49,5 +58,6 @@ function getWeather(latitude, longitude, time) {
         console.log("Differanse mellom datoene er mere enn 7 dager, og værvarsel er ikke tilgjengelig");
         return null;
     }
+    console.log(weather);
     return weather;
 }
