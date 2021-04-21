@@ -273,4 +273,30 @@ public class ActivityService {
         }
         return queueAccounts;
     }
+
+    /**
+     * Method for cancelling a specific Activity
+     * @param id the id of the Activity to be cancelled
+     * @return true or false
+     */
+    public boolean cancelActivity(int id) {
+        Optional<Activity> activity;
+        List<AccountActivity> accountActivities;
+        try {
+            activity = activityRepository.findById(id);
+            if(activity.isPresent()) {
+                accountActivities = new ArrayList<>(accountActivityRepository.findByActivityId(activity.get().getId()));
+                for (AccountActivity a : accountActivities) {
+                    accountActivityRepository.delete(a);
+                    return true;
+                }
+            }else{
+                log.info("No activity with this ID registered");
+                return false;
+            }
+        }catch (DataAccessException e) {
+            log.info("Could not find the specified activity");
+        }
+        return false;
+    }
 }

@@ -144,4 +144,9 @@ public class ActivityController {
         return activityService.getAllAccountsInQueue(id);
     }
 
+    @PutMapping("/{id}/cancel")
+    public boolean cancelActivity(@PathVariable("id")int id) {
+        return activityService.cancelActivity(id);
+    }
+
 }
