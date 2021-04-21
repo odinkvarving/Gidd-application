@@ -15,6 +15,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/activities")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ActivityController {
 
     @Autowired

@@ -3,10 +3,12 @@ package ntnu.idatt2106.group8.gidd.service;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
+import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
 import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
 import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
 import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
+import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class ActivityService {
     private AccountActivityRepository accountActivityRepository;
 
     @Autowired
+    private ActivityTypeRepository activityTypeRepository;
+
+    @Autowired
     private AccountService accountService;
 
     public List<Activity> getAllActivities() {
@@ -58,8 +63,11 @@ public class ActivityService {
 
     public Activity addActivity(Activity activity) {
         try {
+            ActivityType activityType = activityTypeRepository.findActivityTypeByType(activity.getActivityType().getType());
+            activity.setActivityType(activityType);
             return activityRepository.save(activity);
         } catch (DataAccessException e) {
+            e.printStackTrace();
             log.info("Could not add activity");
         }
         return null;

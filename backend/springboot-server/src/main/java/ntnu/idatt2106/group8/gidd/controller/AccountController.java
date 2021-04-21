@@ -101,11 +101,6 @@ public class AccountController {
         return accountService.findAccountByCredentials(email, password);
     }
 
-    @PostMapping("accounts/withInfo")
-    public void saveAccountWithInfo(@RequestBody Account account) {
-        accountService.saveAccountWithInfo(account, account.getAccountInfo());
-    }
-
     @PostMapping("accounts/setInfo")
     public void setAccountInfo(@RequestBody Account account) {
         accountService.setAccountInfo(account.getId(), account.getAccountInfo());

@@ -19,9 +19,10 @@ import javax.persistence.*;
 public class AccountInfo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "accountInfo")
     private Account account;
 
     @ManyToOne

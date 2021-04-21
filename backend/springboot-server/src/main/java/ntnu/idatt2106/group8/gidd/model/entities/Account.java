@@ -23,8 +23,8 @@ public class Account {
     private String email;
     private String password;
 
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="accountInfo", referencedColumnName = "id")
     private AccountInfo accountInfo;
 
     @OneToMany(cascade = CascadeType.ALL)

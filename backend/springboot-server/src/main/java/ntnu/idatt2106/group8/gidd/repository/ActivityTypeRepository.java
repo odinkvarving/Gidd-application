@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ActivityTypeRepository extends CrudRepository<ActivityType, Integer> {
+    ActivityType findActivityTypeByType(String type);
 }

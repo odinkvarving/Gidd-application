@@ -3,13 +3,6 @@ use gidddb;
 
 SET SQL_MODE = 'ALLOW_INVALID_DATES';
 
-CREATE TABLE login
-(
-    id       INT AUTO_INCREMENT PRIMARY KEY,
-    email    VARCHAR(32)  NOT NULL,
-    password VARCHAR(100) NOT NULL
-);
-
 CREATE TABLE level
 (
     id          INT AUTO_INCREMENT PRIMARY KEY,
@@ -17,7 +10,7 @@ CREATE TABLE level
 
 );
 
-CREATE TABLE user_info
+CREATE TABLE ACCOUNTINFO
 (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 
@@ -72,15 +65,5 @@ CREATE TABLE participant
     CONSTRAINT FK_m2m_user FOREIGN KEY (user_id)
         REFERENCES login (id),
     CONSTRAINT FK_m2m_activity FOREIGN KEY (activity_id)
-        REFERENCES activity (id)
-);
-
-CREATE TABLE equipment
-(
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    activity_id INT         NOT NULL,
-    description VARCHAR(64) NOT NULL,
-
-    CONSTRAINT FK_activity FOREIGN KEY (activity_id)
         REFERENCES activity (id)
 );

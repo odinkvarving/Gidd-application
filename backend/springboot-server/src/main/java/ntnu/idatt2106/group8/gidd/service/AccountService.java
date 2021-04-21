@@ -81,6 +81,19 @@ public class AccountService {
         }
     }
 
+    /**
+     * Saves a new account to the database along with its account information.
+     *
+     * @param account     the new account to save in the database.
+     * @param accountInfo the info of the new account.
+     */
+    public boolean saveAccountWithInfo(Account account, AccountInfo accountInfo) {
+        Account result1 = this.accountRepository.save(account);
+        accountInfo.setAccount(account);
+        AccountInfo result2 = this.accountInfoRepository.save(accountInfo);
+        return (result1.equals(account) && result2.equals(accountInfo));
+    }
+
     public JWTResponse login(AuthRequest authRequest, HttpServletResponse response) throws Exception {
         try {
             authenticationManager.authenticate(
@@ -105,18 +118,6 @@ public class AccountService {
     public Account findByEmail(String email) {
         Optional<Account> user = accountRepository.findByEmail(email);
         return user.orElse(new Account());
-    }
-
-    /**
-     * Saves a new account to the database along with its account information.
-     *
-     * @param account     the new account to save in the database.
-     * @param accountInfo the info of the new account.
-     */
-    public void saveAccountWithInfo(Account account, AccountInfo accountInfo) {
-        this.accountRepository.save(account);
-        accountInfo.setAccount(account);
-        this.accountInfoRepository.save(accountInfo);
     }
 
     /**

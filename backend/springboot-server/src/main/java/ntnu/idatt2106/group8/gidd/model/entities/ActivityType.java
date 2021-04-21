@@ -18,6 +18,7 @@ public class ActivityType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(name = "activity_type")
     private String type;
     @Column(name = "point_factor")
     private double pointFactor;

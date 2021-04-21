@@ -34,10 +34,10 @@ public class Activity {
     private Set<Equipment> equipment = new HashSet<>();
 
     @Column(name = "start_time")
-    private LocalDateTime startTime;
+    private String startTime;
 
     @Column(name = "end_time")
-    private LocalDateTime endTime;
+    private String endTime;
 
     private String title;
     private String description;
@@ -46,7 +46,7 @@ public class Activity {
     private int maxParticipants;
 
     protected Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
-                       float latitude, LocalDateTime startTime, LocalDateTime endTime, String description,
+                       float latitude, String startTime, String endTime, String description,
                        int maxParticipants, String title) {
         this.creator = creator;
         this.activityType = activityType;
@@ -142,29 +142,23 @@ public class Activity {
         this.latitude = latitude;
     }
 
-    public LocalDateTime getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime activityStart) {
+    public void setStartTime(String activityStart) {
         if (activityStart == null)
             throw new IllegalArgumentException("start cannot be null");
-        if (!activityStart.isBefore(this.endTime))
-            throw new IllegalArgumentException("start must be before end");
-
         this.startTime = activityStart;
     }
 
-    public LocalDateTime getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime activityEnd) {
+    public void setEndTime(String activityEnd) {
         if (activityEnd == null)
             throw new IllegalArgumentException("end cannot be null");
-        if (!activityEnd.isAfter(this.startTime))
-            throw new IllegalArgumentException("end must be after start");
-
         this.endTime = activityEnd;
     }
 
@@ -188,8 +182,8 @@ public class Activity {
         private final String title;
         private final Account creator;
         private final Level level;
-        private final LocalDateTime activityStart;
-        private final LocalDateTime activityEnd;
+        private final String activityStart;
+        private final String activityEnd;
         private final int maxParticipants;
         private ActivityType activityType;
         private Set<Equipment> equipment = new HashSet<>();
@@ -207,8 +201,8 @@ public class Activity {
          * @param activityEnd     the end-time of the activity represented as LocalDateTime-object.
          * @param maxParticipants the maximum amount of participants in the activity.
          */
-        public Builder(String title, Account creator, ActivityType activityType, Level level, LocalDateTime activityStart,
-                       LocalDateTime activityEnd, int maxParticipants) {
+        public Builder(String title, Account creator, ActivityType activityType, Level level, String activityStart,
+                       String activityEnd, int maxParticipants) {
             this.title = title;
             this.creator = creator;
             this.activityType = activityType;
