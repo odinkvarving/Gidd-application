@@ -25,7 +25,7 @@ public class MailService {
     //Sender address details
     private static final String MAIL_ADDRESS = "giddteam@gmail.com";
     private static final String PASSWORD = "02YWD29BDP5ZaladZApqWaZtJ0f8voZo11V";
-    private static final String BASE_URL = "www.example.com"; //TODO: implement a real frontend-reset website.
+    private static final String BASE_URL = "www.example.com/"; //TODO: implement a real frontend-reset website.
 
 
     /**

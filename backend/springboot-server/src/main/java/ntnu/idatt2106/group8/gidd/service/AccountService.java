@@ -214,7 +214,7 @@ public class AccountService {
     /**
      * Resets the password for a account in the database provided the given suffix is valid.
      *
-     * @param urlSuffix a valid suffix to reset a accounts password.
+     * @param urlSuffix   a valid suffix to reset a accounts password.
      * @param newPassword the new password to the account.
      * @return
      */
@@ -224,8 +224,9 @@ public class AccountService {
             PasswordReset passwordReset =
                     this.passwordResetRepository.findByResetUrlSuffix(urlSuffix).orElseThrow(NoSuchElementException::new);
             Account accountToReset =
-                    this.accountRepository.findById(passwordReset.getId()).orElseThrow(NoSuchElementException::new);
+                    this.accountRepository.findById(passwordReset.getAccountId()).orElseThrow(NoSuchElementException::new);
             updateAccountPassword(accountToReset.getId(), newPassword);
+            this.passwordResetRepository.delete(passwordReset);
             return true;
         } catch (NoSuchElementException nee) {
             return false;
@@ -250,7 +251,16 @@ public class AccountService {
     public void generatePasswordReset(String mailToReset) {
         try {
             Account foundAccount = accountRepository.findByEmail(mailToReset).orElseThrow(NoSuchElementException::new);
-            String randomUrlSuffix = generateRandomAlphanumericString(75);
+
+            String randomUrlSuffix = "";
+            boolean newSuffix = false;
+            while (!newSuffix) {
+                randomUrlSuffix = generateRandomAlphanumericString(75);
+                if (!this.passwordResetRepository.findByResetUrlSuffix(randomUrlSuffix).isPresent()) {
+                    newSuffix = true;
+                }
+            }
+
             PasswordReset passwordReset = new PasswordReset(foundAccount.getId(), randomUrlSuffix, LocalDateTime.now());
             passwordResetRepository.save(passwordReset);
             mailService.sendPasswordResetMail(mailToReset, randomUrlSuffix);
@@ -298,7 +308,7 @@ public class AccountService {
         try {
             return this.accountRepository.findByEmailAndPassword(email, password)
                     .orElseThrow(NoSuchElementException::new);
-        } catch (NoSuchElementException nsee) {
+        } catch (NoSuchElementException nee) {
             logger.info("Did not find any account with credentials, email: " + email + " password: " + password);
             return null;
         }

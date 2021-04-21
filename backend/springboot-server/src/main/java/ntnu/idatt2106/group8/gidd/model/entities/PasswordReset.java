@@ -17,14 +17,14 @@ public class PasswordReset {
     private int id;
 
     private LocalDateTime timeProduced;
-    private int userId;
+    private int accountId;
     private String resetUrlSuffix;
 
     public PasswordReset() {
     }
 
-    public PasswordReset(int userId, String resetUrlSuffix, LocalDateTime timeProduced) {
-        this.userId = userId;
+    public PasswordReset(int accountId, String resetUrlSuffix, LocalDateTime timeProduced) {
+        this.accountId = accountId;
         this.resetUrlSuffix = resetUrlSuffix;
         this.timeProduced = timeProduced;
     }
@@ -45,12 +45,12 @@ public class PasswordReset {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getAccountId() {
+        return accountId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setAccountId(int userId) {
+        this.accountId = userId;
     }
 
     public String getResetUrlSuffix() {
