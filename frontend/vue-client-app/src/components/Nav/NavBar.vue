@@ -140,6 +140,7 @@ export default {
 
 .create-activity {
   background-color: #ffbd3e;
+  color: white;
   border-radius: 6px;
   padding: 0 20px;
   height: 30px;
