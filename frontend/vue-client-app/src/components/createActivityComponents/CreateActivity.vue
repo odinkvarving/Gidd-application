@@ -19,25 +19,31 @@
         <input class="input-field" type="text" />
       </li>
       <div class="line"></div>
-      <li class="menu-item">
+      <li class="menu-item date">
         <label for="datepicker">Dato:</label>
         <b-form-datepicker
           class="datepicker"
-          v-model="value"
+          v-model="date"
           size="sm"
           placeholder="Velg dato"
+          data-date-format="mm/dd/yyyy"
         ></b-form-datepicker>
       </li>
       <li class="menu-item time">
         <label for="timepicker">Tid:</label>
-        <b-form-timepicker placeholder="Velg tid" size="sm"></b-form-timepicker>
+        <b-form-timepicker
+          class="timepicker"
+          placeholder="Velg tid"
+          size="sm"
+          v-model="time"
+        ></b-form-timepicker>
       </li>
       <div class="line"></div>
       <li class="menu-item participants">
         <label>
           deltakere:
         </label>
-        <input class="input-field" type="text" />
+        <input class="input-field" type="number" min="0" />
       </li>
       <div class="line"></div>
       <li class="menu-item description">
@@ -48,13 +54,17 @@
       </li>
       <div class="line"></div>
       <li class="menu-item visibility">
-        <label>
-          Hvem kan delta:
-        </label>
-        <b-dropdown>
-          <b-dropdown-item>Alle</b-dropdown-item>
-          <b-dropdown-item>Privat</b-dropdown-item>
-        </b-dropdown>
+          <div class="participation-container">
+            <label>
+            Hvem kan delta:
+            </label>
+            <div>
+                <b-dropdown class="participant-selector" :text="participantValue" size="sm">
+                    <b-dropdown-item @click="participantValue = 'Alle'">Alle</b-dropdown-item>
+                    <b-dropdown-item @click="participantValue = 'Privat'">Privat</b-dropdown-item>
+                </b-dropdown>
+            </div>          
+        </div>
       </li>
       <li class="menu-item btn">
         <button><span>Opprett Aktivitet</span></button>
@@ -66,6 +76,13 @@
 <script>
 export default {
   name: "CreateActivity",
+  data() {
+    return {
+      date: "",
+      time: "",
+      participantValue: "..."
+    };
+  },
 };
 </script>
 
@@ -97,8 +114,33 @@ ul {
 .menu-item .name-field {
   margin: auto;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.10);
   outline: none;
+  font-size: 20px;
+  background-color: hsla(0, 0%, 77%, 0.10);
+}
+
+.time {
+  padding-top: 5px;
+}
+
+.date {
+  padding-bottom: 5px;
+}
+
+.datepicker {
+  border: none !important;
+  outline: none;
+}
+
+.timepicker {
+  border: none !important;
+  outline: none;
+}
+
+.partcipant-selector {
+    min-width: 100px;
+    margin-left: auto;
 }
 
 .input-field {
@@ -117,9 +159,10 @@ ul {
   margin: 0 auto;
 }
 
-.datepicker {
-  width: 1000px;
-  height: 10px;
+.participation-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
-
 </style>
