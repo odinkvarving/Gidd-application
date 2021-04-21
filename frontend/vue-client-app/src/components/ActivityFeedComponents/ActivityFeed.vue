@@ -9,7 +9,17 @@
             <p class="header">Kommende aktiviteter</p>
             <div class="horizontal-line"/>
             <div id="coming-activities">
-                <!-- list med brukerens aktiviteter -->
+                <!-- TODO: refresh joined activity list when activity is joined or removed -->
+                <div v-for="a in joinedActivities" :key="a.id" style="width: 100%;">
+                    <div class="joined-activity-container">
+                        <div class="circle" />
+                        <p>{{ a.title }}</p>
+                        <div class="time">
+                            <div class="date">04.01</div>
+                            <div class="clock">16:00</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -29,12 +39,13 @@
             return {
                 selectedActivity: null,
                 activities: {},
+                joinedActivities: {},
                 sortKey: "",
             }
         },
         mounted(){
             this.getActivities();
-            
+            this.getJoinedActivities();
         },
         methods: {
             getActivities() {
@@ -49,6 +60,27 @@
                     .then(data => {
                         this.activities = data;
                         console.log(data[0]);
+                    })
+                    .catch(error => console.log(error))
+            },
+            async getJoinedActivities() {
+
+                let accountId;
+                await userService.getAccountByEmail().then(data => accountId = data.id);
+                
+                let url = `http://localhost:8080/accounts/${accountId}/activities/`;
+
+                const requestOptions ={
+                    method: 'GET',
+                    headers: userService.authorizationHeader()
+                }
+
+                // Get all registered activites from database
+                fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        this.joinedActivities = data;
                     })
                     .catch(error => console.log(error))
             },
@@ -101,4 +133,47 @@
         margin-top: 15px;
     }
 
+    #calendar-mini .horizontal-line {
+        width: 85%;
+        opacity: 40%;
+        height: 1px;
+        background-color: black;
+    }
+
+    .joined-activity-container {
+        width: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+    
+    .joined-activity-container p {
+        margin: 0;
+    }
+
+    .joined-activity-container .circle{
+        width: 10px;
+        height: 10px;
+        background-color: #FFBD3E;
+        border-radius: 100%;
+    }
+
+    .joined-activity-container .time {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    .joined-activity-container .time .date {
+        font-size: 20px;
+        margin: 0;
+    }
+
+    .joined-activity-container .time .clock {
+        font-size: 14px;
+        margin: 0;
+    }
 </style>

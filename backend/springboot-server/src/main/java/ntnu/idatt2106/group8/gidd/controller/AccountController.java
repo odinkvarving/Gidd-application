@@ -4,6 +4,7 @@ import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
+import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,9 +137,14 @@ public class AccountController {
         return accountService.removeAccountFromActivity(activityId, accountId);
     }
 
-    @PutMapping("accounts/{id}/activity/{id}")
+    @PutMapping("accounts/{id}/activities/{id}")
     public void addAccountToActivity(@PathVariable("id")int accountId, @PathVariable("id")int activityId) {
         accountService.addAccountToActivity(activityId, accountId);
+    }
+
+    @GetMapping("accounts/{id}/activities")
+    public Set<Activity> getAccountsActivities(@PathVariable("id") int accountId){
+        return accountService.findAccountsActivities(accountId);
     }
 
     @PutMapping("accounts/{id}")
