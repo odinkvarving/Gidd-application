@@ -1,5 +1,5 @@
 <template>
-  <b-navbar class="bg-white" fixed="top" v-show="homePage">
+  <b-navbar class="bg-white" fixed="top" v-show="onHomePage">
     <div class="collapse navbar-collapse">
       <router-link to="/">
         <div class="logo">
@@ -13,9 +13,11 @@
           <input class="search-box" placeholder="Søk" />
         </div>
         <div class="menu-item create-activity">
-          <a v-if="isLoggedIn" href="#">Opprett aktivitet</a>
+          <div v-if="isLoggedIn" @click="toggleCreateActivity">Opprett aktivitet</div>
+          
           <router-link to="/login" v-else>Logg inn</router-link>          
         </div>
+        <CreateActivity v-show="isCreateActivityVisible" />
         <Dropdown
           class="notification-icon"
           icon="bell.png"
@@ -29,15 +31,18 @@
 
 <script>
 import Dropdown from "./Dropdown.vue";
-import { userService } from "../../services/UserService.js"
+//import { userService } from "../../services/UserService.js"
+import CreateActivity from "../createActivityComponents/CreateActivity.vue"
 
 export default {
   name: "navbar",
   components: {
     Dropdown,
+    CreateActivity
   },
   data() {
     return {
+      isCreateActivityVisible: false,
       user: [
         {
           title: "Min Profil",
@@ -53,11 +58,11 @@ export default {
         },
       ],
       notifications: [{}],
-      isLoggedIn: userService.isLoggedIn()
+      isLoggedIn: true
     };
   },
   computed: {
-    homePage() {
+    onHomePage() {
       if (this.$route.path==='/' || this.$route.path==='/register' || this.$route.path==='/login') {
         return false
       } else {
@@ -65,6 +70,15 @@ export default {
       }
     }
   },
+  methods: {
+    toggleCreateActivity() {
+      if (this.isCreateActivityVisible === false) {
+        this.isCreateActivityVisible = true;
+      } else {
+        this.isCreateActivityVisible = false;
+      }
+    }
+  }
 };
 </script>
 
@@ -140,6 +154,7 @@ export default {
 
 .create-activity {
   background-color: #ffbd3e;
+  color: white;
   border-radius: 6px;
   padding: 0 20px;
   height: 30px;
@@ -156,6 +171,6 @@ nav .create-activity a {
 }
 
 .bg-white{
-    box-shadow: 0 2px 2px -2px rgba(0,0,0,.2);
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,.1);
   }
 </style>
