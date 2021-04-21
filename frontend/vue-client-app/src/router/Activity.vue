@@ -28,8 +28,8 @@
         },
 
         methods: {
-            getActivities() { //async when we receive activities from db
-                let activities = [ //FOR TEST PURPOSES
+            async getActivities() { //async when we receive activities from db
+                /*let activities = [ //FOR TEST PURPOSES
                     {
                         id: 0,
                         name: "Fotball i Dødens dal",
@@ -125,22 +125,21 @@
                     }
                 ];
                 activities.forEach(a => console.log(a.name));
-                return activities;
-                /*return await fetch("localhost:8080/activities")
+                return activities;*/
+                return await fetch("http://localhost:8080/activities")
                 .then(data => {
                     console.log(data);
-                    this.activities = data;
-                })*/
+                })
             },
 
             async getWeather() {
                 return await weatherService.getWeather(this.latitude, this.longitude, this.time);
             },
 
-            findActivity() { //async when we will use getActivities
+            async findActivity() { //async when we will use getActivities
                 console.log("test");
                 //let activities = await Promise.all(this.getActivities());
-                let activities = this.getActivities();
+                let activities = await this.getActivities();
                 let act = activities.find((a) => a.id === this.$route.params.id);
                 console.log(act);
                 return act;
