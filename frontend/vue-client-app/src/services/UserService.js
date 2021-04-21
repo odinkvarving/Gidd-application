@@ -127,8 +127,6 @@ function isLoggedIn(){
         return false;
     }
 
-    console.log(JSON.stringify(user.jwtToken));
-
     const requestOptions = {
         method: 'POST',
         headers: {

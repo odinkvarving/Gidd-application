@@ -35,6 +35,7 @@
     </div>
 </template>
 <script>
+import { userService } from '../../services/UserService';
     export default {
         name: "Activity",
 
@@ -55,6 +56,13 @@
             handleButtonClick() {
                 //Open login/register window or add the user to "participants"
                 console.log("Button clicked");
+
+                if(!userService.isLoggedIn()){
+                    console.log("Tried to join activity without being logged in.\nRedirecting to login page");
+                    this.$router.push("/login");
+                }
+
+                
             },
 
             getButtonStatus() {
