@@ -1,15 +1,19 @@
 <template>
     <div id="card">
-        <NavBar/>
-        <ActivityCard id="card" :activity="activity"/>
+        <NavBar/> <!-- Navigation bar -->
+        <ActivityCard id="card" :activity="activity"/> <!-- Activity -->
     </div>
 </template>
 <script>
     import ActivityCard from '../components/ActivityCardComponents/ActivityCard.vue'
     import NavBar from '../components/Nav/NavBar.vue'
-import { userService } from '../services/UserService'
-    import {weatherService} from '../services/WeatherService.js'
+    import {userService} from '../services/UserService'
     
+    /**
+     * Activity is a router, which will display an activity.
+     * 
+     * @author Scott Rydberg Sonen
+     */
     export default {
         name: "Activity",
         components: {
@@ -18,41 +22,46 @@ import { userService } from '../services/UserService'
         },
         data() {
             return {
-                test: [1,2,3],
-                activity: {},
-                activities: {}
-                /*weather: {
-                    name: WeatherService.getName,
-                    temp: WeatherService.getTemp,
-                    description: WeatherService.getDescription
-                }*/
+                /**
+                 * activity is a variable which represents the clicked activity in the activity feed.
+                 */
+                activity: this.findActivity(),
             }
         },
+
         async mounted(){
             this.activity = await this.findActivity()
         },
+
         methods: {
-            async getActivities() { //async when we receive activities from db
+            /**
+             * getActivities() is an asynchronous function which returns all activities registered in the database.
+             * A GET request is sent to the Spring Boot server, and the server returns all activities
+             */
+            async getActivities() {
                 const requestOptions = {
                     method: 'GET',
-                    headers: userService.authorizationHeader()
+                    Headers: userService.authorizationHeader() //Using an authorization header to get access
                 }
-                
-                return await fetch("http://localhost:8080/activities/", requestOptions)
-                    .then(response => response.json())
-                    .then(data => {
-                        this.activities = data;
-                    })
-                    .catch(error => console.log(error));
-                
+                return await fetch("http://localhost:8080/activities", requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => console.log(error));
             },
 
-            async getWeather() {
-                return await weatherService.getWeather(this.latitude, this.longitude, this.time);
-            },
+            /**
+             * findActivity is an asynchronous function which returns clicked activity in activity feed.
+             * The way this is done is by finding activity with an ID.
+             * The ID is passed from Dashboard to Activity.vue through dynamic routing.
+             */
+            async findActivity() {
+                let activities = await this.getActivities();
+                let act = activities.find((a) => a.id === parseInt(this.$route.params.id)); //this.$route.params.id is the ID which is passed through the routing path
+                return act;
 
-            async findActivity() { //async when we will use getActivities
-                console.log("test");
+                /*console.log("test");
                 //await Promise.all(this.getActivities());
                 await this.getActivities();
                 console.log(this.activities);
@@ -65,7 +74,7 @@ import { userService } from '../services/UserService'
                     }
                 }
                 console.log(act);
-                return act;
+                return act;*/
             }
         }
     }

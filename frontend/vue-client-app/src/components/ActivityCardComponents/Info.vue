@@ -1,14 +1,15 @@
 <template>
     <div id="infobox" v-if="activity != null">
         <div class="box" id="top">
-            <h1>{{ activity.title }}</h1>
+            <h1>{{ activity.title }}</h1> <!-- Title of the activity -->
             <div id="ownerInfo">
-                <img :src="require('@/assets/kari.jpg')" >
+                <img :src="require('@/assets/kari.jpg')"/> <!-- Profile picture of creator -->
                 <h3 class="txt">{{ activity.creator.email }}</h3>
+                <!-- <h3 class="txt">{{ activity.creator.accountInfo.firstName }} {{ activity.creator.accountInfo.surName }}</h3> -->
             </div>
-            <p class="txt">{{ activity.description }}</p>
+            <p class="txt">{{ activity.description }}</p> <!-- Description of the activity -->
         </div>
-        <div class="box" id="bottom">
+        <div class="box" id="bottom"> <!-- Lists of other information about the activity -->
             <h3>Informasjon:</h3>
             <ul class="list" id="list1">
                 <li class="txt">Kategori:</li>
@@ -37,42 +38,94 @@
   </div>
 </template>
 <script>
-export default {
-  name: "Info",
+  import {weatherService} from '../../services/WeatherService.js'
 
-  props: {
-    activity: {
-      type: Object,
-      required: true,
-    },
-  },
+  /**
+   * Info is a component which represents general info about an activity
+   * It is used in ActivityCard
+   * 
+   * @author Scott Rydberg Sonen
+   */
+  export default {
+    name: "Info",
 
-  data() {
-    return {
-      isFull: false,
-    };
-  },
-  mounted(){
-    console.log(this.activity);
-  },
-  methods: {
-    checkIfFull() {
-      console.log(this.activity);
-      if (this.activity.currentParticipants < this.activity.totalParticipants) {
-        return "Bli med";
-      } else {
-        this.isFull = true;
-        return "Fullt";
+    props: {
+      /**
+       * activity is a prop passed from ActivityCard to Info.
+       * The prop represent an activity found in ActivityCard by ID from ActivityFeed
+       */
+      activity: {
+        type: Object,
+        required: true
       }
     },
 
-    load() {},
-
-    handleButtonClick() {
-      //Open login/register window or add the user to "participants"
+    data() {
+      return {
+        /**
+         * isFull is a boolean which represent the state an activity and its current participants.
+         * If isFull is true, it means that the number of participants has reach a max limit.
+         * After isFull changes to true, every participant which tries to join will be put in a queue.
+         */
+        isFull: false,
+        /**
+         * location is a string which represents the place name of the activity
+         */
+        location: this.findLocation(),
+        /**
+         * weather is an object which represents the weather of the activity.
+         * It contains relevant parameters: name, temp, description and icon.
+         */
+        weather: this.getWeather(),
+      }
     },
-  },
-};
+
+    mounted() {
+      console.log(this.activity);
+    },
+
+    methods: {
+      /**
+       * checkIfFull is a function which checks if currentParticipants is bigger than max limit.
+       * If it is, the isFull-state changes to true.
+       */
+      checkIfFull() {
+          console.log(this.activity);
+          if (this.activity.currentParticipants < this.activity.totalParticipants) { 
+              return "Bli med";
+          } else {
+              this.isFull = true;
+              return "Fullt";
+          }
+      },
+
+      /**
+       * findLocation is an asynchronous function which returns location of the activity.
+       * getWeather function is utilized, and we find the location by using the weather object.
+       */
+      async findLocation() {
+          return await this.getWeather().name;
+      },
+        
+      /**
+       * getWeather is an asynchronous function which returns weather of the activity.
+       * The weather object is fetched in services/WeatherService.
+       * To find the weather, WeatherService requires latitude, longitude and startTime of activity.
+       */
+      async getWeather() {
+          return await weatherService.getWeather(this.latitude, this.longitude, this.time);
+      },
+
+      /**
+       * handleButtonClick is an event handler for the button in the component.
+       * A PUT request will be sent to the Spring Boot server,
+       * and the server will check if there is space left for the user to join.
+       */
+      handleButtonClick() {
+          //Open login/register window or add the user to "participants"
+      },
+    }
+  }
 </script>
 <style>
 #infobox {
