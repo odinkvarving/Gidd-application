@@ -27,6 +27,7 @@
 <script>
     import Activity from './Activity.vue'
     import { userService } from "../../services/UserService.js"
+    import {weatherService} from '../../services/WeatherService.js'    
 
     export default {
         name: "ActivityFeed",
@@ -37,6 +38,7 @@
 
         data() {
             return {
+                //WeatherService: require('../../services/WeatherService.js'),
                 selectedActivity: null,
                 activities: {},
                 joinedActivities: {},
@@ -84,6 +86,10 @@
                     })
                     .catch(error => console.log(error))
             },
+            async getWeather() {
+                return await weatherService.getWeather(this.latitude, this.longitude, this.time);
+            },
+
             handleActivityClicked(activity) {
                 this.selectedActivity = activity;
                 console.log(this.selectedActivity.name);
