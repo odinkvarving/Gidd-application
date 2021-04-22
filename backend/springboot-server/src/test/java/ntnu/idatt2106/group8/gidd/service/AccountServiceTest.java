@@ -103,14 +103,7 @@ class AccountServiceTest {
                 , "the new email for account1 is wrong");
         assertEquals("newPassword", this.accountService.findAccountById(this.testAccount1.getId()).getPassword()
                 , "the new password of account1 is wrong");
-
-        this.accountService.setAccountInfo(this.testAccount1.getId(), this.testInfo2);
-        assertEquals("firstname2", this.accountService.findAccountInfo(this.testAccount1.getId()).getFirstname()
-                , "the new account info is wrong");
-        this.accountService.setAccountInfo(this.testAccount1.getId(), this.testInfo1);
-        assertEquals("firstname1", this.accountService.findAccountInfo(this.testAccount1.getId()).getFirstname()
-                , "the new account info is wrong");
-
+        
     }
 
     @Test
@@ -120,11 +113,9 @@ class AccountServiceTest {
 
     @Test
     void addAndGetUser() {
-        this.accountService.saveAccountWithInfo(this.testAccount1, this.testInfo1);
+        this.accountService.save(this.testAccount1);
         assertNotNull(this.accountService.findAccountById(this.testAccount1.getId()),
                 "failed retrieving account");
-        assertNotNull(this.accountService.findAccountById(this.testAccount1.getId()).getAccountInfo()
-                , "failed retrieving the account info");
 
         assertNotNull(this.accountService.findAccountByCredentials(this.testAccount1.getEmail(), this.testAccount1.getPassword())
                 , "could not retrieve account by credentials");
@@ -132,7 +123,7 @@ class AccountServiceTest {
         assertTrue(this.accountService.accountExistsById(this.testAccount1.getId())
                 , "account did not exist even though it should.");
 
-        this.accountService.saveAccountWithInfo(this.testAccount2, this.testInfo2);
+        this.accountService.save(this.testAccount2);
 
         assertEquals(2, this.accountService.findAll().size(),
                 "There was not two elements in the database even though there should be");
@@ -140,7 +131,7 @@ class AccountServiceTest {
 
     @Test
     void deleteAccount() {
-        this.accountService.saveAccountWithInfo(this.testAccount1, this.testInfo1);
+        this.accountService.save(this.testAccount1);
         this.accountService.deleteAccount(this.testAccount1.getId());
         assertNull(this.accountService.findAccountById(this.testAccount1.getId())
                 , "null was not found after deleting account");
