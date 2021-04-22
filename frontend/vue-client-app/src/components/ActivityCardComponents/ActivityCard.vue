@@ -7,46 +7,50 @@
         <Chat class="comp chat" id="chat" :activity="activity" v-show="isChatVisible"/>
     </div>
 </template>
+
+
 <script>
-    import Info from './Info.vue'
-    import Map from './Map.vue'
-    import Equipment from './Equipment.vue'
-    import Chat from './Chat.vue'
+import Info from "./Info.vue";
+import Map from "./Map.vue";
+import Equipment from "./Equipment.vue";
+import Chat from "./Chat.vue";
+import { userService } from "../../services/UserService.js";
 
-    export default {
-        name: "ActivityCard",
-        components: {
-            Info,
-            Map,
-            Equipment,
-            Chat
-        },
+export default {
+  name: "ActivityCard",
+  components: {
+    Info,
+    Map,
+    Equipment,
+    Chat,
+  },
 
-        props: {
-            activity: {
-                type: Object,
-                required: true
-            },
-        },
+  props: {
+    activity: {
+      type: Object,
+      required: true,
+    },
+  },
 
-        data() {
-            return {
-                isChatVisible: false,
-            }
-        },
+    data() {
+        return {
+            isChatVisible: false,
+            isLoggedIn: userService.isLoggedIn()
+        }
+    },
 
-        methods: {
-            changeChatVisibility() {
-                this.isChatVisible = !this.isChatVisible;
-                const btn = document.getElementById('btnVisible');
-                if (this.isChatVisible) {
-                    btn.childNodes[0].nodeValue = "Skjul chat";
-                } else {
-                    btn.childNodes[0].nodeValue = "Åpne chat";
-                }
+    methods: {
+        changeChatVisibility() {
+            this.isChatVisible = !this.isChatVisible;
+            const btn = document.getElementById('btnVisible');
+            if (this.isChatVisible) {
+                btn.childNodes[0].nodeValue = "Skjul chat";
+            } else {
+                btn.childNodes[0].nodeValue = "Åpne chat";
             }
         }
     }
+}
 </script>
 <style>
     #activity{
