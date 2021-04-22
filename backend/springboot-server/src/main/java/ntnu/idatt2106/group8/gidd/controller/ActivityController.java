@@ -40,7 +40,7 @@ public class ActivityController {
      * @param id the id of the Activity
      * @return the Activity found with the specified id
      */
-    @GetMapping("activities/{id}")
+    @GetMapping("/activities/{id}")
     public Optional<Activity> getActivity(@PathVariable("id") int id) {
         return activityService.getActivity(id);
     }
@@ -106,7 +106,7 @@ public class ActivityController {
      * @return the Account that was added to the Activity
      */
     @PostMapping("/activities/{activity_id}/accounts/{participant_id}")
-    public Optional<AccountActivity> addParticipantToActivity(@PathVariable("id") int activityId, @PathVariable("id") int participantId) {
+    public Optional<AccountActivity> addParticipantToActivity(@PathVariable("activity_id") int activityId, @PathVariable("participant_id") int participantId) {
         return activityService.addParticipantToActivity(activityId, participantId);
     }
 

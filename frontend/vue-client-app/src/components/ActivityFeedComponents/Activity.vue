@@ -187,7 +187,7 @@ import { userService } from '../../services/UserService';
                 let accountId;
                 await userService.getAccountByEmail().then(data => accountId = data.id);
 
-                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}/`;
+                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}`;
 
                 const requestOptions ={
                     method: 'DELETE',

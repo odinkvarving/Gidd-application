@@ -39,8 +39,8 @@ public class AccountController {
      * @param email PathVariable of the email of the Account
      * @return the Account with this email
      */
-    @GetMapping("accounts/email")
-    public Account getAccountByEmail(@RequestParam(value="email") String email){
+    @GetMapping("accounts/{email}")
+    public Account getAccountByEmail(@PathVariable String email){
         Account account = accountService.findByEmail(email);
         logger.info("Retrieving account with email: " + email);
         logger.info(account.toString());
@@ -51,7 +51,7 @@ public class AccountController {
      *  GetMapping for getting all registered Accounts
      * @return a list of all registered Accounts
      */
-    @GetMapping
+    @GetMapping("accounts/")
     public List<Account> getAllAccounts(){
         return accountService.findAll();
     }
@@ -180,9 +180,9 @@ public class AccountController {
      * @param accountId the PathVariable for the id for the Account
      * @param activityId the PathVariable for the id of the Activity
      */
-    @DeleteMapping("accounts/{id}/activity/{id}")
-    public void removeAccountFromActivity(@PathVariable("id")int accountId, @PathVariable("id")int activityId) {
-        accountService.removeAccountFromActivity(activityId, accountId);
+    @DeleteMapping("accounts/{account_id}/activities/{activity_id}")
+    public boolean removeAccountFromActivity(@PathVariable("account_id")int accountId, @PathVariable("activity_id")int activityId) {
+        return accountService.removeAccountFromActivity(activityId, accountId);
     }
 
     /**
@@ -190,7 +190,7 @@ public class AccountController {
      * @param accountId the PathVariable for the id of the Account
      * @param activityId the PathVariable for the if of the Activity
      */
-    @PutMapping("accounts/{id}/activity/{id}")
+    @PutMapping("accounts/{id}/activities/{id}")
     public void addAccountToActivity(@PathVariable("id")int accountId, @PathVariable("id")int activityId) {
         accountService.addAccountToActivity(activityId, accountId);
     }
