@@ -57,11 +57,11 @@
              * The ID is passed from Dashboard to Activity.vue through dynamic routing.
              */
             async findActivity() {
-                let activities = await this.getActivities();
+                /*let activities = await this.getActivities();
                 let act = activities.find((a) => a.id === parseInt(this.$route.params.id)); //this.$route.params.id is the ID which is passed through the routing path
-                return act;
+                return act;*/
 
-                /*console.log("test");
+                console.log("test");
                 //await Promise.all(this.getActivities());
                 await this.getActivities();
                 console.log(this.activities);
@@ -74,7 +74,7 @@
                     }
                 }
                 console.log(act);
-                return act;*/
+                return act;
             }
         }
     }

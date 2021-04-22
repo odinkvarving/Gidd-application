@@ -12,6 +12,7 @@
     import Map from './Map.vue'
     import Equipment from './Equipment.vue'
     import Chat from './Chat.vue'
+    import {userService} from '../../services/UserService.js'
 
     /**
      * ActivityCard is a component which represents a clicked activity.
@@ -48,7 +49,10 @@
                  * When isChatVisible changes to true, the chat box will be displayed.
                  */
                 isChatVisible: false,
-		isLoggedIn: userService.isLoggedIn()
+                /**
+                 * isLoggedIn is a boolean to check if the client is logged in or not
+                 */
+                isLoggedIn: userService.isLoggedIn()
             }
         },
 
