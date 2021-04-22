@@ -135,11 +135,11 @@ export default {
       let activity = {
         title: this.name,
         description: this.description,
-        endTime: this.endTime,
+        endTime: `${this.date} ${this.endTime}`,
         latitude: "63.41893", //temporary until map is implemented
         longitude: "10.40658", //temporary until map is implemented
         maxParticipants: this.participants,
-        startTime: this.startTime,
+        startTime: `${this.date} ${this.startTime}`,
         activityType: {
           type: this.category
         },

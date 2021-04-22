@@ -178,6 +178,7 @@ import { userService } from '../../services/UserService';
                             this.currentParticipants++;
                             this.alreadyParticipating = true;
                             this.showJoinSpinner = false;
+                            this.$emit('refresh-list', this.activity.id);
                         }
                     })
                     .catch(error => console.log(error));
@@ -200,10 +201,11 @@ import { userService } from '../../services/UserService';
                             this.currentParticipants--;
                             this.alreadyParticipating = false;
                             this.showRemoveSpinner = false;
+                            this.$emit('refresh-list', this.activity.id);
                         }
                     })
                     .catch(error => console.log(error))
-            }
+            },
 
         }
     }

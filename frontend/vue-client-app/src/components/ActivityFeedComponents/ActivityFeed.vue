@@ -2,7 +2,7 @@
     <div id="container">
         <div id="feed">
             <div v-for="a in activities" :key="a.id" @click="handleActivityClicked(a)">
-                <Activity :activity="a"/>
+                <Activity :activity="a" v-on:refresh-list="refreshList"/>
             </div>
         </div>
         <div id="calendar-mini">
@@ -13,10 +13,10 @@
                 <div v-for="a in joinedActivities" :key="a.id" style="width: 100%;">
                     <div class="joined-activity-container">
                         <div class="circle" />
-                        <p>{{ a.title }}</p>
+                        <p class="title">{{ a.title }}</p>
                         <div class="time">
-                            <div class="date">04.01</div>
-                            <div class="clock">16:00</div>
+                            <p class="date">04.01</p>
+                            <p class="clock">16:00</p>
                         </div>
                     </div>
                 </div>
@@ -90,6 +90,34 @@
                 this.$emit('activityClicked', this.selectedActivity);
                 this.$router.push({ name: 'Activity', params: { id: activity.id }});
             },
+            getDayAndMonth(){
+                // Hente ut dag og månede fra tidspunkt start
+            },
+            getClockTime(){
+                // Hente ut klokkeslett ^
+            },
+            refreshList(activityId){
+                let isInList;
+                let index;
+
+                for(let i = 0; i < this.joinedActivities.length; i ++){
+                    if(this.joinedActivities[i].id === activityId){
+                        isInList = true;
+                        index = i;
+                    }
+                }
+
+                if(isInList){
+                    this.joinedActivities.splice(index, 1);
+                }else{
+                    for(let i = 0; i < this.activities.length; i ++){
+                        if(this.activities[i].id === activityId){
+                            this.joinedActivities.push(this.activities[i]);
+                        }
+                    }
+                }
+
+            }
         }
     }
 </script>
@@ -159,7 +187,13 @@
         border-radius: 100%;
     }
 
+    .joined-activity-container .title{
+        width: 210px;
+        text-align: center;
+    }
+
     .joined-activity-container .time {
+        width: 80px;
         display: flex;
         flex-direction: column;
         align-items: center;
