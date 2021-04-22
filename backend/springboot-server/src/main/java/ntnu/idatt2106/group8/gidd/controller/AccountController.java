@@ -26,7 +26,6 @@ import java.util.Set;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/accounts")
 public class AccountController {
 
     @Autowired
@@ -40,7 +39,7 @@ public class AccountController {
      * @param email PathVariable of the email of the Account
      * @return the Account with this email
      */
-    @GetMapping("/email")
+    @GetMapping("accounts/email")
     public Account getAccountByEmail(@RequestParam(value="email") String email){
         Account account = accountService.findByEmail(email);
         logger.info("Retrieving account with email: " + email);
@@ -62,7 +61,7 @@ public class AccountController {
      * @param account requesting the body of the Account to save
      * @return true or false whether the user was created successfully or not
      */
-    @PostMapping("/register")
+    @PostMapping("accounts/register")
     public boolean saveUser(@RequestBody Account account){
         logger.info("Trying to save user:\n" + account.toString());
         boolean success = accountService.save(account);
@@ -81,7 +80,7 @@ public class AccountController {
      * @return JWT token if successful
      * @throws Exception exception
      */
-    @PostMapping("/login")
+    @PostMapping("accounts/login")
     public JWTResponse login(@RequestBody AuthRequest authRequest, HttpServletResponse response) throws Exception {
         return accountService.login(authRequest, response);
     }
@@ -91,7 +90,7 @@ public class AccountController {
      * @param jwtResponse requesting the body of a JWTResponse
      * @return true or false whether the token was valid or not
      */
-    @PostMapping("/validateToken")
+    @PostMapping("accounts/validateToken")
     public boolean isValidToken(@RequestBody JWTResponse jwtResponse) {
         return accountService.isValidToken(jwtResponse.getJwtToken());
     }
@@ -101,7 +100,7 @@ public class AccountController {
      * @param id the id of the Account to find
      * @return the Account that was found
      */
-    @GetMapping("/id={id}")
+    @GetMapping("accounts/id={id}")
     public Account findAccountById(@PathVariable int id) {
         return accountService.findAccountById(id);
     }
@@ -112,7 +111,7 @@ public class AccountController {
      * @param password the password of the account
      * @return the Account that was found
      */
-    @GetMapping("/credentials")
+    @GetMapping("accounts/credentials")
     public Account findAccountByCredentials(@RequestParam(value="email") String email, @RequestParam(value="password")  String password){
         return accountService.findAccountByCredentials(email, password);
     }
@@ -121,7 +120,7 @@ public class AccountController {
      * PostMapping for saving an Account with AccountInfo
      * @param account requests the body of an Account, from where we fetch the AccountInfo that is linked with it
      */
-    @PostMapping("/saveWithInfo")
+    @PostMapping("accounts/saveWithInfo")
     public void saveAccountWithInfo(@RequestBody Account account) {
         accountService.saveAccountWithInfo(account, account.getAccountInfo());
     }
@@ -130,7 +129,7 @@ public class AccountController {
      * PostMapping for setting the AccountInfo of a specified Account
      * @param account requesting the body of an Account
      */
-    @PostMapping("/setInfo")
+    @PostMapping("accounts/setInfo")
     public void setAccountInfo(@RequestBody Account account) {
         accountService.setAccountInfo(account.getId(), account.getAccountInfo());
     }
@@ -140,7 +139,7 @@ public class AccountController {
      * @param id PathVariable for the id of the Account
      * @return the AccountInfo found for this Account
      */
-    @GetMapping("/{id}/info")
+    @GetMapping("accounts/{id}/info")
     public AccountInfo findAccountInfo(@PathVariable("id") int id) {
         return accountService.findAccountInfo(id);
     }
@@ -150,7 +149,7 @@ public class AccountController {
      * @param id the PathVariable of the id for the Account
      * @param email requesting a parameter for a String of the email
      */
-    @PutMapping("/{id}/updateEmail")
+    @PutMapping("accounts/{id}/updateEmail")
     public void updateAccountEmail(@PathVariable("id")int id, @RequestParam String email) {
         accountService.updateAccountEmail(id, email);
     }
@@ -160,7 +159,7 @@ public class AccountController {
      * @param id PathVariable for the id of the Account
      * @param password requesting a parameter for a String of the password
      */
-    @PutMapping("/{id}/updatePassword")
+    @PutMapping("accounts/{id}/updatePassword")
     public void updateAccountPassword(@PathVariable("id")int id, @RequestParam String password) {
         accountService.updateAccountPassword(id, password);
     }
@@ -170,7 +169,7 @@ public class AccountController {
      * @param id the PathVariable of the id for the Account
      * @return true or false
      */
-    @GetMapping("/{id}/exists")
+    @GetMapping("accounts/{id}/exists")
     public boolean accountExistsById(@PathVariable("id")  int id) {
         return accountService.accountExistsById(id);
     }
@@ -181,7 +180,7 @@ public class AccountController {
      * @param password requesting a parameter for a String of the password
      * @return true or false
      */
-    @GetMapping("/existsByCredentials")
+    @GetMapping("accounts/existsByCredentials")
     public boolean accountExistsByCredentials(@RequestParam String email, @RequestParam String password) {
         return accountService.accountExistByCredentials(email, password);
     }
@@ -191,7 +190,7 @@ public class AccountController {
      * @param accountId the PathVariable for the id for the Account
      * @param activityId the PathVariable for the id of the Activity
      */
-    @DeleteMapping("/{id}/activity/{id}")
+    @DeleteMapping("accounts/{id}/activity/{id}")
     public void removeAccountFromActivity(@PathVariable("id")int accountId, @PathVariable("id")int activityId) {
         accountService.removeAccountFromActivity(activityId, accountId);
     }
@@ -201,7 +200,7 @@ public class AccountController {
      * @param accountId the PathVariable for the id of the Account
      * @param activityId the PathVariable for the if of the Activity
      */
-    @PutMapping("/{id}/activity/{id}")
+    @PutMapping("accounts/{id}/activity/{id}")
     public void addAccountToActivity(@PathVariable("id")int accountId, @PathVariable("id")int activityId) {
         accountService.addAccountToActivity(activityId, accountId);
     }
@@ -212,7 +211,7 @@ public class AccountController {
      * @param id the PathVariable of the id for the Account
      * @return the Account that was updated
      */
-    @PutMapping("/{id}")
+    @PutMapping("accounts/{id}")
     public Account updateAccount(@RequestBody Account newAccount, @PathVariable("id")int id) {
         return accountService.updateAccount(id, newAccount);
     }
@@ -221,7 +220,7 @@ public class AccountController {
      * DeleteMapping for deleting an Account
      * @param id the PathVariable for the id of the Account
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("accounts/{id}")
     public void deleteAccount(@PathVariable("id")int id) {
         accountService.deleteAccount(id);
     }
@@ -231,7 +230,7 @@ public class AccountController {
      * @param id the PathVariable for the id of the Account
      * @return a Set of Activities which the Account participates in
      */
-    @GetMapping("/{id}/activities")
+    @GetMapping("accounts/{id}/activities")
     public Set<Activity> findAccountsActivities(@PathVariable("id")int id) {
         return accountService.findAccountsActivities(id);
     }
