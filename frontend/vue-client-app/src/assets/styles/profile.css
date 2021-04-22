@@ -1,27 +1,66 @@
-.headshot{
-    position: absolute;
-    left:240px;
-}
-
 body{
     margin: 0;
     padding: 0;
+}
 
+
+.profile_info{
+    display:grid;
+    grid-template-columns: 17.5vw auto auto auto;
+    grid-template-rows: 7.5vh 10vh 3.5vh 59vh;
 }
 
 .profile_container{
-    position: relative;
     height: 100vh;
     width: 100vw;
 }
 
-#profile_buttons{
-    position:absolute;
-    left:50vw;
-    bottom:20vh;
+.display_container{
+    grid-area: 4/2/span 1/span 3;
+}
+.profile_buttons{
+    grid-area: 3/2/span 1/span 3;
+
+}
+.tabBtn{
+    display: inline-block;
+    width:33%
+}
+
+.profileActivityDisplay{
+    display:table;
+    width:100%;
+    border: 1px solid lightgray;
+    border-collapse: collapse;
+    grid-template-columns: 15% 50% 35%;
+}
+
+.profileActivityID{
+    display:table-cell;
+}
+
+.profileActivityTitle{
+    display:table-cell;
 
 }
 
+.profileActivityStartTime{
+    display:table-cell;
+}
+.vuecal__event.normal-event{
+    background-color: greenyellow;
+    border:1px solid green;
+}
+#name{
+    grid-area: 1/2/span 1/span 2;
+}
+#description{
+    grid-area: 2/2/span 2/span 2;
+}
+
+#info_list{
+    grid-area: 4/1/span 1/span 1;
+}
 #cover_photo{
     width:100vw;
     height:180px;
@@ -33,10 +72,7 @@ body{
     left:24px;
     border-radius:45%;
 }
-
-#info_list{
-    position:absolute;
-    left:7.5vw;
-    top:360px;
-    list-style-type:none
+#calendar{
+    display: block;
+    height:240px;
 }

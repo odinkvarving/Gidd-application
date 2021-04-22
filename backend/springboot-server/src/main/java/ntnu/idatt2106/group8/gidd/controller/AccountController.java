@@ -108,7 +108,7 @@ public class AccountController {
     }
 
     @GetMapping("accounts/{id}/info")
-    public AccountInfo findAccountInfo(@RequestParam(value="id")  int id) {
+    public AccountInfo findAccountInfo(@PathVariable int id) {
         return accountService.findAccountInfo(id);
     }
 
