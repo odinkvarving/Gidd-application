@@ -1,10 +1,10 @@
 <template>
     <div id="infobox" v-if="activity != null">
         <div class="box" id="top">
-            <h1>{{ activity.name }}</h1>
+            <h1>{{ activity.title }}</h1>
             <div id="ownerInfo">
-                <img :src="require('@/assets/' + activity.ownerImage)">
-                <h3 class="txt">{{ activity.ownerName }}</h3>
+                <img :src="require('@/assets/kari.jpg')" >
+                <h3 class="txt">{{ activity.creator.email }}</h3>
             </div>
             <p class="txt">{{ activity.description }}</p>
         </div>
@@ -19,15 +19,14 @@
                 <li class="txt">Deltakere:</li>
             </ul>
             <ul class="list" id="list2">
-                <li class="txt">{{ activity.type }}</li>
-                <li class="txt">{{ activity.location }}</li>
-                <li class="txt">{{ activity.time }}</li>
-                <li class="txt">{{ activity.duration }}</li>
-                <li class="txt" v-if="activity.weather != null">{{ activity.weather.temp }}</li>
+                <li class="txt">{{ activity.activityType.type }}</li>
+                <li class="txt">Dødens dal</li><!-- Replace this with actual location when implemented -->
+                <li class="txt">{{ activity.startTime }}</li>
+                <li class="txt">60 minutter</li><!-- Implement calculation for this -->
+                <li class="txt" v-if="!activity.weather != null">Strålende sol 17 grader</li><!-- IMplement this -->
                 <li class="txt" v-else>Ingen værmelding</li>
-                <li class="txt">{{ activity.currentParticipants }} / {{ activity.totalParticipants }}</li>
+                <li class="txt">{{ 0 }} / {{ activity.maxParticipants }}</li>
             </ul>
-            <button id="btn" :class="{ full: isFull }" @click="handleButtonClick()"><span>{{ checkIfFull() }}</span></button>
         </div>
         <!--<div>
                   <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
@@ -53,7 +52,9 @@ export default {
       isFull: false,
     };
   },
-
+  mounted(){
+    console.log(this.activity);
+  },
   methods: {
     checkIfFull() {
       console.log(this.activity);
