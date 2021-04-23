@@ -19,10 +19,12 @@
         </li>
         <div class="line"></div>
         <li class="menu-item equipment">
-          <label>
-            utstyr:
-          </label>
-          <input class="input-field" type="text" v-model="equipment" />
+          <div class="equipment-container">
+              <label>
+                  utstyr:
+              </label>
+              <b-form-tags input-id="tags-basic" v-model="equipment" placeholder="Legg til utstyr..."></b-form-tags>
+          </div>        
         </li>
         <div class="line"></div>
         <li class="menu-item location">
@@ -111,7 +113,7 @@ export default {
     return {
       name: "",
       category: "",
-      equipment: "",
+      equipment: [],
       location: "",
       date: "",
       startTime: "",
@@ -132,9 +134,15 @@ export default {
 
       let accountDetails = await userService.getAccountByEmail();
 
+      let equipmentList = [];
+      for(let i = 0; i < this.equipment.length; i ++){
+        equipmentList.push({description : this.equipment[i]});
+      }
+
       let activity = {
         title: this.name,
         description: this.description,
+        equipment: equipmentList,
         endTime: `${this.date} ${this.endTime}`,
         latitude: "63.41893", //temporary until map is implemented
         longitude: "10.40658", //temporary until map is implemented
@@ -179,7 +187,6 @@ export default {
   display: flex;
   border: 1px solid rgba(0, 0, 0, 0.15);
   width: 310px;
-  height: 520px;
   justify-content: center;
 }
 
@@ -258,4 +265,14 @@ ul {
   justify-content: space-between;
   width: 100%;
 }
+
+.equipment-container {
+  display: flex;
+  flex-flow: column;
+}
+
+.equipment-container label{
+  margin: 7px 0;
+}
+
 </style>
