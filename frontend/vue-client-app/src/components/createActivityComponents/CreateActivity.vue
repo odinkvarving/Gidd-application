@@ -3,19 +3,20 @@
     <div class="create-activity-container">
       <ul>
         <li class="menu-item name-container">
-          <input
+          <b-form-input
+            :state="nameState"
             class="name-field"
             type="text"
             placeholder="Navn på aktivitet"
             v-model="name"
-          />
+          ></b-form-input>
         </li>
         <div class="line"></div>
         <li class="menu-item category">
           <label>
             Kategori:
           </label>
-          <b-form-select  v-model="category" :options="categories" style="width: 200px">
+          <b-form-select  :state="categoryState" v-model="category" :options="categories" style="width: 200px;">
             <template #first>
               <b-form-select-option :value="null" disabled>-- Velg en kategori --</b-form-select-option>
             </template>
@@ -25,7 +26,7 @@
           <label>
             Nivå:
           </label>
-          <b-form-select  v-model="level" :options="levels" style="width: 200px">
+          <b-form-select :state="levelState" v-model="level" :options="levels" style="width: 200px">
             <template #first>
               <b-form-select-option :value="null" disabled>-- Velg et nivå --</b-form-select-option>
             </template>
@@ -37,20 +38,21 @@
               <label>
                   Utstyr:
               </label>
-              <b-form-tags input-id="tags-basic" remove-on-delete v-model="equipment" placeholder="Legg til utstyr..."></b-form-tags>
+              <b-form-tags :state="equipmentState" input-id="tags-basic" remove-on-delete v-model="equipment" placeholder="Legg til utstyr..."></b-form-tags>
           </div>        
         </li>
         <div class="line"></div>
         <li class="menu-item location">
           <label>
-            sted:
+            Sted:
           </label>
-          <input class="input-field" type="text" v-model="location"/>
+          <b-form-input :state="placeState" class="input-field" type="text" v-model="location"></b-form-input>
         </li>
         <div class="line"></div>
         <li class="menu-item date">
           <label for="datepicker">Start:</label>
           <b-form-datepicker
+            :state="startDateState"
             class="datepicker"
             v-model="startDate"
             size="sm"
@@ -58,6 +60,7 @@
             data-date-format="mm/dd/yyyy"
           ></b-form-datepicker>
           <b-form-timepicker
+            :state="startDateState"
             class="timepicker"
             placeholder="Velg tid"
             size="sm"
@@ -68,6 +71,7 @@
         <li class="menu-item date">
           <label for="datepicker">Slutt:</label>
           <b-form-datepicker
+            :state="endDateState"
             class="datepicker"
             v-model="endDate"
             size="sm"
@@ -75,6 +79,7 @@
             data-date-format="mm/dd/yyyy"
           ></b-form-datepicker>
           <b-form-timepicker
+            :state="endDateState"
             class="timepicker"
             placeholder="Velg tid"
             size="sm"
@@ -86,14 +91,14 @@
           <label>
             Deltakere:
           </label>
-          <input class="input-field" type="number" min="0" v-model="participants"/>
+          <input class="input-field" type="number" min="2" v-model="participants"/>
         </li>
         <div class="line"></div>
         <li class="menu-item description">
           <label>
             Beskrivelse:
           </label>
-          <input class="input-field" type="text" v-model="description" />
+          <b-form-input :state="descriptionState" class="input-field" type="text" v-model="description"></b-form-input>
         </li>
         <div class="line"></div>
         <li class="menu-item visibility">
@@ -118,7 +123,7 @@
           </div>
         </li>
         <li class="menu-item btn">
-          <button @click="createButtonClicked()"><span>Opprett Aktivitet</span></button>
+          <button class="submit-button" @click="createButtonClicked()"><span>Opprett Aktivitet</span></button>
         </li>
       </ul>
     </div>
@@ -127,6 +132,7 @@
 
 <script>
 import { userService } from "../../services/UserService.js"
+import moment from 'moment'
 
 export default {
   name: "CreateActivity",
@@ -147,6 +153,16 @@ export default {
       description: "",
       participantValue: "",
       isVisible: false,
+      nameState: null,
+      categoryState: null,
+      levelState: null,
+      placeState: null,
+      startDateState: null,
+      endDateState: null,
+      participantsState: null,
+      descriptionState: null,
+      equipmentState: null
+
     };
   },
   mounted(){
@@ -157,10 +173,22 @@ export default {
     createButtonClicked(){
       //DOUBLE CHECK IF USER IS LOGGED IN HERE WITH isLoggedIn()
 
-        console.log(this.startDate);
-        console.log(this.startTime);
+        this.equipmentState = true;
 
-      //this.createActivity();
+        this.name === '' ? this.nameState = false : this.nameState = true;
+        this.category === null ? this.categoryState = false : this.categoryState = true;
+        this.level === null ? this.levelState = false : this.levelState = true;
+        this.location === '' || this.placeState === null ? this.placeState = false : this.placeState = true;
+        this.validStartAndEndDate();
+        this.description === '' ? this.descriptionState = false : this.descriptionState = true;
+
+        if(this.nameState === true && this.categoryState === true && this.levelState === true
+          && this.placeState === true && this.startDateState === true && this.endDateState === true
+          && this.descriptionState === true){
+            this.createActivity();
+        }
+
+      // TODO: Make confirmation when creating activity!!!!
     },
     async createActivity(){
 
@@ -227,6 +255,7 @@ export default {
       let levelsList;
 
       this.level = null;
+      this.participantValue = "Alle";
 
       let url = `http://localhost:8080/levels/`;
 
@@ -240,6 +269,26 @@ export default {
       
       for(let i = 0; i < levelsList.length; i ++){
         this.levels.push(levelsList[i].description);
+      }
+    },
+    validStartAndEndDate(){
+      this.startDate === '' || this.startTime === '' ? this.startDateState = false : this.startDateState = true;
+      this.endDate === '' || this.endTime === '' ? this.endDateState = false : this.endDateState = true;
+
+      if(this.startDate === '' || this.startTime === ''){
+        this.startDateState = false;
+      }
+      if(this.endDate === '' || this.endTime === ''){
+        this.endDateState = false;
+      }
+      else{
+        if(moment(`${this.startDate} ${this.startTime}`).isBefore(`${this.endDate} ${this.endTime}`)){
+          this.endDateState = true;
+          this.startDateState = true;
+        }else{
+          this.startDateState = false;
+          this.endDateState = false;
+        }
       }
     }
   }
@@ -354,4 +403,24 @@ label {
   margin: 7px 0;
 }
 
+.submit-button {
+  background-color: #ffbd3e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0 20px;
+  height: 30px;
+  min-width: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  margin: auto;
+  margin-bottom: 10px;
+}
+
+.submit-button:hover {
+  background-color: #eca82b;
+  transition: 0.2s;
+}
 </style>
