@@ -79,7 +79,7 @@
         weather: this.getWeather(),
       }
     },
-
+  
     mounted() {
       console.log(this.activity);
     },

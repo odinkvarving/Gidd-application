@@ -25,11 +25,15 @@
                 /**
                  * activity is a variable which represents the clicked activity in the activity feed.
                  */
-                activity: this.findActivity(),
+                activity: null,
             }
         },
 
         async mounted(){
+            /**
+             * activity is defined here.
+             * We use await because we are waiting for findActivity to return an activity based on a GET request in getActivities.
+             */
             this.activity = await this.findActivity()
         },
 
