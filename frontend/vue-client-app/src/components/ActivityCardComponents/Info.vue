@@ -119,12 +119,9 @@ export default {
       maxParticipants: this.activity.maxParticipants,
       description: this.activity.description,
       participantValue: "",
-      isVisible: false,
     };
   },
-  mounted() {
-    console.log(this.activity);
-  },
+
   methods: {
     checkIfFull() {
       console.log(this.activity);
@@ -143,11 +140,7 @@ export default {
     },
 
     toggleEditMode() {
-      if (this.inEditMode === true) {
-        this.inEditMode = false;
-      } else {
-        this.inEditMode = true;
-      }
+      this.inEditMode = !this.inEditMode;
     },
 
     async editActivity() {

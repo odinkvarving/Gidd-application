@@ -26,7 +26,7 @@ import { userService } from '../services/UserService'
             }
         },
         async mounted(){
-            this.activity = await this.findActivity()
+            await this.findActivity();
         },
         methods: {
             async getActivities() { //async when we receive activities from db
@@ -62,7 +62,7 @@ import { userService } from '../services/UserService'
                     }
                 }
                 console.log(act);
-                return act;
+                this.activity = act;
             }
         }
     }
