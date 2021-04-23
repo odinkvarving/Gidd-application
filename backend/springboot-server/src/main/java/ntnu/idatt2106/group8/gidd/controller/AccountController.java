@@ -1,6 +1,7 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
 import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
+import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
@@ -223,5 +224,10 @@ public class AccountController {
     @GetMapping("accounts/{id}/activities")
     public Set<Activity> findAccountsActivities(@PathVariable("id")int id) {
         return accountService.findAccountsActivities(id);
+    }
+
+    @GetMapping("accounts/{account_id}/activities/{activity_id}")
+    public AccountActivity findAccountActivity(@PathVariable("account_id")int account_id, @PathVariable("activity_id") int activity_id){
+        return accountService.findAccountActivity(account_id, activity_id);
     }
 }

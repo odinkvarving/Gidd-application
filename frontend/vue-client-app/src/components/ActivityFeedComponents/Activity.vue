@@ -31,8 +31,8 @@
         <div id="map-preview">
             <img src="../../assets/map-preview-example.png" alt="Activity location map preview"/>
         </div>
-        <p>Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
-        <p v-if="participantsInQueue > 0">Venteliste: {{ participantsInQueue }}</p>
+        <p style="margin: 0">Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
+        <p style="font-size: 13px; opacity: 70%" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</p>
         <!--<div>
             <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
         </div>-->
@@ -43,11 +43,11 @@
             <span v-else >{{ getButtonStatus() }}</span>
         </button>
         <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
-        <button v-else id="btn" :class="[isInQueue ? inQueue : participating]" @click.stop="removeParticipantClicked()">
+        <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
             <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
                 <span class="sr-only">Loading...</span>
             </div>
-            <span v-else>{{ participatingText }}</span>
+            <span v-else>{{ isInQueue ? "Venteliste" : "Påmeldt" }}</span>
         </button>
     </div>
 </template>
@@ -71,10 +71,8 @@ import { userService } from '../../services/UserService';
                 showJoinSpinner: false,
                 showRemoveSpinner: false,
                 participantsInQueue: 0,
-                isInQueue: true,
-                inQueue: "in-queue",
-                participating: "participating",
-                participatingText: this.isInQueue ? "Venteliste" : "Påmeldt"
+                queuePosition: 0,
+                isInQueue: false
             }
         },
         mounted(){
@@ -134,6 +132,10 @@ import { userService } from '../../services/UserService';
 
                 console.log(`You are already participating: ${this.alreadyParticipating}`);
 
+                if(this.alreadyParticipating){
+                    this.getQueuePosition(accountId);
+                }
+
             },
             async getCurrentParticipantsNumber(){
                 // Get number of participators on this activity
@@ -178,6 +180,7 @@ import { userService } from '../../services/UserService';
                             console.log("Joining activity was successful! Changing button style");
                             if(this.currentParticipants === this.activity.maxParticipants){
                                 this.participantsInQueue ++;
+                                this.isInQueue = true;
                             }else{
                                 this.currentParticipants ++;
                             }
@@ -209,6 +212,7 @@ import { userService } from '../../services/UserService';
                                 this.currentParticipants --;
                             }
                             this.alreadyParticipating = false;
+                            this.isInQueue = false;
                             this.showRemoveSpinner = false;
                             this.$emit('refresh-list', this.activity.id);
                         }
@@ -227,6 +231,23 @@ import { userService } from '../../services/UserService';
                 fetch(url, requestOptions)
                     .then(response => response.json())
                     .then(data => this.participantsInQueue = data);
+            },
+            async getQueuePosition(accountId){
+                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}`
+
+                const requestOptions = {
+                    method:'GET',
+                    headers: userService.authorizationHeader()
+                }
+
+                await fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.queuePosition = data)
+                    .catch(error => console.log(error));
+
+                if(this.queuePosition > 0){
+                    this.isInQueue = true;
+                }
             }
 
         }
@@ -374,17 +395,21 @@ import { userService } from '../../services/UserService';
     #btn.participating:hover:before{
         content: "Meld av";
     }
-    #btn.in-queue{
+    #btn.inQueue{
         background-color: #FF5B3E;
     }
-    #btn.in-queue:hover{
+    #btn.inQueue:hover{
         background-color: #dd4b31;
         transition: 0.2s;
     }
-    #btn.in-queue:hover span{
+    #btn.inQueue:hover span{
         display: none;
     }
-    #btn.in-queue:hover:before{
+    #btn.inQueue:hover:before{
         content: "Meld av";
+    }
+
+    .queue-list{
+        opacity: 70%;
     }
 </style>
