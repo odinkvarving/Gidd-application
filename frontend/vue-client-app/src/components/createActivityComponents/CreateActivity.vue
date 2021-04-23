@@ -132,6 +132,7 @@
 
 <script>
 import { userService } from "../../services/UserService.js"
+import moment from 'moment'
 
 export default {
   name: "CreateActivity",
@@ -181,11 +182,13 @@ export default {
         this.validStartAndEndDate();
         this.description === '' ? this.descriptionState = false : this.descriptionState = true;
 
+        if(this.nameState === true && this.categoryState === true && this.levelState === true
+          && this.placeState === true && this.startDateState === true && this.endDateState === true
+          && this.descriptionState === true){
+            this.createActivity();
+        }
 
-        console.log(this.startDate);
-        console.log(this.startTime);
-
-      //this.createActivity();
+      // TODO: Make confirmation when creating activity!!!!
     },
     async createActivity(){
 
@@ -272,17 +275,21 @@ export default {
       this.startDate === '' || this.startTime === '' ? this.startDateState = false : this.startDateState = true;
       this.endDate === '' || this.endTime === '' ? this.endDateState = false : this.endDateState = true;
 
-      let startDateList = this.startDate.split("-");
-      let endDateList = this.endDate.split("-");
-      let startTimeList = this.startTime.split(":");
-      let endTimeList = this.endTime.split(":");
-      console.log(startDateList);
-      console.log(endDateList);
-      console.log(startTimeList);
-      console.log(endTimeList);
-
-      // TODO: COMPARE TIMES
-      
+      if(this.startDate === '' || this.startTime === ''){
+        this.startDateState = false;
+      }
+      if(this.endDate === '' || this.endTime === ''){
+        this.endDateState = false;
+      }
+      else{
+        if(moment(`${this.startDate} ${this.startTime}`).isBefore(`${this.endDate} ${this.endTime}`)){
+          this.endDateState = true;
+          this.startDateState = true;
+        }else{
+          this.startDateState = false;
+          this.endDateState = false;
+        }
+      }
     }
   }
 };

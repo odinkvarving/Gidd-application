@@ -2,14 +2,8 @@ package ntnu.idatt2106.group8.gidd.service;
 
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
-import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
-import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
-import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
-import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
-import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepository;
+import ntnu.idatt2106.group8.gidd.model.entities.*;
+import ntnu.idatt2106.group8.gidd.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +37,9 @@ public class ActivityService {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private LevelRepository levelRepository;
 
     /**
      * Method for finding all registered activities
@@ -82,7 +79,9 @@ public class ActivityService {
         log.info(activity.getCreator().toString());
         try {
             ActivityType activityType = activityTypeRepository.findActivityTypeByType(activity.getActivityType().getType());
+            Level level = levelRepository.findByDescription(activity.getLevel().getDescription());
             activity.setActivityType(activityType);
+            activity.setLevel(level);
             Activity result = activityRepository.save(activity);
             addParticipantToActivity(result.getId(), activity.getCreator().getId());
             return result;
