@@ -18,9 +18,9 @@
             </div>
             <div class="vertical-line"/>
             <div class="detail-container">
-                <p class="detail-header">Varighet</p> 
+                <p class="detail-header">Nivå</p> 
                 <!-- <p class="detail-value" style="font-size:18px;">{{ activity.duration }}</p>  regne ut tiden fra datoer --> 
-                <p class="detail-value" style="font-size:18px;">2 timer</p>
+                <p class="detail-value" style="font-size:18px;">middels</p>
             </div>
             <div class="vertical-line"/>
             <div class="detail-container">

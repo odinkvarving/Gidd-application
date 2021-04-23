@@ -39,24 +39,31 @@
         </li>
         <div class="line"></div>
         <li class="menu-item date">
-          <label for="datepicker">Dato:</label>
+          <label for="datepicker">Start:</label>
           <b-form-datepicker
             class="datepicker"
-            v-model="date"
+            v-model="startDate"
             size="sm"
             placeholder="Velg dato"
             data-date-format="mm/dd/yyyy"
           ></b-form-datepicker>
-        </li>
-        <li class="menu-item time">
-          <label for="start-timepicker">Start:</label>
           <b-form-timepicker
             class="timepicker"
             placeholder="Velg tid"
             size="sm"
             v-model="startTime"
           ></b-form-timepicker>
-          <label for="timepicker">Slutt:</label>
+        </li>
+        <div class="line"></div>
+        <li class="menu-item date">
+          <label for="datepicker">Slutt:</label>
+          <b-form-datepicker
+            class="datepicker"
+            v-model="endDate"
+            size="sm"
+            placeholder="Velg dato"
+            data-date-format="mm/dd/yyyy"
+          ></b-form-datepicker>
           <b-form-timepicker
             class="timepicker"
             placeholder="Velg tid"
@@ -67,14 +74,14 @@
         <div class="line"></div>
         <li class="menu-item participants">
           <label>
-            deltakere:
+            Deltakere:
           </label>
           <input class="input-field" type="number" min="0" v-model="participants"/>
         </li>
         <div class="line"></div>
         <li class="menu-item description">
           <label>
-            beskrivelse:
+            Beskrivelse:
           </label>
           <input class="input-field" type="text" v-model="description" />
         </li>
@@ -120,7 +127,8 @@ export default {
       categories: [],
       equipment: [],
       location: "",
-      date: "",
+      startDate: "",
+      endDate: "",
       startTime: "",
       endTime: "",
       participants: 0,
@@ -136,7 +144,10 @@ export default {
     createButtonClicked(){
       //DOUBLE CHECK IF USER IS LOGGED IN HERE WITH isLoggedIn()
 
-      this.createActivity();
+        console.log(this.startDate);
+        console.log(this.startTime);
+
+      //this.createActivity();
     },
     async createActivity(){
 
@@ -151,11 +162,11 @@ export default {
         title: this.name,
         description: this.description,
         equipment: equipmentList,
-        endTime: `${this.date} ${this.endTime}`,
+        endTime: `${this.endDate} ${this.endTime}`,
         latitude: "63.41893", //temporary until map is implemented
         longitude: "10.40658", //temporary until map is implemented
         maxParticipants: this.participants,
-        startTime: `${this.date} ${this.startTime}`,
+        startTime: `${this.startDate} ${this.endTime}`,
         activityType: {
           type: this.category
         },
