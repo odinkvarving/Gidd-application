@@ -4,9 +4,29 @@
       ><p class="close-btn-p">
         <b-icon class="text-muted" id="close-btn" icon="x"></b-icon></p
     ></router-link>
-    <h2>Glemt passord?</h2>
-    <input v-model="emailValue" />
-    <button v-on:click="postAddress()">submit</button>
+    <h2 class="header">Glemt passord? 🤯</h2>
+    <div class="info">
+      Skriv inn den registrerte e-posten din, så skal vi se om vi kan hjelpe!
+    </div>
+    <div class="input-container">
+      <p v-if="!isEmailValid">Skriv inn en gyldig e-postadresse</p>
+      <input
+        type="text"
+        class="input"
+        id="email"
+        placeholder="E-post"
+        v-model="emailValue"
+        v-bind:disabled="sent"
+      />
+    </div>
+    <div v-if="sent" class="show-sent">
+      Hvis {{ emailValue }} er koblet til en konto vil en e-post sendes med en
+      beskrivelse på hvordan du kan skifte passord.
+    </div>
+    <button id="submit" @click="postAddress" v-bind:disabled="sent">
+      Send
+    </button>
+    <div class="spacing"></div>
   </div>
 </template>
 
@@ -15,12 +35,31 @@ export default {
   name: "ForgotPasswordBox",
   data() {
     return {
+      isEmailValid: true,
       emailValue: "",
+      sent: false,
     };
   },
   methods: {
-    postAddress: function () {
-      alert("submitted");
+    postAddress() {
+      this.isEmailValid = true;
+      if (!this.validateEmail()) {
+        this.isEmailValid = false;
+      }
+      if (this.isEmailValid) {
+        this.send();
+        this.sent = true;
+      }
+    },
+    validateEmail() {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(this.emailValue).toLowerCase());
+    },
+    async send() {
+      fetch("http://localhost:8080/reset/" + this.emailValue, {
+        method: "POST",
+      });
+      console.log("Sent password reset request for " + this.emailValue);
     },
   },
 };
@@ -29,6 +68,18 @@ export default {
 <style scoped>
 .header {
   margin-top: 50px;
+}
+
+.info {
+  text-align: center;
+}
+
+.show-sent {
+  text-align: center;
+}
+
+p {
+  text-align: center;
 }
 
 .input-box {
@@ -72,7 +123,11 @@ export default {
   outline: none;
 }
 
-#Login-btn {
+#submit:disabled {
+  opacity: 0.3;
+}
+
+#submit {
   margin-top: 20px;
   font-family: "Mulish";
   font-size: 20px;
@@ -85,7 +140,7 @@ export default {
   outline: none;
 }
 
-#Login-btn:hover {
+#submit:hover {
   background-color: #efb03a;
   cursor: pointer;
 }

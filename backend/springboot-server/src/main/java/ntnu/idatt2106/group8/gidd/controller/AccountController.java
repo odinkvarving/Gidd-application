@@ -1,8 +1,8 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
+import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
 import org.slf4j.Logger;
@@ -34,11 +34,12 @@ public class AccountController {
 
     /**
      * Finds an account based on email, if not, and empty account is returned
+     *
      * @param email
      * @return account
      */
     @GetMapping("accounts/{email}")
-    public Account getUserByEmail(@PathVariable String email){
+    public Account getUserByEmail(@PathVariable String email) {
         Account account = accountService.findByEmail(email);
         logger.info("Retrieving account with email: " + email);
         logger.info(account.toString());
@@ -46,24 +47,26 @@ public class AccountController {
     }
 
     /**
-     *  Returns all accounts
+     * Returns all accounts
+     *
      * @return all accounts
      */
     @GetMapping("accounts/")
-    public List<Account> getAllAccounts(){
+    public List<Account> getAllAccounts() {
         return accountService.findAll();
     }
 
     /**
      * Saves a user to the database if it does not already exist
+     *
      * @param account
      * @return true or false whether the user was created successfully or not
      */
     @PostMapping("accounts/register")
-    public boolean saveUser(@RequestBody Account account){
+    public boolean saveUser(@RequestBody Account account) {
         logger.info("Trying to save user:\n" + account.toString());
         boolean success = accountService.save(account);
-        if(success){
+        if (success) {
             logger.info("Success!");
         }
         return success;
@@ -74,6 +77,7 @@ public class AccountController {
      * user login and generate a JWT token if the login is successful.
      * This token can then be included in further HTTP requests from client
      * to access other methods and identify user by email
+     *
      * @param authRequest
      * @return JWT token if successful
      * @throws Exception
@@ -96,7 +100,7 @@ public class AccountController {
 
 
     @GetMapping("accounts/{email}/{password}")
-    public Account findAccountByCredentials(@RequestParam(value="email") String email, @RequestParam(value="password")  String password){
+    public Account findAccountByCredentials(@RequestParam(value = "email") String email, @RequestParam(value = "password") String password) {
         return accountService.findAccountByCredentials(email, password);
     }
 
@@ -111,27 +115,32 @@ public class AccountController {
     }
 
     @GetMapping("accounts/{id}/info")
-    public AccountInfo findAccountInfo(@RequestParam(value="id")  int id) {
+    public AccountInfo findAccountInfo(@RequestParam(value = "id") int id) {
         return accountService.findAccountInfo(id);
     }
 
     @PutMapping("accounts/{id}/email")
-    public void updateAccountEmail(@PathVariable("id")int id, @RequestParam String email) {
+    public void updateAccountEmail(@PathVariable("id") int id, @RequestParam String email) {
         accountService.updateAccountEmail(id, email);
     }
 
+    @GetMapping("/reset/{suffix}")
+    public Account getAccountByResetSuffix(@PathVariable("suffix") String suffix) {
+        return this.accountService.findAccountByResetSuffix(suffix);
+    }
+
     @PutMapping("/reset/{suffix}")
-    public boolean updateAccountPassword(@PathVariable("suffix")String suffix, @RequestParam String newPassword) {
+    public boolean updateAccountPassword(@PathVariable("suffix") String suffix, @RequestParam String newPassword) {
         return this.accountService.resetAccountPassword(suffix, newPassword);
     }
 
     @PostMapping("/reset/{mail}")
-    public void requestPasswordReset(@PathVariable("mail")String mail){
+    public void requestPasswordReset(@PathVariable("mail") String mail) {
         this.accountService.generatePasswordReset(mail);
     }
 
     @GetMapping("accounts/{id}/byId")
-    public boolean accountExistsById(@RequestParam(value="id")  int id) {
+    public boolean accountExistsById(@RequestParam(value = "id") int id) {
         return accountService.accountExistsById(id);
     }
 
@@ -141,22 +150,22 @@ public class AccountController {
     }
 
     @DeleteMapping("accounts/{id}/activity/{id}")
-    public void removeAccountFromActivity(@PathVariable("id")int accountId, @PathVariable("id")int activityId) {
+    public void removeAccountFromActivity(@PathVariable("id") int accountId, @PathVariable("id") int activityId) {
         accountService.removeAccountFromActivity(activityId, accountId);
     }
 
     @PutMapping("accounts/{id}/activity/{id}")
-    public void addAccountToActivity(@PathVariable("id")int accountId, @PathVariable("id")int activityId) {
+    public void addAccountToActivity(@PathVariable("id") int accountId, @PathVariable("id") int activityId) {
         accountService.addAccountToActivity(activityId, accountId);
     }
 
     @PutMapping("accounts/{id}")
-    public Account updateAccount(@RequestBody Account newAccount, @PathVariable("id")int id) {
+    public Account updateAccount(@RequestBody Account newAccount, @PathVariable("id") int id) {
         return accountService.updateAccount(id, newAccount);
     }
 
     @DeleteMapping("accounts/{id}")
-    public void deleteAccount(@PathVariable("id")int id) {
+    public void deleteAccount(@PathVariable("id") int id) {
         accountService.deleteAccount(id);
     }
 }

@@ -69,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors();
-        http.csrf().disable().authorizeRequests().antMatchers("/accounts/register", "/accounts/login", "/accounts/{id}")
+        http.csrf().disable().authorizeRequests().antMatchers("/accounts/register", "/accounts/login", "/accounts/{id}","/reset/{mail}","/reset/{suffix}")
                 .permitAll().anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

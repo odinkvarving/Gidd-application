@@ -5,6 +5,7 @@ import ForgotPasswordPage from "./ForgotPasswordPage.vue"
 import ProfilePage from "./ProfilePage.vue"
 import Dashboard from "./Dashboard.vue"
 import Activity from "./Activity.vue"
+import ResetPasswordPage from "./ResetPasswordPage.vue"
 
 
 const routes = [
@@ -29,9 +30,14 @@ const routes = [
     component: ForgotPasswordPage
   },
   {
-    path:'/accounts/:userId',
-    name:'Profile',
-    component:ProfilePage
+    path: '/accounts/:userId',
+    name: 'Profile',
+    component: ProfilePage
+  },
+  {
+    path: '/resetpassword/:passwordSuffix',
+    name: 'ResetPassword',
+    component: ResetPasswordPage
   },
   {
     path: "/dashboard",

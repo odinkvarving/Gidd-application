@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -211,6 +212,27 @@ public class AccountService {
         }
     }
 
+
+    /**
+     * finds and returns a account that is linked to a current reset token.
+     *
+     * @param resetSuffix the resetsuffix-key linked to the account.
+     * @return a account with null as email if it was not found. otherwise the account linked to the suffix.
+     */
+    public Account findAccountByResetSuffix(String resetSuffix) {
+        updatePasswordResetRepo();
+        try {
+            PasswordReset reset = this.passwordResetRepository.findByResetUrlSuffix(resetSuffix).orElseThrow(TimeoutException::new);
+            return this.accountRepository.findById(reset.getAccountId()).orElseThrow(NoSuchElementException::new);
+        }catch (NoSuchElementException nee){
+            logger.error("did find password-reset but not account linked to resetSuffix:" + resetSuffix);
+            return new Account(null, "nonExistent");
+        }catch (TimeoutException te){
+            logger.info("someone tried to reset password with outdated/ password-reset suffix: " + resetSuffix + "  ,suffix not found");
+            return new Account(null,"outdated/wrong");
+        }
+    }
+
     /**
      * Resets the password for a account in the database provided the given suffix is valid.
      *
@@ -248,6 +270,11 @@ public class AccountService {
         this.passwordResetRepository.deleteAll(resetsToDelete);
     }
 
+    /**
+     * Sends a password reset link to the provided mail address if it exists in the database.
+     *
+     * @param mailToReset the mail to reset the password to.
+     */
     public void generatePasswordReset(String mailToReset) {
         try {
             Account foundAccount = accountRepository.findByEmail(mailToReset).orElseThrow(NoSuchElementException::new);
@@ -264,6 +291,7 @@ public class AccountService {
             PasswordReset passwordReset = new PasswordReset(foundAccount.getId(), randomUrlSuffix, LocalDateTime.now());
             passwordResetRepository.save(passwordReset);
             mailService.sendPasswordResetMail(mailToReset, randomUrlSuffix);
+            logger.info("Generated password reset entity/mail for email: " + mailToReset);
         } catch (NoSuchElementException nee) {
             logger.info("A password reset was requested for a user that does not exist in the database: " + mailToReset);
         }
