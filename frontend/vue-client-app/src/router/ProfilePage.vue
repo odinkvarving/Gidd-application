@@ -101,7 +101,7 @@ export default {
               this.userInfo.surname=data.surname;
             }
             if(data.imageURL!==null&&typeof data.imageURL !== 'undefined'){
-              this.userInfo.imageURL=this.getImgUrl(data.imageURL);
+              this.userInfo.imageURL=data.imageURL;
             }
             if(data.telephone!==null&&typeof data.telephone !== 'undefined'){
               this.userInfo.telephone=data.telephone;
@@ -109,11 +109,11 @@ export default {
             if(data.address!==null&&typeof data.address !== 'undefined') {
               this.userInfo.address = data.address;
             }
-            if(data.email!==null&&typeof data.email !== 'undefined') {
-              this.userInfo.email = data.email;
+            if(data.account.email!==null&&typeof data.account.email !== 'undefined') {
+              this.userInfo.email = data.account.email;
             }
-            if(data.description!==null&&typeof data.description !== 'undefined'){
-              this.userInfo.description=data.description;
+            if(data.profileDescription!==null&&typeof data.profileDescription !== 'undefined'){
+              this.userInfo.description=data.profileDescription;
             }
 
           })
@@ -129,6 +129,7 @@ export default {
       }).then(res=>res.json())
       .then(data=>{
         if(data!==null&&typeof data!=='undefined'&&typeof data.error==='undefined'){
+          console.log(data)
           this.activities=data
         }
       })
@@ -145,25 +146,26 @@ export default {
     activityProperties(){
       //Calendar component
       if(this.currentComp==='profileCalendar'){
-        console.log('Assigning the following data to calendar: '+JSON.stringify(this.activities))
+        console.log(this.activities)
         let events=[]
         this.activities.forEach(item => {
           let isAllDay = false;
-          if (item.end_time === null || typeof item.end_time === 'undefined') {
+          if (item.endTime === null || typeof item.endTime === 'undefined') {
             isAllDay = true
-            item.end_time = null
+            item.endTime = 'undefined'
           }
           if (item.title === null || typeof item.title === 'undefined') {
             item.title = 'Unnamed activity'
           }
           events.push({
-            start: item.start_time,
-            end: item.end_time,
+            start: new Date(item.startTime),
+            end: new Date(item.endTime),
             title: item.title,
             allDay: isAllDay,
             class:"normal-event"
           })
         })
+        console.log('To Calendar:')
         return {activities:events}
       }else//profileActivity component
         if(this.currentComp==='profileActivity'){
@@ -175,14 +177,15 @@ export default {
           events.push({
             id: item.id,
             title: item.title,
-            startTime: item.start_time
+            startTime: item.startTime
           })
         })
         //ProfileActivity.scrollToEnd();
-
+        console.log('To activity list '+events)
         return {activities:events}
       }else{//Errors and Edit component
-        return null
+        console.log(this.userInfo)
+        return {userInfo:this.userInfo}
       }
     }
   },
