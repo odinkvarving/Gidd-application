@@ -15,9 +15,19 @@
           <label>
             Kategori:
           </label>
-          <b-form-select  v-model="category" :options="categories">
+          <b-form-select  v-model="category" :options="categories" style="width: 200px">
             <template #first>
               <b-form-select-option :value="null" disabled>-- Velg en kategori --</b-form-select-option>
+            </template>
+          </b-form-select>
+        </li>
+        <li class="menu-item level">
+          <label>
+            Nivå:
+          </label>
+          <b-form-select  v-model="level" :options="levels" style="width: 200px">
+            <template #first>
+              <b-form-select-option :value="null" disabled>-- Velg et nivå --</b-form-select-option>
             </template>
           </b-form-select>
         </li>
@@ -125,6 +135,8 @@ export default {
       name: "",
       category: "",
       categories: [],
+      level: "",
+      levels: [],
       equipment: [],
       location: "",
       startDate: "",
@@ -139,6 +151,7 @@ export default {
   },
   mounted(){
     this.getCategories();
+    this.getLevels();
   },
   methods: {
     createButtonClicked(){
@@ -169,6 +182,9 @@ export default {
         startTime: `${this.startDate} ${this.endTime}`,
         activityType: {
           type: this.category
+        },
+        level: {
+          description: this.level
         },
         creator: accountDetails
       }
@@ -206,6 +222,25 @@ export default {
       for(let i = 0; i < categoriesList.length; i ++){
         this.categories.push(categoriesList[i].type);
       }
+    },
+    async getLevels(){
+      let levelsList;
+
+      this.level = null;
+
+      let url = `http://localhost:8080/levels/`;
+
+      await fetch(url,{
+        method: 'GET',
+        headers: userService.authorizationHeader()
+      })
+        .then(response => response.json())
+        .then(data => levelsList = data)
+        .catch(error => console.log(error));
+      
+      for(let i = 0; i < levelsList.length; i ++){
+        this.levels.push(levelsList[i].description);
+      }
     }
   }
 };
@@ -236,9 +271,11 @@ label {
   margin: 0 10px 0 0;
 }
 
+
 .menu-item {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 10px 0 10px 0;
 }
 
@@ -249,6 +286,7 @@ label {
 
 .menu-item .name-field {
   margin: auto;
+  width: 100%;
   text-align: center;
   border: 1px solid rgba(0, 0, 0, 0.1);
   outline: none;
