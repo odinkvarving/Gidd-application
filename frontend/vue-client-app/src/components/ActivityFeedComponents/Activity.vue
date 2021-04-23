@@ -31,7 +31,8 @@
         <div id="map-preview">
             <img src="../../assets/map-preview-example.png" alt="Activity location map preview"/>
         </div>
-        <p>Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
+        <p style="margin: 0">Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
+        <p style="font-size: 13px; opacity: 70%" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</p>
         <!--<div>
             <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
         </div>-->
@@ -41,12 +42,12 @@
             </div>
             <span v-else >{{ getButtonStatus() }}</span>
         </button>
-        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="handleButtonClick()"><span>{{ getButtonStatus() }}</span></button>
-        <button v-else id="btn" class="participating" @click.stop="removeParticipantClicked()">
+        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
+        <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
             <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
                 <span class="sr-only">Loading...</span>
             </div>
-            <span v-else>{{ getButtonStatus() }}</span>
+            <span v-else>{{ isInQueue ? "Venteliste" : "Påmeldt" }}</span>
         </button>
     </div>
 </template>
@@ -69,6 +70,9 @@ import { userService } from '../../services/UserService';
                 currentParticipants: 0,
                 showJoinSpinner: false,
                 showRemoveSpinner: false,
+                participantsInQueue: 0,
+                queuePosition: 0,
+                isInQueue: false
             }
         },
         mounted(){
@@ -76,15 +80,6 @@ import { userService } from '../../services/UserService';
             this.isAlreadyParticipating();
         },
         methods: {
-            handleButtonClick() {
-                
-                //Open login/register window or add the user to "participants"
-                console.log("Button clicked");
-
-                if(this.isFull){
-                    // Put on wait list
-                }
-            },
             joinButtonClicked(){
                 this.showJoinSpinner = true;
                 if(!userService.isLoggedIn()){
@@ -137,6 +132,10 @@ import { userService } from '../../services/UserService';
 
                 console.log(`You are already participating: ${this.alreadyParticipating}`);
 
+                if(this.alreadyParticipating){
+                    this.getQueuePosition(accountId);
+                }
+
             },
             async getCurrentParticipantsNumber(){
                 // Get number of participators on this activity
@@ -157,6 +156,10 @@ import { userService } from '../../services/UserService';
 
                 console.log(`${this.activity.title} got current participants: ${this.currentParticipants}.`);
 
+                if(this.currentParticipants == this.activity.maxParticipants){
+                    this.countAccountsInQueue();
+                }
+
             },
             async addParticipantToActivity(){
 
@@ -175,7 +178,12 @@ import { userService } from '../../services/UserService';
                     .then(data => {
                         if(data.activityId === this.activity.id && data.accountId === accountId){
                             console.log("Joining activity was successful! Changing button style");
-                            this.currentParticipants++;
+                            if(this.currentParticipants === this.activity.maxParticipants){
+                                this.participantsInQueue ++;
+                                this.isInQueue = true;
+                            }else{
+                                this.currentParticipants ++;
+                            }
                             this.alreadyParticipating = true;
                             this.showJoinSpinner = false;
                             this.$emit('refresh-list', this.activity.id);
@@ -198,14 +206,49 @@ import { userService } from '../../services/UserService';
                     .then(response => response.json())
                     .then(data => {
                         if(data){
-                            this.currentParticipants--;
+                            if(this.currentParticipants === this.activity.maxParticipants){
+                                this.participantsInQueue --;
+                            }else{
+                                this.currentParticipants --;
+                            }
                             this.alreadyParticipating = false;
+                            this.isInQueue = false;
                             this.showRemoveSpinner = false;
                             this.$emit('refresh-list', this.activity.id);
                         }
                     })
                     .catch(error => console.log(error))
             },
+            countAccountsInQueue(){
+                
+                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/queue/count`;
+
+                const requestOptions = {
+                    method:'GET',
+                    headers: userService.authorizationHeader()
+                }
+
+                fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.participantsInQueue = data);
+            },
+            async getQueuePosition(accountId){
+                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}`
+
+                const requestOptions = {
+                    method:'GET',
+                    headers: userService.authorizationHeader()
+                }
+
+                await fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.queuePosition = data)
+                    .catch(error => console.log(error));
+
+                if(this.queuePosition > 0){
+                    this.isInQueue = true;
+                }
+            }
 
         }
     }
@@ -309,8 +352,8 @@ import { userService } from '../../services/UserService';
     }
 
     #btn{
-        height: 5vh;
-        width: 8vw;
+        height: 50px;
+        width: 160px;
         border-radius: 6px;
         font-size: 20px;
         cursor: pointer;
@@ -351,5 +394,22 @@ import { userService } from '../../services/UserService';
     }
     #btn.participating:hover:before{
         content: "Meld av";
+    }
+    #btn.inQueue{
+        background-color: #FF5B3E;
+    }
+    #btn.inQueue:hover{
+        background-color: #dd4b31;
+        transition: 0.2s;
+    }
+    #btn.inQueue:hover span{
+        display: none;
+    }
+    #btn.inQueue:hover:before{
+        content: "Meld av";
+    }
+
+    .queue-list{
+        opacity: 70%;
     }
 </style>

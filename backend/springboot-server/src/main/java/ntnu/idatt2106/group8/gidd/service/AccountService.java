@@ -340,7 +340,7 @@ public class AccountService {
      * @param accountId  the id of the account that is bound to a activity.
      * @return null if no account-activity matching the given parameters was found.
      */
-    public AccountActivity findAccountActivity(int activityId, int accountId) {
+    public AccountActivity findAccountActivity(int accountId, int activityId) {
         return this.accountActivityRepository
                 .findById(new AccountActivityId(accountId, activityId)).orElse(null);
     }
