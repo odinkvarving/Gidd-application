@@ -15,15 +15,19 @@
           <label>
             Kategori:
           </label>
-          <input class="input-field" type="text" v-model="category" />
+          <b-form-select  v-model="category" :options="categories">
+            <template #first>
+              <b-form-select-option :value="null" disabled>-- Velg en kategori --</b-form-select-option>
+            </template>
+          </b-form-select>
         </li>
         <div class="line"></div>
         <li class="menu-item equipment">
           <div class="equipment-container">
               <label>
-                  utstyr:
+                  Utstyr:
               </label>
-              <b-form-tags input-id="tags-basic" v-model="equipment" placeholder="Legg til utstyr..."></b-form-tags>
+              <b-form-tags input-id="tags-basic" remove-on-delete v-model="equipment" placeholder="Legg til utstyr..."></b-form-tags>
           </div>        
         </li>
         <div class="line"></div>
@@ -113,6 +117,7 @@ export default {
     return {
       name: "",
       category: "",
+      categories: [],
       equipment: [],
       location: "",
       date: "",
@@ -123,6 +128,9 @@ export default {
       participantValue: "",
       isVisible: false,
     };
+  },
+  mounted(){
+    this.getCategories();
   },
   methods: {
     createButtonClicked(){
@@ -167,14 +175,32 @@ export default {
         .then(response => response.json())
         .then(data => console.log(data))
         .catch(error => console.log(error));
+    },
+    async getCategories(){      
+      
+      let categoriesList;
+      
+      this.category = null;
 
+      let url = `http://localhost:8080/activityTypes/`;
 
+      await fetch(url,{
+        method: 'GET',
+        headers: userService.authorizationHeader()
+      })
+        .then(response => response.json())
+        .then(data => categoriesList = data)
+        .catch(error => console.log(error));
+      
+      for(let i = 0; i < categoriesList.length; i ++){
+        this.categories.push(categoriesList[i].type);
+      }
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 .wrapper {
   position: absolute;
   top: calc(100%);
@@ -193,6 +219,10 @@ export default {
 ul {
   padding: 0;
   list-style-type: none;
+}
+
+label {
+  margin: 0 10px 0 0;
 }
 
 .menu-item {

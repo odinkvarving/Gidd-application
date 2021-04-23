@@ -1,19 +1,16 @@
 <template>
     <div id="card">
-        <NavBar/>
         <ActivityCard id="card" :activity="activity"/>
     </div>
 </template>
 <script>
     import ActivityCard from '../components/ActivityCardComponents/ActivityCard.vue'
-    import NavBar from '../components/Nav/NavBar.vue'
-import { userService } from '../services/UserService'
+    import { userService } from '../services/UserService'
     import {weatherService} from '../services/WeatherService.js'
     
     export default {
         name: "Activity",
         components: {
-            NavBar,
             ActivityCard
         },
         data() {
