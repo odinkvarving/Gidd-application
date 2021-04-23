@@ -2,22 +2,22 @@
   <div class="profile_container">
     <img src="../assets/Default_cover.jpg" alt="Cover photo"
          id="cover_photo"/>
-    <img :src=userInfo.imageURL alt="Profile photo"
+    <img :src=AccountInfo.imageURL @error="getDefaultImg" alt="Profile photo"
          width="170" height="170"
          id="profile_photo">
     <div class="profile_info">
-      <h1 id="name">{{userInfo.firstname}} {{userInfo.surname}}</h1>
-      <p id="description">{{userInfo.description}}</p>
+      <h1 id="name">{{ AccountInfo.firstname }} {{ AccountInfo.surname }}</h1>
+      <p id="description">{{ AccountInfo.description }}</p>
 
       <ul id="info_list">
         <li>
-          {{userInfo.telephone}}
+          {{ AccountInfo.telephone }}
         </li>
         <li>
-          {{userInfo.address}}
+          {{ AccountInfo.address }}
         </li>
         <li>
-          {{userInfo.email}}
+          {{ AccountInfo.email }}
         </li>
       </ul>
       <profileToolbar :current-comp="currentComp" @switchComp="sendComp"></profileToolbar>
@@ -72,10 +72,10 @@ export default {
       this.currentComp=newComp
 
     },
-    getImgUrl(imgName){
-      let image=require.context('../assets/',false,/\.png$/);
-      return image('./'+imgName+'.png');
+    getDefaultImg(){
+      this.AccountInfo.imageURL=require("../assets/Default_profile.png")
     },
+
     getUserInfo(){
       console.log(this.$route.params.userId)
       //Getting the user data
@@ -93,27 +93,27 @@ export default {
           .then(data=>{
             console.log('Getting account')
             console.log(data);
-
+            this.originalAccount=data
             if(data.firstname!==null&&typeof data.firstname !== 'undefined'){
-              this.userInfo.firstname=data.firstname;
+              this.AccountInfo.firstname=data.firstname;
             }
             if(data.surname!==null&&typeof data.surname !== 'undefined'){
-              this.userInfo.surname=data.surname;
+              this.AccountInfo.surname=data.surname;
             }
             if(data.imageURL!==null&&typeof data.imageURL !== 'undefined'){
-              this.userInfo.imageURL=data.imageURL;
+              this.AccountInfo.imageURL=data.imageURL;
             }
             if(data.telephone!==null&&typeof data.telephone !== 'undefined'){
-              this.userInfo.telephone=data.telephone;
+              this.AccountInfo.telephone=data.telephone;
             }
             if(data.address!==null&&typeof data.address !== 'undefined') {
-              this.userInfo.address = data.address;
+              this.AccountInfo.address = data.address;
             }
             if(data.account.email!==null&&typeof data.account.email !== 'undefined') {
-              this.userInfo.email = data.account.email;
+              this.AccountInfo.email = data.account.email;
             }
             if(data.profileDescription!==null&&typeof data.profileDescription !== 'undefined'){
-              this.userInfo.description=data.profileDescription;
+              this.AccountInfo.description=data.profileDescription;
             }
 
           })
@@ -184,18 +184,19 @@ export default {
         console.log('To activity list '+events)
         return {activities:events}
       }else{//Errors and Edit component
-        console.log(this.userInfo)
-        return {userInfo:this.userInfo}
+        console.log(this.AccountInfo)
+        return {AccountInfo:this.AccountInfo}
       }
     }
   },
   data(){
     return{
     currentComp: 'profileCalendar',
-    userInfo:{
+    originalAccount:Object,
+    AccountInfo:{
       firstname:"No first name",
       surname:"No last name",
-      imageURL:this.getImgUrl('Default_profile'),
+      imageURL:"../assets/Default_profile.png",
       telephone:"No telephone number found",
       address:"No address found",
       email:"No email found",

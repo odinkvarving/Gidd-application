@@ -1,37 +1,43 @@
 <template>
   <div class="edit">
     <h1>Edit Profile</h1><br>
-    <form class="edit-form">
+    <form class="edit-form" @submit="checkform">
+      <div v-if="errors.length">
+        <b>Unable to edit account information for the following reasons:</b>
+        <ul class="error-list">
+          <li v-for="error in errors" :key="error">{{error}}</li>
+        </ul>
+      </div>
       <fieldset>
         <legend>General account information</legend>
         <div class="edit-name">
           <label for="first-name-form">First name:</label>
-          <input type="text" id="first-name-form" :placeholder="userInfo.firstname">
+          <input type="text" id="first-name-form"  v-model="firstName" :placeholder="AccountInfo.firstname">
           <label for="last-name-form">Last name:</label>
-          <input type="text" id="last-name-form" :placeholder="userInfo.surname">
+          <input type="text" id="last-name-form" v-model="lastName" :placeholder="AccountInfo.surname">
         </div>
         <div class="edit-description">
           <label for="description-form">Description</label>
-          <textarea type="text" id="description-form" placeholder="Please tell us something about you|" v-model="getDescriptionPlaceholder">
-          </textarea>
+          <textarea type="text" id="description-form" placeholder="Please tell us something about you|" v-model="description"></textarea>
         </div>
         <div class="edit-image">
           <label for="image-form">New image:</label>
-          <input type="text" id="image-form" placeholder="Link to image here">
+          <input type="text" id="image-form" v-model="imageURL" placeholder="Link to image here">
         </div>
       </fieldset>
       <fieldset>
         <legend>Login credentials</legend>
         <div>
           <label for="email-form">Change e-mail:</label>
-          <input type="email" id="email-form" :placeholder="userInfo.email">
+          <input type="email" id="email-form" v-model="email" :placeholder="AccountInfo.email">
         </div>
         <div class="edit-password">
           <label for="new-password-form">Change password:</label>
-          <input type="password" id="new-password-form" placeholder="New password">
-          <input type="password" id="confirm-password-form" placeholder="Confirm password">
+          <input type="password" v-model="new_password" id="new-password-form" placeholder="New password">
+          <input type="password" v-model="confirm_password" id="confirm-password-form" placeholder="Confirm password">
         </div>
       </fieldset>
+      <input type="password" v-model="old_password" id="old-password-form" placeholder="Old password to save">
       <input type="submit" value="Save changes">
 
     </form>
@@ -39,17 +45,122 @@
 </template>
 
 <script>
+import {userService} from "../../services/UserService";
+
 export default {
   name: "ProfileEdit",
-  props:{
-    userInfo:Object
+  data(){
+    return{
+      errors:[],
+      firstName:"",
+      lastName:"",
+      description:"",
+      imageURL:"",
+      email:"",
+      new_password:"",
+      confirm_password:"",
+      old_password:""
+    }
   },
-  computed:{
-    getDescriptionPlaceholder(){
-      if(this.userInfo.description==="No description found"){
-        return ""
+  props:{
+    AccountInfo:Object
+  },
+  methods:{
+    exists(obj){
+      return (obj!==null&&typeof obj!=='undefined'&&obj!=="")
+    },
+    validURL(str){
+      let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+          '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+          '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+          '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+      return !!pattern.test(str);
+    },
+    validateNewEmail(){
+      // Check if valid address(If we disable built in check)
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if(!re.test(String(this.email).toLowerCase())){
+        this.errors.push('New e-mail is not a valid email');
+      }
+
+    },
+    validateNewPassword(){
+      //Check if password strength is up to standard
+      if(this.new_password!==this.confirm_password){
+        this.errors.push('New password must match in both fields')
+      }
+    },
+    checkform(e){
+      this.errors=[]
+
+      let newAccount=this.$parent.originalAccount
+      if(this.exists(this.firstName)){
+        console.log('Changing first name to '+this.firstName)
+        newAccount.firstname = this.firstName
+      }
+      if(this.exists(this.lastName)){
+        console.log('Changing last name to '+this.lastName)
+        newAccount.surname=this.lastName
+      }
+
+      if(this.exists(this.description)){
+        console.log('changing description to '+this.description)
+        newAccount.profiledescription=this.description
+      }
+
+      if(this.exists(this.imageURL)){
+        if(this.validURL(this.imageURL)||this.imageURL===""){
+          console.log('Changing image url to '+this.imageURL)
+          newAccount.imageURL=this.imageURL
+        }else{
+          this.errors.push('This is not a valid URL')
+        }
+      }
+      if(this.exists(this.email)){
+        this.validateNewEmail()
+      }
+      if(this.exists(this.new_password)||this.exists(this.new_password)){
+        this.validateNewPassword()
+      }
+      if(userService.getAccountDetails().sub===this.AccountInfo.email) {
+        userService.login(this.AccountInfo.email, this.old_password).then(res => {
+          console.log('getting jwtToken')
+          if (!res.jwtToken) {
+            console.log('Authentication failed')
+            this.errors.push('Old password does not match the account')
+          }else console.log('Login successful')
+        })
       }else{
-        return this.userInfo.description
+        this.errors.push('Your account does not have the rights to change the account for ' + this.AccountInfo.email)
+      }
+      if(this.errors.length){
+        console.log('preventing post call '+this.errors.length+ ' errors')
+        e.preventDefault()
+      }else{
+
+        console.log('sending following json')
+        console.log(newAccount)
+        if(this.exists(this.firstName)||this.exists(this.lastName)||
+            this.exists(this.description)||this.exists(this.imageURL)){
+          let res=userService.setAccount(newAccount);
+          console.log(res)
+        }
+        if(this.exists(this.new_password)){
+          let res =userService.setPassword(this.new_password)
+          console.log(res)
+        }
+
+        if(this.exists(this.email)){
+          // Generate link for confirming email
+
+          // Send link to email
+
+          // change email when confirmed
+        }
+
+        e.preventDefault()
       }
     }
   }

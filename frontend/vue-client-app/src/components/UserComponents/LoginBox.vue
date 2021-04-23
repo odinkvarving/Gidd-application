@@ -70,7 +70,7 @@ export default {
             let response = await userService.login(this.emailValue, this.passwordValue);
 
             if(response.jwtToken){
-                console.log("Login successfull! Token: ");
+                console.log("Login successful! Token: ");
                 console.log(response.jwtToken);
                 this.$router.push("/dashboard");
             }else{
