@@ -1,12 +1,10 @@
 <template>
     <div id="card">
-        <NavBar/> <!-- Navigation bar -->
-        <ActivityCard id="card" :activity="activity"/> <!-- Activity -->
+        <ActivityCard id="card" :activity="activity" :location="location" :weather="weather" :isDataReady="isDataReady" v-if="activity && location && weather && isDataReady"/> <!-- Activity -->
     </div>
 </template>
 <script>
     import ActivityCard from '../components/ActivityCardComponents/ActivityCard.vue'
-    import NavBar from '../components/Nav/NavBar.vue'
     import {userService} from '../services/UserService.js'
     import {weatherService} from '../services/WeatherService.js'
     
@@ -18,7 +16,6 @@
     export default {
         name: "Activity",
         components: {
-            NavBar,
             ActivityCard
         },
         data() {
@@ -30,6 +27,7 @@
                 activities: {},
                 location: {},
                 weather: {},
+                isDataReady: false,
             }
         },
 
@@ -38,12 +36,25 @@
              * activity is defined here.
              * We use await because we are waiting for findActivity to return an activity based on a GET request in getActivities.
              */
-            this.activity = await this.findActivity();
-            this.location = await this.getLocation();
-            this.weather = await this.getWeather();
+            await this.getActivity();
+            //this.activity = await this.findActivity();
+            await this.getLocation();
+            await this.getWeather();
+            this.isDataReady = true;
         },
 
         methods: {
+            async getActivity() {
+                const requestOptions = {
+                    method: 'GET',
+                    headers: userService.authorizationHeader(),
+                };
+                await fetch(`http://localhost:8080/activities/${this.$route.params.id}/`, requestOptions)
+                .then(response => response.json())
+                .then(data => this.activity = data)
+                .catch(error => console.log(error));
+            },
+
             /**
              * getActivities() is an asynchronous function which returns all activities registered in the database.
              * A GET request is sent to the Spring Boot server, and the server returns all activities
@@ -53,7 +64,7 @@
                     method: 'GET',
                     headers: userService.authorizationHeader() //Using an authorization header to get access
                 }
-                return await fetch("http://localhost:8080/activities", requestOptions)
+                await fetch("http://localhost:8080/activities", requestOptions)
                 .then(response => response.json())
                 .then(data => {
                     this.activities = data;
@@ -77,7 +88,7 @@
              * getWeather function is utilized, and we find the location by using the weather object.
              */
             async getLocation() {
-                return await this.getWeather().name;
+                this.location = await this.getWeather().name;
             },
 
             /**
@@ -90,9 +101,9 @@
                 console.log("LATITUDE: " + this.activity.latitude);
                 console.log("LONGITUDE: " + this.activity.longitude);
                 console.log("STARTTIME: " + this.activity.startTime);
-                let w = await weatherService.getWeather(this.activity.latitude, this.activity.longitude, this.activity.startTime);
-                console.log(w.name);
-                return w;
+                this.weather = await weatherService.getWeather(this.activity.latitude, this.activity.longitude, this.activity.startTime);
+                //console.log(w.name);
+                //return w;
                 //return await weatherService.getWeather(this.activity.latitude, this.activity.longitude, this.activity.startTime);
             },
         }

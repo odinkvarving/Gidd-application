@@ -1,5 +1,5 @@
 <template>
-    <div id="infobox" v-if="activity != null">
+    <div id="infobox" v-if="isDataReady"> <!-- v-if="activity != null" -->
         <div class="box" id="top">
             <h1>{{ activity.title }}</h1> <!-- Title of the activity -->
             <div id="ownerInfo">
@@ -66,6 +66,10 @@
         type: Object,
         required: true
       },
+      isDataReady: {
+        type: Boolean,
+        required: true
+      }
     },
 
     data() {
@@ -89,15 +93,13 @@
          * isDataReady is a boolean which represents the state of location and weather.
          * Since we acquire these variables through asynchronous calls, we need to have a flag which tells us when the data is ready.
          */
-        isDataReady: false,
+        //isDataReady: false,
       }
     },
   
-    /*async mounted() {
-      this.location = await this.findLocation();
-      this.weather = await this.getWeather();
-      this.isDataReady = true;
-    },*/
+    async mounted() {
+      
+    },
 
     methods: {
       /**
