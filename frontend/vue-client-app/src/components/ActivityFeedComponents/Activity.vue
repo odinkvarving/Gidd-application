@@ -32,6 +32,7 @@
             <img src="../../assets/map-preview-example.png" alt="Activity location map preview"/>
         </div>
         <p>Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
+        <p v-if="participantsInQueue > 0">Venteliste: {{ participantsInQueue }}</p>
         <!--<div>
             <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
         </div>-->
@@ -41,12 +42,12 @@
             </div>
             <span v-else >{{ getButtonStatus() }}</span>
         </button>
-        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="handleButtonClick()"><span>{{ getButtonStatus() }}</span></button>
-        <button v-else id="btn" class="participating" @click.stop="removeParticipantClicked()">
+        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
+        <button v-else id="btn" :class="[isInQueue ? inQueue : participating]" @click.stop="removeParticipantClicked()">
             <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
                 <span class="sr-only">Loading...</span>
             </div>
-            <span v-else>{{ getButtonStatus() }}</span>
+            <span v-else>{{ participatingText }}</span>
         </button>
     </div>
 </template>
@@ -69,6 +70,11 @@ import { userService } from '../../services/UserService';
                 currentParticipants: 0,
                 showJoinSpinner: false,
                 showRemoveSpinner: false,
+                participantsInQueue: 0,
+                isInQueue: true,
+                inQueue: "in-queue",
+                participating: "participating",
+                participatingText: this.isInQueue ? "Venteliste" : "Påmeldt"
             }
         },
         mounted(){
@@ -76,15 +82,6 @@ import { userService } from '../../services/UserService';
             this.isAlreadyParticipating();
         },
         methods: {
-            handleButtonClick() {
-                
-                //Open login/register window or add the user to "participants"
-                console.log("Button clicked");
-
-                if(this.isFull){
-                    // Put on wait list
-                }
-            },
             joinButtonClicked(){
                 this.showJoinSpinner = true;
                 if(!userService.isLoggedIn()){
@@ -157,6 +154,10 @@ import { userService } from '../../services/UserService';
 
                 console.log(`${this.activity.title} got current participants: ${this.currentParticipants}.`);
 
+                if(this.currentParticipants == this.activity.maxParticipants){
+                    this.countAccountsInQueue();
+                }
+
             },
             async addParticipantToActivity(){
 
@@ -175,7 +176,11 @@ import { userService } from '../../services/UserService';
                     .then(data => {
                         if(data.activityId === this.activity.id && data.accountId === accountId){
                             console.log("Joining activity was successful! Changing button style");
-                            this.currentParticipants++;
+                            if(this.currentParticipants === this.activity.maxParticipants){
+                                this.participantsInQueue ++;
+                            }else{
+                                this.currentParticipants ++;
+                            }
                             this.alreadyParticipating = true;
                             this.showJoinSpinner = false;
                             this.$emit('refresh-list', this.activity.id);
@@ -198,7 +203,11 @@ import { userService } from '../../services/UserService';
                     .then(response => response.json())
                     .then(data => {
                         if(data){
-                            this.currentParticipants--;
+                            if(this.currentParticipants === this.activity.maxParticipants){
+                                this.participantsInQueue --;
+                            }else{
+                                this.currentParticipants --;
+                            }
                             this.alreadyParticipating = false;
                             this.showRemoveSpinner = false;
                             this.$emit('refresh-list', this.activity.id);
@@ -206,6 +215,19 @@ import { userService } from '../../services/UserService';
                     })
                     .catch(error => console.log(error))
             },
+            countAccountsInQueue(){
+                
+                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/queue/count`;
+
+                const requestOptions = {
+                    method:'GET',
+                    headers: userService.authorizationHeader()
+                }
+
+                fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.participantsInQueue = data);
+            }
 
         }
     }
@@ -309,8 +331,8 @@ import { userService } from '../../services/UserService';
     }
 
     #btn{
-        height: 5vh;
-        width: 8vw;
+        height: 50px;
+        width: 160px;
         border-radius: 6px;
         font-size: 20px;
         cursor: pointer;
@@ -350,6 +372,19 @@ import { userService } from '../../services/UserService';
         display: none;
     }
     #btn.participating:hover:before{
+        content: "Meld av";
+    }
+    #btn.in-queue{
+        background-color: #FF5B3E;
+    }
+    #btn.in-queue:hover{
+        background-color: #dd4b31;
+        transition: 0.2s;
+    }
+    #btn.in-queue:hover span{
+        display: none;
+    }
+    #btn.in-queue:hover:before{
         content: "Meld av";
     }
 </style>

@@ -257,6 +257,12 @@ public class ActivityService {
         }
         return 0;
     }
+
+    public int countAllAccountsInQueue(int id){
+        List<Account> accountsInQueue = getAllAccountsInQueue(id);
+        return accountsInQueue.size();
+    }
+
     /**
      * Method for checking if a specified Account is registered to a specific Activity
      * @param activityId the id of the activity
