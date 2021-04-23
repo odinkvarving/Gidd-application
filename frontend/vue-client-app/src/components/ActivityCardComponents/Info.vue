@@ -1,5 +1,5 @@
 <template>
-    <div id="infobox" v-if="isDataReady"> <!-- v-if="activity != null" -->
+    <div id="infobox" v-if="activity != null"> <!-- v-if="activity != null" -->
         <div class="box" id="top">
             <h1>{{ activity.title }}</h1> <!-- Title of the activity -->
             <div id="ownerInfo">

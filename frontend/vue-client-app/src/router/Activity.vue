@@ -1,6 +1,6 @@
 <template>
     <div id="card">
-        <ActivityCard id="card" :activity="activity" :location="location" :weather="weather" :isDataReady="isDataReady" v-if="activity && location && weather && isDataReady"/> <!-- Activity -->
+        <ActivityCard id="card" :activity="activity" :location="location" :weather="weather" :isDataReady="isDataReady"/> <!-- Activity  v-if="activity && location && weather && isDataReady" -->
     </div>
 </template>
 <script>
