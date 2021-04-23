@@ -3,9 +3,9 @@
     <div class="collapse navbar-collapse">
       <router-link to="/">
         <div class="logo">
-            <div class="circle-2">
-              <div class="circle-3" />
-            </div>
+          <div class="circle-2">
+            <div class="circle-3" />
+          </div>
         </div>
       </router-link>
       <ul class="navbar-nav ml-auto">
@@ -13,8 +13,11 @@
           <input class="search-box" placeholder="Søk" />
         </div>
         <div class="menu-item create-activity">
-          <div v-if="isLoggedIn" @click="toggleCreateActivity">Opprett aktivitet</div>
-          <router-link to="/login" v-else>Logg inn</router-link>          
+          <div v-if="isLoggedIn" @click="toggleCreateActivity">
+            Opprett aktivitet
+          </div>
+
+          <router-link to="/login" v-else>Logg inn</router-link>
         </div>
         <CreateActivity v-show="isCreateActivityVisible" />
         <Dropdown
@@ -30,14 +33,14 @@
 
 <script>
 import Dropdown from "./Dropdown.vue";
-import { userService } from "../../services/UserService.js"
-import CreateActivity from "../createActivityComponents/CreateActivity.vue"
+//import { userService } from "../../services/UserService.js"
+import CreateActivity from "../createActivityComponents/CreateActivity.vue";
 
 export default {
   name: "navbar",
   components: {
     Dropdown,
-    CreateActivity
+    CreateActivity,
   },
   data() {
     return {
@@ -57,17 +60,21 @@ export default {
         },
       ],
       notifications: [{}],
-      isLoggedIn: userService.isLoggedIn()
+      isLoggedIn: true,
     };
   },
   computed: {
     onHomePage() {
-      if (this.$route.path==='/' || this.$route.path==='/register' || this.$route.path==='/login') {
-        return false
+      if (
+        this.$route.path === "/" ||
+        this.$route.path === "/register" ||
+        this.$route.path === "/login"
+      ) {
+        return false;
       } else {
-        return true
+        return true;
       }
-    }
+    },
   },
   methods: {
     toggleCreateActivity() {
@@ -76,13 +83,12 @@ export default {
       } else {
         this.isCreateActivityVisible = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style>
-
 .logo {
   width: 59px;
   height: 59px;
@@ -106,10 +112,9 @@ export default {
 .circle-3 {
   width: 21px;
   height: 21px;
-  background-color: #FF0000;
+  background-color: #ff0000;
   border-radius: 100%;
 }
-
 
 .menu-item {
   margin: 0 10px;
@@ -169,7 +174,7 @@ nav .create-activity a {
   color: white;
 }
 
-.bg-white{
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,.1);
+.bg-white {
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
 }
 </style>
