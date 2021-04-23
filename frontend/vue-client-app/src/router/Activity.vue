@@ -45,11 +45,12 @@
 
         methods: {
             async getActivity() {
+                const activityId = parseInt(this.$route.params.id);
                 const requestOptions = {
                     method: 'GET',
                     headers: userService.authorizationHeader(),
                 };
-                await fetch(`http://localhost:8080/activities/${this.$route.params.id}/`, requestOptions)
+                await fetch(`http://localhost:8080/activities/${activityId}/`, requestOptions)
                 .then(response => response.json())
                 .then(data => this.activity = data)
                 .catch(error => console.log(error));

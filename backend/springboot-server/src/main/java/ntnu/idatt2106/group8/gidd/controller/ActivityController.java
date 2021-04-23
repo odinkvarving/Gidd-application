@@ -72,8 +72,8 @@ public class ActivityController {
      * @param type PathVariable for the type to find Activities by
      * @return a list of Activities of this type
      */
-    @GetMapping("/activities/{type}")
-    public List<Activity> getActivitiesByType(@PathVariable String type) {
+    @GetMapping("/activities/type={type}")
+    public List<Activity> getActivitiesByType(@PathVariable("type") String type) {
         return activityService.getActivitiesByType(type);
     }
 
