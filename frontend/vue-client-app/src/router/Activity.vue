@@ -25,7 +25,8 @@
                 /**
                  * activity is a variable which represents the clicked activity in the activity feed.
                  */
-                activity: null,
+                activity: {},
+                activities: {}
             }
         },
 
@@ -45,12 +46,12 @@
             async getActivities() {
                 const requestOptions = {
                     method: 'GET',
-                    Headers: userService.authorizationHeader() //Using an authorization header to get access
+                    headers: userService.authorizationHeader() //Using an authorization header to get access
                 }
                 return await fetch("http://localhost:8080/activities", requestOptions)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    this.activities = data;
                 })
                 .catch(error => console.log(error));
             },
@@ -61,23 +62,8 @@
              * The ID is passed from Dashboard to Activity.vue through dynamic routing.
              */
             async findActivity() {
-                /*let activities = await this.getActivities();
-                let act = activities.find((a) => a.id === parseInt(this.$route.params.id)); //this.$route.params.id is the ID which is passed through the routing path
-                return act;*/
-
-                console.log("test");
-                //await Promise.all(this.getActivities());
                 await this.getActivities();
-                console.log(this.activities);
-                console.log(this.$route.params.id);
-                let act;
-                for(let i = 0; i < this.activities.length; i ++){
-                    console.log(this.activities[i].id);
-                    if(this.activities[i].id === parseInt(this.$route.params.id)){
-                        act = this.activities[i];
-                    }
-                }
-                console.log(act);
+                let act = this.activities.find((a) => a.id === parseInt(this.$route.params.id)); //this.$route.params.id is the ID which is passed through the routing path
                 return act;
             }
         }

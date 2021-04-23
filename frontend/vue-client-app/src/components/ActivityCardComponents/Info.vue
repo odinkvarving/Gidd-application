@@ -24,14 +24,14 @@
                 <li class="txt">Dødens dal</li><!-- Replace this with actual location when implemented -->
                 <li class="txt">{{ activity.startTime }}</li>
                 <li class="txt">60 minutter</li><!-- Implement calculation for this -->
-                <li class="txt" v-if="!activity.weather != null">Strålende sol 17 grader</li><!-- IMplement this -->
+                <li class="txt" v-if="!activity.weather != null">{{ weather.temp }}</li><!-- IMplement this -->
                 <li class="txt" v-else>Ingen værmelding</li>
                 <li class="txt">{{ 0 }} / {{ activity.maxParticipants }}</li>
             </ul>
         </div>
         <!--<div>
-                  <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
-              </div>-->
+            <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
+        </div>-->
         <button id="btn" :class="{ full: isFull }" @click="handleButtonClick()">
           <span>{{ checkIfFull() }}</span>
         </button>
@@ -76,12 +76,14 @@
          * weather is an object which represents the weather of the activity.
          * It contains relevant parameters: name, temp, description and icon.
          */
-        weather: this.getWeather(),
+        weather: {},
       }
     },
   
-    mounted() {
-      console.log(this.activity);
+    async mounted() {
+      this.location = await this.findLocation();
+      this.weather = await this.getWeather();
+      console.log("TESTTESTTEST: " + this.activity.title);
     },
 
     methods: {
@@ -113,7 +115,7 @@
        * To find the weather, WeatherService requires latitude, longitude and startTime of activity.
        */
       async getWeather() {
-          return await weatherService.getWeather(this.latitude, this.longitude, this.time);
+          return await weatherService.getWeather(this.activity.latitude, this.activity.longitude, this.activity.startTime);
       },
 
       /**
