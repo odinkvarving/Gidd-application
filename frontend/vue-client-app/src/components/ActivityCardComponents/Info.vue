@@ -24,7 +24,7 @@
                 <li class="txt">Dødens dal</li><!-- Replace this with actual location when implemented -->
                 <li class="txt">{{ activity.startTime }}</li>
                 <li class="txt">60 minutter</li><!-- Implement calculation for this -->
-                <li class="txt" v-if="!activity.weather != null">{{ weather.temp }}</li><!-- IMplement this -->
+                <li class="txt" v-if="!activity.weather != null">Sol</li><!-- {{ weather.temp }} IMplement this -->
                 <li class="txt" v-else>Ingen værmelding</li>
                 <li class="txt">{{ 0 }} / {{ activity.maxParticipants }}</li>
             </ul>
@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-  import {weatherService} from '../../services/WeatherService.js'
+  //import {weatherService} from '../../services/WeatherService.js'
 
   /**
    * Info is a component which represents general info about an activity
@@ -57,7 +57,15 @@
       activity: {
         type: Object,
         required: true
-      }
+      },
+      location: {
+        type: Object,
+        required: true
+      },
+      weather: {
+        type: Object,
+        required: true
+      },
     },
 
     data() {
@@ -71,20 +79,25 @@
         /**
          * location is a string which represents the place name of the activity
          */
-        location: this.findLocation(),
+        //location: {},
         /**
          * weather is an object which represents the weather of the activity.
          * It contains relevant parameters: name, temp, description and icon.
          */
-        weather: {},
+        //weather: {},
+        /**
+         * isDataReady is a boolean which represents the state of location and weather.
+         * Since we acquire these variables through asynchronous calls, we need to have a flag which tells us when the data is ready.
+         */
+        isDataReady: false,
       }
     },
   
-    async mounted() {
+    /*async mounted() {
       this.location = await this.findLocation();
       this.weather = await this.getWeather();
-      console.log("TESTTESTTEST: " + this.activity.title);
-    },
+      this.isDataReady = true;
+    },*/
 
     methods: {
       /**
@@ -105,18 +118,25 @@
        * findLocation is an asynchronous function which returns location of the activity.
        * getWeather function is utilized, and we find the location by using the weather object.
        */
-      async findLocation() {
+      /*async findLocation() {
           return await this.getWeather().name;
-      },
+      },*/
         
       /**
        * getWeather is an asynchronous function which returns weather of the activity.
        * The weather object is fetched in services/WeatherService.
        * To find the weather, WeatherService requires latitude, longitude and startTime of activity.
        */
-      async getWeather() {
-          return await weatherService.getWeather(this.activity.latitude, this.activity.longitude, this.activity.startTime);
-      },
+      /*async getWeather() {
+        console.log(this.activity);
+        console.log("LATITUDE: " + this.activity.latitude);
+        console.log("LONGITUDE: " + this.activity.longitude);
+        console.log("STARTTIME: " + this.activity.startTime);
+        let w = await weatherService.getWeather(this.activity.latitude, this.activity.longitude, this.activity.startTime);
+        console.log(w.name);
+        return w;
+          //return await weatherService.getWeather(this.activity.latitude, this.activity.longitude, this.activity.startTime);
+      },*/
 
       /**
        * handleButtonClick is an event handler for the button in the component.

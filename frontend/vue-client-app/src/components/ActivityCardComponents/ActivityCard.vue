@@ -1,6 +1,6 @@
 <template>
     <div id="activity" v-if="activity != null">
-        <Info class="comp" id="info" :activity="activity"/> <!-- info box> -->
+        <Info class="comp" id="info" :activity="activity" :location="location" :weather="weather"/> <!-- info box> -->
         <Map class="comp" id="map" :activity="activity"/> <!-- component for map location -->
         <Equipment class="comp" id="equipment" :activity="activity"/> <!-- list of equipment -->
         <button class="comp" id="btnVisible" @click="changeChatVisibility">Åpne chat</button> <!-- button for opening and closing the chat box -->
@@ -13,6 +13,7 @@
     import Equipment from './Equipment.vue'
     import Chat from './Chat.vue'
     import {userService} from '../../services/UserService.js'
+    //import {weatherService} from '../../services/WeatherService.js'
 
     /**
      * ActivityCard is a component which represents a clicked activity.
@@ -40,6 +41,14 @@
                 type: Object,
                 required: true
             },
+            location: {
+                type: Object,
+                required: true
+            },
+            weather: {
+                type: Object,
+                required: true
+            }
         },
 
         data() {
@@ -52,7 +61,7 @@
                 /**
                  * isLoggedIn is a boolean to check if the client is logged in or not
                  */
-                isLoggedIn: userService.isLoggedIn()
+                isLoggedIn: userService.isLoggedIn(),
             }
         },
 
