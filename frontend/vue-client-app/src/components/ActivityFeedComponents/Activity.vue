@@ -29,7 +29,19 @@
             </div>
         </div>
         <div id="map-preview">
-            <img src="../../assets/map-preview-example.png" alt="Activity location map preview"/>
+            <GmapMap 
+                :center="{lat:activity.latitude, lng:activity.longitude}"
+                :zoom="11"
+                :options='{fullscreenControl: false, gestureHandling: "none"}'
+                map-type-id="roadmap"
+                style="width: 245px; height: 161px"
+                >
+
+                <GmapMarker 
+                    :position="{lat:activity.latitude, lng:activity.longitude}"
+                    @click="center={lat:activity.latitude, lng:activity.longitude}"
+                />
+            </GmapMap>
         </div>
         <p style="margin: 0">Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
         <p style="font-size: 13px; opacity: 70%" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</p>

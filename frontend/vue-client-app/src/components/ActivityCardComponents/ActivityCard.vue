@@ -1,10 +1,14 @@
 <template>
     <div id="activity" v-if="activity != null">
-        <Info class="comp" id="info" :activity="activity"/>
-        <Map class="comp" id="map" :activity="activity"/>
-        <Equipment class="comp" id="equipment" :activity="activity"/>
-        <button class="comp" id="btnVisible" @click="changeChatVisibility">Åpne chat</button>
-        <Chat class="comp chat" id="chat" :activity="activity" v-show="isChatVisible"/>
+        <div class="upper-row">
+            <Info class="comp" id="info" :activity="activity"/>
+            <div class="map-equipment-container">
+                <Map class="comp" id="map" :latitude="activity.latitude" :longitude="activity.longitude"/>
+                <Equipment class="comp" id="equipment" :activity="activity"/>
+            </div>
+        </div>
+        <button id="btnVisible" @click="changeChatVisibility">Åpne chat</button>
+        <Chat class="chat" id="chat" :activity="activity" v-show="isChatVisible"/>
     </div>
 </template>
 
@@ -54,46 +58,51 @@ export default {
 </script>
 <style>
     #activity{
-        display: grid;
-        grid-template-areas: 
-        "info map"
-        "info equipment"
-        "btn equipment"
-        "chat chat";
+        display: flex;
         /*display: flex;
         flex-wrap: wrap;
         flex-direction: row;
         background-color: #F6F6F6;*/
     }
+
+    .upper-row{
+        display: flex;
+        flex-direction: row wrap;
+        height: 85vh;
+
+    }
     .comp{
         background-color: white;
-        width: 40vw;
         box-shadow: 0px 4px 4px 0px #00000040;
     }
     #info{
-        grid-area: info;
-        height: 90%;
+        width: 40vw;
         text-align: center;
     }
+
+    .map-equipment-container{
+        display: flex;
+        flex-flow: column;
+        justify-content: space-between;
+        margin-left: 40px;
+    }
+
     #map{
-        grid-area: map;
-        height: 380px;
+        width: 40vw;
+        height: 40vh;
+
     }
     #equipment{
-        grid-area: equipment;
         text-align: left;
-        padding-left: 2%;
-        height: 80%;
-        margin-top: 2%;
+        width: 40vw;
+        height: 40vh;
     }
     #btnVisible{
-        grid-area: btn;
         border: none;
         background-color: #FFBD3E;
         color: white;
     }
     #chat{
-        grid-area: chat;
         width: 87vw;
         margin-top: 1%;
     }
