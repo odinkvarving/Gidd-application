@@ -46,7 +46,11 @@
           <label>
             Sted:
           </label>
-          <b-form-input :state="placeState" class="input-field" type="text" v-model="location"></b-form-input>
+          
+          <!-- Make this appear above everything, result suggestions doesn't show! -->
+          <LocationSearchBar />
+
+        <!--  <b-form-input :state="placeState" class="input-field" type="text" v-model="location"></b-form-input> -->
         </li>
         <div class="line"></div>
         <li class="menu-item date">
@@ -133,9 +137,13 @@
 <script>
 import { userService } from "../../services/UserService.js"
 import moment from 'moment'
+import LocationSearchBar from "./LocationSearchBar.vue"
 
 export default {
   name: "CreateActivity",
+  components: {
+    LocationSearchBar
+  },
   data() {
     return {
       name: "",
@@ -302,6 +310,7 @@ export default {
   transform: translateX(37%);
   width: max-content;
   background-color: white;
+  
 }
 
 .create-activity-container {

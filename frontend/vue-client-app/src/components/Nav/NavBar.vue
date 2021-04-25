@@ -33,7 +33,7 @@
 
 <script>
 import Dropdown from "./Dropdown.vue";
-//import { userService } from "../../services/UserService.js"
+import { userService } from "../../services/UserService.js"
 import CreateActivity from "../createActivityComponents/CreateActivity.vue";
 
 export default {
@@ -60,7 +60,7 @@ export default {
         },
       ],
       notifications: [{}],
-      isLoggedIn: true,
+      isLoggedIn: userService.isLoggedIn(),
     };
   },
   computed: {
@@ -166,7 +166,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: auto;
   align-self: center;
 }
 

@@ -2,7 +2,7 @@
     <div id="container">
         <div id="feed">
             <div v-for="a in activities" :key="a.id" @click="handleActivityClicked(a)">
-                <Activity :activity="a" v-on:refresh-list="refreshList"/>
+                <Activity :activity="a" v-on:refresh-list="refreshList" :isLoggedIn="isLoggedIn" />
             </div>
         </div>
         <div id="calendar-mini">
@@ -43,11 +43,15 @@
                 activities: {},
                 joinedActivities: {},
                 sortKey: "",
+                isLoggedIn: false
             }
         },
         mounted(){
             this.getActivities();
-            this.getJoinedActivities();
+            if(userService.isLoggedIn()){
+                this.isLoggedIn = true;
+                this.getJoinedActivities();
+            }
         },
         methods: {
             getActivities() {

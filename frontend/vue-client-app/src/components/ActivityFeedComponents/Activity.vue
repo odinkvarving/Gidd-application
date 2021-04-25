@@ -72,7 +72,8 @@ import { userService } from '../../services/UserService';
             activity: {
                 type: Object,
                 required: true
-            }
+            },
+            isLoggedIn: Boolean
         },
 
         data() {
@@ -89,7 +90,9 @@ import { userService } from '../../services/UserService';
         },
         mounted(){
             this.getCurrentParticipantsNumber();
-            this.isAlreadyParticipating();
+            if(this.isLoggedIn){
+                this.isAlreadyParticipating();
+            }
         },
         methods: {
             joinButtonClicked(){
@@ -157,7 +160,6 @@ import { userService } from '../../services/UserService';
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': userService.getTokenString()
                     }
                 }
 
