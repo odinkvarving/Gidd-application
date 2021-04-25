@@ -6,7 +6,9 @@
     ></router-link>
 
     <h2 class="header">Bytt passord 🔒</h2>
-    <div class="info">Hei, skriv inn ett nytt passord til brukeren din.</div>
+    <div class="info">
+      Hei, skriv inn ett nytt passord til brukeren koblet til {{ this.email }}.
+    </div>
 
     <div class="input-container">
       <p v-if="!isPasswordValid">Passord må være mellom 5 og 16 tegn</p>
@@ -73,19 +75,19 @@ export default {
       didCheck: false,
       passwordValue: "",
       confirmPasswordValue: "",
-      email: null,
+      email: "",
       resetSuffix: this.$route.params.passwordSuffix,
     };
   },
   created() {
-   const response = await fetch("http://localhost:8080/reset/"+this.resetSuffix,{method:'GET'});
-   const data = await response.json();
-   this.email = data.email;
-   if(this.email===null){
-       console.log("did not find data: " + JSON.stringify(data))
-   }else{
-       console.log("found data: " + data)
-   }
+    fetch("http://localhost:8080/reset/" + this.resetSuffix, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.email);
+        this.email = data.email;
+      });
   },
   methods: {
     testPasswords() {
