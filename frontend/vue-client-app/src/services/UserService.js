@@ -127,7 +127,7 @@ function setAccount(newAccount){
     if(!user || !user.jwtToken){
         return false;
     }
-    return fetch("http://localhost:8080/accounts/saveWithInfo",{
+    return fetch("http://localhost:8080/accounts/accountInfo",{
         method:'POST',
         headers:{
             'Content-Type':'application/json',
@@ -138,7 +138,7 @@ function setAccount(newAccount){
 }
 
 function setPassword(newPassword){
-    return fetch('http://localhost:8080/accounts/${this.$route.params.userId}/updatePassword',{
+    return fetch(`http://localhost:8080/accounts/${this.$route.params.userId}/updatePassword`,{
         method:'POST',
         headers:authorizationHeader(),
         body:newPassword
