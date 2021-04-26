@@ -10,8 +10,14 @@
       </router-link>
       <ul class="navbar-nav ml-auto">
         <div class="search-field">
-          <input type= "text" class="search-box" placeholder="Søk" v-model="query"/>
+          <input v-model="search" type="text" @input="onChange" @keydown.down="onArrowDown" @keydown.up="onArrowUp" @keydown.enter="onEnter" placeholder="Søk"/>
         </div>
+        <ul v-show="isOpen" class="autocomplete-results">
+            <li v-if="isLoading" class="loading"> Loading results...</li>
+            <li v-else v-for="(result, i) in results" :key="i" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }">
+              <p @click="resultClicked(result.id)" @keydown.enter="onEnter(result.id)">{{result.title}}</p>
+            </li>
+        </ul>
         <div class="menu-item create-activity">
           <div v-if="isLoggedIn" @click="toggleCreateActivity">
             Opprett aktivitet
@@ -35,14 +41,47 @@
 import Dropdown from "./Dropdown.vue";
 import CreateActivity from "../createActivityComponents/CreateActivity.vue";
 //import Activity from './Activity.vue';
-import { userService } from "../../services/UserService.js";
 
 export default {
   name: "navbar",
+  props: {
+    items: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    isAsync: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  watch: {
+    
+    items: function (value, oldValue) {
+      console.log(oldValue);
+      if(this.isAsync) {
+        this.results = value;
+        this.isOpen = true;
+        this.isLoading = false;
+      }
+    }
+  },
+
   components: {
     Dropdown,
     CreateActivity,
   },
+
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+    this.getActivities();
+  },
+  destroyed() {
+    document.removeEventListener('click', this.handleClickOutside);
+  },
+  
   data() {
     return {
       isCreateActivityVisible: false,
@@ -63,6 +102,11 @@ export default {
       notifications: [{}],
       isLoggedIn: true,
       activities: {},
+      search: '',
+      isLoading: false,
+      results: [],
+      isOpen: false,
+      arrowCounter: -1,
     };
   },
   computed: {
@@ -79,6 +123,14 @@ export default {
     },
   },
   methods: {
+    resultClicked(resultId){
+      console.log(this.$route.path)
+      if(!(this.$route.path === `/dashboard/activity/${resultId}`)){
+        this.$router.push({ name: 'Activity', params: { id: resultId }});
+      }
+      this.isOpen = false;
+      this.search = '';
+    },
     toggleCreateActivity() {
       if (this.isCreateActivityVisible === false) {
         this.isCreateActivityVisible = true;
@@ -89,7 +141,6 @@ export default {
     getActivities() {
         const requestOptions ={
             method: 'GET',
-            headers: userService.authorizationHeader()
         }
 
         // Get all registered activites from database
@@ -101,8 +152,53 @@ export default {
             })
             .catch(error => console.log(error))
     },
-    
+    filterResults() {
+      console.log(this.search);
+      this.results = [];
+      for(let i = 0; i < this.activities.length; i ++){
+        if(this.activities[i].title.toLowerCase().includes(this.search.toLowerCase())){
+          this.results.push(this.activities[i]);
+        }
+      }
+    },
+    onChange() {
+      this.$emit('input', this.search);
+      if(this.isAsync) {
+        this.isLoading = true;
+      }else {
+        this.filterResults();
+        this.isOpen = true;
+      }
+    },
+    setResult(result) {
+      this.search = result;
+      this.isOpen = false;
+    },
+    handleClickOutside(event) {
+      if(!this.$el.contains(event.target)) {
+        this.arrowCounter = -1;
+        this.isOpen = false;
+      }
+    },
+    onArrowDown() {
+      if (this.arrowCounter < this.results.length) {
+        this.arrowCounter = this.arrowCounter + 1;
+      }
+    },
+    onArrowUp() {
+      if (this.arrowCounter > 0) {
+        this.arrowCounter = this.arrowCounter - 1;
+      }
+    },
+    onEnter() { //fiks onEnter gjør samme som click
+      this.search = this.results[this.arrowCounter];
+      this.arrowCounter = -1;
+      this.$router.push({ name: 'Activity', params: { id: this.results.id }});
+      this.isOpen = false;
+      this.search = '';
+    },
   },
+
 };
 </script>
 
@@ -154,25 +250,51 @@ export default {
 
 .search-field {
   padding: 0px 20px;
-  display: flex;
+  margin: 0px 10px;
   align-content: center;
   align-self: center;
-}
-
-.search-box {
-  background-color: #d1d1d1;
-  opacity: 0.5;
-  border: none;
-  border-radius: 6px;
-  height: 30px;
-  width: 180px;
-  outline: none;
-  padding-left: 10px;
+  position: relative;
 }
 
 .search-box::placeholder {
   color: rgb(50, 50, 50);
 }
+
+input[type=text] {
+  border-radius: 6px;
+  padding: 0 20px;
+  height: 30px;
+  min-width: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  align-self: center;
+}
+
+.autocomplete-results {
+    padding: 0;
+    margin: 0;
+    border: 1px solid #eeeeee;
+    height: 120px;
+    min-height: 1em;
+    max-height: 6em;
+    overflow: auto;
+    z-index: 100%;
+  }
+
+  .autocomplete-result {
+    list-style: none;
+    text-align: left;
+    padding: 4px 2px;
+    cursor: pointer;
+  }
+
+  .autocomplete-result.is-active,
+  .autocomplete-result:hover {
+    background-color: #FFBD3E;
+    color: white;
+  }
 
 .create-activity {
   background-color: #ffbd3e;
