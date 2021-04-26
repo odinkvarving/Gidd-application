@@ -131,6 +131,21 @@ public class AccountController {
         return accountService.saveAccountInfoToAccount(accountInfo, accountInfo.getAccount());
     }
 
+    @GetMapping("/reset/{suffix}")
+    public Account getAccountByResetSuffix(@PathVariable("suffix") String suffix) {
+        return this.accountService.findAccountByResetSuffix(suffix);
+    }
+
+    @PutMapping("/reset/{suffix}")
+    public boolean updateAccountPassword(@PathVariable("suffix") String suffix, @RequestBody String newPassword) {
+        return this.accountService.resetAccountPassword(suffix, newPassword);
+    }
+
+    @PostMapping("/reset/{mail}")
+    public void requestPasswordReset(@PathVariable("mail") String mail) {
+        this.accountService.generatePasswordReset(mail);
+    }
+
     /**
      * PostMapping for setting the AccountInfo of a specified Account
      * @param account requesting the body of an Account
