@@ -204,7 +204,7 @@ public class AccountService {
     private boolean updateAccountPassword(int accountId, String newPassword) {
         Account accountToUpdate = findAccountById(accountId);
         if (accountToUpdate != null) {
-            accountToUpdate.setPassword(newPassword);
+            accountToUpdate.setPassword(passwordEncoder.encode(newPassword));
             this.accountRepository.save(accountToUpdate);
             return true;
         } else {
@@ -247,10 +247,12 @@ public class AccountService {
                     this.passwordResetRepository.findByResetUrlSuffix(urlSuffix).orElseThrow(NoSuchElementException::new);
             Account accountToReset =
                     this.accountRepository.findById(passwordReset.getAccountId()).orElseThrow(NoSuchElementException::new);
+            logger.info("updated account with id: " + accountToReset.getId()+" , with a new password");
             updateAccountPassword(accountToReset.getId(), newPassword);
             this.passwordResetRepository.delete(passwordReset);
             return true;
         } catch (NoSuchElementException nee) {
+            logger.info("did not find either account or passwordreset which responds to the given urlsuffix: " +urlSuffix);
             return false;
         }
     }
@@ -259,6 +261,7 @@ public class AccountService {
      * Goes trough the repo and deletes the entities that is past expiration time.
      */
     private void updatePasswordResetRepo() {
+        logger.info("refreshing passwordreset repo");
         final int TIME_LIMIT = 30;
         Set<PasswordReset> resetsToDelete = new HashSet<>();
         LocalDateTime now = LocalDateTime.now();

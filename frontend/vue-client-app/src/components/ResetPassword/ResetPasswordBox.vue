@@ -51,7 +51,7 @@
     <ErrorModal
       name="error-modal"
       header="Error"
-      info="Registration not successfull, email already exists."
+      info="Noe gik galt under oppdatering av passord"
       buttonText="OK"
     />
   </div>
@@ -75,7 +75,7 @@ export default {
       didCheck: false,
       passwordValue: "",
       confirmPasswordValue: "",
-      email: "",
+      email: null,
       resetSuffix: this.$route.params.passwordSuffix,
     };
   },
@@ -85,9 +85,15 @@ export default {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data.email);
         this.email = data.email;
-      });
+        if (this.email === null) {
+          alert(
+            "The password link is either wrong or timed out, redirecting to login"
+          );
+          this.$router.push({ path: "/login" });
+        }
+      })
+      .catch((error) => console.error("Error:", error));
   },
   methods: {
     testPasswords() {
@@ -97,10 +103,22 @@ export default {
       this.isPasswordValid = pLength >= 5 && pLength <= 16;
     },
     submitPassword() {
+      this.submitted = true;
       if (this.isPasswordValid && this.isPasswordsEqual && this.didCheck) {
-        this.submitted = true;
-        this.$bvModal.show("success-modal");
-        setTimeout(() => this.$router.push({ path: "/login" }), 3000);
+        fetch("http://localhost:8080/reset/" + this.resetSuffix, {
+          method: "PUT",
+          body: this.passwordValue,
+        })
+          .then((response) => (this.submitted = response))
+          .catch((error) => console.error("ERROR: ", error))
+          .then(() => {
+            if (this.submitted) {
+              this.$bvModal.show("success-modal");
+            } else {
+              this.$bvModal.show("error-modal");
+            }
+            setTimeout(() => this.$router.push({ path: "/login" }), 3000);
+          });
       }
     },
   },

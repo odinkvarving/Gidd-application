@@ -130,7 +130,7 @@ public class AccountController {
     }
 
     @PutMapping("/reset/{suffix}")
-    public boolean updateAccountPassword(@PathVariable("suffix") String suffix, @RequestParam String newPassword) {
+    public boolean updateAccountPassword(@PathVariable("suffix") String suffix, @RequestBody String newPassword) {
         return this.accountService.resetAccountPassword(suffix, newPassword);
     }
 
