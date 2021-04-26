@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * @author Endré Hadzalic
+ */
 @Repository
 public interface PasswordResetRepository extends CrudRepository<PasswordReset, Integer> {
     Optional<PasswordReset> findByResetUrlSuffix(String resetUrlSuffix);
