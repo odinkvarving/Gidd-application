@@ -2,9 +2,12 @@ package ntnu.idatt2106.group8.gidd.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,6 +34,10 @@ public class Account {
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Activity> createdActivities = new HashSet<>();
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications = new ArrayList<>();
 
     public Account() {
     }
@@ -83,6 +90,14 @@ public class Account {
 
     public void seAccountInfo(AccountInfo accountInfo) {
         this.accountInfo = accountInfo;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
     }
 
     @Override
