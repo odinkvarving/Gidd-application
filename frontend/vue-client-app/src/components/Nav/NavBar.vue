@@ -10,7 +10,7 @@
       </router-link>
       <ul class="navbar-nav ml-auto">
         <div class="search-field">
-          <input class="search-box" placeholder="Søk" />
+          <input type= "text" class="search-box" placeholder="Søk" v-model="query"/>
         </div>
         <div class="menu-item create-activity">
           <div v-if="isLoggedIn" @click="toggleCreateActivity">
@@ -33,8 +33,9 @@
 
 <script>
 import Dropdown from "./Dropdown.vue";
-//import { userService } from "../../services/UserService.js"
 import CreateActivity from "../createActivityComponents/CreateActivity.vue";
+//import Activity from './Activity.vue';
+import { userService } from "../../services/UserService.js";
 
 export default {
   name: "navbar",
@@ -61,6 +62,7 @@ export default {
       ],
       notifications: [{}],
       isLoggedIn: true,
+      activities: {},
     };
   },
   computed: {
@@ -84,6 +86,22 @@ export default {
         this.isCreateActivityVisible = false;
       }
     },
+    getActivities() {
+        const requestOptions ={
+            method: 'GET',
+            headers: userService.authorizationHeader()
+        }
+
+        // Get all registered activites from database
+        fetch("http://localhost:8080/activities/", requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                this.activities = data;
+                console.log(data[0]);
+            })
+            .catch(error => console.log(error))
+    },
+    
   },
 };
 </script>
