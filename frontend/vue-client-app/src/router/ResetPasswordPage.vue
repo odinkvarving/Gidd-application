@@ -2,20 +2,20 @@
   <div class="body">
     <FrontPageNav />
     <div class="front-page">
-      <ForgotPasswordBox />
+      <ResetPasswordBox />
     </div>
   </div>
 </template>
 
 <script>
 import FrontPageNav from "../components/Nav/FrontPageNav.vue";
-import ForgotPasswordBox from "../components/ForgotPasswordComponents/ForgotPasswordBox.vue";
+import ResetPasswordBox from "../components/ResetPassword/ResetPasswordBox.vue";
 
 export default {
   name: "Login",
   components: {
     FrontPageNav,
-    ForgotPasswordBox,
+    ResetPasswordBox,
   },
 };
 </script>
