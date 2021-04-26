@@ -206,8 +206,9 @@ export default {
   margin-right: 40px;
 }
 #icon{
-  width: 15%;
-  height: auto;
+  width: 8%;
+  height: 8%;
+  margin-right: 10px;
 }
 #btn {
   grid-area: btn;
