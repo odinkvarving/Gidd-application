@@ -126,6 +126,11 @@ public class AccountController {
         accountService.saveAccountWithInfo(account, account.getAccountInfo());
     }
 
+    @PostMapping("accounts/accountInfo")
+    public boolean saveAccountInfoToAccount(@RequestBody AccountInfo accountInfo) {
+        return accountService.saveAccountInfoToAccount(accountInfo, accountInfo.getAccount());
+    }
+
     /**
      * PostMapping for setting the AccountInfo of a specified Account
      * @param account requesting the body of an Account

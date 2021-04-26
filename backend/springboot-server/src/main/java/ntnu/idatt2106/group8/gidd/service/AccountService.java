@@ -374,4 +374,11 @@ public class AccountService {
         Account creator = this.accountRepository.findById(accountId).orElseThrow(NoSuchElementException::new);
         return this.activityRepository.findActivitiesByCreator(creator);
     }
+
+    public boolean saveAccountInfoToAccount(AccountInfo accountInfo, Account account) {
+        Account result1 = this.accountRepository.save(account);
+        accountInfo.setAccount(account);
+        AccountInfo result2 = this.accountInfoRepository.save(accountInfo);
+        return (result1.equals(account) && result2.equals(accountInfo));
+    }
 }
