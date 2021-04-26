@@ -206,8 +206,8 @@ export default {
   margin-right: 40px;
 }
 #icon{
-  width: 8%;
-  height: 8%;
+  width: 25px;
+  height: 25px;
   margin-right: 10px;
 }
 #btn {
