@@ -71,7 +71,8 @@ export default {
       if (
         this.$route.path === "/" ||
         this.$route.path === "/register" ||
-        this.$route.path === "/login"
+        this.$route.path === "/login" ||
+        this.$route.path === "/forgotPassword"
       ) {
         return false;
       } else {
