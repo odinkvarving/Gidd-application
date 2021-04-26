@@ -30,7 +30,7 @@
       </ul>
       <ul class="list" id="list2" v-show="!inEditMode">
         <li class="txt">{{ activity.activityType.type }}</li>
-        <li class="txt">Finn lokasjon</li>
+        <li class="txt">{{ activity.location }}</li>
         <li class="txt">{{ activity.startTime }}</li>
         <li class="txt">60 minutter</li> <!-- Implement duration -->
         <li class="txt" v-if="weather">
