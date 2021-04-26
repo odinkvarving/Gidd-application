@@ -4,10 +4,8 @@
       id="card"
       :activity="activity"
       :weather="weather"
-      :isDataReady="isDataReady"
       v-if="isDataReady"
     />
-    <!-- Activity  v-if="activity && location && weather && isDataReady" -->
   </div>
 </template>
 <script>
@@ -40,11 +38,10 @@ export default {
   async mounted() {
     /**
      * activity is defined here.
-     * We use await because we are waiting for findActivity to return an activity based on a GET request in getActivities.
+     * We use await because we are waiting for getActivity to return an activity based on ID in path.
      */
     await this.getActivity();
-    //this.activity = await this.findActivity();
-    //await this.getWeather();
+    await this.getWeather();
     this.isDataReady = true;
   },
 
@@ -65,36 +62,6 @@ export default {
     },
 
     /**
-     * getActivities() is an asynchronous function which returns all activities registered in the database.
-     * A GET request is sent to the Spring Boot server, and the server returns all activities
-     */
-    async getActivities() {
-      const requestOptions = {
-        method: "GET",
-        headers: userService.authorizationHeader(), //Using an authorization header to get access
-      };
-      await fetch("http://localhost:8080/activities", requestOptions)
-        .then((response) => response.json())
-        .then((data) => {
-          this.activities = data;
-        })
-        .catch((error) => console.log(error));
-    },
-
-    /**
-     * findActivity is an asynchronous function which returns clicked activity in activity feed.
-     * The way this is done is by finding activity with an ID.
-     * The ID is passed from Dashboard to Activity.vue through dynamic routing.
-     */
-    async findActivity() {
-      await this.getActivities();
-      let act = this.activities.find(
-        (a) => a.id === parseInt(this.$route.params.id)
-      ); //this.$route.params.id is the ID which is passed through the routing path
-      return act;
-    },
-
-    /**
      * getWeather is an asynchronous function which returns weather of the activity.
      * The weather object is fetched in services/WeatherService.
      * To find the weather, WeatherService requires latitude, longitude and startTime of activity.
@@ -109,9 +76,6 @@ export default {
         this.activity.longitude,
         this.activity.startTime
       );
-      //console.log(w.name);
-      //return w;
-      //return await weatherService.getWeather(this.activity.latitude, this.activity.longitude, this.activity.startTime);
     },
   },
 };

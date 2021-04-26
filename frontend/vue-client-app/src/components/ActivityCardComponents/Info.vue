@@ -28,16 +28,16 @@
         <li class="txt">Værmelding:</li>
         <li class="txt">Deltakere:</li>
       </ul>
-
       <ul class="list" id="list2" v-show="!inEditMode">
         <li class="txt">{{ activity.activityType.type }}</li>
         <li class="txt">Finn lokasjon</li>
         <li class="txt">{{ activity.startTime }}</li>
-        <li class="txt">60 minutter</li>
-        <!-- Implement calculation for this -->
-        <li class="txt">
-          Legg til vær
+        <li class="txt">60 minutter</li> <!-- Implement duration -->
+        <li class="txt" v-if="weather">
+          <img id="icon" alt="weather icon" :src="require('@/assets/weatherIcons/' + weather.icon + '.png')"/>
+          {{ weather.temp }} C°
         </li>
+        <li class="txt" v-else>Ingen værmelding</li>
         <li class="txt">{{ 0 }} / {{ activity.maxParticipants }}</li>
       </ul>
 
@@ -77,12 +77,8 @@
             v-model="endTimeStamp"
           ></b-form-timepicker>
         </li>
-        <li class="txt">Legg til utregning</li>
-        <!-- Implement calculation for this -->
-        <li class="txt">
-          Legg til vær
-        </li>
-        <!-- Implement this -->
+        <li></li>
+        <li></li>
         <li class="txt">
           <input type="text" placeholder="Antall" v-model="maxParticipants" />
         </li>
@@ -112,6 +108,10 @@ export default {
 
   props: {
     activity: {
+      type: Object,
+      required: true,
+    },
+    weather: {
       type: Object,
       required: true,
     },
@@ -153,7 +153,7 @@ export default {
       console.log(this.activity.title);
     },
 
-      async editActivity() {
+    async editActivity() {
       let accountDetails = await userService.getAccountByEmail();
 
       let activity = {
@@ -263,6 +263,11 @@ export default {
   grid-area: list2;
   text-align: right;
   margin-right: 40px;
+}
+#icon{
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
 }
 #btn {
   grid-area: btn;
