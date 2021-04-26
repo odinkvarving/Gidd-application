@@ -8,14 +8,14 @@
       ></b-icon>
 
       <h1 v-show="!inEditMode">{{ activity.title }}</h1>
-      <h1 v-show="inEditMode"><input type="text" :placeholder="title" /></h1>
+      <h1 v-show="inEditMode"><input type="text" :placeholder="title" v-model="title"/></h1>
       <div id="ownerInfo">
         <img :src="require('@/assets/kari.jpg')" />
         <h3 class="txt">{{ activity.creator.email }}</h3>
       </div>
       <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>
       <p class="txt" v-show="inEditMode">
-        <input type="text" :placeholder="description" />
+        <input type="text" :placeholder="description" v-model="description"/>
       </p>
     </div>
     <div class="box" id="bottom">
@@ -124,15 +124,13 @@ export default {
 
       title: this.activity.title,
       type: this.activity.activityType.type,
-      equipment: "", //TODO: Legg til riktig funksjonalitet
       location: "Trondheim", //TODO: Sjekk om denne skal være med
       startDate: "",
       startTimeStamp: "",
       endDate: "",
       endTimeStamp: "",
       maxParticipants: 10,
-      description: "Bare chilling",
-      participantValue: "",
+      description: this.activity.description,
     };
   },
 
@@ -159,6 +157,7 @@ export default {
       let accountDetails = await userService.getAccountByEmail();
 
       let activity = {
+        id: this.activity.id,
         title: this.title,
         description: this.description,
         latitude: "63.41893", //temporary until map is implemented

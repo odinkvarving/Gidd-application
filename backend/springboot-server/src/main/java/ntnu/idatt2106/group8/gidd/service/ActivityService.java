@@ -2,10 +2,7 @@ package ntnu.idatt2106.group8.gidd.service;
 
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
-import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
+import ntnu.idatt2106.group8.gidd.model.entities.*;
 import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
 import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
 import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
@@ -101,8 +98,10 @@ public class ActivityService {
      */
     public Activity updateActivity(int id, Activity activity) {
         try {
+            activityTypeRepository.save(activity.getActivityType());
             return activityRepository.save(activity);
         } catch (DataAccessException e) {
+            e.printStackTrace();
             log.info("Could not update activity");
         }
         return null;
