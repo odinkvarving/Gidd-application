@@ -20,6 +20,7 @@
         v-model="passwordValue"
         v-on:input="testPasswords"
         v-bind:disabled="submitted"
+        v-on:keyup.enter="submitPassword"
       />
     </div>
 
@@ -33,10 +34,16 @@
         v-model="confirmPasswordValue"
         v-on:input="testPasswords"
         v-bind:disabled="submitted"
+        v-on:keyup.enter="submitPassword"
       />
     </div>
 
-    <button id="submit" @click="submitPassword" v-bind:disabled="submitted">
+    <button
+      id="submit"
+      v-if="testPasswords"
+      @click="submitPassword"
+      v-bind:disabled="submitted"
+    >
       Bytt Passord
     </button>
 
@@ -79,8 +86,8 @@ export default {
       resetSuffix: this.$route.params.passwordSuffix,
     };
   },
-  created() {
-    fetch("http://localhost:8080/reset/" + this.resetSuffix, {
+  async created() {
+    await fetch("http://localhost:8080/reset/" + this.resetSuffix, {
       method: "GET",
     })
       .then((response) => response.json())
@@ -102,10 +109,10 @@ export default {
       let pLength = this.passwordValue.length;
       this.isPasswordValid = pLength >= 5 && pLength <= 16;
     },
-    submitPassword() {
+    async submitPassword() {
       this.submitted = true;
       if (this.isPasswordValid && this.isPasswordsEqual && this.didCheck) {
-        fetch("http://localhost:8080/reset/" + this.resetSuffix, {
+        await fetch("http://localhost:8080/reset/" + this.resetSuffix, {
           method: "PUT",
           body: this.passwordValue,
         })
@@ -119,6 +126,8 @@ export default {
             }
             setTimeout(() => this.$router.push({ path: "/login" }), 3000);
           });
+      } else {
+        this.submitted = false;
       }
     },
   },
