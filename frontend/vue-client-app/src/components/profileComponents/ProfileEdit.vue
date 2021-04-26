@@ -65,8 +65,11 @@ export default {
           '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
       return !!pattern.test(str);
     },
-    sendChangePasswordForm(){
-
+    async sendChangePasswordForm(){
+      console.log("Sending mail for password change to "+this.AccountInfo.email)
+      fetch("http://localhost:8080/reset/"+this.AccountInfo.email,{
+        method:"POST",
+      });
     },
     checkform(e){
       this.errors=[]
