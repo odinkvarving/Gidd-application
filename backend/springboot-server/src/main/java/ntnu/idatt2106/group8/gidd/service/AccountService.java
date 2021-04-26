@@ -375,6 +375,12 @@ public class AccountService {
         return this.activityRepository.findActivitiesByCreator(creator);
     }
 
+    /**
+     * Method for updating the AccountInfo for a specific Account
+     * @param accountInfo the updated AccountInfo
+     * @param account the Account with the AccountInfo
+     * @return true or false
+     */
     public boolean saveAccountInfoToAccount(AccountInfo accountInfo, Account account) {
         Account result1 = this.accountRepository.save(account);
         accountInfo.setAccount(account);
