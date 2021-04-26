@@ -6,7 +6,9 @@
     ></router-link>
     <h2 class="header">Glemt passord? 🤯</h2>
     <div class="info">
-      Skriv inn den registrerte e-posten din, så skal vi se om vi kan hjelpe!
+      <p>
+        Skriv inn den registrerte e-posten din, så skal vi se om vi kan hjelpe!
+      </p>
     </div>
     <div class="input-container">
       <p v-if="!isEmailValid">Skriv inn en gyldig e-postadresse</p>
@@ -19,9 +21,11 @@
         v-bind:disabled="sent"
       />
     </div>
-    <div v-if="sent" class="show-sent">
-      Hvis {{ emailValue }} er koblet til en konto vil en e-post sendes med en
-      beskrivelse på hvordan du kan skifte passord.
+    <div v-if="sent" class="info">
+      <p>
+        Hvis {{ emailValue }} er koblet til en konto vil en e-post sendes med en
+        beskrivelse på hvordan du kan skifte passord.
+      </p>
     </div>
     <button id="submit" @click="postAddress" v-bind:disabled="sent">
       Send
@@ -72,10 +76,8 @@ export default {
 
 .info {
   text-align: center;
-}
-
-.show-sent {
-  text-align: center;
+  padding-right: 15px;
+  padding-left: 15px;
 }
 
 p {
