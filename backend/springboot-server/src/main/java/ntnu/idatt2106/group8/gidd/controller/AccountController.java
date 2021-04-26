@@ -1,9 +1,9 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
+import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A controller class handling requests from client regarding
@@ -53,7 +52,7 @@ public class AccountController {
      * @return a list of all registered Accounts
      */
     @GetMapping("accounts/")
-    public List<Account> getAllAccounts(){
+    public List<Account> getAllAccounts() {
         return accountService.findAll();
     }
 
@@ -63,10 +62,10 @@ public class AccountController {
      * @return true or false whether the user was created successfully or not
      */
     @PostMapping("accounts/register")
-    public boolean saveUser(@RequestBody Account account){
+    public boolean saveUser(@RequestBody Account account) {
         logger.info("Trying to save user:\n" + account.toString());
         boolean success = accountService.save(account);
-        if(success){
+        if (success) {
             logger.info("Success!");
         }
         return success;
@@ -208,7 +207,7 @@ public class AccountController {
      * @return the Account that was updated
      */
     @PutMapping("accounts/{id}")
-    public Account updateAccount(@RequestBody Account newAccount, @PathVariable("id")int id) {
+    public Account updateAccount(@RequestBody Account newAccount, @PathVariable("id") int id) {
         return accountService.updateAccount(id, newAccount);
     }
 
@@ -217,7 +216,7 @@ public class AccountController {
      * @param id the PathVariable for the id of the Account
      */
     @DeleteMapping("accounts/{id}")
-    public void deleteAccount(@PathVariable("id")int id) {
+    public void deleteAccount(@PathVariable("id") int id) {
         accountService.deleteAccount(id);
     }
 
