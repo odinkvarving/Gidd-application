@@ -10,14 +10,20 @@
       </router-link>
       <ul class="navbar-nav ml-auto">
         <div class="search-field">
-          <input v-model="search" type="text" @input="onChange" @keydown.down="onArrowDown" @keydown.up="onArrowUp" @keydown.enter="onEnter" placeholder="Søk"/>
-        </div>
-        <ul v-show="isOpen" class="autocomplete-results">
+          <input v-model="search" type="text" @input="onChange" @keydown.down="onArrowDown" @keydown.up="onArrowUp" placeholder="Søk"/>
+          <div class="wrapper">
+            <ul v-show="isOpen" class="autocomplete-results">
             <li v-if="isLoading" class="loading"> Loading results...</li>
             <li v-else v-for="(result, i) in results" :key="i" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }">
-              <p @click="resultClicked(result.id)" @keydown.enter="onEnter(result.id)">{{result.title}}</p>
+              <p @click="resultClicked(result.id)" @keydown.enter="resultClicked(result.id)">
+                 <span class="title">{{result.title}}</span> 
+                 <span class="email" >{{result.creator.email}}</span>
+              </p>
             </li>
         </ul>
+          </div>
+        </div>
+        
         <div class="menu-item create-activity">
           <div v-if="isLoggedIn" @click="toggleCreateActivity">
             Opprett aktivitet
@@ -40,7 +46,6 @@
 <script>
 import Dropdown from "./Dropdown.vue";
 import CreateActivity from "../createActivityComponents/CreateActivity.vue";
-//import Activity from './Activity.vue';
 
 export default {
   name: "navbar",
@@ -158,6 +163,8 @@ export default {
       for(let i = 0; i < this.activities.length; i ++){
         if(this.activities[i].title.toLowerCase().includes(this.search.toLowerCase())){
           this.results.push(this.activities[i]);
+        }else if(this.activities[i].creator.email.toLowerCase().includes(this.search.toLowerCase())){
+          this.results.push(this.activities[i])
         }
       }
     },
@@ -193,9 +200,6 @@ export default {
     onEnter() { //fiks onEnter gjør samme som click
       this.search = this.results[this.arrowCounter];
       this.arrowCounter = -1;
-      this.$router.push({ name: 'Activity', params: { id: this.results.id }});
-      this.isOpen = false;
-      this.search = '';
     },
   },
 
@@ -251,6 +255,7 @@ export default {
 .search-field {
   padding: 0px 20px;
   margin: 0px 10px;
+  width: 300px;
   align-content: center;
   align-self: center;
   position: relative;
@@ -260,11 +265,10 @@ export default {
   color: rgb(50, 50, 50);
 }
 
-input[type=text] {
-  border-radius: 6px;
+input {
   padding: 0 20px;
   height: 30px;
-  min-width: 180px;
+  min-width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -272,15 +276,25 @@ input[type=text] {
   align-self: center;
 }
 
+.wrapper {
+  float: left;
+  position: absolute;
+  z-index: 100;
+  background: white;
+
+}
+
 .autocomplete-results {
     padding: 0;
     margin: 0;
-    border: 1px solid #eeeeee;
+    border: 1px solid black;
     height: 120px;
+    width: 260px;
     min-height: 1em;
     max-height: 6em;
     overflow: auto;
-    z-index: 100%;
+    z-index: 1;
+    position:sticky;
   }
 
   .autocomplete-result {
@@ -288,6 +302,16 @@ input[type=text] {
     text-align: left;
     padding: 4px 2px;
     cursor: pointer;
+    padding-bottom: 0px;
+  }
+
+  .email {
+    font-size: small;
+    display: block;
+  }
+
+  .title {
+    font-weight: bold;
   }
 
   .autocomplete-result.is-active,
