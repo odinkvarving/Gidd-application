@@ -8,7 +8,7 @@
     <transition name="fade">
       <div class="sub-menu" v-if="isVisible">
         <div v-for="(item, i) in items" :key="i" class="menu-item">
-          <router-link  :to="item.link">{{ item.title }}</router-link>
+          <p @click="item.method()" :to="item.link">{{ item.title }}</p>
         </div>
       </div>
     </transition>

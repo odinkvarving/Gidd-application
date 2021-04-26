@@ -16,9 +16,11 @@ function getAccountsNotifications(accountId){
         headers: userService.authorizationHeader()
     }
 
-    fetch(url, requestOptions)
+    return fetch(url, requestOptions)
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => {
+            return data;
+        })
         .catch(error => console.log(error));
 }
 
