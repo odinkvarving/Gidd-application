@@ -1,11 +1,12 @@
 <template>
-  <div id="infobox" v-if="activity != null">
+  <div id="infobox" v-if="activity">
     <div class="box" id="top">
       <b-icon
         class="toggle-edit-button"
         icon="pencil"
         @click="toggleEditMode"
       ></b-icon>
+
       <h1 v-show="!inEditMode">{{ activity.title }}</h1>
       <h1 v-show="inEditMode"><input type="text" :placeholder="title" /></h1>
       <div id="ownerInfo">
@@ -27,18 +28,16 @@
         <li class="txt">Værmelding:</li>
         <li class="txt">Deltakere:</li>
       </ul>
+
       <ul class="list" id="list2" v-show="!inEditMode">
         <li class="txt">{{ activity.activityType.type }}</li>
-        <li class="txt">Dødens dal</li>
-        <!-- Replace this with actual location when implemented -->
+        <li class="txt">Finn lokasjon</li>
         <li class="txt">{{ activity.startTime }}</li>
         <li class="txt">60 minutter</li>
         <!-- Implement calculation for this -->
-        <li class="txt" v-if="!activity.weather != null">
-          Strålende sol 17 grader
+        <li class="txt">
+          Legg til vær
         </li>
-        <!-- IMplement this -->
-        <li class="txt" v-else>Ingen værmelding</li>
         <li class="txt">{{ 0 }} / {{ activity.maxParticipants }}</li>
       </ul>
 
@@ -51,26 +50,39 @@
         </li>
         <!-- Replace this with actual location when implemented -->
         <li class="txt">
-          <b-form-timepicker
-            class="timepicker"
-            placeholder="Velg tid"
-            v-model="startTime"
-          ></b-form-timepicker>
+          <b-form-datepicker
+            class="datepicker"
+            placeholder="Velg dato"
+            v-model="startDate"
+          ></b-form-datepicker>
         </li>
         <li class="txt">
           <b-form-timepicker
             class="timepicker"
             placeholder="Velg tid"
-            v-model="startTime"
+            v-model="startTimeStamp"
+          ></b-form-timepicker>
+        </li>
+        <li class="txt">
+          <b-form-datepicker
+            class="datepicker"
+            placeholder="Velg dato"
+            v-model="endDate"
+          ></b-form-datepicker>
+        </li>
+        <li class="txt">
+          <b-form-timepicker
+            class="timepicker"
+            placeholder="Velg tid"
+            v-model="endTimeStamp"
           ></b-form-timepicker>
         </li>
         <li class="txt">Legg til utregning</li>
         <!-- Implement calculation for this -->
-        <li class="txt" v-if="!activity.weather != null">
+        <li class="txt">
           Legg til vær
         </li>
         <!-- Implement this -->
-        <li class="txt" v-else>Ingen værmelding</li>
         <li class="txt">
           <input type="text" placeholder="Antall" v-model="maxParticipants" />
         </li>
@@ -83,15 +95,16 @@
       id="btn"
       :class="{ full: isFull }"
       @click="handleButtonClick()"
-      v-show="!inEditMode"
+      v-if="!inEditMode"
     >
       <span>{{ checkIfFull() }}</span>
     </button>
-    <button v-show="inEditMode" @click="editActivity">
+    <button v-if="inEditMode" @click="editActivity">
       <span>Fullfør</span>
     </button>
   </div>
 </template>
+
 <script>
 import { userService } from "../../services/UserService";
 export default {
@@ -113,18 +126,18 @@ export default {
       type: this.activity.activityType.type,
       equipment: "", //TODO: Legg til riktig funksjonalitet
       location: "Trondheim", //TODO: Sjekk om denne skal være med
-      date: this.activity.date,
-      startTime: this.activity.startTime,
-      endTime: "",
-      maxParticipants: this.activity.maxParticipants,
-      description: this.activity.description,
+      startDate: "",
+      startTimeStamp: "",
+      endDate: "",
+      endTimeStamp: "",
+      maxParticipants: 10,
+      description: "Bare chilling",
       participantValue: "",
     };
   },
 
   methods: {
     checkIfFull() {
-      console.log(this.activity);
       if (this.activity.currentParticipants < this.activity.totalParticipants) {
         return "Bli med";
       } else {
@@ -133,27 +146,26 @@ export default {
       }
     },
 
-    load() {},
-
-    handleButtonClick() {
-      //Open login/register window or add the user to "participants"
-    },
-
     toggleEditMode() {
       this.inEditMode = !this.inEditMode;
+      console.log("Edit Mode: " + this.inEditMode);
     },
 
-    async editActivity() {
+    test() {
+      console.log(this.activity.title);
+    },
+
+      async editActivity() {
       let accountDetails = await userService.getAccountByEmail();
 
       let activity = {
         title: this.title,
         description: this.description,
-        endTime: `${this.date} ${this.endTime}`,
         latitude: "63.41893", //temporary until map is implemented
         longitude: "10.40658", //temporary until map is implemented
         maxParticipants: this.maxParticipants,
-        startTime: `${this.date} ${this.startTime}`,
+        startTime: `${this.startDate} ${this.startTimeStamp}`,
+        endTime: `${this.endDate} ${this.endTimeStamp}`,
         activityType: {
           type: this.type,
         },
@@ -177,12 +189,10 @@ export default {
         .then((data) => console.log(data))
         .catch((error) => console.log(error));
     },
-    calculateDuration() {
-      //TODO: Legg til utregning
-    },
   },
 };
 </script>
+
 <style>
 #infobox {
   display: grid;

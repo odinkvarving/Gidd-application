@@ -27,7 +27,6 @@
 <script>
     import Activity from './Activity.vue'
     import { userService } from "../../services/UserService.js"
-    import {weatherService} from '../../services/WeatherService.js'    
 
     export default {
         name: "ActivityFeed",
@@ -85,9 +84,6 @@
                         this.joinedActivities = data;
                     })
                     .catch(error => console.log(error))
-            },
-            async getWeather() {
-                return await weatherService.getWeather(this.latitude, this.longitude, this.time);
             },
 
             handleActivityClicked(activity) {

@@ -5,9 +5,9 @@
       <b-icon class="pencil" icon="pencil" @click="edit"></b-icon>
     </div>
     <div class="equipment-list">
-      <ul v-for="(e, index) in equipment" :key="e.equipmentType">
-        <li id="e.equipmentType">
-          {{ e.equipmentType }}
+      <ul v-for="(e, index) in equipment" :key="e.description">
+        <li id="e.description">
+          {{ e.description }}
           <div class="remove-button">
             <b-icon
               class="remove-button"
@@ -51,18 +51,14 @@ export default {
   },
   methods: {
     edit() {
-      if (this.inEditMode) {
-        this.inEditMode = false;
-      } else {
-        this.inEditMode = true;
-      }
+      this.inEditMode = !this.inEditMode
     },
     removeEquipment(index) {
       this.equipment.splice(index, 1);
     },
     addEquipment() {
       if (this.newEquipment != "") {
-        this.equipment.push({ equipmentType: this.newEquipment });
+        this.equipment.push({ description: this.newEquipment });
         this.newEquipment = "";
       }
     },
