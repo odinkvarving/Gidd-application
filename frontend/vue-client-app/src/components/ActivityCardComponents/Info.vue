@@ -1,5 +1,5 @@
 <template>
-  <div id="infobox" v-if="activity != null">
+  <div id="infobox" v-if="activity">
     <!-- v-if="activity != null" -->
     <div class="box" id="top">
       <h1>{{ activity.title }}</h1>
@@ -31,8 +31,10 @@
         <li class="txt">{{ activity.startTime }}</li>
         <li class="txt">60 minutter</li>
         <!-- Implement calculation for this -->
-        <li class="txt" v-if="!activity.weather != null">Sol</li>
-        <!-- {{ weather.temp }} IMplement this -->
+        <li class="txt" v-if="weather != null">
+          <img id="icon" alt="weather icon" :src="require('@/assets/weatherIcons/' + weather.icon + '.png')"/>
+          {{ weather.temp }} C°
+        </li>
         <li class="txt" v-else>Ingen værmelding</li>
         <li class="txt">{{ 0 }} / {{ activity.maxParticipants }}</li>
       </ul>
@@ -46,7 +48,6 @@
   </div>
 </template>
 <script>
-//import {weatherService} from '../../services/WeatherService.js'
 
 /**
  * Info is a component which represents general info about an activity
@@ -70,10 +71,6 @@ export default {
       type: Object,
       required: true,
     },
-    isDataReady: {
-      type: Boolean,
-      required: true,
-    },
   },
 
   data() {
@@ -84,24 +81,8 @@ export default {
        * After isFull changes to true, every participant which tries to join will be put in a queue.
        */
       isFull: false,
-      /**
-       * location is a string which represents the place name of the activity
-       */
-      //location: {},
-      /**
-       * weather is an object which represents the weather of the activity.
-       * It contains relevant parameters: name, temp, description and icon.
-       */
-      //weather: {},
-      /**
-       * isDataReady is a boolean which represents the state of location and weather.
-       * Since we acquire these variables through asynchronous calls, we need to have a flag which tells us when the data is ready.
-       */
-      //isDataReady: false,
     };
   },
-
-  async mounted() {},
 
   methods: {
     /**
@@ -223,6 +204,10 @@ export default {
   grid-area: list2;
   text-align: right;
   margin-right: 40px;
+}
+#icon{
+  width: 15%;
+  height: auto;
 }
 #btn {
   grid-area: btn;

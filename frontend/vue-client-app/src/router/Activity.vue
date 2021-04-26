@@ -4,9 +4,8 @@
       id="card"
       :activity="activity"
       :weather="weather"
-      :isDataReady="isDataReady"
+      v-if="isDataReady"
     />
-    <!-- Activity  v-if="activity && location && weather && isDataReady" -->
   </div>
 </template>
 <script>

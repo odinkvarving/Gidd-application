@@ -1,6 +1,6 @@
 <template>
-    <div id="activity" v-if="activity != null">
-        <Info class="comp" id="info" :activity="activity" :weather="weather" :isDataReady="isDataReady"/> <!-- info box> -->
+    <div id="activity" v-if="activity">
+        <Info class="comp" id="info" :activity="activity" :weather="weather"/> <!-- info box> -->
         <Map class="comp" id="map" :activity="activity"/> <!-- component for map location -->
         <Equipment class="comp" id="equipment" :activity="activity"/> <!-- list of equipment -->
         <button class="comp" id="btnVisible" @click="changeChatVisibility">Åpne chat</button> <!-- button for opening and closing the chat box -->
@@ -45,10 +45,6 @@
                 type: Object,
                 required: true
             },
-            isDataReady: {
-                type: Boolean,
-                required: true
-            }
         },
 
         data() {
