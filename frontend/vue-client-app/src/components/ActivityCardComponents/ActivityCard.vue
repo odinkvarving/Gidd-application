@@ -11,50 +11,80 @@
         <Chat class="chat" id="chat" :activity="activity" v-show="isChatVisible"/>
     </div>
 </template>
-
-
 <script>
-import Info from "./Info.vue";
-import Map from "./Map.vue";
-import Equipment from "./Equipment.vue";
-import Chat from "./Chat.vue";
-import { userService } from "../../services/UserService.js";
+    import Info from './Info.vue'
+    import Map from './Map.vue'
+    import Equipment from './Equipment.vue'
+    import Chat from './Chat.vue'
+    import {userService} from '../../services/UserService.js'
+    //import {weatherService} from '../../services/WeatherService.js'
 
-export default {
-  name: "ActivityCard",
-  components: {
-    Info,
-    Map,
-    Equipment,
-    Chat,
-  },
+    /**
+     * ActivityCard is a component which represents a clicked activity.
+     * The component is found in router/Activity.
+     * The component itself contains four other components: Info, Map, Equipment and Chat.
+     * Each of these components represents their own part of an activity.
+     * 
+     * @author Scott Rydberg Sonen
+     */
+    export default {
+        name: "ActivityCard",
+        components: {
+            Info,
+            Map,
+            Equipment,
+            Chat
+        },
 
-  props: {
-    activity: {
-      type: Object,
-      required: true,
-    },
-  },
+        props: {
+            /**
+             * activity is a prop passed from router/Activity to ActivityCard.
+             * The activity represents the clicked activity in activity feed.
+             */
+            activity: {
+                type: Object,
+                required: true
+            },
+/*             weather: {
+                type: Object,
+                required: true
+            }, */
+            isDataReady: {
+                type: Boolean,
+                required: true
+            }
+        },
 
-    data() {
-        return {
-            isChatVisible: false,
-            isLoggedIn: userService.isLoggedIn()
-        }
-    },
+        data() {
+            return {
+                /**
+                 * isChatVisible is a boolean which changes each time the button (btnVisible) is clicked.
+                 * When isChatVisible changes to true, the chat box will be displayed.
+                 */
+                isChatVisible: false,
+                /**
+                 * isLoggedIn is a boolean to check if the client is logged in or not
+                 */
+                isLoggedIn: userService.isLoggedIn(),
+            }
+        },
 
-    methods: {
-        changeChatVisibility() {
-            this.isChatVisible = !this.isChatVisible;
-            const btn = document.getElementById('btnVisible');
-            if (this.isChatVisible) {
-                btn.childNodes[0].nodeValue = "Skjul chat";
-            } else {
-                btn.childNodes[0].nodeValue = "Åpne chat";
+        methods: {
+            /**
+             * changeChatVisibility is a function which changes the state of chat visibility.
+             * When btnVisible is clicked, it will change value, depending on if the chat is visible or not.
+             */
+            changeChatVisibility() {
+                this.isChatVisible = !this.isChatVisible;
+                const btn = document.getElementById('btnVisible');
+                if (this.isChatVisible) {
+                    btn.childNodes[0].nodeValue = "Skjul chat";
+                } else {
+                    btn.childNodes[0].nodeValue = "Åpne chat";
+                }
             }
         }
     }
-}
 </script>
 <style>
     #activity{
