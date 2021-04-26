@@ -108,7 +108,6 @@ public class Account {
                 ", password='" + password + '\'' +
                 ", accountInfo=" + accountInfo +
                 ", createdActivities=" + createdActivities +
-                ", notifications=" + notifications +
                 '}';
     }
 }
