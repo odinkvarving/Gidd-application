@@ -71,7 +71,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors();
         http.headers().frameOptions().disable();
         http.csrf().disable().authorizeRequests().antMatchers("/accounts/register",
-                "/accounts/login", "/h2-console/*")
+                "/accounts/login", "/h2-console/*", "/activities/", "/activityTypes/",
+                "/levels/", "/activities/{id}/accounts/count", "/activities/{id}/accounts/queue/count"
+                , "/reset/{mail}")
                 .permitAll().anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

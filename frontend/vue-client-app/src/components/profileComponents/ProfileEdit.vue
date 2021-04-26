@@ -117,6 +117,7 @@ export default {
           console.log(res)
         }
       }
+      e.preventDefault()
     }
   }
 }

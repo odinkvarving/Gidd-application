@@ -1,8 +1,9 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
-import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
+import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
+import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
+import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
@@ -27,12 +28,12 @@ import java.util.Set;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class AccountController {
-
     @Autowired
     private AccountService accountService;
 
     Logger logger = LoggerFactory.getLogger(AccountController.class);
 
+    private final String frontend="http://localhost:8081/";
 
     /**
      * GetMapping for finding an Account with a specific email
@@ -52,7 +53,7 @@ public class AccountController {
      * @return a list of all registered Accounts
      */
     @GetMapping("accounts/")
-    public List<Account> getAllAccounts(){
+    public List<Account> getAllAccounts() {
         return accountService.findAll();
     }
 
@@ -62,10 +63,10 @@ public class AccountController {
      * @return true or false whether the user was created successfully or not
      */
     @PostMapping("accounts/register")
-    public boolean saveUser(@RequestBody Account account){
+    public boolean saveUser(@RequestBody Account account) {
         logger.info("Trying to save user:\n" + account.toString());
         boolean success = accountService.save(account);
-        if(success){
+        if (success) {
             logger.info("Success!");
         }
         return success;
@@ -123,6 +124,27 @@ public class AccountController {
     @PostMapping("accounts/saveWithInfo")
     public void saveAccountWithInfo(@RequestBody Account account) {
         accountService.saveAccountWithInfo(account, account.getAccountInfo());
+    }
+
+    @CrossOrigin(origins=frontend)
+    @PostMapping("accounts/accountInfo")
+    public boolean saveAccountInfoToAccount(@RequestBody AccountInfo accountInfo) {
+        return accountService.saveAccountInfoToAccount(accountInfo, accountInfo.getAccount());
+    }
+
+    @GetMapping("/reset/{suffix}")
+    public Account getAccountByResetSuffix(@PathVariable("suffix") String suffix) {
+        return this.accountService.findAccountByResetSuffix(suffix);
+    }
+
+    @PutMapping("/reset/{suffix}")
+    public boolean updateAccountPassword(@PathVariable("suffix") String suffix, @RequestBody String newPassword) {
+        return this.accountService.resetAccountPassword(suffix, newPassword);
+    }
+
+    @PostMapping("/reset/{mail}")
+    public void requestPasswordReset(@PathVariable("mail") String mail) {
+        this.accountService.generatePasswordReset(mail);
     }
 
     /**
@@ -202,7 +224,7 @@ public class AccountController {
      * @return the Account that was updated
      */
     @PutMapping("accounts/{id}")
-    public Account updateAccount(@RequestBody Account newAccount, @PathVariable("id")int id) {
+    public Account updateAccount(@RequestBody Account newAccount, @PathVariable("id") int id) {
         return accountService.updateAccount(id, newAccount);
     }
 
@@ -211,7 +233,7 @@ public class AccountController {
      * @param id the PathVariable for the id of the Account
      */
     @DeleteMapping("accounts/{id}")
-    public void deleteAccount(@PathVariable("id")int id) {
+    public void deleteAccount(@PathVariable("id") int id) {
         accountService.deleteAccount(id);
     }
 
@@ -223,5 +245,10 @@ public class AccountController {
     @GetMapping("accounts/{id}/activities")
     public Set<Activity> findAccountsActivities(@PathVariable("id")int id) {
         return accountService.findAccountsActivities(id);
+    }
+
+    @GetMapping("accounts/{account_id}/activities/{activity_id}")
+    public AccountActivity findAccountActivity(@PathVariable("account_id")int account_id, @PathVariable("activity_id") int activity_id){
+        return accountService.findAccountActivity(account_id, activity_id);
     }
 }

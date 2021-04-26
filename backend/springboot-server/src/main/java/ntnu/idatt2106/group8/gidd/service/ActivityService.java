@@ -2,14 +2,8 @@ package ntnu.idatt2106.group8.gidd.service;
 
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.ActivityType;
-import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
-import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
-import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
-import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
-import ntnu.idatt2106.group8.gidd.repository.ActivityTypeRepository;
+import ntnu.idatt2106.group8.gidd.model.entities.*;
+import ntnu.idatt2106.group8.gidd.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +38,9 @@ public class ActivityService {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private LevelRepository levelRepository;
+
     /**
      * Method for finding all registered activities
      * @return a list of all activities
@@ -77,20 +74,22 @@ public class ActivityService {
      * @param activity the activity to be added
      * @return the activity that was added
      */
-    public Activity addActivity(Activity activity) {
+    public boolean addActivity(Activity activity) {
         log.info(activity.toString());
         log.info(activity.getCreator().toString());
         try {
             ActivityType activityType = activityTypeRepository.findActivityTypeByType(activity.getActivityType().getType());
+            Level level = levelRepository.findByDescription(activity.getLevel().getDescription());
             activity.setActivityType(activityType);
+            activity.setLevel(level);
             Activity result = activityRepository.save(activity);
             addParticipantToActivity(result.getId(), activity.getCreator().getId());
-            return result;
+            return result.equals(activity);
         } catch (DataAccessException e) {
             e.printStackTrace();
             log.info("Could not add activity");
         }
-        return null;
+        return false;
     }
 
     /**
@@ -257,6 +256,12 @@ public class ActivityService {
         }
         return 0;
     }
+
+    public int countAllAccountsInQueue(int id){
+        List<Account> accountsInQueue = getAllAccountsInQueue(id);
+        return accountsInQueue.size();
+    }
+
     /**
      * Method for checking if a specified Account is registered to a specific Activity
      * @param activityId the id of the activity
