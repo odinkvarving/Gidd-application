@@ -7,20 +7,17 @@
             <div class="owner-time">
                 <h3>{{ activity.creator.email }}</h3>
                 <p>{{ activity.startTime }}</p>
-                <!-- Add start time with date!! -->
             </div>
         </div>
         <div class="mini-details">
             <div class="detail-container">
                 <p class="detail-header">Sted</p> 
-                <!-- <p class="detail-value" style="font-size:18px;">{{ activity.location }}</p> This when we can find location from longitude and latitude -->
-                <p class="detail-value" style="font-size:18px;">Dødens dal</p>
+                <p class="detail-value" style="font-size:18px;"> {{ activity.location }} </p>
             </div>
             <div class="vertical-line"/>
             <div class="detail-container">
-                <p class="detail-header">Varighet</p> 
-                <!-- <p class="detail-value" style="font-size:18px;">{{ activity.duration }}</p>  regne ut tiden fra datoer --> 
-                <p class="detail-value" style="font-size:18px;">2 timer</p>
+                <p class="detail-header">Nivå</p> 
+                <p class="detail-value" style="font-size:18px;"> {{ activity.level.description }}</p>
             </div>
             <div class="vertical-line"/>
             <div class="detail-container">
@@ -29,9 +26,25 @@
             </div>
         </div>
         <div id="map-preview">
-            <img src="../../assets/map-preview-example.png" alt="Activity location map preview"/>
+            <div v-if="activity.latitude == 0 && activity.longitude == 0" style="width: 245px; height: 161px; background-color: #f6f6f6">
+                <p>Location not found!</p>
+            </div>
+            <GmapMap 
+                :center="{lat:activity.latitude, lng:activity.longitude}"
+                :zoom="11"
+                :options='{fullscreenControl: false, gestureHandling: "none"}'
+                map-type-id="roadmap"
+                style="width: 245px; height: 161px"
+                >
+
+                <GmapMarker 
+                    :position="{lat:activity.latitude, lng:activity.longitude}"
+                    @click="center={lat:activity.latitude, lng:activity.longitude}"
+                />
+            </GmapMap>
         </div>
-        <p>Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
+        <p style="margin: 0">Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
+        <p style="font-size: 13px; opacity: 70%" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</p>
         <!--<div>
             <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
         </div>-->
@@ -41,12 +54,12 @@
             </div>
             <span v-else >{{ getButtonStatus() }}</span>
         </button>
-        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="handleButtonClick()"><span>{{ getButtonStatus() }}</span></button>
-        <button v-else id="btn" class="participating" @click.stop="removeParticipantClicked()">
+        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
+        <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
             <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
                 <span class="sr-only">Loading...</span>
             </div>
-            <span v-else>{{ getButtonStatus() }}</span>
+            <span id="test-id" v-else>{{ isInQueue ? "Venteliste" : "Påmeldt" }}</span>
         </button>
     </div>
 </template>
@@ -59,7 +72,8 @@ import { userService } from '../../services/UserService';
             activity: {
                 type: Object,
                 required: true
-            }
+            },
+            isLoggedIn: Boolean
         },
 
         data() {
@@ -69,22 +83,18 @@ import { userService } from '../../services/UserService';
                 currentParticipants: 0,
                 showJoinSpinner: false,
                 showRemoveSpinner: false,
+                participantsInQueue: 0,
+                queuePosition: 0,
+                isInQueue: false
             }
         },
         mounted(){
             this.getCurrentParticipantsNumber();
-            this.isAlreadyParticipating();
+            if(this.isLoggedIn){
+                this.isAlreadyParticipating();
+            }
         },
         methods: {
-            handleButtonClick() {
-                
-                //Open login/register window or add the user to "participants"
-                console.log("Button clicked");
-
-                if(this.isFull){
-                    // Put on wait list
-                }
-            },
             joinButtonClicked(){
                 this.showJoinSpinner = true;
                 if(!userService.isLoggedIn()){
@@ -137,6 +147,10 @@ import { userService } from '../../services/UserService';
 
                 console.log(`You are already participating: ${this.alreadyParticipating}`);
 
+                if(this.alreadyParticipating){
+                    this.getQueuePosition(accountId);
+                }
+
             },
             async getCurrentParticipantsNumber(){
                 // Get number of participators on this activity
@@ -146,7 +160,6 @@ import { userService } from '../../services/UserService';
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': userService.getTokenString()
                     }
                 }
 
@@ -156,6 +169,10 @@ import { userService } from '../../services/UserService';
                     .catch(error => console.log(error));
 
                 console.log(`${this.activity.title} got current participants: ${this.currentParticipants}.`);
+
+                if(this.currentParticipants == this.activity.maxParticipants){
+                    this.countAccountsInQueue();
+                }
 
             },
             async addParticipantToActivity(){
@@ -175,10 +192,15 @@ import { userService } from '../../services/UserService';
                     .then(data => {
                         if(data.activityId === this.activity.id && data.accountId === accountId){
                             console.log("Joining activity was successful! Changing button style");
-                            this.currentParticipants++;
+                            if(this.currentParticipants === this.activity.maxParticipants){
+                                this.participantsInQueue ++;
+                                this.isInQueue = true;
+                            }else{
+                                this.currentParticipants ++;
+                            }
                             this.alreadyParticipating = true;
                             this.showJoinSpinner = false;
-                            this.$emit('refresh-list', this.activity.id);
+                            this.$emit('refresh-list', this.activity.id, true);
                         }
                     })
                     .catch(error => console.log(error));
@@ -198,14 +220,49 @@ import { userService } from '../../services/UserService';
                     .then(response => response.json())
                     .then(data => {
                         if(data){
-                            this.currentParticipants--;
-                            this.alreadyParticipating = false;
                             this.showRemoveSpinner = false;
-                            this.$emit('refresh-list', this.activity.id);
+                            if(this.currentParticipants === this.activity.maxParticipants){
+                                this.participantsInQueue --;
+                            }else{
+                                this.currentParticipants --;
+                            }
+                            this.alreadyParticipating = false;
+                            this.isInQueue = false;
+                            this.$emit('refresh-list', this.activity.id, false);
                         }
                     })
                     .catch(error => console.log(error))
             },
+            countAccountsInQueue(){
+                
+                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/queue/count`;
+
+                const requestOptions = {
+                    method:'GET',
+                    headers: userService.authorizationHeader()
+                }
+
+                fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.participantsInQueue = data);
+            },
+            async getQueuePosition(accountId){
+                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}`
+
+                const requestOptions = {
+                    method:'GET',
+                    headers: userService.authorizationHeader()
+                }
+
+                await fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => this.queuePosition = data)
+                    .catch(error => console.log(error));
+
+                if(this.queuePosition > 0){
+                    this.isInQueue = true;
+                }
+            }
 
         }
     }
@@ -309,8 +366,8 @@ import { userService } from '../../services/UserService';
     }
 
     #btn{
-        height: 5vh;
-        width: 8vw;
+        height: 50px;
+        width: 160px;
         border-radius: 6px;
         font-size: 20px;
         cursor: pointer;
@@ -351,5 +408,22 @@ import { userService } from '../../services/UserService';
     }
     #btn.participating:hover:before{
         content: "Meld av";
+    }
+    #btn.inQueue{
+        background-color: #FF5B3E;
+    }
+    #btn.inQueue:hover{
+        background-color: #dd4b31;
+        transition: 0.2s;
+    }
+    #btn.inQueue:hover span{
+        display: none;
+    }
+    #btn.inQueue:hover:before{
+        content: "Meld av";
+    }
+
+    .queue-list{
+        opacity: 70%;
     }
 </style>

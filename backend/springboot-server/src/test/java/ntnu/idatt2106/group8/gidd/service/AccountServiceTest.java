@@ -4,14 +4,15 @@ import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
+import ntnu.idatt2106.group8.gidd.model.entities.PasswordReset;
 import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
+import ntnu.idatt2106.group8.gidd.repository.PasswordResetRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -32,6 +33,9 @@ class AccountServiceTest {
     private AccountService accountService;
     @Autowired
     private ActivityRepository activityRepository;
+
+    @Autowired
+    private PasswordResetRepository passwordResetRepository;
 
     private Account testAccount1;
     private Account testAccount2;
@@ -86,7 +90,7 @@ class AccountServiceTest {
     }
 
     @Test
-    void accountsCreatedActivities(){
+    void accountsCreatedActivities() {
         this.accountService.save(this.testAccount1);
         this.activityRepository.save(this.testActivity1);
 
@@ -94,10 +98,41 @@ class AccountServiceTest {
     }
 
     @Test
+    void resetAccountPassword() {
+        try {
+            //setup
+            String testMail = "giddteam@gmail.com";
+            Account testMailAccount = new Account(testMail, "forgottenpassword");
+            this.accountService.save(testMailAccount);
+            this.accountService.generatePasswordReset(testMail);
+
+            //there should only be one passwordreset in the repo
+            PasswordReset pr = this.passwordResetRepository.findAll().iterator().next();
+
+            assertEquals(testMailAccount.getId(), pr.getAccountId(), "the ids of the reset element and the " +
+                    "account did not match.");
+
+            String suffix = pr.getResetUrlSuffix();
+            String newPassword = "password321";
+
+            assertTrue(this.accountService.resetAccountPassword(suffix, newPassword)
+                    , "the resetpassword method returned false/failed");
+
+            assertTrue(this.accountService.findAccountById(testMailAccount.getId())
+                            .getPassword().equals(newPassword)
+                    , "the actual password did not match the new password");
+
+            assertFalse(this.accountService.resetAccountPassword(suffix,newPassword));
+        } catch (Exception e) {
+            fail("The test threw a exception", e);
+        }
+
+    }
+
+    @Test
     void updateAccount() {
         this.accountService.save(this.testAccount1);
         this.accountService.updateAccountEmail(this.testAccount1.getId(), "newEmail@email.no");
-        this.accountService.updateAccountPassword(this.testAccount1.getId(), "newPassword");
 
         assertEquals("newEmail@email.no", this.accountService.findAccountById(this.testAccount1.getId()).getEmail()
                 , "the new email for account1 is wrong");

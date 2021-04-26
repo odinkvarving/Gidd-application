@@ -51,7 +51,7 @@ public class ActivityController {
      * @return the Activity that was added
      */
     @PostMapping("/activities")
-    public Activity addActivity(@RequestBody Activity activity) {
+    public boolean addActivity(@RequestBody Activity activity) {
         return activityService.addActivity(activity);
     }
 
@@ -72,7 +72,7 @@ public class ActivityController {
      * @param type PathVariable for the type to find Activities by
      * @return a list of Activities of this type
      */
-    @GetMapping("/activities/{type}")
+    @GetMapping("/activities/type={type}")
     public List<Activity> getActivitiesByType(@PathVariable String type) {
         return activityService.getActivitiesByType(type);
     }
@@ -151,9 +151,14 @@ public class ActivityController {
      * @param id PathVariable for the id the the Activity
      * @return a list of Accounts in queue for the Activity
      */
-    @GetMapping("/{id}/accounts/queue")
+    @GetMapping("activities/{id}/accounts/queue")
     public List<Account> getAllAccountsInQueue(@PathVariable("id") int id) {
         return activityService.getAllAccountsInQueue(id);
+    }
+
+    @GetMapping("activities/{id}/accounts/queue/count")
+    public int countAllAccountsInQueue(@PathVariable("id") int id){
+        return activityService.countAllAccountsInQueue(id);
     }
 
     /**
@@ -161,7 +166,7 @@ public class ActivityController {
      * @param id the PathVariable for the id of the Activity
      * @return true or false
      */
-    @PutMapping("/{id}/cancel")
+    @PutMapping("activities/{id}/cancel")
     public boolean cancelActivity(@PathVariable("id")int id) {
         return activityService.cancelActivity(id);
     }

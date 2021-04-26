@@ -3,6 +3,7 @@ package ntnu.idatt2106.group8.gidd.model.entities;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -41,11 +42,12 @@ public class Activity {
 
     private String title;
     private String description;
+    private String location;
     private float longitude;
     private float latitude;
     private int maxParticipants;
 
-    protected Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, float longitude,
+    protected Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, String location, float longitude,
                        float latitude, String startTime, String endTime, String description,
                        int maxParticipants, String title) {
         this.creator = creator;
@@ -53,6 +55,7 @@ public class Activity {
         this.level = level;
         this.equipment = equipment;
         this.title = title;
+        this.location = location;
         this.longitude = longitude;
         this.latitude = latitude;
         this.startTime = startTime;
@@ -64,6 +67,13 @@ public class Activity {
     protected Activity() {
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public String getTitle() {
         return title;
@@ -173,6 +183,19 @@ public class Activity {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Activity activity = (Activity) o;
+        return id == activity.id && Float.compare(activity.longitude, longitude) == 0 && Float.compare(activity.latitude, latitude) == 0 && maxParticipants == activity.maxParticipants && Objects.equals(creator, activity.creator) && Objects.equals(activityType, activity.activityType) && Objects.equals(level, activity.level) && Objects.equals(equipment, activity.equipment) && Objects.equals(startTime, activity.startTime) && Objects.equals(endTime, activity.endTime) && Objects.equals(title, activity.title) && Objects.equals(description, activity.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, creator, activityType, level, equipment, startTime, endTime, title, description, location, longitude, latitude, maxParticipants);
+    }
+
+    @Override
     public String toString() {
         return "Activity{" +
                 "id=" + id +
@@ -184,6 +207,7 @@ public class Activity {
                 ", endTime='" + endTime + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
+                ", location='" + location + '\'' +
                 ", longitude=" + longitude +
                 ", latitude=" + latitude +
                 ", maxParticipants=" + maxParticipants +
@@ -205,6 +229,7 @@ public class Activity {
         private final int maxParticipants;
         private ActivityType activityType;
         private Set<Equipment> equipment = new HashSet<>();
+        private String location;
         private float longitude;
         private float latitude;
         private String description;
@@ -236,7 +261,7 @@ public class Activity {
          * @return a new Activity-object.
          */
         public Activity build() {
-            return new Activity(creator, activityType, level, equipment, longitude, latitude, activityStart,
+            return new Activity(creator, activityType, level, equipment, location, longitude, latitude, activityStart,
                     activityEnd, description, maxParticipants, title);
         }
 
