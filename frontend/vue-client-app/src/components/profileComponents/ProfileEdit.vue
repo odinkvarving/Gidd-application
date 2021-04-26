@@ -1,6 +1,6 @@
 <template>
   <div class="edit">
-    <h1>Edit Profile</h1><br>
+    <h1 class="edit-title" >Edit Profile</h1><br>
     <form class="edit-form" @submit="checkform">
       <div v-if="errors.length">
         <b>Unable to edit account information for the following reasons:</b>
@@ -8,7 +8,7 @@
           <li v-for="error in errors" :key="error">{{error}}</li>
         </ul>
       </div>
-      <fieldset>
+      <fieldset class="edit-general">
         <legend>General account information</legend>
         <div class="edit-name">
           <label for="first-name-form">First name:</label>
@@ -16,18 +16,19 @@
           <label for="last-name-form">Last name:</label>
           <input type="text" id="last-name-form" v-model="lastName" :placeholder="AccountInfo.surname">
         </div>
-        <div class="edit-description">
-          <label for="description-form">Description</label>
-          <textarea type="text" id="description-form" placeholder="Please tell us something about you|" v-model="description"></textarea>
-        </div>
         <div class="edit-image">
-          <label for="image-form">New image:</label>
+          <label for="image-form">New profile image:</label>
           <input type="text" id="image-form" v-model="imageURL" placeholder="Link to image here">
         </div>
+        <div class="edit-description">
+          <label for="description-form">Description</label>
+          <textarea type="text" id="description-form" rows=5 cols=80 placeholder="Please tell us something about you|" v-model="description"></textarea>
+        </div>
+
       </fieldset>
       <input type="button" @click="sendChangePasswordForm" id="change-password" value="Send change password form">
       <input type="password" v-model="old_password" id="old-password-form" placeholder="Old password to save">
-      <input type="submit" value="Save changes">
+      <input type="submit" value="Save changes" id="edit-submit">
 
     </form>
   </div>
@@ -117,7 +118,6 @@ export default {
           console.log(res)
         }
       }
-      e.preventDefault()
     }
   }
 }
