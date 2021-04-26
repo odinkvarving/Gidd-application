@@ -202,7 +202,7 @@ public class AccountService {
      * @param accountId   the id of the account that should change password.
      * @param newPassword the new password of the account.
      */
-    private boolean updateAccountPassword(int accountId, String newPassword) {
+    public boolean updateAccountPassword(int accountId, String newPassword) {
         Account accountToUpdate = findAccountById(accountId);
         if (accountToUpdate != null) {
             accountToUpdate.setPassword(passwordEncoder.encode(newPassword));
