@@ -1,6 +1,6 @@
 <template>
     <div id="activity" v-if="activity != null">
-        <Info class="comp" id="info" :activity="activity" :location="location" :weather="weather" :isDataReady="isDataReady"/> <!-- info box> -->
+        <Info class="comp" id="info" :activity="activity" :weather="weather" :isDataReady="isDataReady"/> <!-- info box> -->
         <Map class="comp" id="map" :activity="activity"/> <!-- component for map location -->
         <Equipment class="comp" id="equipment" :activity="activity"/> <!-- list of equipment -->
         <button class="comp" id="btnVisible" @click="changeChatVisibility">Åpne chat</button> <!-- button for opening and closing the chat box -->
@@ -38,10 +38,6 @@
              * The activity represents the clicked activity in activity feed.
              */
             activity: {
-                type: Object,
-                required: true
-            },
-            location: {
                 type: Object,
                 required: true
             },

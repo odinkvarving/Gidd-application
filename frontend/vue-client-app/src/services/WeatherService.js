@@ -9,12 +9,12 @@ function hello(text) {
     console.log(text);
 }
 
-function getWeather(latitude, longitude, time) {
+async function getWeather(latitude, longitude, time) {
     console.log("TIME: " + time);
     const startTime = new Date(time);
     console.log("Start time: " + startTime);
-    const startDate = new Date(startTime.getFullYear, startTime.getMonth, startTime.getDate);
-    console.log("Start date: " + startDate);
+    //const startDate = new Date(startTime.getFullYear, startTime.getMonth, startTime.getDate);
+    //console.log("Start date: " + startDate);
     const currentTime = Date.now();
     console.log("Current time: " + currentTime);
     /*const current = new Date();
@@ -27,17 +27,18 @@ function getWeather(latitude, longitude, time) {
         + current.getMilliseconds;*/
     const diff = startTime - currentTime; //Difference in milliseconds between current date and start date of activity
     console.log(diff);
-    if (diff <= 1209600000) { //Checking if difference is bigger than 14 days
-        /*fetch("https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude
+    if (diff <= 604800000) { //Checking if difference is bigger than 7 days
+        await fetch("https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude
         + "&lon="+ longitude
-        + "&appid=3e2762909a752f554a04ad7972f1a13d") //&exclude=current,minutely*/
-        fetch("https://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude
+        + "&appid=3e2762909a752f554a04ad7972f1a13d"
+        + "&lang=no") //&exclude=current,minutely
+        /*fetch("https://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude
          + "&lon=" + longitude
          + "&cnt=" + 14
-         + "&appid=3e2762909a752f554a04ad7972f1a13d")
+         + "&appid=3e2762909a752f554a04ad7972f1a13d")*/
         .then(response => response.json())
         .then(data => {
-            for (let i = 0; i < 14; i++) {
+            /*for (let i = 0; i < 14; i++) {
                 if ((data["list"][i]["dt"] <= startDate) && (data["list"][i+1]["dt"] >= startDate)) { //Checking to see if startdate is in interval
                     weather = {
                         name: data["city"]["name"],
@@ -46,8 +47,20 @@ function getWeather(latitude, longitude, time) {
                         icon: "http://openweathermap.org/img/wn/" + data["list"][i]["weather"]["icon"]
                     }
                 }
+            }*/
+
+            for (let i = 0; i < 7; i++) {
+                if ((data["daily"][i]["dt"] <= startTime) && data["daily"][i+1]["dt"] >= startTime) { //Checking to see if startTime is in an interval of seven days ahead of current time
+                    weather = {
+                        temp: data["daily"][i]["temp"]["day"],
+                        description: data["daily"][i]["weather"]["description"],
+                        icon: data["daily"][i]["weather"]["icon"]
+                    }
+                    console.log("Found weather");
+                }
             }
-            /*data["list"].array.forEach(day => {
+
+            /*data["daily"].array.forEach(day => {
                 if (day["dt"] == startDate) {
                     //Eventuelt sjekke om startDate ligger mellom ulike dt i daily
                 }
