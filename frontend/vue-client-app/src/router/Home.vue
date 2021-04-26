@@ -28,9 +28,9 @@
         occaecat cupidatat non proident, sunt in culpa qui officia deserunt
         mollit anim id est laborum.
       </div>
-      <router-link to="/dashboard" class="btn-dashboard">
-        Se aktiviteter
-      </router-link>
+      <button class="btn-dashboard">
+        Test funksjon
+      </button>
     </div>
   </div>
 </template>

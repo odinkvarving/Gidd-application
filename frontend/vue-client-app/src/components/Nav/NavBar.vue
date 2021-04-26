@@ -62,7 +62,7 @@ export default {
           link: "/",
         },
       ],
-      notifications: [{}],
+      notifications: [{title: "testing 1", link: "/"}, {title: "testing 1", link: "/"}, {title: "testing 1", link: "/"}],
       isLoggedIn: userService.isLoggedIn(),
     };
   },
