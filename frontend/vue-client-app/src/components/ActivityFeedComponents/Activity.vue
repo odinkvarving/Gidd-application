@@ -59,7 +59,7 @@
             <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
                 <span class="sr-only">Loading...</span>
             </div>
-            <span v-else>{{ isInQueue ? "Venteliste" : "Påmeldt" }}</span>
+            <span id="test-id" v-else>{{ isInQueue ? "Venteliste" : "Påmeldt" }}</span>
         </button>
     </div>
 </template>
@@ -220,6 +220,7 @@ import { userService } from '../../services/UserService';
                     .then(response => response.json())
                     .then(data => {
                         if(data){
+                            this.showRemoveSpinner = false;
                             if(this.currentParticipants === this.activity.maxParticipants){
                                 this.participantsInQueue --;
                             }else{
@@ -227,7 +228,6 @@ import { userService } from '../../services/UserService';
                             }
                             this.alreadyParticipating = false;
                             this.isInQueue = false;
-                            this.showRemoveSpinner = false;
                             this.$emit('refresh-list', this.activity.id);
                         }
                     })

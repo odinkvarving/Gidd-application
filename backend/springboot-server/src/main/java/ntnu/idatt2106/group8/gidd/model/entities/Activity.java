@@ -3,6 +3,7 @@ package ntnu.idatt2106.group8.gidd.model.entities;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -170,6 +171,19 @@ public class Activity {
         if (description == null)
             description = "";
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Activity activity = (Activity) o;
+        return id == activity.id && Float.compare(activity.longitude, longitude) == 0 && Float.compare(activity.latitude, latitude) == 0 && maxParticipants == activity.maxParticipants && Objects.equals(creator, activity.creator) && Objects.equals(activityType, activity.activityType) && Objects.equals(level, activity.level) && Objects.equals(equipment, activity.equipment) && Objects.equals(startTime, activity.startTime) && Objects.equals(endTime, activity.endTime) && Objects.equals(title, activity.title) && Objects.equals(description, activity.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, creator, activityType, level, equipment, startTime, endTime, title, description, longitude, latitude, maxParticipants);
     }
 
     @Override

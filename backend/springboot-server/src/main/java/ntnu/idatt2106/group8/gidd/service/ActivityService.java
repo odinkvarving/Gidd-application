@@ -74,7 +74,7 @@ public class ActivityService {
      * @param activity the activity to be added
      * @return the activity that was added
      */
-    public Activity addActivity(Activity activity) {
+    public boolean addActivity(Activity activity) {
         log.info(activity.toString());
         log.info(activity.getCreator().toString());
         try {
@@ -84,12 +84,12 @@ public class ActivityService {
             activity.setLevel(level);
             Activity result = activityRepository.save(activity);
             addParticipantToActivity(result.getId(), activity.getCreator().getId());
-            return result;
+            return result.equals(activity);
         } catch (DataAccessException e) {
             e.printStackTrace();
             log.info("Could not add activity");
         }
-        return null;
+        return false;
     }
 
     /**

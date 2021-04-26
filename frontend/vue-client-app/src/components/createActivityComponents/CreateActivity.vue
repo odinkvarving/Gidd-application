@@ -194,6 +194,7 @@ export default {
           && this.placeState === true && this.startDateState === true && this.endDateState === true
           && this.descriptionState === true){
             this.createActivity();
+            console.log("Activity created!");
         }
 
       // TODO: Make confirmation when creating activity!!!!

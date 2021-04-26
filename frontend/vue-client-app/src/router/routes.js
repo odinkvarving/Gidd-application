@@ -5,7 +5,7 @@ import ForgotPasswordPage from "./ForgotPasswordPage.vue"
 import ProfilePage from "./ProfilePage.vue"
 import Dashboard from "./Dashboard.vue"
 import Activity from "./Activity.vue"
-import LocationSearchBar from "../components/createActivityComponents/LocationSearchBar.vue"
+import CreateActivity from "./CreateActivity.vue"
 
 
 const routes = [
@@ -45,9 +45,9 @@ const routes = [
     component: Activity,
   },
   {
-    path: "/search",
-    name: "Search",
-    component: LocationSearchBar
+    path: "/dashboard/createActivity",
+    name: "CreateActivity",
+    component: CreateActivity
   }
 ];
 

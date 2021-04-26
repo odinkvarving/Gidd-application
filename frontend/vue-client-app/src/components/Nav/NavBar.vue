@@ -12,14 +12,19 @@
         <div class="search-field">
           <input class="search-box" placeholder="Søk" />
         </div>
-        <div class="menu-item create-activity">
-          <div v-if="isLoggedIn" @click="toggleCreateActivity">
-            Opprett aktivitet
+        
+        <router-link v-if="isLoggedIn" to="/dashboard/createActivity">
+          <div class="menu-item create-activity">
+              Lag aktivitet
           </div>
+        </router-link>
 
-          <router-link to="/login" v-else>Logg inn</router-link>
-        </div>
-        <CreateActivity v-show="isCreateActivityVisible" />
+        <router-link v-else to="/login">
+            <div class="menu-item create-activity">
+                Logg inn
+            </div>
+          </router-link>
+        
         <Dropdown
           class="notification-icon"
           icon="bell.png"
@@ -34,14 +39,12 @@
 <script>
 import Dropdown from "./Dropdown.vue";
 import { userService } from "../../services/UserService.js"
-import CreateActivity from "../createActivityComponents/CreateActivity.vue";
 
 export default {
   name: "navbar",
   components: {
     Dropdown,
-    CreateActivity,
-  },
+},
   data() {
     return {
       isCreateActivityVisible: false,

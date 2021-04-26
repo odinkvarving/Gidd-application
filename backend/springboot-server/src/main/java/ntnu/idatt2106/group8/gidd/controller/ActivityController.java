@@ -51,7 +51,7 @@ public class ActivityController {
      * @return the Activity that was added
      */
     @PostMapping("/activities")
-    public Activity addActivity(@RequestBody Activity activity) {
+    public boolean addActivity(@RequestBody Activity activity) {
         return activityService.addActivity(activity);
     }
 
