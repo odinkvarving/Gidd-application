@@ -18,13 +18,14 @@
         </router-link>
 
         <router-link v-else to="/login">
-          <div class="menu-item create-activity">Logg inn</div>
-        </router-link>
-
-        <Dropdown
+            <div class="menu-item create-activity">
+                Logg inn
+            </div>
+          </router-link>
+        
+        <NotificationsDropdown
           class="notification-icon"
           icon="bell.png"
-          :items="notifications"
         />
         <Dropdown icon="user.png" :items="user" />
       </ul>
@@ -34,13 +35,15 @@
 
 <script>
 import Dropdown from "./Dropdown.vue";
-import { userService } from "../../services/UserService.js";
+import NotificationsDropdown from "./NotificationsDropdown.vue"
+import { userService } from "../../services/UserService.js"
 
 export default {
   name: "navbar",
   components: {
     Dropdown,
-  },
+    NotificationsDropdown
+},
   data() {
     return {
       isCreateActivityVisible: false,
@@ -64,7 +67,7 @@ export default {
           }
         },
       ],
-      notifications: [{}],
+      notifications: [{message: "Aktiviteten Klatre på Sluppen har blitt avlyst", date: "2021-01-01 16:00", activityId: 117}, {message: "Aktiviteten Snøballkrig har blitt endret", date: "2021-01-01 16:00",activityId: 117}, {message: "Du har fått plass på aktiviteten Snøballkrig på Nordpolen!", date: "2021-01-01 16:00", activityId: 117}],
       isLoggedIn: userService.isLoggedIn(),
     };
   },
