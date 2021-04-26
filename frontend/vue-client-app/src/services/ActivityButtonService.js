@@ -19,8 +19,8 @@ export const activityButtonService = {
     getQueuePosition
 }
 
-function joinButtonClicked(activity){
-    if(!userService.isLoggedIn()){
+function joinButtonClicked(activity, isLoggedIn){
+    if(!isLoggedIn){
         console.log("Tried to join activity without being logged in.\nRedirecting to login page");
         this.$router.push("/login");
     }else{

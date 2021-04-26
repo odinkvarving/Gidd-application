@@ -96,9 +96,12 @@ import { activityButtonService } from '../../services/ActivityButtonService';
             }
         },
         methods: {
+            checkIfLoggedIn() {
+                return userService.isLoggedIn();
+            },
             joinButtonClicked(){
                 this.showJoinSpinner = true;
-                activityButtonService.joinButtonClicked()
+                activityButtonService.joinButtonClicked(this.activity, this.isLoggedIn)
             },
             async removeParticipantClicked(){
                 // TODO: Lage alert boks som spør om bruker er sikker
