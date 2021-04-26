@@ -200,7 +200,7 @@ import { userService } from '../../services/UserService';
                             }
                             this.alreadyParticipating = true;
                             this.showJoinSpinner = false;
-                            this.$emit('refresh-list', this.activity.id);
+                            this.$emit('refresh-list', this.activity.id, true);
                         }
                     })
                     .catch(error => console.log(error));
@@ -228,7 +228,7 @@ import { userService } from '../../services/UserService';
                             }
                             this.alreadyParticipating = false;
                             this.isInQueue = false;
-                            this.$emit('refresh-list', this.activity.id);
+                            this.$emit('refresh-list', this.activity.id, false);
                         }
                     })
                     .catch(error => console.log(error))

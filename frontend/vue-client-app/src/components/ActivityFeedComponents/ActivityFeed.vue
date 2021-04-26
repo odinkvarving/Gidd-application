@@ -11,12 +11,12 @@
             <div id="coming-activities">
                 <!-- TODO: refresh joined activity list when activity is joined or removed -->
                 <div v-for="a in joinedActivities" :key="a.id" style="width: 100%;">
-                    <div class="joined-activity-container">
+                    <div @click="joinedActivityClicked(a.id)" class="joined-activity-container">
                         <div class="circle" />
                         <p class="title">{{ a.title }}</p>
                         <div class="time">
-                            <p class="date">04.01</p>
-                            <p class="clock">16:00</p>
+                            <p class="date">{{ getDayAndMonth(a) }}</p>
+                            <p class="clock">{{ getClockTime(a) }}</p>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,8 @@
 <script>
     import Activity from './Activity.vue'
     import { userService } from "../../services/UserService.js"
-    import {weatherService} from '../../services/WeatherService.js'    
+    import {weatherService} from '../../services/WeatherService.js' 
+   
 
     export default {
         name: "ActivityFeed",
@@ -85,10 +86,15 @@
                 fetch(url, requestOptions)
                     .then(response => response.json())
                     .then(data => {
+                        console.log(`Joined activities:`);
                         console.log(data);
                         this.joinedActivities = data;
                     })
                     .catch(error => console.log(error))
+            },
+            joinedActivityClicked(activityId){
+                console.log("clicked");
+                this.$router.push({ name: 'Activity', params: { id: activityId }});
             },
             async getWeather() {
                 return await weatherService.getWeather(this.latitude, this.longitude, this.time);
@@ -100,24 +106,26 @@
                 this.$emit('activityClicked', this.selectedActivity);
                 this.$router.push({ name: 'Activity', params: { id: activity.id }});
             },
-            getDayAndMonth(){
+            getDayAndMonth(activity){
                 // Hente ut dag og månede fra tidspunkt start
+                let date = activity.startTime.split(" ")[0].split("-");
+                return `${date[2]}.${date[1]}`;
             },
-            getClockTime(){
-                // Hente ut klokkeslett ^
+            getClockTime(activity){
+                // Hente ut klokkeslett
+                let time = activity.startTime.split(" ")[1].split(":");
+                return `${time[0]}:${time[1]}`
             },
-            refreshList(activityId){
-                let isInList;
+            refreshList(activityId, add){
                 let index;
 
                 for(let i = 0; i < this.joinedActivities.length; i ++){
                     if(this.joinedActivities[i].id === activityId){
-                        isInList = true;
                         index = i;
                     }
                 }
 
-                if(isInList){
+                if(!add){
                     this.joinedActivities.splice(index, 1);
                 }else{
                     for(let i = 0; i < this.activities.length; i ++){
@@ -126,8 +134,11 @@
                         }
                     }
                 }
-
-            }
+                this.sortList();
+            },
+            sortList(){
+                // TODO: Sort list when adding new activity
+            },
         }
     }
 </script>
@@ -185,6 +196,14 @@
         align-items: center;
         justify-content: space-around;
         margin-top: 20px;
+        padding-left: 10px;
+        transition: 0.3s;
+    }
+
+    .joined-activity-container:hover{
+        cursor: pointer;
+        background-color:rgb(236, 235, 235);
+        transition: 0.3s;
     }
     
     .joined-activity-container p {
