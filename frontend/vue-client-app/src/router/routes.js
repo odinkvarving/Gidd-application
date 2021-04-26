@@ -5,6 +5,7 @@ import ForgotPasswordPage from "./ForgotPasswordPage.vue"
 import ProfilePage from "./ProfilePage.vue"
 import Dashboard from "./Dashboard.vue"
 import Activity from "./Activity.vue"
+import CreateActivity from "./CreateActivity.vue"
 
 
 const routes = [
@@ -42,6 +43,11 @@ const routes = [
     path: "/dashboard/activity/:id",
     name: "Activity",
     component: Activity,
+  },
+  {
+    path: "/dashboard/createActivity",
+    name: "CreateActivity",
+    component: CreateActivity
   }
 ];
 

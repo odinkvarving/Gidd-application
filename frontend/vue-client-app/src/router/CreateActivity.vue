@@ -4,11 +4,11 @@
       <ul>
         <li class="menu-item name-container">
           <b-form-input
-            :state="nameState"
-            class="name-field"
-            type="text"
-            placeholder="Navn på aktivitet"
-            v-model="name"
+              :state="nameState"
+              class="name-field"
+              type="text"
+              placeholder="Navn på aktivitet"
+              v-model="name"
           ></b-form-input>
         </li>
         <div class="line"></div>
@@ -35,59 +35,59 @@
         <div class="line"></div>
         <li class="menu-item equipment">
           <div class="equipment-container">
-              <label>
-                  Utstyr:
-              </label>
-              <b-form-tags :state="equipmentState" input-id="tags-basic" remove-on-delete v-model="equipment" placeholder="Legg til utstyr..."></b-form-tags>
-          </div>        
+            <label>
+              Utstyr:
+            </label>
+            <b-form-tags :state="equipmentState" input-id="tags-basic" remove-on-delete v-model="equipment" placeholder="Legg til utstyr..."></b-form-tags>
+          </div>
         </li>
         <div class="line"></div>
         <li class="menu-item location">
           <label>
             Sted:
           </label>
-          
+
           <!-- Make this appear above everything, result suggestions doesn't show! -->
           <LocationSearchBar />
 
-        <!--  <b-form-input :state="placeState" class="input-field" type="text" v-model="location"></b-form-input> -->
+          <!--  <b-form-input :state="placeState" class="input-field" type="text" v-model="location"></b-form-input> -->
         </li>
         <div class="line"></div>
         <li class="menu-item date">
           <label for="datepicker">Start:</label>
           <b-form-datepicker
-            :state="startDateState"
-            class="datepicker"
-            v-model="startDate"
-            size="sm"
-            placeholder="Velg dato"
-            data-date-format="mm/dd/yyyy"
+              :state="startDateState"
+              class="datepicker"
+              v-model="startDate"
+              size="sm"
+              placeholder="Velg dato"
+              data-date-format="mm/dd/yyyy"
           ></b-form-datepicker>
           <b-form-timepicker
-            :state="startDateState"
-            class="timepicker"
-            placeholder="Velg tid"
-            size="sm"
-            v-model="startTime"
+              :state="startDateState"
+              class="timepicker"
+              placeholder="Velg tid"
+              size="sm"
+              v-model="startTime"
           ></b-form-timepicker>
         </li>
         <div class="line"></div>
         <li class="menu-item date">
           <label for="datepicker">Slutt:</label>
           <b-form-datepicker
-            :state="endDateState"
-            class="datepicker"
-            v-model="endDate"
-            size="sm"
-            placeholder="Velg dato"
-            data-date-format="mm/dd/yyyy"
+              :state="endDateState"
+              class="datepicker"
+              v-model="endDate"
+              size="sm"
+              placeholder="Velg dato"
+              data-date-format="mm/dd/yyyy"
           ></b-form-datepicker>
           <b-form-timepicker
-            :state="endDateState"
-            class="timepicker"
-            placeholder="Velg tid"
-            size="sm"
-            v-model="endTime"
+              :state="endDateState"
+              class="timepicker"
+              placeholder="Velg tid"
+              size="sm"
+              v-model="endTime"
           ></b-form-timepicker>
         </li>
         <div class="line"></div>
@@ -112,15 +112,15 @@
             </label>
             <div>
               <b-dropdown
-                class="participant-selector"
-                :text="participantValue"
-                size="sm"
+                  class="participant-selector"
+                  :text="participantValue"
+                  size="sm"
               >
                 <b-dropdown-item @click="participantValue = 'Alle'"
-                  >Alle</b-dropdown-item
+                >Alle</b-dropdown-item
                 >
                 <b-dropdown-item @click="participantValue = 'Privat'"
-                  >Privat</b-dropdown-item
+                >Privat</b-dropdown-item
                 >
               </b-dropdown>
             </div>
@@ -181,21 +181,21 @@ export default {
     createButtonClicked(){
       //DOUBLE CHECK IF USER IS LOGGED IN HERE WITH isLoggedIn()
 
-        this.equipmentState = true;
+      this.equipmentState = true;
 
-        this.name === '' ? this.nameState = false : this.nameState = true;
-        this.category === null ? this.categoryState = false : this.categoryState = true;
-        this.level === null ? this.levelState = false : this.levelState = true;
-        this.location === '' || this.placeState === null ? this.placeState = false : this.placeState = true;
-        this.validStartAndEndDate();
-        this.description === '' ? this.descriptionState = false : this.descriptionState = true;
+      this.name === '' ? this.nameState = false : this.nameState = true;
+      this.category === null ? this.categoryState = false : this.categoryState = true;
+      this.level === null ? this.levelState = false : this.levelState = true;
+      this.location === '' || this.placeState === null ? this.placeState = false : this.placeState = true;
+      this.validStartAndEndDate();
+      this.description === '' ? this.descriptionState = false : this.descriptionState = true;
 
-        if(this.nameState === true && this.categoryState === true && this.levelState === true
+      if(this.nameState === true && this.categoryState === true && this.levelState === true
           && this.placeState === true && this.startDateState === true && this.endDateState === true
           && this.descriptionState === true){
-            this.createActivity();
-            console.log("Activity created!");
-        }
+        this.createActivity();
+        console.log("Activity created!");
+      }
 
       // TODO: Make confirmation when creating activity!!!!
     },
@@ -229,21 +229,21 @@ export default {
       const requestOptions = {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': userService.getTokenString()
+          'Content-Type': 'application/json',
+          'Authorization': userService.getTokenString()
         },
-        body: JSON.stringify(activity) 
+        body: JSON.stringify(activity)
       }
 
       fetch("http://localhost:8080/activities/", requestOptions)
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.log(error));
+          .then(response => response.json())
+          .then(data => console.log(data))
+          .catch(error => console.log(error));
     },
-    async getCategories(){      
-      
+    async getCategories(){
+
       let categoriesList;
-      
+
       this.category = null;
 
       let url = `http://localhost:8080/activityTypes/`;
@@ -252,10 +252,10 @@ export default {
         method: 'GET',
         headers: userService.authorizationHeader()
       })
-        .then(response => response.json())
-        .then(data => categoriesList = data)
-        .catch(error => console.log(error));
-      
+          .then(response => response.json())
+          .then(data => categoriesList = data)
+          .catch(error => console.log(error));
+
       for(let i = 0; i < categoriesList.length; i ++){
         this.categories.push(categoriesList[i].type);
       }
@@ -272,10 +272,10 @@ export default {
         method: 'GET',
         headers: userService.authorizationHeader()
       })
-        .then(response => response.json())
-        .then(data => levelsList = data)
-        .catch(error => console.log(error));
-      
+          .then(response => response.json())
+          .then(data => levelsList = data)
+          .catch(error => console.log(error));
+
       for(let i = 0; i < levelsList.length; i ++){
         this.levels.push(levelsList[i].description);
       }
@@ -311,7 +311,7 @@ export default {
   transform: translateX(37%);
   width: max-content;
   background-color: white;
-  
+
 }
 
 .create-activity-container {
@@ -354,7 +354,7 @@ label {
 }
 
 .name-container {
-    padding: 15px 0 15px 0;
+  padding: 15px 0 15px 0;
 }
 
 .time {

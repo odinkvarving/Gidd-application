@@ -25,18 +25,7 @@
           <input type="text" id="image-form" v-model="imageURL" placeholder="Link to image here">
         </div>
       </fieldset>
-      <fieldset>
-        <legend>Login credentials</legend>
-        <div>
-          <label for="email-form">Change e-mail:</label>
-          <input type="email" id="email-form" v-model="email" :placeholder="AccountInfo.email">
-        </div>
-        <div class="edit-password">
-          <label for="new-password-form">Change password:</label>
-          <input type="password" v-model="new_password" id="new-password-form" placeholder="New password">
-          <input type="password" v-model="confirm_password" id="confirm-password-form" placeholder="Confirm password">
-        </div>
-      </fieldset>
+      <input type="button" @click="sendChangePasswordForm" id="change-password" value="Send change password form">
       <input type="password" v-model="old_password" id="old-password-form" placeholder="Old password to save">
       <input type="submit" value="Save changes">
 
@@ -56,9 +45,6 @@ export default {
       lastName:"",
       description:"",
       imageURL:"",
-      email:"",
-      new_password:"",
-      confirm_password:"",
       old_password:""
     }
   },
@@ -78,19 +64,8 @@ export default {
           '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
       return !!pattern.test(str);
     },
-    validateNewEmail(){
-      // Check if valid address(If we disable built in check)
-      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      if(!re.test(String(this.email).toLowerCase())){
-        this.errors.push('New e-mail is not a valid email');
-      }
+    sendChangePasswordForm(){
 
-    },
-    validateNewPassword(){
-      //Check if password strength is up to standard
-      if(this.new_password!==this.confirm_password){
-        this.errors.push('New password must match in both fields')
-      }
     },
     checkform(e){
       this.errors=[]
@@ -107,7 +82,7 @@ export default {
 
       if(this.exists(this.description)){
         console.log('changing description to '+this.description)
-        newAccount.profiledescription=this.description
+        newAccount.profileDescription=this.description
       }
 
       if(this.exists(this.imageURL)){
@@ -117,12 +92,6 @@ export default {
         }else{
           this.errors.push('This is not a valid URL')
         }
-      }
-      if(this.exists(this.email)){
-        this.validateNewEmail()
-      }
-      if(this.exists(this.new_password)||this.exists(this.new_password)){
-        this.validateNewPassword()
       }
       if(userService.getAccountDetails().sub===this.AccountInfo.email) {
         userService.login(this.AccountInfo.email, this.old_password).then(res => {
@@ -147,20 +116,6 @@ export default {
           let res=userService.setAccount(newAccount);
           console.log(res)
         }
-        if(this.exists(this.new_password)){
-          let res =userService.setPassword(this.new_password)
-          console.log(res)
-        }
-
-        if(this.exists(this.email)){
-          // Generate link for confirming email
-
-          // Send link to email
-
-          // change email when confirmed
-        }
-
-        e.preventDefault()
       }
     }
   }

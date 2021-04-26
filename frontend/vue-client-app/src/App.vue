@@ -34,7 +34,6 @@ export default {
 }
 
 header {
-  width: 100wv;
   border: 1px solid black;
   padding: 5px;
 }
