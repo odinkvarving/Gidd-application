@@ -52,14 +52,20 @@ export default {
         {
           title: "Min Profil",
           link: "#",
+          method: () => {}
         },
         {
           title: "Innstillinger",
           link: "#",
+          method: () => {}
         },
         {
           title: "Logg Ut",
           link: "/",
+          method: () => {
+            userService.logout();
+            this.$router.push("/");
+          }
         },
       ],
       notifications: [{}],
