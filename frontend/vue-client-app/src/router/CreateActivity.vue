@@ -224,7 +224,6 @@ data() {
 
     },
     setLocation(location){
-      console.log(location);
       if(location.geometry){
         this.currentLocation = location;
         this.center = {lat:this.currentLocation.geometry.location.lat(), lng:this.currentLocation.geometry.location.lng()}
@@ -247,9 +246,10 @@ data() {
         title: this.name,
         description: this.description,
         equipment: equipmentList,
+        location: this.currentLocation.name,
         endTime: `${this.endDate} ${this.endTime}`,
-        latitude: this.currentLocation.geometry.location.lat(), //temporary until map is implemented
-        longitude: this.currentLocation.geometry.location.lng(), //temporary until map is implemented
+        latitude: null, //temporary until map is implemented
+        longitude: null, //temporary until map is implemented
         maxParticipants: this.participants,
         startTime: `${this.startDate} ${this.endTime}`,
         activityType: {
@@ -259,6 +259,11 @@ data() {
           description: this.level
         },
         creator: accountDetails
+      }
+
+      if(this.currentLocation.geometry){
+        activity.latitude = this.currentLocation.geometry.location.lat();
+        activity.longitude = this.currentLocation.geometry.location.lng();
       }
 
       const requestOptions = {

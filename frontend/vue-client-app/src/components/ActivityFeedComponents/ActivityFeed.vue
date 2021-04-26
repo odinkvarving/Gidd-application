@@ -136,6 +136,7 @@
         background-color: #F6F6F6;
         position: relative;
         font-family: "Mulish";
+        min-height: 100vh;
 
     }
     #feed{

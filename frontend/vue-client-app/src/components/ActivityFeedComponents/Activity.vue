@@ -7,20 +7,17 @@
             <div class="owner-time">
                 <h3>{{ activity.creator.email }}</h3>
                 <p>{{ activity.startTime }}</p>
-                <!-- Add start time with date!! -->
             </div>
         </div>
         <div class="mini-details">
             <div class="detail-container">
                 <p class="detail-header">Sted</p> 
-                <!-- <p class="detail-value" style="font-size:18px;">{{ activity.location }}</p> This when we can find location from longitude and latitude -->
-                <p class="detail-value" style="font-size:18px;">Dødens dal</p>
+                <p class="detail-value" style="font-size:18px;"> {{ activity.location }} </p>
             </div>
             <div class="vertical-line"/>
             <div class="detail-container">
                 <p class="detail-header">Nivå</p> 
-                <!-- <p class="detail-value" style="font-size:18px;">{{ activity.duration }}</p>  regne ut tiden fra datoer --> 
-                <p class="detail-value" style="font-size:18px;">middels</p>
+                <p class="detail-value" style="font-size:18px;"> {{ activity.level.description }}</p>
             </div>
             <div class="vertical-line"/>
             <div class="detail-container">
@@ -29,6 +26,9 @@
             </div>
         </div>
         <div id="map-preview">
+            <div v-if="activity.latitude == 0 && activity.longitude == 0" style="width: 245px; height: 161px; background-color: #f6f6f6">
+                <p>Location not found!</p>
+            </div>
             <GmapMap 
                 :center="{lat:activity.latitude, lng:activity.longitude}"
                 :zoom="11"
