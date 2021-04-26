@@ -6,7 +6,9 @@
     ></router-link>
     <h2 class="header">Glemt passord? 🤯</h2>
     <div class="info">
-      Skriv inn den registrerte e-posten din, så skal vi se om vi kan hjelpe!
+      <p>
+        Skriv inn den registrerte e-posten din, så skal vi se om vi kan hjelpe!
+      </p>
     </div>
     <div class="input-container">
       <p v-if="!isEmailValid">Skriv inn en gyldig e-postadresse</p>
@@ -17,11 +19,14 @@
         placeholder="E-post"
         v-model="emailValue"
         v-bind:disabled="sent"
+        v-on:keyup.enter="postAddress"
       />
     </div>
-    <div v-if="sent" class="show-sent">
-      Hvis {{ emailValue }} er koblet til en konto vil en e-post sendes med en
-      beskrivelse på hvordan du kan skifte passord.
+    <div v-if="sent" class="info">
+      <p>
+        Hvis {{ emailValue }} er koblet til en konto vil en e-post sendes med en
+        beskrivelse på hvordan du kan skifte passord.
+      </p>
     </div>
     <button id="submit" @click="postAddress" v-bind:disabled="sent">
       Send
@@ -51,6 +56,16 @@ export default {
         this.sent = true;
       }
     },
+    redirectPage() {
+      setTimeout(() => {
+        if (this.redirect > 0) {
+          this.redirect--;
+          this.redirectPage();
+        } else {
+          this.$router.push({ path: "/login" });
+        }
+      }, 1000);
+    },
     validateEmail() {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(String(this.emailValue).toLowerCase());
@@ -72,10 +87,12 @@ export default {
 
 .info {
   text-align: center;
+  padding-right: 15px;
+  padding-left: 15px;
 }
 
-.show-sent {
-  text-align: center;
+b {
+  opacity: 0.3;
 }
 
 p {

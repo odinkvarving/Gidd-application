@@ -100,8 +100,10 @@ public class ActivityService {
      */
     public Activity updateActivity(int id, Activity activity) {
         try {
+            activityTypeRepository.save(activity.getActivityType());
             return activityRepository.save(activity);
         } catch (DataAccessException e) {
+            e.printStackTrace();
             log.info("Could not update activity");
         }
         return null;

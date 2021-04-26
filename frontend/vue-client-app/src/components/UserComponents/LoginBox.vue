@@ -32,6 +32,7 @@
         id="email"
         placeholder="E-post"
         v-model="emailValue"
+        v-on:keyup.enter="loginUser"
       />
     </div>
     <div class="input-container">
@@ -42,6 +43,7 @@
         id="password"
         placeholder="Passord"
         v-model="passwordValue"
+        v-on:keyup.enter="loginUser"
       />
     </div>
 

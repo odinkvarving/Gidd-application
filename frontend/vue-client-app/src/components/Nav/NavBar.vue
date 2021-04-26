@@ -12,19 +12,15 @@
         <div class="search-field">
           <input class="search-box" placeholder="Søk" />
         </div>
-        
+
         <router-link v-if="isLoggedIn" to="/dashboard/createActivity">
-          <div class="menu-item create-activity">
-              Lag aktivitet
-          </div>
+          <div class="menu-item create-activity">Lag aktivitet</div>
         </router-link>
 
         <router-link v-else to="/login">
-            <div class="menu-item create-activity">
-                Logg inn
-            </div>
-          </router-link>
-        
+          <div class="menu-item create-activity">Logg inn</div>
+        </router-link>
+
         <Dropdown
           class="notification-icon"
           icon="bell.png"
@@ -38,13 +34,13 @@
 
 <script>
 import Dropdown from "./Dropdown.vue";
-import { userService } from "../../services/UserService.js"
+import { userService } from "../../services/UserService.js";
 
 export default {
   name: "navbar",
   components: {
     Dropdown,
-},
+  },
   data() {
     return {
       isCreateActivityVisible: false,
@@ -52,14 +48,20 @@ export default {
         {
           title: "Min Profil",
           link: "#",
+          method: () => {}
         },
         {
           title: "Innstillinger",
           link: "#",
+          method: () => {}
         },
         {
           title: "Logg Ut",
           link: "/",
+          method: () => {
+            userService.logout();
+            this.$router.push("/");
+          }
         },
       ],
       notifications: [{}],
@@ -72,7 +74,8 @@ export default {
         this.$route.path === "/" ||
         this.$route.path === "/register" ||
         this.$route.path === "/login" ||
-        this.$route.path === "/forgotPassword"
+        this.$route.path === "/forgotPassword" ||
+        this.$route.path.includes("/resetpassword")
       ) {
         return false;
       } else {
