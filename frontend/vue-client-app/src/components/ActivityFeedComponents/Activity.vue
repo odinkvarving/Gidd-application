@@ -65,6 +65,7 @@
 </template>
 <script>
 import { userService } from '../../services/UserService';
+import { activityButtonService } from '../../services/ActivityButtonService';
     export default {
         name: "Activity",
 
@@ -97,59 +98,34 @@ import { userService } from '../../services/UserService';
         methods: {
             joinButtonClicked(){
                 this.showJoinSpinner = true;
-                if(!userService.isLoggedIn()){
-                    console.log("Tried to join activity without being logged in.\nRedirecting to login page");
-                    this.$router.push("/login");
-                }else{
-                    this.addParticipantToActivity();
-                }
+                activityButtonService.joinButtonClicked()
             },
             removeParticipantClicked(){
                 // TODO: Lage alert boks som spør om bruker er sikker
                 this.showRemoveSpinner = true;
-                this.removeParticipantFromActivity();
+                const data = activityButtonService.removeParticipantFromActivity(this.activity);
+                if (data) {
+                    this.showRemoveSpinner = false;
+                    if (this.currentParticipants === this.activity.maxParticipants) {
+                        this.participantsInQueue --;
+                     }else {
+                        this.currentParticipants --;
+                    }
+                    this.alreadyParticipating = false;
+                    this.isInQueue = false;
+                    this.$emit('refresh-list', this.activity.id, false);
+                }
             },
             getButtonStatus() {
-                if (this.alreadyParticipating) { 
-                    return "Påmeldt";
-                } else { //If we could not find the ID in accountActivity database, we check if the activity is full or not
-                    return this.checkIfFull();
-                }
-            },
-
-            checkIfFull() {
-                if (this.currentParticipants < this.activity.maxParticipants) {
-                    return "Bli med";
-                } else {
+                let status = activityButtonService.getButtonStatus(this.alreadyParticipating);
+                if (status === "Fullt") {
                     this.isFull = true;
-                    return "Fullt";
                 }
+                return status;
             },
+
             async isAlreadyParticipating() {
-
-                let accountId;
-                await userService.getAccountByEmail().then(data => accountId = data.id);
-
-                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/${accountId}/`;
-
-                const requestOptions ={
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': userService.getTokenString()
-                    }
-                }
-
-                await fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.alreadyParticipating = data)
-                    .catch(error => console.log(error));
-
-                console.log(`You are already participating: ${this.alreadyParticipating}`);
-
-                if(this.alreadyParticipating){
-                    this.getQueuePosition(accountId);
-                }
+                this.alreadyParticipating = activityButtonService.isAlreadyParticipating(this.activity);
 
             },
             async getCurrentParticipantsNumber(){
@@ -204,34 +180,6 @@ import { userService } from '../../services/UserService';
                         }
                     })
                     .catch(error => console.log(error));
-            },
-            async removeParticipantFromActivity(){
-                let accountId;
-                await userService.getAccountByEmail().then(data => accountId = data.id);
-
-                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}`;
-
-                const requestOptions ={
-                    method: 'DELETE',
-                    headers: userService.authorizationHeader()
-                }
-
-                fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data){
-                            this.showRemoveSpinner = false;
-                            if(this.currentParticipants === this.activity.maxParticipants){
-                                this.participantsInQueue --;
-                            }else{
-                                this.currentParticipants --;
-                            }
-                            this.alreadyParticipating = false;
-                            this.isInQueue = false;
-                            this.$emit('refresh-list', this.activity.id, false);
-                        }
-                    })
-                    .catch(error => console.log(error))
             },
             countAccountsInQueue(){
                 
