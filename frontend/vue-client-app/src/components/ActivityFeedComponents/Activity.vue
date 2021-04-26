@@ -100,15 +100,15 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 this.showJoinSpinner = true;
                 activityButtonService.joinButtonClicked()
             },
-            removeParticipantClicked(){
+            async removeParticipantClicked(){
                 // TODO: Lage alert boks som spør om bruker er sikker
                 this.showRemoveSpinner = true;
-                const data = activityButtonService.removeParticipantFromActivity(this.activity);
+                const data = await activityButtonService.removeParticipantFromActivity(this.activity);
                 if (data) {
                     this.showRemoveSpinner = false;
                     if (this.currentParticipants === this.activity.maxParticipants) {
                         this.participantsInQueue --;
-                     }else {
+                    } else {
                         this.currentParticipants --;
                     }
                     this.alreadyParticipating = false;
@@ -125,87 +125,43 @@ import { activityButtonService } from '../../services/ActivityButtonService';
             },
 
             async isAlreadyParticipating() {
-                this.alreadyParticipating = activityButtonService.isAlreadyParticipating(this.activity);
-
+                this.alreadyParticipating = await activityButtonService.isAlreadyParticipating(this.activity);
+                if (this.alreadyParticipating) {
+                    if (activityButtonService.getQueuePosition(this.activity) > 0) {
+                        this.isInQueue = true;
+                    }
+                }
             },
             async getCurrentParticipantsNumber(){
                 // Get number of participators on this activity
-                let url =  `http://localhost:8080/activities/${this.activity.id}/accounts/count`
-
-                const requestOptions ={
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }
-
-                await fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.currentParticipants = data)
-                    .catch(error => console.log(error));
-
-                console.log(`${this.activity.title} got current participants: ${this.currentParticipants}.`);
-
+                this.currentParticipants = await activityButtonService.getCurrentParticipantsNumber(this.activity);
                 if(this.currentParticipants == this.activity.maxParticipants){
-                    this.countAccountsInQueue();
+                    this.participantsInQueue = activityButtonService.countAccountsInQueue(this.activity);
                 }
-
             },
             async addParticipantToActivity(){
-
-                let accountId;
-                await userService.getAccountByEmail().then(data => accountId = data.id);
-
-                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/${accountId}/`;
-
-                const requestOptions ={
-                    method: 'POST',
-                    headers: userService.authorizationHeader()
-                }
-
-                fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data.activityId === this.activity.id && data.accountId === accountId){
-                            console.log("Joining activity was successful! Changing button style");
-                            if(this.currentParticipants === this.activity.maxParticipants){
-                                this.participantsInQueue ++;
-                                this.isInQueue = true;
-                            }else{
-                                this.currentParticipants ++;
-                            }
-                            this.alreadyParticipating = true;
-                            this.showJoinSpinner = false;
-                            this.$emit('refresh-list', this.activity.id, true);
+                let data = await activityButtonService.addParticipantToActivity(this.activity);
+                let accountId = await userService.getAccountByEmail().then(data => accountId = data.id);
+                    if(data.activityId === this.activity.id && data.accountId === accountId){
+                        console.log("Joining activity was successful! Changing button style");
+                        if(this.currentParticipants === this.activity.maxParticipants){
+                            this.participantsInQueue ++;
+                            this.isInQueue = true;
+                        }else{
+                            this.currentParticipants ++;
                         }
-                    })
-                    .catch(error => console.log(error));
+                        this.alreadyParticipating = true;
+                        this.showJoinSpinner = false;
+                        this.$emit('refresh-list', this.activity.id, true);
+                    }
             },
+
             countAccountsInQueue(){
-                
-                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/queue/count`;
-
-                const requestOptions = {
-                    method:'GET',
-                    headers: userService.authorizationHeader()
-                }
-
-                fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.participantsInQueue = data);
+                this.participantsInQueue = activityButtonService.countAccountsInQueue(this.activity);
             },
-            async getQueuePosition(accountId){
-                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}`
-
-                const requestOptions = {
-                    method:'GET',
-                    headers: userService.authorizationHeader()
-                }
-
-                await fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.queuePosition = data)
-                    .catch(error => console.log(error));
+            
+            async getQueuePosition(){
+                this.queuePosition = await activityButtonService.getQueuePosition(this.activity);
 
                 if(this.queuePosition > 0){
                     this.isInQueue = true;

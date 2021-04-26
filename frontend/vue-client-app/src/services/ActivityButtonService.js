@@ -19,12 +19,12 @@ export const activityButtonService = {
     getQueuePosition
 }
 
-function joinButtonClicked(){
+function joinButtonClicked(activity){
     if(!userService.isLoggedIn()){
         console.log("Tried to join activity without being logged in.\nRedirecting to login page");
         this.$router.push("/login");
     }else{
-        this.addParticipantToActivity();
+        return this.addParticipantToActivity(activity);
     }
 }
 
@@ -73,9 +73,11 @@ async function isAlreadyParticipating(activity) {
     return participating;
 }
 
-async function getCurrentParticipantsNumber(){
+async function getCurrentParticipantsNumber(activity){
     // Get number of participators on this activity
-    let url =  `http://localhost:8080/activities/${this.activity.id}/accounts/count`
+    let currentParticipants = 0;
+
+    let url =  `http://localhost:8080/activities/${activity.id}/accounts/count`
 
     const requestOptions ={
         method: 'GET',
@@ -86,45 +88,26 @@ async function getCurrentParticipantsNumber(){
 
     await fetch(url, requestOptions)
         .then(response => response.json())
-        .then(data => this.currentParticipants = data)
+        .then(data => currentParticipants = data)
         .catch(error => console.log(error));
 
-    console.log(`${this.activity.title} got current participants: ${this.currentParticipants}.`);
-
-    if(this.currentParticipants == this.activity.maxParticipants){
-        this.countAccountsInQueue();
-    }
-
+    console.log(`${activity.title} got current participants: ${currentParticipants}.`);
+    return currentParticipants;
 }
 
-async function addParticipantToActivity(){
-
+async function addParticipantToActivity(activity){
     let accountId;
     await userService.getAccountByEmail().then(data => accountId = data.id);
 
-    let url = `http://localhost:8080/activities/${this.activity.id}/accounts/${accountId}/`;
+    let url = `http://localhost:8080/activities/${activity.id}/accounts/${accountId}/`;
 
     const requestOptions ={
         method: 'POST',
         headers: userService.authorizationHeader()
     }
 
-    fetch(url, requestOptions)
+    return await fetch(url, requestOptions)
         .then(response => response.json())
-        .then(data => {
-            if(data.activityId === this.activity.id && data.accountId === accountId){
-                console.log("Joining activity was successful! Changing button style");
-                if(this.currentParticipants === this.activity.maxParticipants){
-                    this.participantsInQueue ++;
-                    this.isInQueue = true;
-                }else{
-                    this.currentParticipants ++;
-                }
-                this.alreadyParticipating = true;
-                this.showJoinSpinner = false;
-                this.$emit('refresh-list', this.activity.id, true);
-            }
-        })
         .catch(error => console.log(error));
 }
 
@@ -139,39 +122,36 @@ async function removeParticipantFromActivity(activity){
         headers: userService.authorizationHeader()
     }
 
-    return fetch(url, requestOptions)
+    return await fetch(url, requestOptions)
         .then(response => response.json())
         .catch(error => console.log(error))
 }
 
-function countAccountsInQueue(){
-    
-    let url = `http://localhost:8080/activities/${this.activity.id}/accounts/queue/count`;
+function countAccountsInQueue(activity){
+    let url = `http://localhost:8080/activities/${activity.id}/accounts/queue/count`;
 
     const requestOptions = {
         method:'GET',
         headers: userService.authorizationHeader()
     }
 
-    fetch(url, requestOptions)
+    return fetch(url, requestOptions)
         .then(response => response.json())
-        .then(data => this.participantsInQueue = data);
+        .catch(error => console.log(error));
 }
 
-async function getQueuePosition(accountId){
-    let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}`
+async function getQueuePosition(activity){
+    let accountId;
+    await userService.getAccountByEmail().then(data => accountId = data.id);
+
+    let url = `http://localhost:8080/accounts/${accountId}/activities/${activity.id}`
 
     const requestOptions = {
         method:'GET',
         headers: userService.authorizationHeader()
     }
 
-    await fetch(url, requestOptions)
+    return await fetch(url, requestOptions)
         .then(response => response.json())
-        .then(data => this.queuePosition = data)
         .catch(error => console.log(error));
-
-    if(this.queuePosition > 0){
-        this.isInQueue = true;
-    }
 }
