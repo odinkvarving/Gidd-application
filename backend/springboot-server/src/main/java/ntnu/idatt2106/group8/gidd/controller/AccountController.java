@@ -6,7 +6,9 @@ import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.Account;
 import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
 import ntnu.idatt2106.group8.gidd.model.entities.Activity;
+import ntnu.idatt2106.group8.gidd.model.entities.Notification;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
+import ntnu.idatt2106.group8.gidd.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ import java.util.Set;
 public class AccountController {
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     Logger logger = LoggerFactory.getLogger(AccountController.class);
 
@@ -251,4 +256,20 @@ public class AccountController {
     public AccountActivity findAccountActivity(@PathVariable("account_id")int account_id, @PathVariable("activity_id") int activity_id){
         return accountService.findAccountActivity(account_id, activity_id);
     }
+
+    @GetMapping("accounts/{account_id}/notifications")
+    public List<Notification> getAccountsNotifications(@PathVariable int account_id){
+        return notificationService.getAccountsNotifications(account_id);
+    }
+
+    @PostMapping("accounts/notifications")
+    public boolean sendNotification(@RequestBody Notification notification){
+        return notificationService.sendNotification(notification);
+    }
+
+    @PutMapping("accounts/notifications")
+    public boolean updateNotification(@RequestBody Notification notification){
+        return notificationService.updateNotification(notification);
+    }
+
 }
