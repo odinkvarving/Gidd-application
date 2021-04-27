@@ -20,7 +20,7 @@
           {{userInfo.email}}
         </li>
       </ul>
-      <profileToolbar :current-comp="currentComp" @switch-comp="sendComp"></profileToolbar>
+      <profileToolbar :current-comp="currentComp" @switchComp="sendComp"></profileToolbar>
       <div class="display_container">
         <component v-bind="activityProperties" :is="currentComp" ></component>
       </div>
@@ -95,10 +95,10 @@ export default {
             console.log(data);
 
             if(data.firstname!==null&&typeof data.firstname !== 'undefined'){
-              this.userInfo.firstname=data.account.firstname;
+              this.userInfo.firstname=data.firstname;
             }
-            if(data.account.surname!==null&&typeof data.account.surname !== 'undefined'){
-              this.userInfo.surname=data.account.surname;
+            if(data.surname!==null&&typeof data.surname !== 'undefined'){
+              this.userInfo.surname=data.surname;
             }
             if(data.imageURL!==null&&typeof data.imageURL !== 'undefined'){
               this.userInfo.imageURL=this.getImgUrl(data.imageURL);
