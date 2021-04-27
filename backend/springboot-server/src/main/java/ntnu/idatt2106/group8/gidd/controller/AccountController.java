@@ -3,10 +3,7 @@ package ntnu.idatt2106.group8.gidd.controller;
 import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
-import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.Notification;
+import ntnu.idatt2106.group8.gidd.model.entities.*;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
 import ntnu.idatt2106.group8.gidd.service.NotificationService;
 import org.slf4j.Logger;
@@ -36,6 +33,7 @@ public class AccountController {
 
     @Autowired
     private NotificationService notificationService;
+
 
     Logger logger = LoggerFactory.getLogger(AccountController.class);
 
@@ -271,4 +269,13 @@ public class AccountController {
         return notificationService.updateNotification(notification);
     }
 
+    @PutMapping("/accounts/{account_id}/accountInfo/notificationSettings")
+    public boolean updateAccountsNotificationSettings(@PathVariable int account_id, @RequestBody NotificationSettings notificationSettings){
+        return notificationService.updateAccountsNotificationsSetting(account_id, notificationSettings);
+    }
+
+    @GetMapping("/accounts/{account_id}/accountInfo/notificationSettings")
+    public NotificationSettings getAccountsNotificationSettings(@PathVariable int account_id){
+        return notificationService.getNotificationSettingsByAccountId(account_id);
+    }
 }
