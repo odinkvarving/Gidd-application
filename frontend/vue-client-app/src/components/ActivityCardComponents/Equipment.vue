@@ -2,7 +2,7 @@
   <div id="container">
     <h3>Utstyr:</h3>
     <div class="edit">
-      <b-icon  v-show="isActivityHost" class="pencil" icon="pencil" @click="edit"></b-icon>
+      <b-icon  v-show="isActivityHost && !activity.cancelled" class="pencil" icon="pencil" @click="edit"></b-icon>
     </div>
     <div class="equipment-list">
       <ul v-for="(e, index) in equipment" :key="e.description">
@@ -66,7 +66,7 @@ export default {
         this.equipment.push({ description: this.newEquipment });
         this.newEquipment = "";
         let result = notificationService.sendNotificationToAllParticipants(this.activity.id);
-        if(result){
+        if(result === true){
               console.log("Sucessfully notified all participants about the edit!");
         }else{
           console.log("Error! Something went wrong when notifying participants!");

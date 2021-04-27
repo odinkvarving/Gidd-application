@@ -22,8 +22,8 @@
             }
         },
         props: {
-            latitude: String,
-            longitude: String
+            latitude: Number,
+            longitude: Number
         }
     }
 </script>

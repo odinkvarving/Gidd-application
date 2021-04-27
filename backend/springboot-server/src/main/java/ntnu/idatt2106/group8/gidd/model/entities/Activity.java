@@ -46,6 +46,7 @@ public class Activity {
     private float longitude;
     private float latitude;
     private int maxParticipants;
+    private boolean cancelled;
 
     protected Activity(Account creator, ActivityType activityType, Level level, Set<Equipment> equipment, String location, float longitude,
                        float latitude, String startTime, String endTime, String description,
@@ -62,9 +63,18 @@ public class Activity {
         this.endTime = endTime;
         this.description = description;
         this.maxParticipants = maxParticipants;
+        this.cancelled = false;
     }
 
     protected Activity() {
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     public String getLocation() {

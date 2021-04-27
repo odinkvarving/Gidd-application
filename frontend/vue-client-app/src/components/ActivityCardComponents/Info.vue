@@ -5,7 +5,7 @@
         class="toggle-edit-button"
         icon="pencil"
         @click="toggleEditMode"
-        v-show="isActivityHost"
+        v-show="isActivityHost && !activity.cancelled"
       ></b-icon>
 
       <h1 v-show="!inEditMode">{{ activity.title }}</h1>
@@ -107,22 +107,25 @@
     >
       <span>{{ checkIfFull() }}</span>
     </button>-->
-    <button v-if="!isFull && !alreadyParticipating && !inEditMode" id="btn" class="join" @click.stop="joinButtonClicked()">
-      <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
-        <span class="sr-only">Loading...</span>
-      </div>
-      <span v-else >{{ getButtonStatus() }}</span>
-    </button>
-    <button v-else-if="isFull && !alreadyParticipating && !inEditMode" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
-    <button v-else-if="!inEditMode" id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
-      <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
-        <span class="sr-only">Loading...</span>
-      </div>
-      <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
-    </button>
-    <button v-show="inEditMode" @click="onClickSaveButton">
-      <span>Lagre</span>
-    </button>
+    <div v-show="!activity.cancelled">
+      <button v-if="!isFull && !alreadyParticipating && !inEditMode" id="btn" class="join" @click.stop="joinButtonClicked()">
+        <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <span v-else >{{ getButtonStatus() }}</span>
+      </button>
+      <button v-else-if="isFull && !alreadyParticipating && !inEditMode" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
+      <button v-else-if="!inEditMode" id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
+        <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
+      </button>
+      <button v-show="inEditMode" @click="onClickSaveButton">
+        <span>Lagre</span>
+      </button>
+    </div>
+    <b-button disabled v-show="activity.cancelled" @click="cancelActivity()" class="cancel-button" variant="danger">Aktivitet avlyst!</b-button>
   </div>
 </template>
 
@@ -390,7 +393,7 @@ export default {
           // If update activity was successfull
           if(data !== null){
             let result = notificationService.sendNotificationToAllParticipants(this.activity.id);
-            if(result){
+            if(result === true){
               console.log("Sucessfully notified all participants about the edit!");
             }else{
               console.log("Error! Something went wrong when notifying participants!");

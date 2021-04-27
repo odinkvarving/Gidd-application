@@ -41,6 +41,9 @@ public class ActivityService {
     @Autowired
     private LevelRepository levelRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     /**
      * Method for finding all registered activities
      * @return a list of all activities
@@ -315,12 +318,19 @@ public class ActivityService {
         try {
             activity = activityRepository.findById(id);
             if(activity.isPresent()) {
+                notificationService.sendNotificationToAllParticipants(id, "was cancelled :/");
+                activity.get().setCancelled(true);
+                activityRepository.save(activity.get());
                 accountActivities = new ArrayList<>(accountActivityRepository.findByActivityId(activity.get().getId()));
-                for (AccountActivity a : accountActivities) {
-                    accountActivityRepository.delete(a);
-                    if(accountActivityRepository.findByActivityId(activity.get().getId()).size() == 0) {
-                        return true;
+                if(accountActivities.size() != 0) {
+                    for (AccountActivity a : accountActivities) {
+                        accountActivityRepository.delete(a);
+                        if (accountActivityRepository.findByActivityId(activity.get().getId()).size() == 0) {
+                            return true;
+                        }
                     }
+                }else{
+                    return true;
                 }
             }else{
                 log.info("No activity with this ID registered");
