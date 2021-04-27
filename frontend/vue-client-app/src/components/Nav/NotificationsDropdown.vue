@@ -5,6 +5,9 @@
     v-on-clickaway="hideDropdown"
   >
     <img :src="require('@/assets/' + icon + '')" class="profile-picture" :style="'width:' + width + '; height:' + height + ''">
+    <div v-if="showUnreadSymbol" id="notification-alert">
+      <p style="margin: 0; color: white;"> {{ unreadNotifications }} </p>
+    </div>
     <transition name="fade">
       <div class="sub-menu" v-if="isVisible">
         <div v-for="(item, i) in items" :key="i" class="menu-item">
@@ -30,8 +33,25 @@ export default {
   data() {
     return {
       isVisible: false,
-      items: []
+      items: [],
+      unreadNotifications: 0,
+      showUnreadSymbol: false
     };
+  },
+  async mounted(){
+    let accountId = await userService.getAccountByEmail().then(data => {
+          return data.id
+    });
+    this.items = await notificationService.getAccountsNotifications(accountId);
+    for(let i = 0; i < this.items.length; i ++){
+      if(this.items[i].seen === false){
+        this.unreadNotifications++;
+      }
+    }
+
+    if(this.unreadNotifications > 0){
+      this.showUnreadSymbol = true;
+    }
   },
   methods: {
     toggleDropdown() {
@@ -47,12 +67,24 @@ export default {
         }
     },
     async showNotifications(){
+        let unread = 0;
         this.isVisible = !this.isVisible;
         let accountId = await userService.getAccountByEmail().then(data => {
           return data.id
         });
         this.items = await notificationService.getAccountsNotifications(accountId);
+        for(let i = 0; i < this.items.length; i ++){
+          if(this.items[i].seen === false){
+            unread++;
+          }
+        }
+
+        if(unread > 0){
+          this.unreadNotifications = unread;
+          this.showUnreadSymbol = true;
+        }
         console.log(this.items);
+        console.log(this.unreadNotifications);
     }
   },
 };
@@ -110,5 +142,19 @@ nav .menu-item .sub-menu {
 
 .notification-item #message {
     font-size: 17px;
+}
+
+#notification-alert {
+  position: absolute;
+  top: 20px;
+  right: 88px;
+  width: 18px;
+  height: 18px;
+  background-color: #f70128;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Mulish";
 }
 </style>
