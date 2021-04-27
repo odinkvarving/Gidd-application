@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
- *
+ * @author Endré Hadzalic
  */
 @Entity
 public class PasswordReset {

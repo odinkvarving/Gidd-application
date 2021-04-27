@@ -73,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().authorizeRequests().antMatchers("/accounts/register",
                 "/accounts/login", "/h2-console/*", "/activities/", "/activityTypes/",
                 "/levels/", "/activities/{id}/accounts/count", "/activities/{id}/accounts/queue/count"
-                , "/reset/{mail}")
+                , "/reset/{mail}","/activities/{id}/messages","/accounts/{id}/info")
                 .permitAll().anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
