@@ -1,5 +1,6 @@
 <template>
   <div id="card">
+    <NavBar />
     <ActivityCard
       id="card"
       :activity="activity"
@@ -12,6 +13,7 @@
 import ActivityCard from "../components/ActivityCardComponents/ActivityCard.vue";
 import { userService } from "../services/UserService.js";
 import { weatherService } from "../services/WeatherService.js";
+import NavBar from "../components/Nav/NavBar.vue"
 
 /**
  * Activity is a router, which will display an activity.
@@ -22,6 +24,7 @@ export default {
   name: "Activity",
   components: {
     ActivityCard,
+    NavBar
   },
   data() {
     return {

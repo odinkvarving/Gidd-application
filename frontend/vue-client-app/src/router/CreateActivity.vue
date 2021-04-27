@@ -1,5 +1,6 @@
  <template>
   <div class="create-activity-container">
+      <NavBar />
       <h1>GIDD å lag en ny aktivitet!</h1>
       <div id="create-activity-form">
           <ul>
@@ -157,12 +158,14 @@ import { userService } from "../services/UserService.js"
 import moment from 'moment'
 import LocationSearchBar from "../components/createActivityComponents/LocationSearchBar"
 import ConfirmModal from "../components/PopUpComponents/ConfirmModal.vue"
+import NavBar from "../components/Nav/NavBar.vue"
 
 export default {
     name: "CreateActivity",
     components: {
         LocationSearchBar,
-        ConfirmModal
+        ConfirmModal,
+        NavBar
     },
 data() {
     return {
