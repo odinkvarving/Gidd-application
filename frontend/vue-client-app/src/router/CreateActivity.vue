@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="create-activity-container">
       <h1>GIDD å lag en ny aktivitet!</h1>
       <div id="create-activity-form">
@@ -24,6 +24,7 @@
         </li>
         <li class="menu-item level">
           <label>
+
             Nivå<p style="color: red; display: inline; margin-left: 3px">*</p>
           </label>
           <b-form-select :state="levelState" v-model="level" :options="levels" style="width:80%">
@@ -190,6 +191,7 @@ data() {
       endDateState: null,
       participantsState: null,
       descriptionState: null,
+
       equipmentState: null,
       showSpinner: false,
 
@@ -246,6 +248,7 @@ data() {
         title: this.name,
         description: this.description,
         equipment: equipmentList,
+
         location: this.currentLocation.name,
         endTime: `${this.endDate} ${this.endTime}`,
         latitude: null, //temporary until map is implemented
@@ -291,7 +294,7 @@ data() {
     async getCategories(){      
       
       let categoriesList;
-      
+
       this.category = null;
 
       let url = `http://localhost:8080/activityTypes/`;
@@ -303,7 +306,7 @@ data() {
         .then(response => response.json())
         .then(data => categoriesList = data)
         .catch(error => console.log(error));
-      
+
       for(let i = 0; i < categoriesList.length; i ++){
         this.categories.push(categoriesList[i].type);
       }
@@ -323,7 +326,6 @@ data() {
         .then(response => response.json())
         .then(data => levelsList = data)
         .catch(error => console.log(error));
-      
       for(let i = 0; i < levelsList.length; i ++){
         this.levels.push(levelsList[i].description);
       }
@@ -527,3 +529,4 @@ data() {
     }
 
 </style>
+

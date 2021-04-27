@@ -88,7 +88,7 @@ public class Account {
         return accountInfo;
     }
 
-    public void seAccountInfo(AccountInfo accountInfo) {
+    public void setAccountInfo(AccountInfo accountInfo) {
         this.accountInfo = accountInfo;
     }
 

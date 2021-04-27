@@ -51,6 +51,39 @@ body{
     background-color: greenyellow;
     border:1px solid green;
 }
+.edit-name{
+    margin:0 30%;
+}
+.edit-form{
+    height: 100%;
+    width:100%;
+}
+.edit{
+    display: flex;
+    flex-direction: column;
+}
+.edit-general{
+    width:100%;
+    height:100%;
+}
+.edit-description{
+    margin:2.5% 20%;
+}
+.edit-image{
+    margin:0 35%;
+}
+#change-password{
+    width: auto;
+    margin-right:20%;
+}
+
+#old-password-form{
+    width:auto;
+    margin-right:25%
+}
+#edit-submit{
+    width:auto;
+}
 #name{
     grid-area: 1/2/span 1/span 2;
 }

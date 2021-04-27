@@ -3,12 +3,14 @@ import VueJwtDecode from "vue-jwt-decode"
 export const userService = {
     login,
     getAccountByEmail,
+    setAccount,
     logout,
     getAll,
     getAccountDetails,
     isLoggedIn,
     authorizationHeader,
-    getTokenString
+    getTokenString,
+    getCurrentLocation
 }
 
 
@@ -32,6 +34,8 @@ function login(email, password) {
             return jwtResponse;
         });
 }
+
+
 
 function getAccountByEmail(){
     try{
@@ -64,6 +68,7 @@ function getAll() {
 
 function handleResponse(response) {
     return response.text().then(text => {
+        console.log(text)
         const data = text && JSON.parse(text);
         if (!response.ok) {
             if (response.status === 403) {
@@ -116,9 +121,22 @@ function getAccountDetails() {
         return null;
     }
 }
-
-function isLoggedIn() {
-
+function setAccount(newAccount,id){
+    let user = JSON.parse(localStorage.getItem("user"));
+    if(!user || !user.jwtToken){
+        return false;
+    }
+    return fetch("http://localhost:8080/accounts/"+id+"/accountInfo",{
+        method:'PUT',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization': `Bearer ${user.jwtToken}`
+        }
+        ,
+        body:JSON.stringify(newAccount)
+    }).then(handleResponse)
+}
+function isLoggedIn(){
     // get token from localstorage
     let user = JSON.parse(localStorage.getItem("user"));
     if (!user || !user.jwtToken) {
@@ -136,4 +154,17 @@ function isLoggedIn() {
 
     return fetch("http://localhost:8080/accounts/validateToken", requestOptions)
         .then(handleResponse);
+}
+
+function getCurrentLocation(){
+    let currentLocation;
+
+    navigator.geolocation.getCurrentPosition(position => {
+        console.log(position.coords);
+        currentLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+        }
+        return currentLocation;
+    })
 }

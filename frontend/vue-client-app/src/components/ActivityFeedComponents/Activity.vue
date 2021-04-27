@@ -228,6 +228,7 @@ import { userService } from '../../services/UserService';
                             }
                             this.alreadyParticipating = false;
                             this.isInQueue = false;
+
                             this.$emit('refresh-list', this.activity.id, false);
                         }
                     })
