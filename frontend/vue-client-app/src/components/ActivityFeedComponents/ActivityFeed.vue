@@ -2,24 +2,33 @@
   <div id="container">
     <div id="feed">
       <div class="sortingContainer">
-        <div class="sortingDropdown">
-          <b-dropdown text="Sortering" class="sortingBox">
-            <b-dropdown-item href="#">Ledige plasser høy-lav</b-dropdown-item>
-            <b-dropdown-item href="#">Ledige plasser lav-høy</b-dropdown-item>
-            <b-dropdown-item href="#">Antall påmeldte høy-lav</b-dropdown-item>
-            <b-dropdown-item href="#">Antall påmeldte lav-høy</b-dropdown-item>
-          </b-dropdown>
+        <div class="categoryDropdown">
+            <b-form-select v-model="selected" :options="categories" @change="modifyActivities()" class="categoryBox">
+                <template #first>
+                    <b-form-select-option :value="null">Kategori</b-form-select-option>
+                </template>
+            </b-form-select>
         </div>
-        <div class="filteringDropdown">
-          <b-dropdown text="Filtrering" class="filteringBox">
-            <b-dropdown text="Aktivitetstype" class="m-2">
-                <b-dropdown-item href="#">Tur</b-dropdown-item>
-                <b-dropdown-item href="#">Tur</b-dropdown-item>
-            </b-dropdown>
-
-            <b-dropdown-item href="#">Nivå</b-dropdown-item>
-            <b-dropdown-item href="#">Kategori</b-dropdown-item>
-          </b-dropdown>
+        <div class="levelDropdown">
+            <b-form-select v-model="selected" :options="levels" @change="modifyActivities()" class="levelBox">
+                <template #first>
+                    <b-form-select-option :value="null">Nivå</b-form-select-option>
+                </template>
+            </b-form-select>
+        </div>
+        <div class="locationDropdown">
+            <b-form-select v-model="selected" :options="locations" @change="modifyActivities()" class="locationBox">
+                <template #first>
+                    <b-form-select-option :value="null">Sted</b-form-select-option>
+                </template>
+            </b-form-select>
+        </div>
+        <div class="sortingDropdown">
+            <b-form-select v-model="chosen" :options="sorts" @change="modifyActivities()" class="sortingBox">
+                <template #first>
+                    <b-form-select-option :value="null">Sorter</b-form-select-option>
+                </template>
+            </b-form-select>
         </div>
       </div>
 
@@ -61,6 +70,7 @@
 import Activity from "./Activity.vue";
 import { userService } from "../../services/UserService.js";
 import { weatherService } from "../../services/WeatherService.js";
+import { activityButtonService } from '../../services/ActivityButtonService';
 
 export default {
   name: "ActivityFeed",
@@ -75,10 +85,38 @@ export default {
       selectedActivity: null,
       activities: {},
       joinedActivities: {},
+      currentParticipants: 0,
       sortKey: "",
       isLoggedIn: false,
       modifiedActivities: {},
-      filter: [],
+      selected: null,
+      chosen: null,
+      categories: [
+          { value: "Fotball", text: "Fotball"},
+          { value: "Tur", text: "Tur"},
+          { value: "Topptur", text: "Topptur"},
+          { value: "Svømming", text: "Svømming"},
+          { value: "Gaming", text: "Gaming"}
+      ],
+      levels: [
+          { value: "Lett", text: "Lett"},
+          { value: "Middels", text: "Middels"},
+          { value: "Krevende", text: "Krevende"},
+          { value: "Hardt", text: "Hardt"},
+          { value: "Ekstremt", text: "Ekstremt"},
+      ],
+      locations: [
+          { value: "Trondheim", text: "Trondheim"},
+          { value: "Oslo", text: "Oslo"},
+          { value: "Bergen", text: "Bergen"},
+          { value: "Stavanger", text: "Stavanger"},
+      ],
+      sorts: [
+          { value: 1, text: "Ledige plasser høy-lav"},
+          { value: 2, text: "Ledige plasser lav-høy"},
+          { value: 3, text: "Antall påmeldte høy-lay"},
+          { value: 4, text: "Antall påmeldte lav-høy"},
+      ],
       filterKey: "",
     };
   },
@@ -106,16 +144,52 @@ export default {
     },
 
     modifyActivities() {
-      let listFiltered = this.filterActivities();
-      let listSorted = this.sortActivities(listFiltered);
+      console.log(this.selected);
+      console.log(this.chosen);  
+      let filteredList = this.filterActivities();
+      let listSorted = this.sortActivities(filteredList);
       this.modifiedActivities = listSorted;
+      this.activities = this.modifiedActivities;
     },
 
     filterActivities() {
-      //if(this.filterKey === )
+        
+        const filteredList = [];
+
+        if(this.selected !== "") {
+            for(let i = 0; i < this.activities.length; i++) {
+                if(this.activities[i].activityType.type.toLowerCase() === this.selected.toLowerCase()) {
+                    filteredList.push(this.activities[i])
+                }
+            }
+            return filteredList;
+        }else {
+            return this.activities;
+        }
     },
 
-    sortActivities() {},
+    sortActivities(filteredList) {
+        //Returnerer dette filteredList(sortert)?
+        if(this.chosen === 1) {
+            filteredList.sort(function(a, b) {
+                return (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b)) - (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a));
+            });
+        }else if(this.chosen === 2) {
+            filteredList.sort(function(a, b) {
+                return (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a)) - (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b));
+            });
+        }else if(this.chosen === 3) {
+            filteredList.sort(function(a, b) {
+                return (activityButtonService.getCurrentParticipantsNumber(b)) - (activityButtonService.getCurrentParticipantsNumber(a))
+            });
+        }else if(this.chosen === 4) {
+            filteredList.sort(function(a, b) {
+                return (activityButtonService.getCurrentParticipantsNumber(a)) - (activityButtonService.getCurrentParticipantsNumber(b))
+            });
+        }else {
+            return filteredList;
+        }
+    },
 
     async getJoinedActivities() {
       let accountId;
@@ -301,20 +375,41 @@ export default {
 .sortingDropdown {
   display: inline-block;
   padding-right: 10px;
-  padding-left: 10px;
+  padding-left: 330px;
 }
 
 .sortingBox {
     width: 180px;
 }
 
-.filteringDropdown {
+.categoryDropdown {
   display: inline-block;
   padding-right: 10px;
   padding-left: 10px;
 }
 
-.filteringBox {
-    width: 180px;
+.categoryBox {
+    width: 130px;
 }
+
+.levelDropdown {
+    display: inline-block;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.levelBox {
+    width: 130px;
+}
+
+.locationDropdown {
+    display: inline-block;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.locationBox {
+    width: 130px;
+}
+
 </style>
