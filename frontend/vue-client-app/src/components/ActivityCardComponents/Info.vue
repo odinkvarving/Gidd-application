@@ -8,16 +8,18 @@
       ></b-icon>
 
       <h1 v-show="!inEditMode">{{ activity.title }}</h1>
-      <h1 v-show="inEditMode">
-        <input type="text" :placeholder="title" v-model="title" />
+      <h1 class="edit" v-show="inEditMode">
+        <input class="title" type="text" :placeholder="title" v-model="title" />
       </h1>
       <div id="ownerInfo">
         <img :src="require('@/assets/kari.jpg')" />
         <h3 class="txt">{{ activity.creator.email }}</h3>
       </div>
-      <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>
-      <p class="txt" v-show="inEditMode">
-        <input type="text" :placeholder="description" v-model="description" />
+      <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>   
+
+      <p class="txt edit" v-show="inEditMode">
+        <input class="description" type="text" :placeholder="description" v-model="description" />
+        
       </p>
     </div>
     <div class="box" id="bottom">
@@ -30,25 +32,29 @@
         <li class="txt">Værmelding:</li>
         <li class="txt">Deltakere:</li>
       </ul>
-
       <ul class="list" id="list2" v-show="!inEditMode">
         <li class="txt">{{ activity.activityType.type }}</li>
-        <li class="txt">Legg til lokasjon</li>
+        <li class="txt">{{ activity.location }}</li>
         <li class="txt">{{ activity.startTime }}</li>
-        <li class="txt">60 minutter</li>
-        <!-- Implement calculation for this -->
-        <li class="txt">
-          Legg til vær
+        <li class="txt">60 minutter</li> <!-- Implement duration -->
+        <li class="txt" v-if="weather">
+          <img id="icon" alt="weather icon" :src="require('@/assets/weatherIcons/' + weather.icon + '.png')"/>
+          {{ weather.temp }} C°
         </li>
+        <li class="txt" v-else>Ingen værmelding</li>
         <li class="txt">{{ 0 }} / {{ activity.maxParticipants }}</li>
       </ul>
 
       <ul class="list" id="list2" v-show="inEditMode">
         <li class="txt">
-          <input type="text" :placeholder="type" v-model="type" />
+          <b-form-select size="sm" :state="categoryState" v-model="category" :options="categories" style="width: 80%;">
+            <template #first>
+              <b-form-select-option :value="null" disabled>-- Velg en kategori --</b-form-select-option>
+            </template>
+          </b-form-select>
         </li>
         <li class="txt">
-          <LocationSearchBar />
+          <LocationSearchBar @setPlace="setLocation" />
         </li>
         <!-- Replace this with actual location when implemented -->
         <li class="txt">
@@ -56,30 +62,33 @@
             class="datepicker"
             placeholder="Velg dato"
             v-model="startDate"
+            size="sm"
           ></b-form-datepicker>
-        </li>
-        <li class="txt">
           <b-form-timepicker
             class="timepicker"
             placeholder="Velg tid"
             v-model="startTimeStamp"
+            size="sm"
           ></b-form-timepicker>
-        </li>
-        <li class="txt">
+          <li>
           <b-form-datepicker
             class="datepicker"
             placeholder="Velg dato"
             v-model="endDate"
+            size="sm"
           ></b-form-datepicker>
-        </li>
-        <li class="txt">
           <b-form-timepicker
             class="timepicker"
             placeholder="Velg tid"
             v-model="endTimeStamp"
+            size="sm"
           ></b-form-timepicker>
         </li>
-        <li class="txt">Legg til utregning</li>
+        <b-form-select :state="levelState" v-model="level" :options="levels" style="width:80%">
+            <template #first>
+              <b-form-select-option :value="null" disabled>-- Velg et nivå --</b-form-select-option>
+            </template>
+          </b-form-select>
         <li class="txt">
           <input type="text" placeholder="Antall" v-model="maxParticipants" />
         </li>
@@ -118,22 +127,40 @@ export default {
       type: Object,
       required: true,
     },
+    weather: {
+      type: Object,
+      required: true,
+    },
   },
 
   data() {
     return {
       inEditMode: false,
       isFull: false,
-
       title: this.activity.title,
-      type: this.activity.activityType.type,
-      location: "Trondheim", //TODO: Sjekk om denne skal være med
+      category: this.activity.activityType.type,
+      categories: [],
+      level: this.activity.level,
+      levels: [],
+      location: this.activity.location,
       startDate: "",
       startTimeStamp: "",
       endDate: "",
       endTimeStamp: "",
       maxParticipants: 10,
       description: this.activity.description,
+      nameState: null,
+      categoryState: null,
+      levelState: null,
+      geometryFound: false,
+      newLocation: false,
+      center: {},
+      startDateState: null,
+      endDateState: null,
+      participantsState: null,
+      descriptionState: null,
+      equipmentState: null,
+      showSpinner: false,
     };
   },
 
@@ -148,33 +175,33 @@ export default {
       console.log("Edit Mode: " + this.inEditMode);
     },
 
-    onClickSaveButton() {
+    onClickSaveButton() {      
+      this.showSpinner = true;
+      this.equipmentState = true;
       this.name === "" ? (this.nameState = false) : (this.nameState = true);
-      this.category === null
-        ? (this.categoryState = false)
-        : (this.categoryState = true);
-      this.level === null
-        ? (this.levelState = false)
-        : (this.levelState = true);
-      this.location === "" || this.placeState === null
-        ? (this.placeState = false)
-        : (this.placeState = true);
-      this.validStartAndEndDate();
       this.description === ""
         ? (this.descriptionState = false)
         : (this.descriptionState = true);
-
-      if (
+      this.validStartAndEndDate();
+       if (
         this.nameState === true &&
-        this.categoryState === true &&
-        this.levelState === true &&
-        this.placeState === true &&
-        this.startDateState === true &&
-        this.endDateState === true &&
         this.descriptionState === true
-      ) {
+      ) { 
         this.editActivity();
         console.log("Activity updated!");
+      }
+    },
+
+    setLocation(location){
+      if(location.geometry){
+        this.currentLocation = location;
+        this.center = {lat:this.currentLocation.geometry.location.lat(), lng:this.currentLocation.geometry.location.lng()}
+        this.geometryFound = true;
+        this.newLocation = true;
+      }else{
+        this.geometryFound = false;
+        this.newLocation = false;
+        this.currentLocation = location;
       }
     },
 
@@ -186,20 +213,53 @@ export default {
         title: this.title,
         description: this.description,
         equipment: this.activity.equipment,
-        location: this.
-        latitude: "63.41893", //temporary until map is implemented
-        longitude: "10.40658", //temporary until map is implemented
+        location: this.location,
+        latitude: null, //temporary until map is implemented
+        longitude: null, //temporary until map is implemented
         maxParticipants: this.maxParticipants,
         startTime: `${this.startDate} ${this.startTimeStamp}`,
         endTime: `${this.endDate} ${this.endTimeStamp}`,
         activityType: {
-          type: this.type,
+          type: this.category,
         },
         level: {
           description: this.level
         },
         creator: accountDetails,
-      };
+      }
+
+      if (this.startDate === "" || this.startTimeStamp === "") {
+        activity.startTime = this.activity.startTime;
+      }
+
+      if (this.endDate === "" || this.endTimeStamp === "") {
+        activity.endTime = this.activity.endTime;
+      }
+
+      if (activity.activityType.type === null) {
+        console.log("No category selected, using previous");
+        activity.activityType = this.activity.activityType;
+      }
+
+      if (activity.level.description === null) {
+        console.log("No level selected, using previous");
+        activity.level = this.activity.level;
+      }
+
+      if (!this.newLocation) {
+        console.log("No location entered, using previous");
+        activity.latitude = this.activity.latitude;
+        activity.longitude = this.activity.longitude;
+        activity.location = this.location;
+      }
+
+      if (this.geometryFound) {
+        activity.latitude = this.currentLocation.geometry.location.lat();
+        activity.longitude = this.currentLocation.geometry.location.lng();
+        activity.location = this.currentLocation.name;
+        console.log("this.location: " + this.location);
+        console.log("this.currentLocation.name: " + this.currentLocation.name);
+      }
 
       const requestOptions = {
         method: "PUT",
@@ -239,7 +299,6 @@ export default {
 
     async getLevels() {
       let levelsList;
-
       this.level = null;
       this.participantValue = "Alle";
 
@@ -370,6 +429,11 @@ export default {
   text-align: right;
   margin-right: 40px;
 }
+#icon{
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+}
 #btn {
   grid-area: btn;
   height: 5vh;
@@ -409,4 +473,28 @@ export default {
 .toggle-edit-button {
   cursor: pointer;
 }
+
+.edit .title {
+  margin: 0 auto;
+  width: 75%;
+  text-align: center;
+}
+
+.edit .description {
+  margin: 0 auto;
+  width: 75%;
+  height: 40px;
+}
+
+.datepicker {
+  width: 50% !important;
+  min-width: 110px !important;
+}
+
+.timepicker {
+  width: 50% !important;
+  min-width: 110px !important;
+}
+
+
 </style>

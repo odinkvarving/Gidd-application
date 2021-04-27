@@ -19,6 +19,7 @@
         placeholder="E-post"
         v-model="emailValue"
         v-bind:disabled="sent"
+        v-on:keyup.enter="postAddress"
       />
     </div>
     <div v-if="sent" class="info">
@@ -55,6 +56,16 @@ export default {
         this.sent = true;
       }
     },
+    redirectPage() {
+      setTimeout(() => {
+        if (this.redirect > 0) {
+          this.redirect--;
+          this.redirectPage();
+        } else {
+          this.$router.push({ path: "/login" });
+        }
+      }, 1000);
+    },
     validateEmail() {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(String(this.emailValue).toLowerCase());
@@ -78,6 +89,10 @@ export default {
   text-align: center;
   padding-right: 15px;
   padding-left: 15px;
+}
+
+b {
+  opacity: 0.3;
 }
 
 p {

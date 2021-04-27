@@ -1,7 +1,7 @@
 <template>
     <div id="activity" v-if="activity != null">
         <div class="upper-row">
-            <Info class="comp" id="info" :activity="activity"/>
+            <Info class="comp" id="info" :activity="activity" :weather="weather"/>
             <div class="map-equipment-container">
                 <Map class="comp" id="map" :latitude="activity.latitude" :longitude="activity.longitude"/>
                 <Equipment class="comp" id="equipment" :activity="activity"/>
@@ -24,8 +24,6 @@
      * The component is found in router/Activity.
      * The component itself contains four other components: Info, Map, Equipment and Chat.
      * Each of these components represents their own part of an activity.
-     * 
-     * @author Scott Rydberg Sonen
      */
     export default {
         name: "ActivityCard",
@@ -45,14 +43,10 @@
                 type: Object,
                 required: true
             },
-/*             weather: {
+            weather: {
                 type: Object,
                 required: true
-            }, */
-            isDataReady: {
-                type: Boolean,
-                required: true
-            }
+            },
         },
 
         data() {

@@ -1,61 +1,70 @@
+/**
+ * WeatherService is a script which finds the weather in a given place at a given time.
+ * NB: the startTime of activity needs to be within the next 7 days of the current date.
+ * If not, the method will return null.
+ * 
+ * @author Scott Rydberg Sonen
+ */
+
+/**
+ * WeatherService is exporting getWeather-function
+ */
 export const weatherService = {
     getWeather,
-    hello
 }
 
+/**
+ * weather is variable which will contain return value of fetch
+ */
 let weather = null;
 
-function hello(text) {
-    console.log(text);
-}
-
-function getWeather(latitude, longitude, time) {
-    console.log("TIME: " + time);
-    const startTime = new Date(time);
-    console.log("Start time: " + startTime);
-    const startDate = new Date(startTime.getFullYear, startTime.getMonth, startTime.getDate);
-    console.log("Start date: " + startDate);
+/**
+ * getWeather is an asynchronous function which finds the weather in a given place,
+ * if startTime is within 7 days of current time.
+ * 
+ * @param latitude: latitude of activity place
+ * @param longitude: longitude of activity place
+ * @param time: startTime of activity
+ * @returns weather of activity place
+ */
+async function getWeather(latitude, longitude, time) {
+    const startTime = new Date(time).getTime();
+    const start = (startTime-(startTime%1000))/1000; //Start time
+    console.log("Start time: " + start);
     const currentTime = Date.now();
-    console.log("Current time: " + currentTime);
-    /*const current = new Date();
-    const currentDate = current.getFullYear() + "-" 
-        + (current.getMonth() + 1) + "-" 
-        + current.getDate + "T" 
-        + current.getHours + ":"
-        + current.getMinutes + ":"
-        + current.getSeconds + "."
-        + current.getMilliseconds;*/
-    const diff = startTime - currentTime; //Difference in milliseconds between current date and start date of activity
-    console.log(diff);
-    if (diff <= 1209600000) { //Checking if difference is bigger than 14 days
-        /*fetch("https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude
+    const current = (currentTime-(currentTime%1000))/1000; //Current time
+    console.log("Current time: " + current);
+    const diff = start - current; //Difference in milliseconds between current date and start date of activity
+    if ((diff >= 0) && (diff <= 604800000)) { //Checking if difference is bigger than 7 days
+        //Fetching weather from openweathermap API
+        await fetch("https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude
         + "&lon="+ longitude
-        + "&appid=3e2762909a752f554a04ad7972f1a13d") //&exclude=current,minutely*/
-        fetch("https://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude
-         + "&lon=" + longitude
-         + "&cnt=" + 14
-         + "&appid=3e2762909a752f554a04ad7972f1a13d")
+        + "&appid=3e2762909a752f554a04ad7972f1a13d"
+        + "&lang=no&units=metric")
         .then(response => response.json())
         .then(data => {
-            for (let i = 0; i < 14; i++) {
-                if ((data["list"][i]["dt"] <= startDate) && (data["list"][i+1]["dt"] >= startDate)) { //Checking to see if startdate is in interval
+            console.log(data);
+            let dailyDt = 0;
+            let nextDt = 0;
+            for (let i = 0; i < 7; i++) {
+                dailyDt = data["daily"][i]["dt"];
+                nextDt = data["daily"][i+1]["dt"];
+                //Checking if startTime of activity is in interval between two daily object
+                if ((dailyDt <= start) && (nextDt >= start)) {
+                    //Defining the weather with relevant variables
                     weather = {
-                        name: data["city"]["name"],
-                        temp: data["list"][i]["temp"]["day"],
-                        description: data["list"][i]["weather"]["description"],
-                        icon: "http://openweathermap.org/img/wn/" + data["list"][i]["weather"]["icon"]
+                        temp: Math.round(data["daily"][i]["temp"]["day"]),
+                        description: data["daily"][i]["weather"][0]["description"],
+                        icon: data["daily"][i]["weather"][0]["icon"]
                     }
+                    console.log("Daily dt: " + data["daily"][i]["dt"]);
+                    console.log("Found weather: " + data["daily"][i]);
                 }
             }
-            /*data["list"].array.forEach(day => {
-                if (day["dt"] == startDate) {
-                    //Eventuelt sjekke om startDate ligger mellom ulike dt i daily
-                }
-            });*/
         })
         .catch(error => console.log(error));
     } else {
-        console.log("Differanse mellom datoene er mere enn 7 dager, og værvarsel er ikke tilgjengelig");
+        console.log("Værvarsel er ikke tilgjengelig da differansen mellom nåværende tid og starttid er mer enn 7 dager");
         return null;
     }
     console.log(weather);

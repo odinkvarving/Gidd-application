@@ -1,6 +1,6 @@
 <template>
   <div id="search-container">
-      <GmapAutocomplete @place_changed="setLocation" style="width: 100%;" placeHolder="Legg til sted..."/>
+      <GmapAutocomplete @place_changed="setLocation" style="width: 100%; height: 30px;" placeHolder="Legg til sted..."/>
   </div>
 </template>
 
@@ -12,7 +12,8 @@ export default {
         return{
             currentLocation: null,
             center: {lat: 1, lng: 1},
-            geometryFound: false
+            geometryFound: false,
+            newLocation: true
         }
     },
     methods: {

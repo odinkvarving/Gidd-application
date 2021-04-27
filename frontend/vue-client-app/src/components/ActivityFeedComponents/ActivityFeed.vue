@@ -58,7 +58,6 @@
             getActivities() {
                 const requestOptions ={
                     method: 'GET',
-                    headers: userService.authorizationHeader()
                 }
 
                 // Get all registered activites from database
