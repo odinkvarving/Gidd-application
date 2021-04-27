@@ -10,7 +10,7 @@
                 <Equipment class="comp" id="equipment" :activity="activity" :isActivityHost="isActivityHost"/>
             </div>
         </div>
-        <button id="btnVisible" @click="changeChatVisibility">Åpne chat</button>
+        <button id="btnVisible" @click="changeChatVisibility">Skjul chat</button>
         <Chat class="chat" id="chat" :activity="activity" v-show="isChatVisible"/>
     </div>
 </template>
@@ -56,9 +56,9 @@
             return {
                 /**
                  * isChatVisible is a boolean which changes each time the button (btnVisible) is clicked.
-                 * When isChatVisible changes to true, the chat box will be displayed.
+                 * When isChatVisible changes to false, the chat box will be not be displayed.
                  */
-                isChatVisible: false,
+                isChatVisible: true,
                 /**
                  * isLoggedIn is a boolean to check if the client is logged in or not
                  */
