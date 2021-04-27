@@ -257,7 +257,7 @@ data() {
         latitude: undefined, 
         longitude: undefined, 
         maxParticipants: this.participants,
-        startTime: `${this.startDate} ${this.endTime}`,
+        startTime: `${this.startDate} ${this.startTime}`,
         activityType: {
           type: this.category
         },
