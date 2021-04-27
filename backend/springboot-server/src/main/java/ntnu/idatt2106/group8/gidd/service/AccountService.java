@@ -387,15 +387,18 @@ public class AccountService {
                     .collect(Collectors.toCollection(HashSet::new));
             aboveInQueue.forEach(accountActivity -> {
                 if(accountActivity.getQueuePosition() == 1){
-                    Optional<Account> account = accountRepository.findById(accountActivity.getAccountId());
-                    Activity activity = activityRepository.findById(activityId).orElse(null);
-                    Notification notification = new Notification();
-                    notification.setAccount(account.orElse(null));
-                    notification.setActivityId(activityId);
-                    notification.setMessage("Du har nå fått plass på: " + activity.getTitle() + "!");
-                    notification.setDate("01-01-2000 16:00");
-                    notification.setSeen(false);
-                    notificationService.sendNotification(notification);
+                    NotificationSettings notificationSettings = notificationService.getNotificationSettingsByAccountId(accountActivity.getAccountId());
+                    if(notificationSettings.isWantsOutOfQueueNotifications()){
+                        Optional<Account> account = accountRepository.findById(accountActivity.getAccountId());
+                        Activity activity = activityRepository.findById(activityId).orElse(null);
+                        Notification notification = new Notification();
+                        notification.setAccount(account.orElse(null));
+                        notification.setActivityId(activityId);
+                        notification.setMessage("Du har nå fått plass på: " + activity.getTitle() + "!");
+                        notification.setDate("01-01-2000 16:00");
+                        notification.setSeen(false);
+                        notificationService.sendNotification(notification);
+                    }
                 }
                 accountActivity.decrementQueuePosition();
             });
