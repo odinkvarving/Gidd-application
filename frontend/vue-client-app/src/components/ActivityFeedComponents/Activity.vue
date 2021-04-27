@@ -1,5 +1,5 @@
 <template>
-    <div id="card">
+    <div id="card" v-if="isDataReady">
         <h1 style="margin-top: 15px; opacity: 75%;">{{ activity.title }}</h1>
         <div id="ownerInfo">
             <img alt="Activity host profile picture" :src="require('@/assets/kari.jpg') ">
@@ -87,14 +87,19 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 showRemoveSpinner: false,
                 participantsInQueue: 0,
                 queuePosition: 0,
-                isInQueue: false
+                isInQueue: false,
+                isDataReady: false
             }
         },
-        mounted(){
-            this.getCurrentParticipantsNumber();
+        async mounted(){
+            await this.getCurrentParticipantsNumber();
             if(this.isLoggedIn){
-                this.isAlreadyParticipating();
+                await this.isAlreadyParticipating();
+                if (this.currentParticipants == this.activity.maxParticipants) {
+                    this.isInQueue = true;
+                }
             }
+            this.isDataReady = true;
         },
         
         methods: {
