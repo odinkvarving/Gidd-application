@@ -32,7 +32,7 @@
         <li class="txt">{{ activity.activityType.type }}</li>
         <li class="txt">{{ activity.location }}</li>
         <li class="txt">{{ activity.startTime }}</li>
-        <li class="txt">60 minutter</li> <!-- Implement duration -->
+        <li class="txt">{{ duration }}</li> <!-- Implement duration -->
         <li class="txt" v-if="weather">
           <img id="icon" alt="weather icon" :src="require('@/assets/weatherIcons/' + weather.icon + '.png')"/>
           {{ weather.temp }} C°
@@ -239,19 +239,24 @@ export default {
     },
 
     getDuration() {
-      //let rest = 0;
       const start = new Date(this.activity.endTime);
-      console.log(start);
       const end = new Date(this.activity.startTime);
-      console.log(end);
       let diff = Math.abs(end - start); //Difference between start and end
-      console.log("Diff: " + diff);
-      let days = Math.floor(diff / 86400000);
-      diff -= days * 86400000;
-      console.log(diff);
-      let hours = Math.floor((diff - days * 86400000) / 3600000);
-      let minutes = Math.round((diff - days * 86400000 - hours * 3600000) / 60000);
-      console.log("Time: " + days + " days, " + hours + " hours, " + minutes + " minutes");    
+
+      let days = Math.floor(diff / 86400000); //Calculate whole days
+      diff -= days * 86400000; //Subtract whole days from diff
+      if (days > 0) this.duration += days + "d, ";
+
+      let hours = Math.floor(diff / 3600000) % 24; //Calculate whole hours
+      diff -= hours * 3600000; //Subtract whole hours from diff
+      if (hours > 0) this.duration += hours + "t, ";
+
+      let minutes = Math.floor(diff / 60000) % 60; //Calculate whole minutes
+      diff -= minutes * 60000; //Subtract whole minutes from diff
+      if (minutes > 0) this.duration += minutes + "m, ";
+
+      let seconds = Math.floor(diff % 60); //Calculating whole seconds
+      if (seconds > 0) this.duration += seconds + "s, ";
     },
 
     toggleEditMode() {
