@@ -86,16 +86,8 @@
       </ul>
     </div>
     <!--<div>
-                  <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
-              </div>-->
-    <!--<button
-      id="btn"
-      :class="{ full: isFull }"
-      @click="handleButtonClick()"
-      v-if="!inEditMode"
-    >
-      <span>{{ checkIfFull() }}</span>
-    </button>-->
+      <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
+    </div>-->
     <button v-if="!isFull && !alreadyParticipating && !inEditMode" id="btn" class="join" @click.stop="joinButtonClicked()">
       <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
         <span class="sr-only">Loading...</span>
@@ -143,6 +135,7 @@ export default {
       participantsInQueue: 0,
       queuePosition: 0,
       isInQueue: false,
+      duration: "",
 
       title: this.activity.title,
       type: this.activity.activityType.type,
@@ -161,6 +154,7 @@ export default {
     if(this.isLoggedIn){
       this.isAlreadyParticipating();
     }
+    this.getDuration();
   },
 
   methods: {
@@ -243,6 +237,13 @@ export default {
         this.isInQueue = true;
       }
     },
+
+    /*getDuration() {
+      let days = 0;
+      let hours = 0;
+      let minutes = 0;
+      const diff = this.endDate
+    },*/
 
     toggleEditMode() {
       this.inEditMode = !this.inEditMode;
