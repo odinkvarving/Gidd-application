@@ -10,12 +10,12 @@
       </router-link>
       <ul class="navbar-nav ml-auto">
         <div class="search-field">
-          <input v-model="search" type="text" @input="onChange" @keydown.down="onArrowDown" @keydown.up="onArrowUp" placeholder="Søk"/>
+          <input v-model="search" type="text" @input="onChange" @keydown.down="onArrowDown" @keydown.up="onArrowUp" @keydown.enter="onEnter" placeholder="Søk"/>
           <div class="wrapper">
             <ul v-show="isOpen" class="autocomplete-results">
             <li v-if="isLoading" class="loading"> Loading results...</li>
             <li v-else v-for="(result, i) in results" :key="i" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }">
-              <p @click="resultClicked(result.id)" @keydown.enter="resultClicked(result.id)">
+              <p @click="resultClicked(result.id)">
                  <span class="title">{{result.title}}</span> 
                  <span class="email" >{{result.creator.email}}</span>
               </p>
@@ -130,9 +130,13 @@ export default {
   methods: {
     resultClicked(resultId){
       console.log(this.$route.path)
-      if(!(this.$route.path === `/dashboard/activity/${resultId}`)){
-        this.$router.push({ name: 'Activity', params: { id: resultId }});
-      }
+      //if((this.$router.currentRoute.path !== `/dashboard/activity/${resultId}`)){
+        this.$router.push({ name: 'Activity', params: { id: resultId }}).then((route) => {
+          if(route.path === this.$route.path) {
+            throw new Error('Navigation Duplicated')
+          }
+        }).catch((error) => { console.error(error)});
+      //}
       this.isOpen = false;
       this.search = '';
     },
