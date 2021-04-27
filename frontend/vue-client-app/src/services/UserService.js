@@ -121,17 +121,16 @@ function getAccountDetails() {
         return null;
     }
 }
-function setAccount(newAccount){
+function setAccount(newAccount,id){
     let user = JSON.parse(localStorage.getItem("user"));
     if(!user || !user.jwtToken){
         return false;
     }
-    return fetch("http://localhost:8080/accounts/accountInfo",{
-        method:'POST',
+    return fetch("http://localhost:8080/accounts/"+id+"/accountInfo",{
+        method:'PUT',
         headers:{
             'Content-Type':'application/json',
-            'Authorization': `Bearer ${user.jwtToken}`,
-            'Access-Control-Allow-Origin': 'http://localhost:8080/accounts/'
+            'Authorization': `Bearer ${user.jwtToken}`
         }
         ,
         body:JSON.stringify(newAccount)
