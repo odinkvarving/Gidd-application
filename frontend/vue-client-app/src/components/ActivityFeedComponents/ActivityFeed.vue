@@ -100,6 +100,7 @@
             },
 
             handleActivityClicked(activity) {
+                this.activity = 
                 this.selectedActivity = activity;
                 console.log(this.selectedActivity.name);
                 this.$emit('activityClicked', this.selectedActivity);

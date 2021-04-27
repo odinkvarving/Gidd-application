@@ -10,7 +10,18 @@
       </router-link>
       <ul class="navbar-nav ml-auto">
         <div class="search-field">
-          <input class="search-box" placeholder="Søk" />
+          <input v-model="search" type="text" @input="onChange" @keydown.down="onArrowDown" @keydown.up="onArrowUp" @keydown.enter="onEnter" placeholder="Søk"/>
+          <div class="wrapper">
+            <ul v-show="isOpen" class="autocomplete-results">
+            <li v-if="isLoading" class="loading"> Loading results...</li>
+            <li v-else v-for="(result, i) in results" :key="i" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }">
+              <p @click="resultClicked(result.id)">
+                 <span class="title">{{result.title}}</span> 
+                 <span class="email" >{{result.creator.email}}</span>
+              </p>
+            </li>
+        </ul>
+          </div>
         </div>
 
         <router-link v-if="isLoggedIn" to="/dashboard/createActivity">
@@ -40,10 +51,44 @@ import { userService } from "../../services/UserService.js"
 
 export default {
   name: "navbar",
+  props: {
+    items: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    isAsync: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  watch: {
+    
+    items: function (value, oldValue) {
+      console.log(oldValue);
+      if(this.isAsync) {
+        this.results = value;
+        this.isOpen = true;
+        this.isLoading = false;
+      }
+    }
+  },
+
   components: {
     Dropdown,
     NotificationsDropdown
-},
+  },
+
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+    this.getActivities();
+  },
+  destroyed() {
+    document.removeEventListener('click', this.handleClickOutside);
+  },
+  
   data() {
     return {
       isCreateActivityVisible: false,
@@ -67,8 +112,15 @@ export default {
           }
         },
       ],
-      notifications: [{message: "Aktiviteten Klatre på Sluppen har blitt avlyst", date: "2021-01-01 16:00", activityId: 117}, {message: "Aktiviteten Snøballkrig har blitt endret", date: "2021-01-01 16:00",activityId: 117}, {message: "Du har fått plass på aktiviteten Snøballkrig på Nordpolen!", date: "2021-01-01 16:00", activityId: 117}],
       isLoggedIn: userService.isLoggedIn(),
+      notifications: [{}],
+      isLoggedIn: true,
+      activities: {},
+      search: '',
+      isLoading: false,
+      results: [],
+      isOpen: false,
+      arrowCounter: -1,
     };
   },
   computed: {
@@ -87,6 +139,18 @@ export default {
     },
   },
   methods: {
+    resultClicked(resultId){
+      console.log(this.$route.path)
+      //if((this.$router.currentRoute.path !== `/dashboard/activity/${resultId}`)){
+        this.$router.push({ name: 'Activity', params: { id: resultId }}).then((route) => {
+          if(route.path === this.$route.path) {
+            throw new Error('Navigation Duplicated')
+          }
+        }).catch((error) => { console.error(error)});
+      //}
+      this.isOpen = false;
+      this.search = '';
+    },
     toggleCreateActivity() {
       if (this.isCreateActivityVisible === false) {
         this.isCreateActivityVisible = true;
@@ -94,7 +158,66 @@ export default {
         this.isCreateActivityVisible = false;
       }
     },
+    getActivities() {
+        const requestOptions ={
+            method: 'GET',
+        }
+
+        // Get all registered activites from database
+        fetch("http://localhost:8080/activities/", requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                this.activities = data;
+                console.log(data[0]);
+            })
+            .catch(error => console.log(error))
+    },
+    filterResults() {
+      console.log(this.search);
+      this.results = [];
+      for(let i = 0; i < this.activities.length; i ++){
+        if(this.activities[i].title.toLowerCase().includes(this.search.toLowerCase())){
+          this.results.push(this.activities[i]);
+        }else if(this.activities[i].creator.email.toLowerCase().includes(this.search.toLowerCase())){
+          this.results.push(this.activities[i])
+        }
+      }
+    },
+    onChange() {
+      this.$emit('input', this.search);
+      if(this.isAsync) {
+        this.isLoading = true;
+      }else {
+        this.filterResults();
+        this.isOpen = true;
+      }
+    },
+    setResult(result) {
+      this.search = result;
+      this.isOpen = false;
+    },
+    handleClickOutside(event) {
+      if(!this.$el.contains(event.target)) {
+        this.arrowCounter = -1;
+        this.isOpen = false;
+      }
+    },
+    onArrowDown() {
+      if (this.arrowCounter < this.results.length) {
+        this.arrowCounter = this.arrowCounter + 1;
+      }
+    },
+    onArrowUp() {
+      if (this.arrowCounter > 0) {
+        this.arrowCounter = this.arrowCounter - 1;
+      }
+    },
+    onEnter() { //fiks onEnter gjør samme som click
+      this.search = this.results[this.arrowCounter];
+      this.arrowCounter = -1;
+    },
   },
+
 };
 </script>
 
@@ -146,25 +269,71 @@ export default {
 
 .search-field {
   padding: 0px 20px;
-  display: flex;
+  margin: 0px 10px;
+  width: 300px;
   align-content: center;
   align-self: center;
-}
-
-.search-box {
-  background-color: #d1d1d1;
-  opacity: 0.5;
-  border: none;
-  border-radius: 6px;
-  height: 30px;
-  width: 180px;
-  outline: none;
-  padding-left: 10px;
+  position: relative;
 }
 
 .search-box::placeholder {
   color: rgb(50, 50, 50);
 }
+
+input {
+  padding: 0 20px;
+  height: 30px;
+  min-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  align-self: center;
+}
+
+.wrapper {
+  float: left;
+  position: absolute;
+  z-index: 100;
+  background: white;
+
+}
+
+.autocomplete-results {
+    padding: 0;
+    margin: 0;
+    border: 1px solid black;
+    height: 120px;
+    width: 260px;
+    min-height: 1em;
+    max-height: 6em;
+    overflow: auto;
+    z-index: 1;
+    position:sticky;
+  }
+
+  .autocomplete-result {
+    list-style: none;
+    text-align: left;
+    padding: 4px 2px;
+    cursor: pointer;
+    padding-bottom: 0px;
+  }
+
+  .email {
+    font-size: small;
+    display: block;
+  }
+
+  .title {
+    font-weight: bold;
+  }
+
+  .autocomplete-result.is-active,
+  .autocomplete-result:hover {
+    background-color: #FFBD3E;
+    color: white;
+  }
 
 .create-activity {
   background-color: #ffbd3e;
