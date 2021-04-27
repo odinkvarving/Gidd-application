@@ -4,10 +4,7 @@ import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
-import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.PasswordReset;
+import ntnu.idatt2106.group8.gidd.model.entities.*;
 import ntnu.idatt2106.group8.gidd.repository.*;
 import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
@@ -77,6 +74,7 @@ public class AccountService {
 
     public boolean save(Account account) {
         //Check if email already exists
+        account.getAccountInfo().setNotificationSettings(new NotificationSettings(true, true, true, true, true, true));
         Optional<Account> acc = accountRepository.findByEmail(account.getEmail());
         if (acc.isPresent()) {
             logger.info("Error! Could not create user, email already exists");
