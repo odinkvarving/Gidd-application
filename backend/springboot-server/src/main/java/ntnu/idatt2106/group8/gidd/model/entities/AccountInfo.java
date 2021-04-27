@@ -1,5 +1,6 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -31,6 +32,11 @@ public class AccountInfo {
     @ManyToOne
     @JoinColumn(name = "level_id")
     private Level level;
+
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="notificationSettings", referencedColumnName = "id")
+    private NotificationSettings notificationSettings;
 
     private String imageURL;
     private String firstname;
@@ -64,8 +70,12 @@ public class AccountInfo {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public NotificationSettings getNotificationSettings() {
+        return notificationSettings;
+    }
+
+    public void setNotificationSettings(NotificationSettings notificationSettings) {
+        this.notificationSettings = notificationSettings;
     }
 
     public Level getUserLevel() {
