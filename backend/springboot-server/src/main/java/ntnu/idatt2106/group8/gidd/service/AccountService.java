@@ -491,28 +491,13 @@ public class AccountService {
      * @return true or false
      */
     public boolean saveAccountInfoToAccount(AccountInfo accountInfo, int id) {
-        Optional<AccountInfo> accountInfo1;
-        Optional<Account> account;
-        account = accountRepository.findById(id);
+        Optional<Account> account = accountRepository.findById(id);
         if(account.isPresent()) {
-            accountInfo.setAccount(account.get());
+            AccountInfo info = account.get().getAccountInfo();
+            accountInfo.setId(info.getId());
             accountInfoRepository.save(accountInfo);
             return true;
         }
-        /*
-        accountInfo1 = accountInfoRepository.findAccountInfoByAccount_Id(id);
-        if(accountInfo1.isPresent()) {
-            accountInfo1.get().setFirstname(accountInfo.getFirstname());
-            accountInfo1.get().setImageURL(accountInfo.getImageURL());
-            accountInfo1.get().setPoints(accountInfo.getPoints());
-            accountInfo1.get().setProfileDescription(accountInfo.getProfileDescription());
-            accountInfo1.get().setSurname(accountInfo.getSurname());
-            accountInfo1.get().setUserLevel(accountInfo.getUserLevel());
-            accountInfoRepository.save(accountInfo1.get());
-            return true;
-        }
-
-         */
         return false;
     }
 }
