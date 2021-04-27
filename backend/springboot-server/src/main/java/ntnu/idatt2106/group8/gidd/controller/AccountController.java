@@ -30,7 +30,6 @@ import java.util.Set;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class AccountController {
-
     @Autowired
     private AccountService accountService;
 
@@ -39,6 +38,7 @@ public class AccountController {
 
     Logger logger = LoggerFactory.getLogger(AccountController.class);
 
+    private final String frontend="http://localhost:8081/";
 
     /**
      * GetMapping for finding an Account with a specific email
@@ -131,6 +131,7 @@ public class AccountController {
         accountService.saveAccountWithInfo(account, account.getAccountInfo());
     }
 
+    @CrossOrigin(origins=frontend)
     @PutMapping("accounts/{id}/accountInfo")
     public boolean saveAccountInfoToAccount(@RequestBody AccountInfo accountInfo, @PathVariable("id")int id) {
         return accountService.saveAccountInfoToAccount(accountInfo, id);

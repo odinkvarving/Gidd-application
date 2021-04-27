@@ -3,6 +3,7 @@ import VueJwtDecode from "vue-jwt-decode"
 export const userService = {
     login,
     getAccountByEmail,
+    setAccount,
     logout,
     getAll,
     getAccountDetails,
@@ -33,6 +34,8 @@ function login(email, password) {
             return jwtResponse;
         });
 }
+
+
 
 function getAccountByEmail(){
     try{
@@ -65,6 +68,7 @@ function getAll() {
 
 function handleResponse(response) {
     return response.text().then(text => {
+        console.log(text)
         const data = text && JSON.parse(text);
         if (!response.ok) {
             if (response.status === 403) {
@@ -117,9 +121,23 @@ function getAccountDetails() {
         return null;
     }
 }
-
-function isLoggedIn() {
-
+function setAccount(newAccount){
+    let user = JSON.parse(localStorage.getItem("user"));
+    if(!user || !user.jwtToken){
+        return false;
+    }
+    return fetch("http://localhost:8080/accounts/accountInfo",{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization': `Bearer ${user.jwtToken}`,
+            'Access-Control-Allow-Origin': 'http://localhost:8080/accounts/'
+        }
+        ,
+        body:JSON.stringify(newAccount)
+    }).then(handleResponse)
+}
+function isLoggedIn(){
     // get token from localstorage
     let user = JSON.parse(localStorage.getItem("user"));
     if (!user || !user.jwtToken) {
