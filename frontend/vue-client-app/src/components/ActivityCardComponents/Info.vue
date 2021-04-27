@@ -37,7 +37,7 @@
         <li class="txt">{{ activity.activityType.type }}</li>
         <li class="txt">{{ activity.location }}</li>
         <li class="txt">{{ activity.startTime }}</li>
-        <li class="txt">60 minutter</li> <!-- Implement duration -->
+        <li class="txt">{{ duration }}</li> <!-- Implement duration -->
         <li class="txt" v-if="weather">
           <img id="icon" alt="weather icon" :src="require('@/assets/weatherIcons/' + weather.icon + '.png')"/>
           {{ weather.temp }} C°
@@ -97,16 +97,8 @@
       </ul>
     </div>
     <!--<div>
-                  <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
-              </div>-->
-    <!--<button
-      id="btn"
-      :class="{ full: isFull }"
-      @click="handleButtonClick()"
-      v-show="!inEditMode"
-    >
-      <span>{{ checkIfFull() }}</span>
-    </button>-->
+      <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
+    </div>-->
     <button v-if="!isFull && !alreadyParticipating && !inEditMode" id="btn" class="join" @click.stop="joinButtonClicked()">
       <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
         <span class="sr-only">Loading...</span>
@@ -165,6 +157,7 @@ export default {
       participantsInQueue: 0,
       queuePosition: 0,
       isInQueue: false,
+      duration: "",
 
       title: this.activity.title,
       category: this.activity.activityType.type,
@@ -199,6 +192,7 @@ export default {
     if(this.isLoggedIn){
       this.isAlreadyParticipating();
     }
+    this.getDuration();
   },
 
   methods: {
@@ -281,6 +275,28 @@ export default {
         this.isInQueue = true;
       }
     },
+
+    getDuration() {
+      const start = new Date(this.activity.endTime);
+      const end = new Date(this.activity.startTime);
+      let diff = Math.abs(end - start); //Difference between start and end
+
+      let days = Math.floor(diff / 86400000); //Calculate whole days
+      diff -= days * 86400000; //Subtract whole days from diff
+      if (days > 0) this.duration += days + "d, ";
+
+      let hours = Math.floor(diff / 3600000) % 24; //Calculate whole hours
+      diff -= hours * 3600000; //Subtract whole hours from diff
+      if (hours > 0) this.duration += hours + "t, ";
+
+      let minutes = Math.floor(diff / 60000) % 60; //Calculate whole minutes
+      diff -= minutes * 60000; //Subtract whole minutes from diff
+      if (minutes > 0) this.duration += minutes + "m, ";
+
+      let seconds = Math.floor(diff % 60); //Calculating whole seconds
+      if (seconds > 0) this.duration += seconds + "s, ";
+    },
+
     toggleEditMode() {
       this.inEditMode = !this.inEditMode;
       console.log("Edit Mode: " + this.inEditMode);
