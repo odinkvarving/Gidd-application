@@ -22,7 +22,6 @@ import javax.persistence.*;
 public class AccountInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @JsonManagedReference
