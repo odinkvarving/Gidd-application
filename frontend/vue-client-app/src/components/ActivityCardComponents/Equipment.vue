@@ -32,6 +32,7 @@
   </div>
 </template>
 <script>
+import { notificationService } from '../../services/NotificationService';
 export default {
   name: "Equipments",
 
@@ -60,6 +61,12 @@ export default {
       if (this.newEquipment != "") {
         this.equipment.push({ description: this.newEquipment });
         this.newEquipment = "";
+        let result = notificationService.sendNotificationToAllParticipants(this.activity.id);
+        if(result){
+              console.log("Sucessfully notified all participants about the edit!");
+        }else{
+          console.log("Error! Something went wrong when notifying participants!");
+        }
       }
     },
   },

@@ -130,6 +130,7 @@ import { userService } from "../../services/UserService";
 import { activityButtonService } from "../../services/ActivityButtonService"
 import moment from "moment";
 import LocationSearchBar from "../createActivityComponents/LocationSearchBar.vue";
+import { notificationService } from '../../services/NotificationService';
 
 export default {
   name: "Info",
@@ -380,7 +381,17 @@ export default {
         requestOptions
       )
         .then((response) => response.json())
-        .then((data) => console.log(data))
+        .then((data) => {
+          // If update activity was successfull
+          if(data !== null){
+            let result = notificationService.sendNotificationToAllParticipants(this.activity.id);
+            if(result){
+              console.log("Sucessfully notified all participants about the edit!");
+            }else{
+              console.log("Error! Something went wrong when notifying participants!");
+            }
+          }
+        })
         .catch((error) => console.log(error));
     },
 

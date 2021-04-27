@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
@@ -389,13 +390,16 @@ public class AccountService {
                 if(accountActivity.getQueuePosition() == 1){
                     NotificationSettings notificationSettings = notificationService.getNotificationSettingsByAccountId(accountActivity.getAccountId());
                     if(notificationSettings.isWantsOutOfQueueNotifications()){
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                        LocalDateTime now = LocalDateTime.now();
+
                         Optional<Account> account = accountRepository.findById(accountActivity.getAccountId());
                         Activity activity = activityRepository.findById(activityId).orElse(null);
                         Notification notification = new Notification();
                         notification.setAccount(account.orElse(null));
                         notification.setActivityId(activityId);
                         notification.setMessage("Du har nå fått plass på: " + activity.getTitle() + "!");
-                        notification.setDate("01-01-2000 16:00");
+                        notification.setDate(dtf.format(now));
                         notification.setSeen(false);
                         notificationService.sendNotification(notification);
                     }

@@ -5,7 +5,8 @@ export const notificationService = {
     getAccountsNotificationSettings,
     updateAccountsNotificationSettings,
     sendNotification,
-    updateNotification
+    updateNotification,
+    sendNotificationToAllParticipants
 }
 
 
@@ -105,7 +106,7 @@ function sendNotification(notification){
 }
     
 
-function updateNotification(data){
+function updateNotification(notification){
     let url = `http://localhost:8080/accounts/notifications`;
 
     const requestOptions = {
@@ -114,7 +115,7 @@ function updateNotification(data){
             'Content-Type': 'application/json',
             'Authorization': userService.getTokenString()
         },
-        body: JSON.stringify({id: data.id, isSeen: true})
+        body: JSON.stringify({id: notification.id, isSeen: true})
     }
 
     return fetch(url, requestOptions)
@@ -123,4 +124,20 @@ function updateNotification(data){
             return data;
         })
         .catch(error => console.log(error))
+}
+
+
+async function sendNotificationToAllParticipants(activityId){
+    let url = `http://localhost:8080/activities/${activityId}/notify-edit`;
+
+    const requestOptions = {
+        method: 'POST'
+    }
+
+    return await fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => console.log(error));
 }

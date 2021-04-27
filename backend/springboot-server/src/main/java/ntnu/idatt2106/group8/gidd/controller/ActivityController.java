@@ -7,6 +7,7 @@ import ntnu.idatt2106.group8.gidd.model.entities.ChatMessage;
 import ntnu.idatt2106.group8.gidd.model.entities.Equipment;
 import ntnu.idatt2106.group8.gidd.service.ActivityService;
 import ntnu.idatt2106.group8.gidd.service.ChatService;
+import ntnu.idatt2106.group8.gidd.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,9 @@ public class ActivityController {
 
     @Autowired
     private ChatService chatService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     /**
      * GetMapping for fetching all registered Activities
@@ -221,6 +225,11 @@ public class ActivityController {
                 message.getAccountId(),
                 activityId,
                 message.getMessage());
+    }
+
+    @PostMapping("activities/{id}/notify-edit")
+    public boolean sendNotificationToAllParticipants(@PathVariable int id){
+        return notificationService.sendNotificationToAllParticipants(id);
     }
 
 

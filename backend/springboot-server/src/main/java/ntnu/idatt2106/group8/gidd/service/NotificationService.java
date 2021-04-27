@@ -1,10 +1,7 @@
 package ntnu.idatt2106.group8.gidd.service;
 
 
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
-import ntnu.idatt2106.group8.gidd.model.entities.Notification;
-import ntnu.idatt2106.group8.gidd.model.entities.NotificationSettings;
+import ntnu.idatt2106.group8.gidd.model.entities.*;
 import ntnu.idatt2106.group8.gidd.repository.AccountInfoRepository;
 import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
 import ntnu.idatt2106.group8.gidd.repository.NotificationRepository;
@@ -14,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +31,9 @@ public class NotificationService {
 
     @Autowired
     private AccountInfoRepository accountInfoRepository;
+
+    @Autowired
+    private ActivityService activityService;
 
     Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
@@ -85,6 +87,25 @@ public class NotificationService {
             notificationSettings.setId(accountInfo.getNotificationSettings().getId());
             accountInfo.setNotificationSettings(notificationSettings);
             accountInfoRepository.save(accountInfo);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean sendNotificationToAllParticipants(int activityId){
+        List<Account> accounts = activityService.getAllAccountsInActivity(activityId);
+        Activity activity = activityService.getActivity(activityId).orElse(null);
+        if(accounts.size() != 0 && activity != null){
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime now = LocalDateTime.now();
+
+            accounts.stream().forEach(account -> {
+                String message = "Activity: " + activity.getTitle() + " was edited!";
+                String date = dtf.format(now);
+                Notification notification = new Notification(account, activityId, message, date, false);
+                sendNotification(notification);
+            });
             return true;
         }else{
             return false;
