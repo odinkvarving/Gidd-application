@@ -1,16 +1,28 @@
 <template>
-  <vue-cal
-      :time-from="6*60"
-      :time-to="23*60"
-      :time-step="60"
-      :events="activities"
-      :disable-views="['years','year','month']"
-      cell-contextmenu/>
+  <div>
+    <vue-cal
+        :time-from="6*60"
+        :time-to="23*60"
+        :time-step="60"
+        :events="getEvents"
+        :disable-views="['years','year','month']"
+        :on-event-click="onEventClick"
+        cell-contextmenu/>
+    <b-modal id="activity_modal" title="Activity pop-up">
+      <Activity
+          :activity="selectedEvent"
+          :isLoggedIn="loggedIn"
+          v-model="showEvent"/>
+    </b-modal>
+
+  </div>
 </template>
 
 <script>
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
+import Activity from "../ActivityFeedComponents/Activity";
+import {userService} from "../../services/UserService";
 
 /**
  * @author Kevin Andre Helgeland
@@ -27,10 +39,68 @@ import 'vue-cal/dist/vuecal.css'
  */
 export default {
   name: "ProfileCalendar",
-  components:{'vue-cal':VueCal},
+  components:{Activity, 'vue-cal':VueCal},
   props:{
-    activities: Array
+    activities:{
+      type:Array,
+      required:true
+    }
+  },
+  data(){
+    return{
+      selectedEvent:{},
+      showEvent:false,
+      loggedIn:false
+    }},
+  methods:{
+    onEventClick(event,e){
+      this.selectedEvent=this.activities.find(element=> event.id===element.id)
+      this.showEvent=true
+      this.$bvModal.show('activity_modal')
+      console.log('event has been clicked')
+      e.stopPropagation()
+    },
+    async isLoggedIn(){
+      let res=await userService.isLoggedIn();
+      console.log('isLoggedIn response:'+res)
+      this.loggedIn= !!res;
+
+    }
+
+  },
+  computed:{
+    getEvents() {
+      console.log('getEvents()')
+      console.log(this.activities)
+      let events = []
+      if (this.activities) {
+        this.activities.forEach(item => {
+          let isAllDay = false;
+          if (item.endTime === null || typeof item.endTime === 'undefined') {
+            isAllDay = true
+            item.endTime = 'undefined'
+          }
+          if (item.title === null || typeof item.title === 'undefined') {
+            item.title = 'Unnamed activity'
+          }
+          events.push({
+            id:item.id,
+            start: new Date(item.startTime),
+            end: new Date(item.endTime),
+            title: item.title,
+            allDay: isAllDay,
+            class: "normal-event"
+          })
+        })
+        console.log('To Calendar:')
+        console.log(events)
+        return events
+      }
+      console.log('No events')
+      return []
+    }
   }
+
 }
 </script>
 

@@ -147,26 +147,7 @@ export default {
       //Calendar component
       if(this.currentComp==='profileCalendar'){
         console.log(this.activities)
-        let events=[]
-        this.activities.forEach(item => {
-          let isAllDay = false;
-          if (item.endTime === null || typeof item.endTime === 'undefined') {
-            isAllDay = true
-            item.endTime = 'undefined'
-          }
-          if (item.title === null || typeof item.title === 'undefined') {
-            item.title = 'Unnamed activity'
-          }
-          events.push({
-            start: new Date(item.startTime),
-            end: new Date(item.endTime),
-            title: item.title,
-            allDay: isAllDay,
-            class:"normal-event"
-          })
-        })
-        console.log('To Calendar:')
-        return {activities:events}
+        return {activities:this.activities}
       }else//profileActivity component
         if(this.currentComp==='profileActivity'){
         let events=[]
