@@ -5,6 +5,7 @@
         class="toggle-edit-button"
         icon="pencil"
         @click="toggleEditMode"
+        v-show="isActivityHost"
       ></b-icon>
 
       <h1 v-show="!inEditMode">{{ activity.title }}</h1>
@@ -147,6 +148,10 @@ export default {
       type: Object,
       required: true,
     },
+    isActivityHost: {
+      type: Boolean,
+      required: true,
+    }
   },
 
   data() {

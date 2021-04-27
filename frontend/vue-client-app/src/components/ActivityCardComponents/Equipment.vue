@@ -2,7 +2,7 @@
   <div id="container">
     <h3>Utstyr:</h3>
     <div class="edit">
-      <b-icon class="pencil" icon="pencil" @click="edit"></b-icon>
+      <b-icon  v-show="isActivityHost" class="pencil" icon="pencil" @click="edit"></b-icon>
     </div>
     <div class="equipment-list">
       <ul v-for="(e, index) in equipment" :key="e.description">
@@ -49,6 +49,10 @@ export default {
       type: Object,
       required: true,
     },
+    isActivityHost: {
+    type: Boolean,
+    required: true,
+    }
   },
   methods: {
     edit() {
