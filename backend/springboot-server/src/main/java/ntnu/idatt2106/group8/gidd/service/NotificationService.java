@@ -55,7 +55,7 @@ public class NotificationService {
     }
 
 
-    public boolean updateNotification(Notification notification){
+     public boolean updateNotification(Notification notification){
         Optional<Notification> notificationToUpdate = notificationRepository.findById(notification.getId());
         Notification result;
 

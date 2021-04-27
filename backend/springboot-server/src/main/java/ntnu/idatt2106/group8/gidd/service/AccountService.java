@@ -4,10 +4,7 @@ import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
-import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.PasswordReset;
+import ntnu.idatt2106.group8.gidd.model.entities.*;
 import ntnu.idatt2106.group8.gidd.repository.*;
 import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
@@ -64,6 +61,9 @@ public class AccountService {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private NotificationService notificationService;
 
 
     public List<Account> findAll() {
@@ -385,7 +385,20 @@ public class AccountService {
             Set<AccountActivity> aboveInQueue = this.accountActivityRepository.findByActivityId(activityId).stream()
                     .filter(accountActivity -> accountActivity.getQueuePosition() > queuePosition)
                     .collect(Collectors.toCollection(HashSet::new));
-            aboveInQueue.forEach(AccountActivity::decrementQueuePosition);
+            aboveInQueue.forEach(accountActivity -> {
+                if(accountActivity.getQueuePosition() == 1){
+                    Optional<Account> account = accountRepository.findById(accountActivity.getAccountId());
+                    Activity activity = activityRepository.findById(activityId).orElse(null);
+                    Notification notification = new Notification();
+                    notification.setAccount(account.orElse(null));
+                    notification.setActivityId(activityId);
+                    notification.setMessage("Du har nå fått plass på: " + activity.getTitle() + "!");
+                    notification.setDate("01-01-2000 16:00");
+                    notification.setSeen(false);
+                    notificationService.sendNotification(notification);
+                }
+                accountActivity.decrementQueuePosition();
+            });
             this.accountActivityRepository.saveAll(aboveInQueue);
             return true;
         }else{

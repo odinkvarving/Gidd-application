@@ -254,8 +254,8 @@ data() {
 
         location: this.currentLocation.name,
         endTime: `${this.endDate} ${this.endTime}`,
-        latitude: null, 
-        longitude: null, 
+        latitude: undefined, 
+        longitude: undefined, 
         maxParticipants: this.participants,
         startTime: `${this.startDate} ${this.endTime}`,
         activityType: {

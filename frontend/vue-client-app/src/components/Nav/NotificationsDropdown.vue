@@ -21,6 +21,7 @@
 <script>
 import { mixin as clickaway } from "vue-clickaway";
 import { notificationService } from "../../services/NotificationService.js"
+import { userService } from '../../services/UserService.js';
 
 export default {
   name: "NotificationsDropdown",
@@ -47,7 +48,10 @@ export default {
     },
     async showNotifications(){
         this.isVisible = !this.isVisible;
-        this.items = await notificationService.getAccountsNotifications(1);
+        let accountId = await userService.getAccountByEmail().then(data => {
+          return data.id
+        });
+        this.items = await notificationService.getAccountsNotifications(accountId);
         console.log(this.items);
     }
   },

@@ -27,6 +27,14 @@ public class Notification  {
     public Notification() {
     }
 
+    public Notification(Account account, int activityId, String message, String date, boolean isSeen) {
+        this.account = account;
+        this.activityId = activityId;
+        this.message = message;
+        this.date = date;
+        this.isSeen = isSeen;
+    }
+
     public Account getAccount() {
         return account;
     }

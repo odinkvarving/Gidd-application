@@ -26,7 +26,7 @@
             </div>
         </div>
         <div id="map-preview">
-            <div v-if="activity.latitude == 0 && activity.longitude == 0" style="width: 245px; height: 161px; background-color: #f6f6f6">
+            <div v-if="activity.latitude == undefined && activity.longitude == undefined" style="width: 245px; height: 161px; background-color: #f6f6f6">
                 <p>Location not found!</p>
             </div>
             <GmapMap 
@@ -35,6 +35,7 @@
                 :options='{fullscreenControl: false, gestureHandling: "none"}'
                 map-type-id="roadmap"
                 style="width: 245px; height: 161px"
+                v-else
                 >
 
                 <GmapMarker 
