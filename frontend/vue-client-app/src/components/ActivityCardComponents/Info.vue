@@ -103,7 +103,7 @@
       <span v-else >{{ getButtonStatus() }}</span>
     </button>
     <button v-else-if="isFull && !alreadyParticipating && !inEditMode" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
-    <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
+    <button v-else-if="!inEditMode" id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
       <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
         <span class="sr-only">Loading...</span>
       </div>
