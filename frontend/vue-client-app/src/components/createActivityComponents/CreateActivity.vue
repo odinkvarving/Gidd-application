@@ -216,7 +216,7 @@ export default {
         latitude: "63.41893", //temporary until map is implemented
         longitude: "10.40658", //temporary until map is implemented
         maxParticipants: this.participants,
-        startTime: `${this.startDate} ${this.endTime}`,
+        startTime: `${this.startDate} ${this.startTime}`,
         activityType: {
           type: this.category
         },

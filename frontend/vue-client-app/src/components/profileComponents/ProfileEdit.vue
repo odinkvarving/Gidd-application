@@ -117,7 +117,7 @@ export default {
         console.log(newAccount)
         if(this.exists(this.firstName)||this.exists(this.lastName)||
             this.exists(this.description)||this.exists(this.imageURL)){
-          let res=userService.setAccount(newAccount);
+          let res=userService.setAccount(newAccount,this.$route.params.userId);
           console.log(res)
         }
       }

@@ -70,6 +70,10 @@ public class AccountInfo {
         return id;
     }
 
+    public void setId(int id){
+        this.id = id;
+    }
+
     public NotificationSettings getNotificationSettings() {
         return notificationSettings;
     }

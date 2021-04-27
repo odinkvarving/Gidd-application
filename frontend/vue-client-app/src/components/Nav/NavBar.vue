@@ -95,13 +95,17 @@ export default {
       user: [
         {
           title: "Min Profil",
-          link: "#",
-          method: () => {}
-        },
-        {
-          title: "Innstillinger",
-          link: "#",
-          method: () => {}
+          link: String,
+          method: () => {
+            console.log(this.user[0].link)
+            if(this.user[0].link){
+              console.log('Logged in; going to '+this.user[0].link)
+              this.$router.push(this.user[0].link)
+            }else{
+              console.log('Not logged in, redirecting to login')
+              this.$router.push('/login')
+            }
+          }
         },
         {
           title: "Logg Ut",
@@ -136,8 +140,18 @@ export default {
         return true;
       }
     },
+  },created() {
+    if(userService.getTokenString()){
+      this.getUserId()
+    }
   },
   methods: {
+
+    async getUserId(){
+    let res = await userService.getAccountByEmail(userService.getAccountDetails().sub)
+    this.user[0].link = '/accounts/' + res.id;
+    },
+
     resultClicked(resultId){
       console.log(this.$route.path)
       //if((this.$router.currentRoute.path !== `/dashboard/activity/${resultId}`)){
