@@ -114,7 +114,6 @@ export default {
       ],
       isLoggedIn: userService.isLoggedIn(),
       notifications: [{}],
-      isLoggedIn: true,
       activities: {},
       search: '',
       isLoading: false,
