@@ -152,15 +152,12 @@ export default {
     this.user[0].link = '/accounts/' + res.id;
     },
 
-    resultClicked(resultId){
-      console.log(this.$route.path)
-      //if((this.$router.currentRoute.path !== `/dashboard/activity/${resultId}`)){
-        this.$router.push({ name: 'Activity', params: { id: resultId }}).then((route) => {
-          if(route.path === this.$route.path) {
-            throw new Error('Navigation Duplicated')
-          }
-        }).catch((error) => { console.error(error)});
-      //}
+    async resultClicked(resultId){
+      console.log(resultId)
+      if((this.$router.path !== `/dashboard/activity/${resultId}`)){
+        console.log("test");
+        await this.$router.push(`/dashboard/activity/${resultId}`);
+      }
       this.isOpen = false;
       this.search = '';
     },
