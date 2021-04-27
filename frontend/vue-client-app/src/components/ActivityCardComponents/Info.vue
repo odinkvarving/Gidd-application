@@ -38,7 +38,8 @@
           {{ weather.temp }} C°
         </li>
         <li class="txt" v-else>Ingen værmelding</li>
-        <li class="txt">{{ 0 }} / {{ activity.maxParticipants }}</li>
+        <li class="txt">{{ currentParticipants }} / {{ activity.maxParticipants }}</li>
+        <li style="font-size: 13px; opacity: 70%" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</li>
       </ul>
 
       <ul class="list" id="list2" v-show="inEditMode">
@@ -87,13 +88,26 @@
     <!--<div>
                   <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
               </div>-->
-    <button
+    <!--<button
       id="btn"
       :class="{ full: isFull }"
       @click="handleButtonClick()"
       v-if="!inEditMode"
     >
       <span>{{ checkIfFull() }}</span>
+    </button>-->
+    <button v-if="!isFull && !alreadyParticipating && !inEditMode" id="btn" class="join" @click.stop="joinButtonClicked()">
+      <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <span v-else >{{ getButtonStatus() }}</span>
+    </button>
+    <button v-else-if="isFull && !alreadyParticipating && !inEditMode" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
+    <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
+      <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
     </button>
     <button v-if="inEditMode" @click="editActivity">
       <span>Fullfør</span>
@@ -103,6 +117,7 @@
 
 <script>
 import { userService } from "../../services/UserService";
+import { activityButtonService } from "../../services/ActivityButtonService"
 export default {
   name: "Info",
 
@@ -121,6 +136,13 @@ export default {
     return {
       inEditMode: false,
       isFull: false,
+      alreadyParticipating: false,
+      currentParticipants: 0,
+      showJoinSpinner: false,
+      showRemoveSpinner: false,
+      participantsInQueue: 0,
+      queuePosition: 0,
+      isInQueue: false,
 
       title: this.activity.title,
       type: this.activity.activityType.type,
@@ -131,16 +153,94 @@ export default {
       endTimeStamp: "",
       maxParticipants: 10,
       description: this.activity.description,
-    };
+    }
+  },
+
+  mounted(){
+    this.getCurrentParticipantsNumber();
+    if(this.isLoggedIn){
+      this.isAlreadyParticipating();
+    }
   },
 
   methods: {
-    checkIfFull() {
-      if (this.activity.currentParticipants < this.activity.totalParticipants) {
-        return "Bli med";
-      } else {
+    checkIfLoggedIn() {
+      return userService.isLoggedIn();
+    },
+    joinButtonClicked(){
+      this.showJoinSpinner = true;
+      if (activityButtonService.joinButtonClicked()) {
+        this.addParticipantToActivity(this.activity);
+      }
+    },
+    
+    async removeParticipantClicked(){
+      if (activityButtonService.showRemoveAlert()) {
+        this.showRemoveSpinner = true;
+        const data = await activityButtonService.removeParticipantFromActivity(this.activity);
+        if (data) {
+          this.showRemoveSpinner = false;
+          if (this.currentParticipants === this.activity.maxParticipants) {
+            this.participantsInQueue --;
+          } else {
+            this.currentParticipants --;
+          }
+          this.alreadyParticipating = false;
+          this.isInQueue = false;
+          this.$emit('refresh-list', this.activity.id, false);
+        }
+      }
+    },
+    
+    getButtonStatus() {
+      let status = activityButtonService.getButtonStatus(this.alreadyParticipating, this.currentParticipants, this.activity);
+      if (status === "Fullt") {
         this.isFull = true;
-        return "Fullt";
+      }
+      return status;
+    },
+    
+    async isAlreadyParticipating() {
+      this.alreadyParticipating = await activityButtonService.isAlreadyParticipating(this.activity);
+      if (this.alreadyParticipating) {
+        this.getQueuePosition();
+      }
+    },
+
+    async getCurrentParticipantsNumber(){
+      // Get number of participators on this activity
+      this.currentParticipants = await activityButtonService.getCurrentParticipantsNumber(this.activity);
+      if(this.currentParticipants == this.activity.maxParticipants){
+        this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
+      }
+    },
+    
+    async addParticipantToActivity(){
+      let data = await activityButtonService.addParticipantToActivity(this.activity);
+      let accountId = await userService.getAccountByEmail().then(data => accountId = data.id);
+      if(data.activityId === this.activity.id && data.accountId === accountId){
+        console.log("Joining activity was successful! Changing button style");
+        if(this.currentParticipants === this.activity.maxParticipants){
+          this.participantsInQueue ++;
+          this.isInQueue = true;
+        }else{
+          this.currentParticipants ++;
+        }
+        this.alreadyParticipating = true;
+        this.showJoinSpinner = false;
+        this.$emit('refresh-list', this.activity.id, true);
+      }
+    },
+    
+    async countAccountsInQueue(){
+      this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
+    },
+
+    async getQueuePosition(){
+      this.queuePosition = await activityButtonService.getQueuePosition(this.activity);
+
+      if(this.queuePosition > 0){
+        this.isInQueue = true;
       }
     },
 
@@ -269,27 +369,65 @@ export default {
   height: 25px;
   margin-right: 10px;
 }
-#btn {
-  grid-area: btn;
-  height: 5vh;
-  width: 8vw;
+#btn{
+  height: 50px;
+  width: 160px;
   border-radius: 6px;
   font-size: 20px;
   cursor: pointer;
-  background-color: #ffbd3e;
+  background-color: #FFBD3E;
   color: white;
   border: 0;
-  margin: auto;
   outline: none;
 }
-#btn.full {
-  background-color: #ff5b3e;
+#btn:hover {
+  background-color: #eca82b;
+  transition: 0.2s;
 }
-#btn.full:hover span {
+
+#btn.full{
+  background-color: #FF5B3E;
+}
+#btn.full:hover{
+  background-color: #91301f;
+  transition: 0.2s;
+}
+#btn.full:hover span{
   display: none;
 }
-#btn.full:hover:before {
+#btn.full:hover:before{
   content: "Venteliste";
+}
+
+#btn.participating{
+  background-color: #4a934a;
+  transition: 0.2s;
+}
+#btn.participating:hover{
+  background-color: #408140;
+  transition: 0.2s;
+}
+#btn.participating:hover span{
+  display: none;
+}
+#btn.participating:hover:before{
+  content: "Meld av";
+}
+#btn.inQueue{
+  background-color: #FF5B3E;
+}
+#btn.inQueue:hover{
+  background-color: #91301f;
+  transition: 0.2s;
+}
+#btn.inQueue:hover span{
+  display: none;
+}
+#btn.inQueue:hover:before{
+  content: "Meld av";
+}
+.queue-list{
+  opacity: 70%;
 }
 
 .box {
