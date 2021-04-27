@@ -1,7 +1,7 @@
 <template>
   <div id="chat">
     <h4>Chat:</h4>
-    <div v-for="message in messages" :key="message.timeStamp">
+    <div v-for="message in messages" :key="message.id">
       <ChatElement :chatMessage="message" />
     </div>
     <input
@@ -94,7 +94,6 @@ export default {
 </script>
 <style>
 #chat {
-  height: 300px;
 }
 .input {
   padding: 0 10px;

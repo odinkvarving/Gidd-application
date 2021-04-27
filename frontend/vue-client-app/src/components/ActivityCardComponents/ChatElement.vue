@@ -1,9 +1,9 @@
 <template>
   <div class="box">
-    <img v-bind:src="profilePicUrl" v-bind:alt="name" />
-    <h2 class="name">{{ name }}</h2>
-    <p></p>
-    <p>{{ message }}</p>
+    <img v-bind:src="profilePicUrl" alt="profilepic" />
+    <h5 class="name">{{ name }}</h5>
+    <p class="time">{{ time }}</p>
+    <p class="message">{{ message }}</p>
   </div>
 </template>
 <script>
@@ -54,4 +54,16 @@ export default {
 };
 </script>
 <style scoped>
+.box {
+  background-color: white;
+  padding-left: 15px;
+}
+.time {
+  opacity: 0.5;
+  padding-left: 15px;
+}
+.message {
+  padding-bottom: 15px;
+  padding-left: 15px;
+}
 </style>

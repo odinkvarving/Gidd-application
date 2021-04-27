@@ -1,9 +1,8 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -20,8 +19,11 @@ public class ChatMessage {
 
     private int activityId;
 
+    @JsonFormat(pattern = "MM-dd/yy HH:mm")
     private LocalDateTime timeStamp;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String message;
 
     public ChatMessage(int accountId, int activityId, String message) {
