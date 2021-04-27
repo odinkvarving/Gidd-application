@@ -2,6 +2,8 @@ import { userService } from "./UserService.js"
 
 export const notificationService = {
     getAccountsNotifications,
+    getAccountsNotificationSettings,
+    updateAccountsNotificationSettings,
     sendNotification,
     updateNotification
 }
@@ -14,6 +16,52 @@ function getAccountsNotifications(accountId){
     const requestOptions = {
         method: 'GET',
         headers: userService.authorizationHeader()
+    }
+
+    return fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => console.log(error));
+}
+
+function getAccountsNotificationSettings(accountId){
+    let url = `http://localhost:8080/accounts/${accountId}/accountInfo/notificationSettings`;
+
+    const requestOptions = {
+        method: 'GET',
+        headers: userService.authorizationHeader()
+    }
+
+    return fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => console.log(error));
+}
+
+/** NotificationSettings object structure
+{
+    wantsActivityChangedNotifications:false,
+    wantsActivityChangedMails: true,
+    wantsOutOfQueueNotifications: false,
+    wantsOutOfQueueMails: true,
+    wantsActivityCancelledNotifications: false,
+    wantsActivityCancelledMails: true
+}
+ */
+function updateAccountsNotificationSettings(accountId, notificationSettings){
+    let url = `http://localhost:8080/accounts/${accountId}/accountInfo/notificationSettings`;
+
+    const requestOptions = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': userService.getTokenString()
+        },
+        body: JSON.stringify(notificationSettings)
     }
 
     return fetch(url, requestOptions)

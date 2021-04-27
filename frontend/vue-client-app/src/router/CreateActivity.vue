@@ -172,7 +172,7 @@ data() {
       level: "",
       levels: [],
       equipment: [],
-      location: "",
+      currentLocation: "",
       startDate: "",
       endDate: "",
       startTime: "",
@@ -211,7 +211,7 @@ data() {
         this.name === '' ? this.nameState = false : this.nameState = true;
         this.category === null ? this.categoryState = false : this.categoryState = true;
         this.level === null ? this.levelState = false : this.levelState = true;
-        this.location === '' ? this.placeState = false : this.placeState = true;
+        this.currentLocation === '' ? this.placeState = false : this.placeState = true;
         this.validStartAndEndDate();
         this.description === '' ? this.descriptionState = false : this.descriptionState = true;
 
@@ -251,8 +251,8 @@ data() {
 
         location: this.currentLocation.name,
         endTime: `${this.endDate} ${this.endTime}`,
-        latitude: null, //temporary until map is implemented
-        longitude: null, //temporary until map is implemented
+        latitude: null, 
+        longitude: null, 
         maxParticipants: this.participants,
         startTime: `${this.startDate} ${this.endTime}`,
         activityType: {
