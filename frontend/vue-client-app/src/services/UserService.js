@@ -9,7 +9,8 @@ export const userService = {
     getAccountDetails,
     isLoggedIn,
     authorizationHeader,
-    getTokenString
+    getTokenString,
+    getCurrentLocation
 }
 
 
@@ -154,4 +155,17 @@ function isLoggedIn(){
 
     return fetch("http://localhost:8080/accounts/validateToken", requestOptions)
         .then(handleResponse);
+}
+
+function getCurrentLocation(){
+    let currentLocation;
+
+    navigator.geolocation.getCurrentPosition(position => {
+        console.log(position.coords);
+        currentLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+        }
+        return currentLocation;
+    })
 }

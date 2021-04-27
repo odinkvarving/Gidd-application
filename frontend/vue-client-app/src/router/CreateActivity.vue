@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="create-activity-container">
       <h1>GIDD å lag en ny aktivitet!</h1>
       <div id="create-activity-form">
