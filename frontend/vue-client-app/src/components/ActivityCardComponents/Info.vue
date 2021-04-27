@@ -241,10 +241,14 @@ export default {
     getDuration() {
       //let rest = 0;
       const start = new Date(this.activity.endTime);
+      console.log(start);
       const end = new Date(this.activity.startTime);
-      const diff = start - end;
+      console.log(end);
+      let diff = Math.abs(end - start); //Difference between start and end
       console.log("Diff: " + diff);
       let days = Math.floor(diff / 86400000);
+      diff -= days * 86400000;
+      console.log(diff);
       let hours = Math.floor((diff - days * 86400000) / 3600000);
       let minutes = Math.round((diff - days * 86400000 - hours * 3600000) / 60000);
       console.log("Time: " + days + " days, " + hours + " hours, " + minutes + " minutes");    
