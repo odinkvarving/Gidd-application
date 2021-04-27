@@ -8,14 +8,18 @@
       ></b-icon>
 
       <h1 v-show="!inEditMode">{{ activity.title }}</h1>
-      <h1 v-show="inEditMode"><input type="text" :placeholder="title" v-model="title"/></h1>
+      <h1 class="edit" v-show="inEditMode">
+        <input class="title" type="text" :placeholder="title" v-model="title" />
+      </h1>
       <div id="ownerInfo">
         <img :src="require('@/assets/kari.jpg')" />
         <h3 class="txt">{{ activity.creator.email }}</h3>
       </div>
-      <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>
-      <p class="txt" v-show="inEditMode">
-        <input type="text" :placeholder="description" v-model="description"/>
+      <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>   
+
+      <p class="txt edit" v-show="inEditMode">
+        <input class="description" type="text" :placeholder="description" v-model="description" />
+        
       </p>
     </div>
     <div class="box" id="bottom">
@@ -44,10 +48,14 @@
 
       <ul class="list" id="list2" v-show="inEditMode">
         <li class="txt">
-          <input type="text" :placeholder="type" v-model="type" />
+          <b-form-select size="sm" :state="categoryState" v-model="category" :options="categories" style="width: 80%;">
+            <template #first>
+              <b-form-select-option :value="null" disabled>-- Velg en kategori --</b-form-select-option>
+            </template>
+          </b-form-select>
         </li>
         <li class="txt">
-          <input type="text" :placeholder="location" v-model="location" />
+          <LocationSearchBar @setPlace="setLocation" />
         </li>
         <!-- Replace this with actual location when implemented -->
         <li class="txt">
@@ -55,31 +63,33 @@
             class="datepicker"
             placeholder="Velg dato"
             v-model="startDate"
+            size="sm"
           ></b-form-datepicker>
-        </li>
-        <li class="txt">
           <b-form-timepicker
             class="timepicker"
             placeholder="Velg tid"
             v-model="startTimeStamp"
+            size="sm"
           ></b-form-timepicker>
-        </li>
-        <li class="txt">
+          <li>
           <b-form-datepicker
             class="datepicker"
             placeholder="Velg dato"
             v-model="endDate"
+            size="sm"
           ></b-form-datepicker>
-        </li>
-        <li class="txt">
           <b-form-timepicker
             class="timepicker"
             placeholder="Velg tid"
             v-model="endTimeStamp"
+            size="sm"
           ></b-form-timepicker>
         </li>
-        <li></li>
-        <li></li>
+        <b-form-select :state="levelState" v-model="level" :options="levels" style="width:80%">
+            <template #first>
+              <b-form-select-option :value="null" disabled>-- Velg et nivå --</b-form-select-option>
+            </template>
+          </b-form-select>
         <li class="txt">
           <input type="text" placeholder="Antall" v-model="maxParticipants" />
         </li>
@@ -92,7 +102,7 @@
       id="btn"
       :class="{ full: isFull }"
       @click="handleButtonClick()"
-      v-if="!inEditMode"
+      v-show="!inEditMode"
     >
       <span>{{ checkIfFull() }}</span>
     </button>-->
@@ -109,8 +119,8 @@
       </div>
       <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
     </button>
-    <button v-if="inEditMode" @click="editActivity">
-      <span>Fullfør</span>
+    <button v-show="inEditMode" @click="onClickSaveButton">
+      <span>Lagre</span>
     </button>
   </div>
 </template>
@@ -118,8 +128,14 @@
 <script>
 import { userService } from "../../services/UserService";
 import { activityButtonService } from "../../services/ActivityButtonService"
+import moment from "moment";
+import LocationSearchBar from "../createActivityComponents/LocationSearchBar.vue";
+
 export default {
   name: "Info",
+  components: {
+    LocationSearchBar,
+  },
 
   props: {
     activity: {
@@ -145,18 +161,34 @@ export default {
       isInQueue: false,
 
       title: this.activity.title,
-      type: this.activity.activityType.type,
-      location: "Trondheim", //TODO: Sjekk om denne skal være med
+      category: this.activity.activityType.type,
+      categories: [],
+      level: this.activity.level,
+      levels: [],
+      location: this.activity.location,
       startDate: "",
       startTimeStamp: "",
       endDate: "",
       endTimeStamp: "",
-      maxParticipants: 10,
+      maxParticipants: this.activity.maxParticipants,
       description: this.activity.description,
-    }
+      nameState: null,
+      categoryState: null,
+      levelState: null,
+      geometryFound: false,
+      newLocation: false,
+      center: {},
+      startDateState: null,
+      endDateState: null,
+      participantsState: null,
+      descriptionState: null,
+      equipmentState: null,
+    };
   },
 
   mounted(){
+    this.getCategories();
+    this.getLevels();
     this.getCurrentParticipantsNumber();
     if(this.isLoggedIn){
       this.isAlreadyParticipating();
@@ -243,14 +275,39 @@ export default {
         this.isInQueue = true;
       }
     },
-
     toggleEditMode() {
       this.inEditMode = !this.inEditMode;
       console.log("Edit Mode: " + this.inEditMode);
     },
 
-    test() {
-      console.log(this.activity.title);
+    onClickSaveButton() {      
+      this.showSpinner = true;
+      this.equipmentState = true;
+      this.name === "" ? (this.nameState = false) : (this.nameState = true);
+      this.description === ""
+        ? (this.descriptionState = false)
+        : (this.descriptionState = true);
+      this.validStartAndEndDate();
+       if (
+        this.nameState === true &&
+        this.descriptionState === true
+      ) { 
+        this.editActivity();
+        console.log("Activity updated!");
+      }
+    },
+
+    setLocation(location){
+      if(location.geometry){
+        this.currentLocation = location;
+        this.center = {lat:this.currentLocation.geometry.location.lat(), lng:this.currentLocation.geometry.location.lng()}
+        this.geometryFound = true;
+        this.newLocation = true;
+      }else{
+        this.geometryFound = false;
+        this.newLocation = false;
+        this.currentLocation = location;
+      }
     },
 
     async editActivity() {
@@ -260,16 +317,54 @@ export default {
         id: this.activity.id,
         title: this.title,
         description: this.description,
-        latitude: "63.41893", //temporary until map is implemented
-        longitude: "10.40658", //temporary until map is implemented
+        equipment: this.activity.equipment,
+        location: this.location,
+        latitude: null, //temporary until map is implemented
+        longitude: null, //temporary until map is implemented
         maxParticipants: this.maxParticipants,
         startTime: `${this.startDate} ${this.startTimeStamp}`,
         endTime: `${this.endDate} ${this.endTimeStamp}`,
         activityType: {
-          type: this.type,
+          type: this.category,
+        },
+        level: {
+          description: this.level
         },
         creator: accountDetails,
-      };
+      }
+
+      if (this.startDate === "" || this.startTimeStamp === "") {
+        activity.startTime = this.activity.startTime;
+      }
+
+      if (this.endDate === "" || this.endTimeStamp === "") {
+        activity.endTime = this.activity.endTime;
+      }
+
+      if (activity.activityType.type === null) {
+        console.log("No category selected, using previous");
+        activity.activityType = this.activity.activityType;
+      }
+
+      if (activity.level.description === null) {
+        console.log("No level selected, using previous");
+        activity.level = this.activity.level;
+      }
+
+      if (!this.newLocation) {
+        console.log("No location entered, using previous");
+        activity.latitude = this.activity.latitude;
+        activity.longitude = this.activity.longitude;
+        activity.location = this.location;
+      }
+
+      if (this.geometryFound) {
+        activity.latitude = this.currentLocation.geometry.location.lat();
+        activity.longitude = this.currentLocation.geometry.location.lng();
+        activity.location = this.currentLocation.name;
+        console.log("this.location: " + this.location);
+        console.log("this.currentLocation.name: " + this.currentLocation.name);
+      }
 
       const requestOptions = {
         method: "PUT",
@@ -287,6 +382,81 @@ export default {
         .then((response) => response.json())
         .then((data) => console.log(data))
         .catch((error) => console.log(error));
+    },
+
+    async getCategories() {
+      let categoriesList;
+      this.category = null;
+      let url = `http://localhost:8080/activityTypes/`;
+
+      await fetch(url, {
+        method: "GET",
+        headers: userService.authorizationHeader(),
+      })
+        .then((response) => response.json())
+        .then((data) => (categoriesList = data))
+        .catch((error) => console.log(error));
+
+      for (let i = 0; i < categoriesList.length; i++) {
+        this.categories.push(categoriesList[i].type);
+      }
+    },
+
+    async getLevels() {
+      let levelsList;
+      this.level = null;
+      this.participantValue = "Alle";
+
+      let url = `http://localhost:8080/levels/`;
+
+      await fetch(url, {
+        method: "GET",
+        headers: userService.authorizationHeader(),
+      })
+        .then((response) => response.json())
+        .then((data) => (levelsList = data))
+        .catch((error) => console.log(error));
+
+      for (let i = 0; i < levelsList.length; i++) {
+        this.levels.push(levelsList[i].description);
+      }
+    },
+
+    validStartAndEndDate() {
+      this.startDate === "" || this.startTime === ""
+        ? (this.startDateState = false)
+        : (this.startDateState = true);
+      this.endDate === "" || this.endTime === ""
+        ? (this.endDateState = false)
+        : (this.endDateState = true);
+
+      if (this.startDate === "" || this.startTime === "") {
+        this.startDateState = false;
+      }
+      if (this.endDate === "" || this.endTime === "") {
+        this.endDateState = false;
+      } else {
+        if (
+          moment(`${this.startDate} ${this.startTime}`).isBefore(
+            `${this.endDate} ${this.endTime}`
+          )
+        ) {
+          this.endDateState = true;
+          this.startDateState = true;
+        } else {
+          this.startDateState = false;
+          this.endDateState = false;
+        }
+      }
+    },
+
+    checkIfFull() {
+      if (this.activity.currentParticipants < this.activity.totalParticipants) {
+        return "Bli med";
+      } else {
+        this.isFull = true;
+        return "Fullt";
+      }
     },
   },
 };
@@ -446,4 +616,28 @@ export default {
 .toggle-edit-button {
   cursor: pointer;
 }
+
+.edit .title {
+  margin: 0 auto;
+  width: 75%;
+  text-align: center;
+}
+
+.edit .description {
+  margin: 0 auto;
+  width: 75%;
+  height: 40px;
+}
+
+.datepicker {
+  width: 50% !important;
+  min-width: 110px !important;
+}
+
+.timepicker {
+  width: 50% !important;
+  min-width: 110px !important;
+}
+
+
 </style>

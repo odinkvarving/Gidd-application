@@ -100,7 +100,10 @@ public class ActivityService {
      */
     public Activity updateActivity(int id, Activity activity) {
         try {
-            activityTypeRepository.save(activity.getActivityType());
+            ActivityType activityType = activityTypeRepository.findActivityTypeByType(activity.getActivityType().getType());
+            Level level = levelRepository.findByDescription(activity.getLevel().getDescription());
+            activity.setActivityType(activityType);
+            activity.setLevel(level);
             return activityRepository.save(activity);
         } catch (DataAccessException e) {
             e.printStackTrace();

@@ -21,6 +21,7 @@
     "vue-jwt-decode": "^0.1.0",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.5.1",
+    "vue-textarea-autosize": "^1.1.1",
     "vue2-google-maps": "^0.10.7"
   },
   "devDependencies": {
