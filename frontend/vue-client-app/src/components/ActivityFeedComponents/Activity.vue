@@ -59,7 +59,7 @@
             <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
                 <span class="sr-only">Loading...</span>
             </div>
-            <span id="test-id" v-else>{{ isInQueue ? "Venteliste" : "Påmeldt" }}</span>
+            <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
         </button>
     </div>
 </template>
@@ -95,165 +95,59 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 this.isAlreadyParticipating();
             }
         },
-        /*mounted(){
-            this.getCurrentParticipantsNumber();
-            if(this.isLoggedIn){
-                this.isAlreadyParticipating();
-            }
-        },*/
+        
         methods: {
             checkIfLoggedIn() {
                 return userService.isLoggedIn();
             },
             joinButtonClicked(){
                 this.showJoinSpinner = true;
-                activityButtonService.joinButtonClicked(this.activity, this.isLoggedIn)
-            },
-            /*joinButtonClicked(){
-                this.showJoinSpinner = true;
-                if(!userService.isLoggedIn()){
-                    console.log("Tried to join activity without being logged in.\nRedirecting to login page");
-                    this.$router.push("/login");
-                }else{
-                    this.addParticipantToActivity();
+                if (activityButtonService.joinButtonClicked()) {
+                    this.addParticipantToActivity(this.activity);
                 }
-            },*/
+            },
+            
             async removeParticipantClicked(){
-                // TODO: Lage alert boks som spør om bruker er sikker
-                this.showRemoveSpinner = true;
-                const data = await activityButtonService.removeParticipantFromActivity(this.activity);
-                if (data) {
-                    this.showRemoveSpinner = false;
-                    if (this.currentParticipants === this.activity.maxParticipants) {
-                        this.participantsInQueue --;
-                    } else {
-                        this.currentParticipants --;
+                if (activityButtonService.showRemoveAlert()) {
+                    this.showRemoveSpinner = true;
+                    const data = await activityButtonService.removeParticipantFromActivity(this.activity);
+                    if (data) {
+                        this.showRemoveSpinner = false;
+                        if (this.currentParticipants === this.activity.maxParticipants) {
+                            this.participantsInQueue --;
+                        } else {
+                            this.currentParticipants --;
+                        }
+                        this.alreadyParticipating = false;
+                        this.isInQueue = false;
+                        this.$emit('refresh-list', this.activity.id, false);
                     }
-                    this.alreadyParticipating = false;
-                    this.isInQueue = false;
-                    this.$emit('refresh-list', this.activity.id, false);
                 }
             },
-            /*removeParticipantClicked(){
-                // TODO: Lage alert boks som spør om bruker er sikker
-                this.showRemoveSpinner = true;
-                this.removeParticipantFromActivity();
-            },*/
-            /*async removeParticipantFromActivity(){
-                let accountId;
-                await userService.getAccountByEmail().then(data => accountId = data.id);
-
-                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}`;
-
-                const requestOptions ={
-                    method: 'DELETE',
-                    headers: userService.authorizationHeader()
-                }
-
-                fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data){
-                            this.showRemoveSpinner = false;
-                            if(this.currentParticipants === this.activity.maxParticipants){
-                                this.participantsInQueue --;
-                            }else{
-                                this.currentParticipants --;
-                            }
-                            this.alreadyParticipating = false;
-                            this.isInQueue = false;
-                            this.$emit('refresh-list', this.activity.id, false);
-                        }
-                    })
-                    .catch(error => console.log(error))
-            },*/
+            
             getButtonStatus() {
-                let status = activityButtonService.getButtonStatus(this.alreadyParticipating);
+                let status = activityButtonService.getButtonStatus(this.alreadyParticipating, this.currentParticipants, this.activity);
                 if (status === "Fullt") {
                     this.isFull = true;
                 }
                 return status;
             },
-            /*getButtonStatus() {
-                if (this.alreadyParticipating) { 
-                    return "Påmeldt";
-                } else { //If we could not find the ID in accountActivity database, we check if the activity is full or not
-                    return this.checkIfFull();
-                }
-            },*/
-            /*checkIfFull() {
-                if (this.currentParticipants < this.activity.maxParticipants) {
-                    return "Bli med";
-                } else {
-                    this.isFull = true;
-                    return "Fullt";
-                }
-            },*/
+            
             async isAlreadyParticipating() {
                 this.alreadyParticipating = await activityButtonService.isAlreadyParticipating(this.activity);
                 if (this.alreadyParticipating) {
-                    if (activityButtonService.getQueuePosition(this.activity) > 0) {
-                        this.isInQueue = true;
-                    }
+                    this.getQueuePosition();
                 }
             },
-            /*async isAlreadyParticipating() {
 
-                let accountId;
-                await userService.getAccountByEmail().then(data => accountId = data.id);
-
-                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/${accountId}/`;
-
-                const requestOptions ={
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': userService.getTokenString()
-                    }
-                }
-
-                await fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.alreadyParticipating = data)
-                    .catch(error => console.log(error));
-
-                console.log(`You are already participating: ${this.alreadyParticipating}`);
-
-                if(this.alreadyParticipating){
-                    this.getQueuePosition(accountId);
-                }
-
-            },*/
             async getCurrentParticipantsNumber(){
                 // Get number of participators on this activity
                 this.currentParticipants = await activityButtonService.getCurrentParticipantsNumber(this.activity);
                 if(this.currentParticipants == this.activity.maxParticipants){
-                    this.participantsInQueue = activityButtonService.countAccountsInQueue(this.activity);
+                    this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
                 }
             },
-            /*async getCurrentParticipantsNumber(){
-                // Get number of participators on this activity
-                let url =  `http://localhost:8080/activities/${this.activity.id}/accounts/count`
-
-                const requestOptions ={
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }
-
-                await fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.currentParticipants = data)
-                    .catch(error => console.log(error));
-
-                console.log(`${this.activity.title} got current participants: ${this.currentParticipants}.`);
-
-                if(this.currentParticipants == this.activity.maxParticipants){
-                    this.countAccountsInQueue();
-                }
-
-            },*/
+            
             async addParticipantToActivity(){
                 let data = await activityButtonService.addParticipantToActivity(this.activity);
                 let accountId = await userService.getAccountByEmail().then(data => accountId = data.id);
@@ -270,77 +164,18 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                         this.$emit('refresh-list', this.activity.id, true);
                     }
             },
-            /*async addParticipantToActivity(){
-
-                let accountId;
-                await userService.getAccountByEmail().then(data => accountId = data.id);
-
-                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/${accountId}/`;
-
-                const requestOptions ={
-                    method: 'POST',
-                    headers: userService.authorizationHeader()
-                }
-
-                fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data.activityId === this.activity.id && data.accountId === accountId){
-                            console.log("Joining activity was successful! Changing button style");
-                            if(this.currentParticipants === this.activity.maxParticipants){
-                                this.participantsInQueue ++;
-                                this.isInQueue = true;
-                            }else{
-                                this.currentParticipants ++;
-                            }
-                            this.alreadyParticipating = true;
-                            this.showJoinSpinner = false;
-                            this.$emit('refresh-list', this.activity.id, true);
-                        }
-                    })
-                    .catch(error => console.log(error));
-            },*/
-            countAccountsInQueue(){
-                this.participantsInQueue = activityButtonService.countAccountsInQueue(this.activity);
+            
+            async countAccountsInQueue(){
+                this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
             },
-            /*countAccountsInQueue(){
-                
-                let url = `http://localhost:8080/activities/${this.activity.id}/accounts/queue/count`;
 
-                const requestOptions = {
-                    method:'GET',
-                    headers: userService.authorizationHeader()
-                }
-
-                fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.participantsInQueue = data);
-            },*/
             async getQueuePosition(){
                 this.queuePosition = await activityButtonService.getQueuePosition(this.activity);
 
                 if(this.queuePosition > 0){
                     this.isInQueue = true;
                 }
-            },
-            /*async getQueuePosition(accountId){
-                let url = `http://localhost:8080/accounts/${accountId}/activities/${this.activity.id}`
-
-                const requestOptions = {
-                    method:'GET',
-                    headers: userService.authorizationHeader()
-                }
-
-                await fetch(url, requestOptions)
-                    .then(response => response.json())
-                    .then(data => this.queuePosition = data)
-                    .catch(error => console.log(error));
-
-                if(this.queuePosition > 0){
-                    this.isInQueue = true;
-                }
-            }*/
-            
+            },            
         }
     }
 </script>
@@ -462,7 +297,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         background-color: #FF5B3E;
     }
     #btn.full:hover{
-        background-color: #dd4b31;
+        background-color: #91301f;
         transition: 0.2s;
     }
     #btn.full:hover span{
@@ -490,7 +325,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         background-color: #FF5B3E;
     }
     #btn.inQueue:hover{
-        background-color: #dd4b31;
+        background-color: #91301f;
         transition: 0.2s;
     }
     #btn.inQueue:hover span{

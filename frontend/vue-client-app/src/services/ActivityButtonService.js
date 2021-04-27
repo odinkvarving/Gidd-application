@@ -16,15 +16,17 @@ export const activityButtonService = {
     addParticipantToActivity,
     removeParticipantFromActivity,
     countAccountsInQueue,
-    getQueuePosition
+    getQueuePosition,
+    showRemoveAlert
 }
 
-function joinButtonClicked(activity, isLoggedIn){
-    if(!isLoggedIn){
+function joinButtonClicked(){
+    if(!userService.isLoggedIn()){
         console.log("Tried to join activity without being logged in.\nRedirecting to login page");
         this.$router.push("/login");
     }else{
-        return this.addParticipantToActivity(activity);
+        //this.addParticipantToActivity(activity);
+        return true;
     }
 }
 
@@ -68,7 +70,7 @@ async function isAlreadyParticipating(activity) {
     console.log(`You are already participating: ${participating}`);
 
     if(participating){
-        this.getQueuePosition(accountId);
+        this.getQueuePosition(activity);
     }
     return participating;
 }
@@ -127,7 +129,7 @@ async function removeParticipantFromActivity(activity){
         .catch(error => console.log(error))
 }
 
-function countAccountsInQueue(activity){
+async function countAccountsInQueue(activity){
     let url = `http://localhost:8080/activities/${activity.id}/accounts/queue/count`;
 
     const requestOptions = {
@@ -135,7 +137,7 @@ function countAccountsInQueue(activity){
         headers: userService.authorizationHeader()
     }
 
-    return fetch(url, requestOptions)
+    return await fetch(url, requestOptions)
         .then(response => response.json())
         .catch(error => console.log(error));
 }
@@ -154,4 +156,12 @@ async function getQueuePosition(activity){
     return await fetch(url, requestOptions)
         .then(response => response.json())
         .catch(error => console.log(error));
+}
+
+function showRemoveAlert() {
+    if (confirm('Klikk "OK" hvis du vil melde deg av aktiviteten')) {
+        return true;
+    } else {
+        return false;
+    }
 }
