@@ -24,7 +24,7 @@ public class ChatMessage {
 
     private String message;
 
-    public ChatMessage(int userId, int activityId, String message) {
+    public ChatMessage(int accountId, int activityId, String message) {
         this.accountId = accountId;
         this.activityId = activityId;
         this.timeStamp = LocalDateTime.now();
