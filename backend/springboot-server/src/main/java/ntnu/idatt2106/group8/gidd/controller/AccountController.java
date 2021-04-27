@@ -132,9 +132,9 @@ public class AccountController {
     }
 
     @CrossOrigin(origins=frontend)
-    @PostMapping("accounts/accountInfo")
-    public boolean saveAccountInfoToAccount(@RequestBody AccountInfo accountInfo) {
-        return accountService.saveAccountInfoToAccount(accountInfo, accountInfo.getAccount());
+    @PutMapping("accounts/{id}/accountInfo")
+    public boolean saveAccountInfoToAccount(@RequestBody AccountInfo accountInfo, @PathVariable("id")int id) {
+        return accountService.saveAccountInfoToAccount(accountInfo, id);
     }
 
     @GetMapping("/reset/{suffix}")

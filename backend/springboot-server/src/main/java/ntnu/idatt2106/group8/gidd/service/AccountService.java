@@ -487,13 +487,17 @@ public class AccountService {
     /**
      * Method for updating the AccountInfo for a specific Account
      * @param accountInfo the updated AccountInfo
-     * @param account the Account with the AccountInfo
+     * @param id the id of the Account with the AccountInfo
      * @return true or false
      */
-    public boolean saveAccountInfoToAccount(AccountInfo accountInfo, Account account) {
-        Account result1 = this.accountRepository.save(account);
-        accountInfo.setAccount(account);
-        AccountInfo result2 = this.accountInfoRepository.save(accountInfo);
-        return (result1.equals(account) && result2.equals(accountInfo));
+    public boolean saveAccountInfoToAccount(AccountInfo accountInfo, int id) {
+        Optional<AccountInfo> accountInfo1;
+        accountInfo1 = accountInfoRepository.findAccountInfoByAccount_Id(id);
+        if(accountInfo1.isPresent()) {
+            accountInfo1.get().setId(accountInfo.getId());
+            accountInfoRepository.save(accountInfo1.get());
+            return true;
+        }
+        return false;
     }
 }
