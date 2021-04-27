@@ -93,19 +93,21 @@ public class NotificationService {
         }
     }
 
-    public boolean sendNotificationToAllParticipants(int activityId){
+    public boolean sendNotificationToAllParticipants(int activityId, String msg){
         List<Account> accounts = activityService.getAllAccountsInActivity(activityId);
         Activity activity = activityService.getActivity(activityId).orElse(null);
-        if(accounts.size() != 0 && activity != null){
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime now = LocalDateTime.now();
+        if(activity != null){
+            if(accounts.size() != 0) {
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime now = LocalDateTime.now();
 
-            accounts.stream().forEach(account -> {
-                String message = "Activity: " + activity.getTitle() + " was edited!";
-                String date = dtf.format(now);
-                Notification notification = new Notification(account, activityId, message, date, false);
-                sendNotification(notification);
-            });
+                accounts.stream().forEach(account -> {
+                    String message = "Activity: \"" + activity.getTitle() + "\" " + msg;
+                    String date = dtf.format(now);
+                    Notification notification = new Notification(account, activityId, message, date, false);
+                    sendNotification(notification);
+                });
+            }
             return true;
         }else{
             return false;

@@ -1,7 +1,7 @@
 <template>
     <div id="activity" v-if="activity != null">
         <div v-show="isActivityHost" class="cancel-button-container">
-            <b-button class="cancel-button" variant="danger">Avlys aktivitet</b-button>
+            <b-button :disabled="this.activity.cancelled" @click="cancelActivity()" class="cancel-button" variant="danger">Avlys aktivitet</b-button>
         </div>
         <div class="upper-row">
             <Info class="comp" id="info" :activity="activity" :weather="weather" :isActivityHost="isActivityHost"/>
@@ -10,7 +10,7 @@
                 <Equipment class="comp" id="equipment" :activity="activity" :isActivityHost="isActivityHost"/>
             </div>
         </div>
-        <button id="btnVisible" @click="changeChatVisibility">Skjul chat</button>
+        <button :disabled="this.activity.cancelled" id="btnVisible" @click="changeChatVisibility">Åpne chat</button>
         <Chat class="chat" id="chat" :activity="activity" v-show="isChatVisible"/>
     </div>
 </template>
@@ -69,7 +69,6 @@
         async mounted(){
             this.isLoggedIn = await userService.isLoggedIn();
             this.isActivityHost = await this.checkIfActivityHost();
-            console.log(this.isActivityHost);
         },
         methods: {
             /**
@@ -95,6 +94,28 @@
                 }else{
                     return false;
                 }
+            },
+            cancelActivity(){
+
+                // TODO: add alert box making sure the host wants to cancel activity
+
+                let url = `http://localhost:8080/activities/${this.activity.id}/cancel`;
+                
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: userService.authorizationHeader()
+                }
+
+                fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data === true){
+                            console.log("Cancelling activity was successful and all participants is notified");
+                        }else{
+                            console.log("Error cancelling activity! Something went wrong!");
+                        }
+                    })
+                    .catch(error => console.log(error));
             }
         }
     }
