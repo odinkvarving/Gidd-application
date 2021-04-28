@@ -41,6 +41,7 @@
           :activity="a"
           v-on:refresh-list="refreshList"
           :isLoggedIn="isLoggedIn"
+          v-on:currentParticipantsFound="findCurrentParticipants"
         />
       </div>
     </div>
@@ -70,8 +71,6 @@
 import Activity from "./Activity.vue";
 import { userService } from "../../services/UserService.js";
 import { weatherService } from "../../services/WeatherService.js";
-import { activityButtonService } from '../../services/ActivityButtonService';
-//import { activityButtonService } from '../../services/ActivityButtonService';
 
 export default {
   name: "ActivityFeed",
@@ -87,7 +86,7 @@ export default {
       activities: [],
       allCategories: {},
       joinedActivities: {},
-      currentParticipants: 0,
+      currentParticipantsAll: [],
       sortKey: "",
       isLoggedIn: false,
       filteredActivities: [],
@@ -180,20 +179,6 @@ export default {
             .catch((error) => console.log(error));
     },
 
-    test() {
-        let list = this.activites;
-        if(type !== ""){
-            list = this.filterByCategory(list);
-        }
-        if(level !== ""){
-            list = this.filterLevel(list);
-        }
-        if(location !== "") {
-            list = this.filterByLocation(list);
-        }
-        this.filteredList = list;
-    }
-
     filterByCategory() {
         
         const filteredList = [];
@@ -241,6 +226,13 @@ export default {
         }else {
             return this.activities;
         }
+    },
+
+    findCurrentParticipants(activityId, currentParticipants) {
+      this.currentParticipantsAll.push({
+        id: activityId,
+        currentParticipants: currentParticipants
+      });
     },
 
     sortActivities() {
@@ -314,36 +306,43 @@ export default {
       })
     },
 
-    async sortByFreeSpotsDesc() {
+    sortByFreeSpotsDesc() {
       console.log(">> sortByFreeSpotsDesc() called");
       return this.activities.sort((x,y) => {
-        let current1 = await activityButtonService.getCurrentParticipantsNumber(y);
-        let free1 = y.maxParticipants - 
-        let free2 = x.maxParticipants - await activityButtonService.getCurrentParticipantsNumber(x);
+        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        let free1 = y.maxParticipants - current1;
+        let free2 = x.maxParticipants - current2;
         return free1 - free2;
       });
     },
 
-    async sortByFreeSpotsAsc() {
+    sortByFreeSpotsAsc() {
       console.log(">> sortByFreeSpotsAsc() called");
       return this.activities.sort((x,y) => {
-        let free1 = x.maxParticipants - await activityButtonService.getCurrentParticipantsNumber(x);
-        let free2 = y.maxParticipants - await activityButtonService.getCurrentParticipantsNumber(y);
-        return free2 - free1;
+        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        let free1 = x.maxParticipants - current1;
+        let free2 = y.maxParticipants - current2;
+        return free1 - free2;
       });
     },
 
-    async sortByCurrentParticipantsDesc() {
+    sortByCurrentParticipantsDesc() {
       console.log(">> sortByCurrentParticipantsDesc() called");
       return this.activities.sort((x,y) => {
-        return await activityButtonService.getCurrentParticipantsNumber(x) - await activityButtonService.getCurrentParticipantsNumber(y);
+        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        return current1 - current2;
       });
     },
 
-    async sortByCurrentParticipantsAsc() {
+    sortByCurrentParticipantsAsc() {
       console.log(">> sortByCurrentParticipantsAsc() called");
       return this.activities.sort((x,y) => {
-        return await activityButtonService.getCurrentParticipantsNumber(y) - await activityButtonService.getCurrentParticipantsNumber(x);
+        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        return current1 - current2;
       });
     },
 
