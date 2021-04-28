@@ -24,7 +24,7 @@
             </b-form-select>
         </div>
         <div class="sortingDropdown">
-            <b-form-select v-model="sort" :options="sorts" @change="modifyActivities()" class="sortingBox">
+            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" class="sortingBox">
                 <template #first>
                     <b-form-select-option :value="null">Sorter</b-form-select-option>
                 </template>
@@ -33,7 +33,7 @@
       </div>
 
       <div
-        v-for="a in activities"
+        v-for="a in sortedActivities"
         :key="a.id"
         @click="handleActivityClicked(a)"
       >
@@ -70,6 +70,7 @@
 import Activity from "./Activity.vue";
 import { userService } from "../../services/UserService.js";
 import { weatherService } from "../../services/WeatherService.js";
+import { activityButtonService } from '../../services/ActivityButtonService';
 //import { activityButtonService } from '../../services/ActivityButtonService';
 
 export default {
@@ -83,7 +84,7 @@ export default {
     return {
       //WeatherService: require('../../services/WeatherService.js'),
       selectedActivity: null,
-      activities: {},
+      activities: [],
       allCategories: {},
       joinedActivities: {},
       currentParticipants: 0,
@@ -137,9 +138,10 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.activities = data;
-          console.log(data[0]);
         })
         .catch((error) => console.log(error));
+
+      this.sortedActivities = this.sortByTimeEarliest();
     },
 
     async getCategories() {
@@ -151,13 +153,11 @@ export default {
             .then((response) => response.json())
             .then((data) => {
                 for(let i = 0; i < data.length; i++) {
-                    console.log(data[i].type)
                     this.categories.push({
                         value: data[i].type,
                         text: data[i].type
                     })
                 }
-                console.log(data[0]);
             })
             .catch((error) => console.log(error)); 
     },
@@ -167,20 +167,32 @@ export default {
             method: "GET"
         };
 
-        await fetch("https://localhost:8080/levels/", requestOptions)
+        await fetch("http://localhost:8080/levels/", requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 for(let i = 0; i < data.length; i++) {
-                    console.log(data[i].description + "DESCRPTION XXXXXX");
                     this.levels.push({
                         value: data[i].description,
                         text: data[i].description
                     })
                 }
-                console.log(data[0]);
             })
             .catch((error) => console.log(error));
     },
+
+    test() {
+        let list = this.activites;
+        if(type !== ""){
+            list = this.filterByCategory(list);
+        }
+        if(level !== ""){
+            list = this.filterLevel(list);
+        }
+        if(location !== "") {
+            list = this.filterByLocation(list);
+        }
+        this.filteredList = list;
+    }
 
     filterByCategory() {
         
@@ -233,79 +245,106 @@ export default {
 
     sortActivities() {
       switch(this.sort) {
-        case 1: this.sortedActivities = this.sortByTimeEarliest(); break;
-        case 2: this.sortedActivities = this.sortByTimeLatest(); break;
-        case 3: this.sortedActivities = this.sortByDurationDesc(); break;
-        case 4: this.sortedActivities = this.sortByDurationAsc(); break;
-        case 5: this.sortedActivities = this.sortByFreeSpotsDesc(); break;
-        case 6: this.sortedActivities = this.sortByFreeSpotsAsc(); break;
-        case 7: this.sortedActivities = this.sortByCurrentParticipantsDesc(); break;
-        case 8: this.sortedActivities = this.sortByCurrentParticipantsAsc(); break;
+        case 1: {
+          this.sortedActivities = this.sortByTimeEarliest();
+          break;
+        }
+        case 2: {
+          this.sortedActivities = this.sortByTimeLatest();
+          break;
+        }
+        case 3: {
+          this.sortedActivities = this.sortByDurationDesc();
+          break;
+        }
+        case 4: {
+          this.sortedActivities = this.sortByDurationAsc();
+          break;
+        }
+        case 5: {
+          this.sortedActivities = this.sortByFreeSpotsDesc();
+          break;
+        }
+        case 6: {
+          this.sortedActivities = this.sortByFreeSpotsAsc();
+          break;
+        }       
+        case 7: {
+          this.sortedActivities = this.sortByCurrentParticipantsDesc();
+          break;
+        }
+        case 8: {
+          this.sortedActivities = this.sortByCurrentParticipantsAsc();
+          break;
+        }
       }
 
-
         //Returnerer dette filteredList(sortert)?
-        /*if(this.sort === 1) { //Sort by free spots high-low
-            filteredList.sort(function(a, b) {
-                return (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b)) - (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a));
-            });
-        }else if(this.sort === 2) { //Sort by free spots low-high
-            filteredList.sort(function(a, b) {
-                return (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a)) - (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b));
-            });
-        }else if(this.sort === 3) { //Sort by current participants high-low
-            filteredList.sort(function(a, b) {
-                return (activityButtonService.getCurrentParticipantsNumber(b)) - (activityButtonService.getCurrentParticipantsNumber(a))
-            });
-        }else if(this.sort === 4) { //Sort by current participants low-high
-            filteredList.sort(function(a, b) {
-                return (activityButtonService.getCurrentParticipantsNumber(a)) - (activityButtonService.getCurrentParticipantsNumber(b))
-            });
-        }else {
-            return filteredList;
-        }*/
     },
 
     sortByTimeEarliest() {
-      return this.filteredActivities.sort((x,y) => {
-        let d1 = new Date(x.startTime);
-        let d2 = new Date(y.startTime);
-        d1 - d2;
+      console.log(">> sortByTimeEarliest() called");
+      return this.activities.sort((x,y) => {
+        return new Date(x.startTime) - new Date(y.startTime);
       });
     },
 
     sortByTimeLatest() {
-      return this.filteredActivities.sort((x,y) => {
-        let d1 = new Date(y.startTime);
-        let d2 = new Date(x.startTime);
-        d1 - d2;
+      console.log(">> sortByTimeLatest() called");
+      return this.activities.sort((x,y) => {
+        return new Date(y.startTime) - new Date(x.startTime);
       });
     },
 
     sortByDurationDesc() {
-      return this.filteredActivities.sort((x,y) => {
-        
-      })
+      console.log(">> sortByDurationDesc() called");
+      return this.activities.sort((x,y) => {
+        let d1 = new Date(y.endTime) - new Date(y.startTime);
+        let d2 = new Date(x.endTime) - new Date(x.startTime);
+        return d1 - d2;
+      });
     },
 
     sortByDurationAsc() {
-
+      console.log(">> sortByDurationAsc() called");
+      return this.activities.sort((x,y) => {
+        let d1 = new Date(x.endTime) - new Date(x.startTime);
+        let d2 = new Date(y.endTime) - new Date(y.startTime);
+        return d1 - d2;
+      })
     },
 
-    sortByFreeSpotsDesc() {
-
+    async sortByFreeSpotsDesc() {
+      console.log(">> sortByFreeSpotsDesc() called");
+      return this.activities.sort((x,y) => {
+        let current1 = await activityButtonService.getCurrentParticipantsNumber(y);
+        let free1 = y.maxParticipants - 
+        let free2 = x.maxParticipants - await activityButtonService.getCurrentParticipantsNumber(x);
+        return free1 - free2;
+      });
     },
 
-    sortByFreeSpotsAsc() {
-
+    async sortByFreeSpotsAsc() {
+      console.log(">> sortByFreeSpotsAsc() called");
+      return this.activities.sort((x,y) => {
+        let free1 = x.maxParticipants - await activityButtonService.getCurrentParticipantsNumber(x);
+        let free2 = y.maxParticipants - await activityButtonService.getCurrentParticipantsNumber(y);
+        return free2 - free1;
+      });
     },
 
-    sortByCurrentParticipantsDesc() {
-
+    async sortByCurrentParticipantsDesc() {
+      console.log(">> sortByCurrentParticipantsDesc() called");
+      return this.activities.sort((x,y) => {
+        return await activityButtonService.getCurrentParticipantsNumber(x) - await activityButtonService.getCurrentParticipantsNumber(y);
+      });
     },
 
-    sortByCurrentParticipantsAsc() {
-
+    async sortByCurrentParticipantsAsc() {
+      console.log(">> sortByCurrentParticipantsAsc() called");
+      return this.activities.sort((x,y) => {
+        return await activityButtonService.getCurrentParticipantsNumber(y) - await activityButtonService.getCurrentParticipantsNumber(x);
+      });
     },
 
     async getJoinedActivities() {
