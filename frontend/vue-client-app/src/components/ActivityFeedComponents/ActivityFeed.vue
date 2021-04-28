@@ -1,33 +1,29 @@
 <template>
   <div id="container">
     <div id="feed">
-      <div class="sortingContainer">
-        <div class="categoryDropdown">
-            <b-form-select v-model="category" :options="categories" id="select-category" @change="filterByCategory()" class="categoryBox">
+      <div class="filter-sort-container">
+        <div class="category-container">
+            <b-form-select v-model="category" :options="categories" id="select-category" @change="filterByCategory()" class="category-picker">
                 <template #first>
                     <b-form-select-option :value="null">Kategori</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
-        <div class="levelDropdown">
-            <b-form-select v-model="level" :options="levels" id="select-level" @change="filterByLevel()" class="levelBox">
+        <div class="level-container">
+            <b-form-select  v-model="level" :options="levels" id="select-level" @change="filterByLevel()" class="level-picker">
                 <template #first>
                     <b-form-select-option :value="null">Nivå</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="location-container">
-            <div class="location-box">
-                <div class="box-body">
-                    <select class="location-picker" id="select-location" @change="filterByLocation()" data-live-search="true">  
-                        <option data-tokens="Sted">Sted</option>
-                        <option v-for="item in locations" :key="item.id" data-tokens="" >{{item.value}}</option>                                    
-                    </select>
-                </div>
-            </div>
+            <select class="location-picker" id="select-location" @change="filterByLocation()" data-live-search="true">  
+                <option data-tokens="Sted">Sted</option>
+                <option v-for="item in locations" :key="item.id" data-tokens="" >{{item.value}}</option>                                    
+            </select>
         </div>        
-        <div class="sortingDropdown">
-            <b-form-select v-model="sort" :options="sorts" @change="modifyActivities()" class="sortingBox">
+        <div class="sorting-container">
+            <b-form-select v-model="sort" :options="sorts" @change="modifyActivities()" class="sorting-picker">
                 <template #first>
                     <b-form-select-option :value="null">Sorter</b-form-select-option>
                 </template>
@@ -488,81 +484,55 @@ export default {
   margin: 0;
 }
 
-.sortingContainer {
+.filter-sort-container {
     width: 100%;
     display: flex;
     padding-bottom: 20px;
     padding-left: 55px;
 }
 
-.sortingDropdown {
-  display: inline-block;
-  padding-right: 10px;
-  padding-left: 20px;
-}
-
-.sortingBox {
-    width: 180px;
-}
-
-.categoryDropdown {
+.category-container {
   display: inline-block;
   padding-right: 10px;
   padding-left: 10px;
 }
 
-.categoryBox {
+.category-picker {
     width: 130px;
 }
 
-.levelDropdown {
+.level-container {
     display: inline-block;
     padding-right: 10px;
     padding-left: 10px;
 }
 
-.levelBox {
+.level-picker {
     width: 130px;
 }
 
 .location-container {
-    width: 300px;
-}
-
-.location-box {
-    width: 100%;
-    height: 100%;
-}
-
-.box-body {
-    height: 100%;
+    width: 200px;
+    padding-left: 10px;
 }
 
 .location-picker {
     width: 70%;
     height: 100%;
-    background-color: #FFBD3E;
-    color: #FFFF;
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding-left: 10px;
 }
 
-.location-picker select {
-    display: none;
+.sorting-container {
+  display: inline-block;
+  padding-right: 10px;
+  padding-left: 265px;
 }
 
-.locationBox {
-    width: 130px;
-}
-
-.categoryDropdown {
-    width: 130px;
-}
-
-.custom-select {
-    max-width: 100%;
-}
-
-.categoryBox {
-    width: 300px;
+.sorting-picker {
+    width: 100%;
+    background: #6C757D;
 }
 
 </style>
