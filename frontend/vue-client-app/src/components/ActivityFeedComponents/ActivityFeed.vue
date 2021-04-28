@@ -136,7 +136,8 @@ export default {
         .then((data) => {
           console.log(`Joined activities:`);
           console.log(data);
-          this.joinedActivities = data;
+          let sorted = data.sort((x,y) => x.startTime - y.startTime);
+          this.joinedActivities = sorted;
         })
         .catch((error) => console.log(error));
     },
