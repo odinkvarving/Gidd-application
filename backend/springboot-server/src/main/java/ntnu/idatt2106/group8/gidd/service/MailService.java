@@ -23,7 +23,7 @@ public class MailService {
     //Sender address details
     private static final String MAIL_ADDRESS = "giddteam@gmail.com";
     private static final String PASSWORD = "02YWD29BDP5ZaladZApqWaZtJ0f8voZo11V";
-    private static final String BASE_URL = "http://localhost:8081/resetpassword/"; //TODO: implement a real frontend-reset website.
+    private static final String BASE_URL = "http://localhost:8081/resetpassword/";
 
 
     /**
@@ -50,12 +50,48 @@ public class MailService {
     public boolean sendPasswordResetMail(String recipient, String urlSuffix) {
         try {
             Transport.send(getPasswordResetMessage(getGmailSession(), recipient, urlSuffix));
-            logger.info("Sendt password reset message to: " + recipient);
+            logger.info("Sent password reset message to: " + recipient);
             return true;
         } catch (Exception e) {
             logger.error("Error during transporting of password reset message to: " + recipient);
             return false;
         }
+    }
+
+    /**
+     * Sends a email to the given recipient, with a given subject and a given message.
+     *
+     * @param recipient the email of the recipient ex: test@gmail.com.
+     * @param subject the subject of the message.
+     * @param message the message itself.
+     * @return true if the message was successfully sent, false if not.
+     */
+    public boolean sendEmailMessage(String recipient, String subject, String message){
+        try {
+            Transport.send(getEmailMessage(getGmailSession(),recipient,subject,message));
+            logger.info("Sent a email-message to: " + recipient);
+            return true;
+        }catch ( Exception e){
+            return false;
+        }
+    }
+
+    private Message getEmailMessage(Session session, String recipient, String subject,String message) {
+        logger.info("Preparing a new email-message to: " + recipient);
+        Message mimeMessage = new MimeMessage(session);
+        String textMessage =
+                "<H2>"+subject+"</H2> </br>" +
+                        "<p>"+message+"</p> </br>" +
+                        "<h3>Best regards -The Gidd team.</h3>";
+        try {
+            mimeMessage.setFrom(new InternetAddress(MAIL_ADDRESS));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+            mimeMessage.setSubject(subject);
+            mimeMessage.setContent(textMessage,"text/html");
+        } catch (Exception e) {
+            logger.error("Something went wrong during "+subject+" message generation", e);
+        }
+        return mimeMessage;
     }
 
     public boolean sendFeedbackEmail(FeedbackDTO feedbackDTO) {
