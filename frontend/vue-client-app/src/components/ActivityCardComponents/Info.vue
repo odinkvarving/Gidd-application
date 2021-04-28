@@ -145,6 +145,10 @@ export default {
       type: Object,
       required: true,
     },
+    isLoggedIn: {
+      type: Object,
+      required: true,
+    },
     isActivityHost: {
       type: Boolean,
       required: true,
@@ -195,9 +199,9 @@ export default {
     await this.getCategories();
     await this.getLevels();
     await this.getCurrentParticipantsNumber();
-    if(this.isLoggedIn){
+    if (this.isLoggedIn) {
       await this.isAlreadyParticipating();
-      if (this.currentParticipants == this.activity.maxParticipants) {
+      if (this.currentParticipants == this.maxParticipants) {
         this.isInQueue = true;
       }
     }

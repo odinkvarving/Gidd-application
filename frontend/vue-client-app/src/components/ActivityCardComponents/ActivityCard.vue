@@ -4,7 +4,7 @@
             <b-button :disabled="this.activity.cancelled" @click="cancelActivity()" class="cancel-button" variant="danger">Avlys aktivitet</b-button>
         </div>
         <div class="upper-row">
-            <Info class="comp" id="info" :activity="activity" :weather="weather" :isActivityHost="isActivityHost"/>
+            <Info class="comp" id="info" :activity="activity" :weather="weather" :isLoggedIn="isLoggedIn" :isActivityHost="isActivityHost"/>
             <div class="map-equipment-container">
                 <Map class="comp" id="map" :latitude="activity.latitude" :longitude="activity.longitude"/>
                 <Equipment class="comp" id="equipment" :activity="activity" :isActivityHost="isActivityHost"/>
