@@ -108,8 +108,6 @@ export default {
 };
 </script>
 <style>
-#chat {
-}
 .input {
   padding: 0 10px;
   border: solid 2px #eca82b;

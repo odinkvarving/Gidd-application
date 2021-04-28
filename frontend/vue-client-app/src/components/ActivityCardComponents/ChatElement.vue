@@ -19,7 +19,9 @@
       src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
       alt="default pic"
     />
-    <h5 class="name">{{ name }}</h5>
+    <router-link v-bind:to="profileLink">
+      <h5 class="name">{{ name }}</h5>
+    </router-link>
     <p class="message">{{ message }}</p>
     <p class="time">{{ time }}</p>
   </div>
@@ -52,17 +54,17 @@ export default {
       time: null,
 
       message: "",
+
+      profileLink: "",
     };
   },
   created() {
     this.getUserInfo();
     this.time = this.chatMessage.timeStamp;
     this.message = this.chatMessage.message;
+    this.profileLink = "/accounts/" + this.chatMessage.accountId;
   },
   methods: {
-    sendToProfile() {
-      this.$router.push({ route: "/accounts/" + this.chatMessage.accountId });
-    },
     async getUserInfo() {
       await fetch(
         "http://localhost:8080/accounts/" +
@@ -134,6 +136,11 @@ img {
   font-weight: bold;
   font-size: 25px;
 }
+
+.name {
+  color: black;
+}
+
 .delete:hover {
   color: red;
 }
