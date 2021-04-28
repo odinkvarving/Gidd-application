@@ -80,28 +80,32 @@ export default {
       }
     },
     async sendMessage() {
-      if (userService.isLoggedIn()) {
-        console.log("sending message: " + this.message);
-        console.log("account id: " + this.userId);
-        const data = {
-          accountId: this.userId,
-          message: this.message,
-        };
-        this.message = "";
-        await fetch(
-          "http://localhost:8080/activities/" + this.activity.id + "/messages",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify(data),
-          }
-        ).catch((error) =>
-          console.error("error during posting of message: ", error)
-        );
-      } else {
-        console.error("User must be logged in to post message");
+      if (this.message.length > 0) {
+        if (userService.isLoggedIn()) {
+          console.log("sending message: " + this.message);
+          console.log("account id: " + this.userId);
+          const data = {
+            accountId: this.userId,
+            message: this.message,
+          };
+          this.message = "";
+          await fetch(
+            "http://localhost:8080/activities/" +
+              this.activity.id +
+              "/messages",
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              method: "POST",
+              body: JSON.stringify(data),
+            }
+          ).catch((error) =>
+            console.error("error during posting of message: ", error)
+          );
+        } else {
+          console.error("User must be logged in to post message");
+        }
       }
     },
   },
