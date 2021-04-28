@@ -229,7 +229,7 @@ public class ActivityController {
 
     @PostMapping("activities/{id}/notify-edit")
     public boolean sendNotificationToAllParticipants(@PathVariable int id){
-        return notificationService.sendNotificationToAllParticipants(id, "was edited!");
+        return notificationService.sendNotificationToAllParticipants(id, "was edited!   ");
     }
 
 

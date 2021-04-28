@@ -6,7 +6,8 @@ export const notificationService = {
     updateAccountsNotificationSettings,
     sendNotification,
     updateNotification,
-    sendNotificationToAllParticipants
+    sendNotificationToAllParticipants,
+    removeNotification
 }
 
 
@@ -132,6 +133,22 @@ async function sendNotificationToAllParticipants(activityId){
 
     const requestOptions = {
         method: 'POST'
+    }
+
+    return await fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => console.log(error));
+}
+
+async function removeNotification(notificationId){
+    console.log(notificationId);
+    let url = `http://localhost:8080/accounts/notifications/${notificationId}`;
+
+    const requestOptions = {
+        method: 'DELETE'
     }
 
     return await fetch(url, requestOptions)

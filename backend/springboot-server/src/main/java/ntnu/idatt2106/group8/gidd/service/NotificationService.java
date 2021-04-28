@@ -113,4 +113,16 @@ public class NotificationService {
             return false;
         }
     }
+
+    public boolean deleteNotification(int notificationId){
+        Notification notification = notificationRepository.findById(notificationId).orElse(null);
+        if(notification != null){
+            notificationRepository.delete(notification);
+            logger.info(notification.toString() + " \nwas deleted");
+            return true;
+        }else{
+            logger.info("Notifcation was not found, could not delete");
+            return false;
+        }
+    }
 }

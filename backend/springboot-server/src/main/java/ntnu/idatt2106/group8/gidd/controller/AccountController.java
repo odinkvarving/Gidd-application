@@ -279,4 +279,9 @@ public class AccountController {
     public NotificationSettings getAccountsNotificationSettings(@PathVariable int account_id){
         return notificationService.getNotificationSettingsByAccountId(account_id);
     }
+
+    @DeleteMapping("/accounts/notifications/{notificationId}")
+    public boolean deleteNotification(@PathVariable int notificationId){
+        return notificationService.deleteNotification(notificationId);
+    }
 }

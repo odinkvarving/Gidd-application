@@ -14,6 +14,7 @@
           <div @click="handleClick(item)" class="notification-item">
                 <p id="message">{{ item.message }}</p>
                 <p id="date">{{ item.date }}</p>
+                <b-icon id="close-notification" icon="x" @click.stop="removeNotification(item.id)"/>
           </div>
         </div>
       </div>
@@ -35,22 +36,26 @@ export default {
       isVisible: false,
       items: [],
       unreadNotifications: 0,
-      showUnreadSymbol: false
+      showUnreadSymbol: false,
+      isLoggedIn: false,
     };
   },
   async mounted(){
-    let accountId = await userService.getAccountByEmail().then(data => {
-          return data.id
-    });
-    this.items = await notificationService.getAccountsNotifications(accountId);
-    for(let i = 0; i < this.items.length; i ++){
-      if(this.items[i].seen === false){
-        this.unreadNotifications++;
+    this.isLoggedIn = await userService.isLoggedIn();
+    if(this.isLoggedIn){
+      let accountId = await userService.getAccountByEmail().then(data => {
+            return data.id
+      });
+      this.items = await notificationService.getAccountsNotifications(accountId);
+      for(let i = 0; i < this.items.length; i ++){
+        if(this.items[i].seen === false){
+          this.unreadNotifications++;
+        }
       }
-    }
 
-    if(this.unreadNotifications > 0){
-      this.showUnreadSymbol = true;
+      if(this.unreadNotifications > 0){
+        this.showUnreadSymbol = true;
+      }
     }
   },
   methods: {
@@ -62,11 +67,20 @@ export default {
     },
     handleClick(item){
         let path = `/dashboard/activity/${item.activityId}`;
+        notificationService.removeNotification(item.id)
+          .then(result => {
+            if(result === true){
+              console.log("Removed notification sucessfully");
+            }else{
+              console.log("Error removing notfication...");
+            }
+          });
         if(this.$router.currentRoute.path !== path){
             this.$router.push(path);
         }
     },
     async showNotifications(){
+      if(this.isLoggedIn){
         let unread = 0;
         this.isVisible = !this.isVisible;
         let accountId = await userService.getAccountByEmail().then(data => {
@@ -85,6 +99,23 @@ export default {
         }
         console.log(this.items);
         console.log(this.unreadNotifications);
+      }else{
+        this.$router.push("/login");
+      }
+    },
+    async removeNotification(notificationId){
+      console.log("clicked");
+      let result = await notificationService.removeNotification(notificationId);
+      if(result === true){
+        console.log("Successfully removed notification");
+        for(let i = 0; i < this.items.length; i ++){
+          if(this.items[i].id === notificationId){
+            this.items.splice(i, 1);
+          }
+        }
+      }else{
+        console.log("Error removing notification...");
+      }
     }
   },
 };
@@ -99,7 +130,6 @@ nav .menu-item .sub-menu {
   width: 250px;
   max-height: 30vh;
   overflow-y: auto;
-  padding: 10px;
   border: 1px solid rgba(0, 0, 0, 0.245)
 }
 
@@ -119,12 +149,14 @@ nav .menu-item .sub-menu {
 }
 
 .notification-item {
+    width: 100%;
     padding: 8px;
     font-family: "Mulish";
     text-overflow: ellipsis;
     line-height: 1.5em;
     height: 7.5em;
     overflow: hidden;
+    position: relative;
 }
 
 .notification-item:hover{
@@ -157,4 +189,19 @@ nav .menu-item .sub-menu {
   justify-content: center;
   font-family: "Mulish";
 }
+
+#close-notification {
+ position: absolute;
+ top: 27%;
+ right: 0;
+ font-size: 28px;
+ opacity: 75%;
+ transition: 0.3s;
+}
+
+#close-notification:hover {
+  transition: 0.3s;
+  font-size: 29px;
+}
+
 </style>
