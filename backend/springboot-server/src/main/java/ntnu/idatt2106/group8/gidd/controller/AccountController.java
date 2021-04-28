@@ -280,6 +280,11 @@ public class AccountController {
         return notificationService.updateAccountsNotificationsSetting(account_id, notificationSettings);
     }
 
+    @PutMapping("/accounts/accountInfos/notificationSettings")
+    public boolean updateNotificationSettings(@RequestBody NotificationSettings notificationSettings){
+        return notificationService.updateNotificationSettings(notificationSettings);
+    }
+
     @GetMapping("/accounts/{account_id}/accountInfo/notificationSettings")
     public NotificationSettings getAccountsNotificationSettings(@PathVariable int account_id){
         return notificationService.getNotificationSettingsByAccountId(account_id);

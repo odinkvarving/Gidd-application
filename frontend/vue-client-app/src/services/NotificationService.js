@@ -54,9 +54,9 @@ function getAccountsNotificationSettings(accountId){
     wantsActivityCancelledMails: true
 }
  */
-function updateAccountsNotificationSettings(accountId, notificationSettings){
+async function updateAccountsNotificationSettings(accountId, notificationSettings){
     let url = `http://localhost:8080/accounts/${accountId}/accountInfo/notificationSettings`;
-
+    console.log(notificationSettings);
     const requestOptions = {
         method: 'PUT',
         headers: {
@@ -66,7 +66,7 @@ function updateAccountsNotificationSettings(accountId, notificationSettings){
         body: JSON.stringify(notificationSettings)
     }
 
-    return fetch(url, requestOptions)
+    return await fetch(url, requestOptions)
         .then(response => response.json())
         .then(data => {
             return data;
