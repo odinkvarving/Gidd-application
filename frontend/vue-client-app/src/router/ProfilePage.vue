@@ -1,5 +1,6 @@
 <template>
   <div class="profile_container">
+    <NavBar />
     <img src="../assets/Default_cover.jpg" alt="Cover photo"
          id="cover_photo"/>
     <img :src=AccountInfo.imageURL @error="getDefaultImg" alt="Profile photo"
@@ -36,6 +37,7 @@ import ProfileCalendar from "../components/profileComponents/ProfileCalendar";
 import ProfileActivity from "../components/profileComponents/ProfileActivity";
 import ProfileEdit from "../components/profileComponents/ProfileEdit";
 import { userService } from '../services/UserService';
+import NavBar from "../components/Nav/NavBar.vue"
 
 let path_to_db='http://localhost:8080/';
 /**
@@ -65,7 +67,6 @@ let path_to_db='http://localhost:8080/';
  */
 export default {
   name: "ProfilePage",
-
   methods:{
     sendComp(newComp){
       console.log(newComp)
@@ -140,7 +141,8 @@ export default {
     'ProfileToolbar':ProfileToolbar,
     'profileCalendar':ProfileCalendar,
     'profileActivity':ProfileActivity,
-    'profileEdit':ProfileEdit
+    'profileEdit':ProfileEdit,
+    NavBar
   },
   computed:{
     activityProperties(){

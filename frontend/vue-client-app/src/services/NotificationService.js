@@ -2,8 +2,11 @@ import { userService } from "./UserService.js"
 
 export const notificationService = {
     getAccountsNotifications,
+    getAccountsNotificationSettings,
+    updateAccountsNotificationSettings,
     sendNotification,
-    updateNotification
+    updateNotification,
+    sendNotificationToAllParticipants
 }
 
 
@@ -14,6 +17,52 @@ function getAccountsNotifications(accountId){
     const requestOptions = {
         method: 'GET',
         headers: userService.authorizationHeader()
+    }
+
+    return fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => console.log(error));
+}
+
+function getAccountsNotificationSettings(accountId){
+    let url = `http://localhost:8080/accounts/${accountId}/accountInfo/notificationSettings`;
+
+    const requestOptions = {
+        method: 'GET',
+        headers: userService.authorizationHeader()
+    }
+
+    return fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => console.log(error));
+}
+
+/** NotificationSettings object structure
+{
+    wantsActivityChangedNotifications:false,
+    wantsActivityChangedMails: true,
+    wantsOutOfQueueNotifications: false,
+    wantsOutOfQueueMails: true,
+    wantsActivityCancelledNotifications: false,
+    wantsActivityCancelledMails: true
+}
+ */
+function updateAccountsNotificationSettings(accountId, notificationSettings){
+    let url = `http://localhost:8080/accounts/${accountId}/accountInfo/notificationSettings`;
+
+    const requestOptions = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': userService.getTokenString()
+        },
+        body: JSON.stringify(notificationSettings)
     }
 
     return fetch(url, requestOptions)
@@ -57,7 +106,7 @@ function sendNotification(notification){
 }
     
 
-function updateNotification(data){
+function updateNotification(notification){
     let url = `http://localhost:8080/accounts/notifications`;
 
     const requestOptions = {
@@ -66,7 +115,7 @@ function updateNotification(data){
             'Content-Type': 'application/json',
             'Authorization': userService.getTokenString()
         },
-        body: JSON.stringify({id: data.id, isSeen: true})
+        body: JSON.stringify({id: notification.id, isSeen: true})
     }
 
     return fetch(url, requestOptions)
@@ -75,4 +124,20 @@ function updateNotification(data){
             return data;
         })
         .catch(error => console.log(error))
+}
+
+
+async function sendNotificationToAllParticipants(activityId){
+    let url = `http://localhost:8080/activities/${activityId}/notify-edit`;
+
+    const requestOptions = {
+        method: 'POST'
+    }
+
+    return await fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => console.log(error));
 }

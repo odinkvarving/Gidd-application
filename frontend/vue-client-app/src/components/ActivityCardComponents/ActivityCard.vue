@@ -1,13 +1,16 @@
 <template>
     <div id="activity" v-if="activity != null">
+        <div v-show="isActivityHost" class="cancel-button-container">
+            <b-button :disabled="this.activity.cancelled" @click="cancelActivity()" class="cancel-button" variant="danger">Avlys aktivitet</b-button>
+        </div>
         <div class="upper-row">
-            <Info class="comp" id="info" :activity="activity" :weather="weather"/>
+            <Info class="comp" id="info" :activity="activity" :weather="weather" :isLoggedIn="isLoggedIn" :isActivityHost="isActivityHost"/>
             <div class="map-equipment-container">
                 <Map class="comp" id="map" :latitude="activity.latitude" :longitude="activity.longitude"/>
-                <Equipment class="comp" id="equipment" :activity="activity"/>
+                <Equipment class="comp" id="equipment" :activity="activity" :isActivityHost="isActivityHost"/>
             </div>
         </div>
-        <button id="btnVisible" @click="changeChatVisibility">Åpne chat</button>
+        <button :disabled="this.activity.cancelled" id="btnVisible" @click="changeChatVisibility">Åpne chat</button>
         <Chat class="chat" id="chat" :activity="activity" v-show="isChatVisible"/>
     </div>
 </template>
@@ -53,16 +56,20 @@
             return {
                 /**
                  * isChatVisible is a boolean which changes each time the button (btnVisible) is clicked.
-                 * When isChatVisible changes to true, the chat box will be displayed.
+                 * When isChatVisible changes to false, the chat box will be not be displayed.
                  */
-                isChatVisible: false,
+                isChatVisible: true,
                 /**
                  * isLoggedIn is a boolean to check if the client is logged in or not
                  */
-                isLoggedIn: userService.isLoggedIn(),
+                isLoggedIn: false,
+                isActivityHost: false
             }
         },
-
+        async mounted(){
+            this.isLoggedIn = await userService.isLoggedIn();
+            this.isActivityHost = await this.checkIfActivityHost();
+        },
         methods: {
             /**
              * changeChatVisibility is a function which changes the state of chat visibility.
@@ -76,11 +83,58 @@
                 } else {
                     btn.childNodes[0].nodeValue = "Åpne chat";
                 }
+            },
+            async checkIfActivityHost(){
+                if(this.isLoggedIn){
+                    let accountId = await userService.getAccountByEmail().then(data => {
+                    return data.id;
+                    });
+                    
+                    return this.activity.creator.id === accountId;
+                }else{
+                    return false;
+                }
+            },
+            cancelActivity(){
+
+                // TODO: add alert box making sure the host wants to cancel activity
+
+                let url = `http://localhost:8080/activities/${this.activity.id}/cancel`;
+                
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: userService.authorizationHeader()
+                }
+
+                fetch(url, requestOptions)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data === true){
+                            console.log("Cancelling activity was successful and all participants is notified");
+                        }else{
+                            console.log("Error cancelling activity! Something went wrong!");
+                        }
+                    })
+                    .catch(error => console.log(error));
             }
         }
     }
 </script>
 <style>
+
+    .cancel-button-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cancel-button{
+        width: 200px;
+        height: 40px;
+        margin: 20px 60px 20px 20px;
+    }
+
     #activity{
         display: flex;
         /*display: flex;

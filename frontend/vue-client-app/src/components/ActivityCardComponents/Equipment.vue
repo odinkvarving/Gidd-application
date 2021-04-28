@@ -2,7 +2,7 @@
   <div id="container">
     <h3>Utstyr:</h3>
     <div class="edit">
-      <b-icon class="pencil" icon="pencil" @click="edit"></b-icon>
+      <b-icon  v-show="isActivityHost && !activity.cancelled" class="pencil" icon="pencil" @click="edit"></b-icon>
     </div>
     <div class="equipment-list">
       <ul v-for="(e, index) in equipment" :key="e.description">
@@ -32,6 +32,7 @@
   </div>
 </template>
 <script>
+import { notificationService } from '../../services/NotificationService';
 export default {
   name: "Equipments",
 
@@ -48,6 +49,10 @@ export default {
       type: Object,
       required: true,
     },
+    isActivityHost: {
+    type: Boolean,
+    required: true,
+    }
   },
   methods: {
     edit() {
@@ -60,6 +65,12 @@ export default {
       if (this.newEquipment != "") {
         this.equipment.push({ description: this.newEquipment });
         this.newEquipment = "";
+        let result = notificationService.sendNotificationToAllParticipants(this.activity.id);
+        if(result === true){
+              console.log("Sucessfully notified all participants about the edit!");
+        }else{
+          console.log("Error! Something went wrong when notifying participants!");
+        }
       }
     },
   },
