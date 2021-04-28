@@ -87,10 +87,15 @@ public class NotificationService {
             notificationSettings.setId(accountInfo.getNotificationSettings().getId());
             accountInfo.setNotificationSettings(notificationSettings);
             accountInfoRepository.save(accountInfo);
+            logger.info("Comes here!!!!");
             return true;
         }else{
             return false;
         }
+    }
+
+    public boolean updateNotificationSettings(NotificationSettings notificationSettings){
+        return notificationSettingsRepository.save(notificationSettings).equals(notificationSettings);
     }
 
     public boolean sendNotificationToAllParticipants(int activityId, String msg){

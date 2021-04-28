@@ -418,13 +418,13 @@ data() {
     }
 
     .menu-item .name-field {
-        margin: auto;
-        width: 100%;
-        text-align: center;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        outline: none;
-        font-size: 30px;
-        background-color: hsla(0, 0%, 77%, 0.1);
+      margin: auto;
+      width: 100%;
+      text-align: center;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      outline: none;
+      font-size: 30px;
+      background-color: hsla(0, 0%, 77%, 0.1);
     }
 
 

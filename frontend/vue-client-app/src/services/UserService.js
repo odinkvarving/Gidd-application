@@ -133,7 +133,7 @@ function setAccount(newAccount,id){
             'Authorization': `Bearer ${user.jwtToken}`
         }
         ,
-        body:JSON.stringify(newAccount)
+        body: JSON.stringify(newAccount)
     }).then(handleResponse)
 }
 function isLoggedIn(){
