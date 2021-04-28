@@ -74,7 +74,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/accounts/login", "/h2-console/*", "/activities/", "/activityTypes/",
                 "/levels/", "/activities/{id}/accounts/count", "/activities/{id}/accounts/queue/count"
                 , "/reset/{mail}","/activities/{id}/messages","/accounts/{id}/info", "/activities/{id}/notify-edit",
-                "/levels/", "/activityTypes/", "/activities/{id}/", "/accounts/notifications/{notificationId}")
+                "/levels/", "/activityTypes/", "/activities/{id}/", "/accounts/notifications/{notificationId}", 
+                "/reset/{mail}","/activities/{id}/messages","/accounts/{id}/info","/messages/{id}")
                 .permitAll().anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

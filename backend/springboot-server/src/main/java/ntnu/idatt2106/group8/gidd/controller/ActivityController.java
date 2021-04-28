@@ -215,6 +215,16 @@ public class ActivityController {
     }
 
     /**
+     * Endpoint for deleting a message.
+     *
+     * @param id the id of the message to delete.
+     */
+    @DeleteMapping("messages/{id}")
+    public void deleteMessage(@PathVariable int id){
+        this.chatService.deleteChatMessage(id);
+    }
+
+    /**
      * Endpoint for adding a message to a specific activity.
      *
      * @param message the message to add to the activity.
