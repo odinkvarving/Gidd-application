@@ -248,4 +248,4 @@ export default {
     text-align: center;
     margin: 10px 0;
   }
-</style>
+  </style>

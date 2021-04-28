@@ -187,6 +187,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
 </script>
 <style scoped>
     #card{
+        position: relative;
         height: 625px;
         width: 464px;
         background: #FFFFFF;
@@ -199,6 +200,10 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         flex-flow: column;
         align-items: center;
     }
+
+    #card h1 {
+        font-size: 30px;
+    }
     
     #card:hover {
         background: #ffffff42;
@@ -207,6 +212,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
 
     #card p{
         font-size: 20px;
+        padding: 0;
     }
     #ownerInfo{
         display: flex;
@@ -216,7 +222,6 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         margin: 20px 0 0 65px;
     }
     #ownerInfo img{
-        grid-area: image;
         width: 50px;
         height: 50px;
         border-radius: 35px;
@@ -232,10 +237,12 @@ import { activityButtonService } from '../../services/ActivityButtonService';
     }
 
     #ownerInfo h3{
-        grid-area: name;
-        font-size: 25px;
+        font-size: 20px;
         margin: 0;
         opacity: 75%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     #ownerInfo p{
@@ -266,6 +273,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
 
     .detail-container {
         display: flex;
+        width: 30%;
         flex-flow: column;
         justify-content: space-between;
     }
@@ -273,10 +281,16 @@ import { activityButtonService } from '../../services/ActivityButtonService';
     .detail-header {
         opacity: 65%;
         margin: 0;
+        padding: 0;
     }
 
     .detail-value {
         margin: 0;
+        padding: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 25px;
+        line-height: 25px;
     }
 
     #map-preview {
@@ -293,6 +307,8 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         color: white;
         border: 0;
         outline: none;
+        position: absolute;
+        bottom: 30px;
     }
     #btn:hover {
         background-color: #eca82b;
@@ -344,4 +360,5 @@ import { activityButtonService } from '../../services/ActivityButtonService';
     .queue-list{
         opacity: 70%;
     }
+
 </style>

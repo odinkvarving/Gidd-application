@@ -318,4 +318,5 @@ export default {
 .filteringBox {
     width: 180px;
 }
+
 </style>
