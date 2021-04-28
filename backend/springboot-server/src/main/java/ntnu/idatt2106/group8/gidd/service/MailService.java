@@ -1,13 +1,11 @@
 package ntnu.idatt2106.group8.gidd.service;
 
+import ntnu.idatt2106.group8.gidd.model.DTO.FeedbackDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
@@ -56,6 +54,23 @@ public class MailService {
             return true;
         } catch (Exception e) {
             logger.error("Error during transporting of password reset message to: " + recipient);
+            return false;
+        }
+    }
+
+    public boolean sendFeedbackEmail(FeedbackDTO feedbackDTO) {
+        try {
+            Message message = new MimeMessage(getGmailSession());
+            message.setFrom(new InternetAddress(feedbackDTO.getSender())); //TODO: set from correct email address from user
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(MAIL_ADDRESS));
+            message.setSubject("Feedback");
+            message.setText("User: " + feedbackDTO.getSender() + ":\n\nFeedback: " + feedbackDTO.getText() + "\n\n" + "Rating: " + feedbackDTO.getRating()); //TODO: set correct text input from user
+            Transport.send(message);
+            logger.info("Feedback email sent successfully");
+            return true;
+        } catch (MessagingException mex) {
+            mex.printStackTrace();
+            logger.error("Could not send feedback email");
             return false;
         }
     }
