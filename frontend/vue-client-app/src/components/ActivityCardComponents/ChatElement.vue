@@ -6,7 +6,7 @@
         creatorId === loggedInAccountId
       "
     >
-      <button @click="deleteMessage()" class="delete">X</button>
+      <button @click="deleteMessage()" class="delete">×</button>
     </div>
 
     <img
@@ -101,9 +101,11 @@ img {
 }
 
 .box {
+  margin-bottom: 10px;
   background-color: white;
   padding-left: 15px;
   width: 92%;
+  border: solid lightgray 2px;
 }
 .time {
   opacity: 0.5;
@@ -125,10 +127,11 @@ img {
   background-color: white;
   color: lightgray;
   border-radius: 12px;
-  padding-top: 10px;
+  padding-top: 5px;
   border: none;
   padding-right: 15px;
   font-weight: bold;
+  font-size: 25px;
 }
 .delete:hover {
   color: red;

@@ -13,11 +13,11 @@
         type="text"
         class="input"
         id="message-field"
-        placeholder="Ny Kommentar"
+        placeholder="Legg til en kommentar"
         rows="2"
         v-model="message"
       />
-      <button @click="sendMessage">✉</button>
+      <button @click="sendMessage">✔</button>
     </div>
   </div>
 </template>
