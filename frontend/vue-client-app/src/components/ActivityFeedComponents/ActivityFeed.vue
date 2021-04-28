@@ -36,7 +36,7 @@
       </div>
     </div>
     <div id="calendar-mini">
-      <p class="header">Kommende aktiviteter</p>
+      <p class="header">Dine aktiviteter</p>
       <div class="horizontal-line" />
       <div id="coming-activities">
         <!-- TODO: refresh joined activity list when activity is joined or removed -->
