@@ -16,23 +16,13 @@
                 </template>
             </b-form-select>
         </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-body">
-                    <form>
-                        <div class="form-group row">
-                        <div class="col-sm-10">
-                            <select class="location-picker" id="select-location" @change="filterByLocation()" data-live-search="true">  
-                                <option data-tokens="Sted">Sted</option>
-                                <option v-for="item in locations" :key="item.id" data-tokens="" >{{item.value}}</option>                                    
-                            </select>
-                        </div>
-                        </div>
-                    </form>
-                    </div>
-                </div>
+        <div class="location-container">
+            <div class="location-box">
+                <div class="box-body">
+                    <select class="location-picker" id="select-location" @change="filterByLocation()" data-live-search="true">  
+                        <option data-tokens="Sted">Sted</option>
+                        <option v-for="item in locations" :key="item.id" data-tokens="" >{{item.value}}</option>                                    
+                    </select>
                 </div>
             </div>
         </div>        
@@ -508,7 +498,7 @@ export default {
 .sortingDropdown {
   display: inline-block;
   padding-right: 10px;
-  padding-left: 330px;
+  padding-left: 20px;
 }
 
 .sortingBox {
@@ -535,14 +525,44 @@ export default {
     width: 130px;
 }
 
-.locationDropdown {
-    display: inline-block;
-    padding-right: 10px;
-    padding-left: 10px;
+.location-container {
+    width: 300px;
+}
+
+.location-box {
+    width: 100%;
+    height: 100%;
+}
+
+.box-body {
+    height: 100%;
+}
+
+.location-picker {
+    width: 70%;
+    height: 100%;
+    background-color: #FFBD3E;
+    color: #FFFF;
+}
+
+.location-picker select {
+    display: none;
 }
 
 .locationBox {
     width: 130px;
+}
+
+.categoryDropdown {
+    width: 130px;
+}
+
+.custom-select {
+    max-width: 100%;
+}
+
+.categoryBox {
+    width: 300px;
 }
 
 </style>
