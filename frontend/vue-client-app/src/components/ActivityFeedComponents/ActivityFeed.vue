@@ -105,14 +105,16 @@ export default {
           { value: "Stavanger", text: "Stavanger"},
       ],
       sorts: [
-        { value: 1, text: "Tidspunkt tidlig-senest"},
-        { value: 2, text: "Tidspunkt senest-tidlig"},
-        { value: 3, text: "Varighet høy-lav"},
-        { value: 4, text: "Varighet lav-høy"},
-        { value: 5, text: "Ledige plasser høy-lav"},
-        { value: 6, text: "Ledige plasser lav-høy"},
-        { value: 7, text: "Antall påmeldte høy-lay"},
-        { value: 8, text: "Antall påmeldte lav-høy"},
+        { value: 1, text: "Navn A-Å"},
+        { value: 2, text: "Navn Å-A"},
+        { value: 3, text: "Tidspunkt tidlig-senest"},
+        { value: 4, text: "Tidspunkt senest-tidlig"},
+        { value: 5, text: "Varighet høy-lav"},
+        { value: 6, text: "Varighet lav-høy"},
+        { value: 7, text: "Ledige plasser høy-lav"},
+        { value: 8, text: "Ledige plasser lav-høy"},
+        { value: 9, text: "Antall påmeldte høy-lay"},
+        { value: 10, text: "Antall påmeldte lav-høy"},
       ],
       filterKey: "",
     };
@@ -238,40 +240,64 @@ export default {
     sortActivities() {
       switch(this.sort) {
         case 1: {
-          this.sortedActivities = this.sortByTimeEarliest();
+          this.sortedActivities = this.sortByNameAsc();
           break;
         }
         case 2: {
-          this.sortedActivities = this.sortByTimeLatest();
+          this.sortedActivities = this.sortByNameDesc();
           break;
         }
         case 3: {
-          this.sortedActivities = this.sortByDurationDesc();
+          this.sortedActivities = this.sortByTimeEarliest();
           break;
         }
         case 4: {
-          this.sortedActivities = this.sortByDurationAsc();
+          this.sortedActivities = this.sortByTimeLatest();
           break;
         }
         case 5: {
-          this.sortedActivities = this.sortByFreeSpotsDesc();
+          this.sortedActivities = this.sortByDurationDesc();
           break;
         }
         case 6: {
-          this.sortedActivities = this.sortByFreeSpotsAsc();
+          this.sortedActivities = this.sortByDurationAsc();
           break;
-        }       
+        }
         case 7: {
-          this.sortedActivities = this.sortByCurrentParticipantsDesc();
+          this.sortedActivities = this.sortByFreeSpotsDesc();
           break;
         }
         case 8: {
+          this.sortedActivities = this.sortByFreeSpotsAsc();
+          break;
+        }       
+        case 9: {
+          this.sortedActivities = this.sortByCurrentParticipantsDesc();
+          break;
+        }
+        case 10: {
           this.sortedActivities = this.sortByCurrentParticipantsAsc();
           break;
         }
       }
+    },
 
-        //Returnerer dette filteredList(sortert)?
+    sortByNameAsc() {
+      console.log(">> sortByNameAsc() called");
+      return this.activities.sort((x,y) => {
+        if (x.title < y.title) return -1;
+        else if (x.title > y.title) return 1;
+        return 0;
+      });
+    },
+
+    sortByNameDesc() {
+      console.log(">> sortByNameDesc() called");
+      return this.activities.sort((x,y) => {
+        if (x.title < y.title) return 1;
+        else if (x.title > y.title) return -1;
+        return 0;
+      });
     },
 
     sortByTimeEarliest() {
