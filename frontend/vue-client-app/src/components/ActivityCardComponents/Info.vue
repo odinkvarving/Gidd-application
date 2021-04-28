@@ -1,5 +1,5 @@
 <template>
-  <div id="infobox" v-if="activity">
+  <div id="infobox" v-if="activity && isDataReady">
     <div class="box" id="top">
       <b-icon
         class="toggle-edit-button"
@@ -97,30 +97,24 @@
       </ul>
     </div>
     <!--<div>
-                  <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
-              </div>-->
-    <!--<button
-      id="btn"
-      :class="{ full: isFull }"
-      @click="handleButtonClick()"
-      v-show="!inEditMode"
-    >
-      <span>{{ checkIfFull() }}</span>
-    </button>-->
+      <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
+    </div>-->
     <div v-show="!activity.cancelled">
-      <button v-if="!isFull && !alreadyParticipating && !inEditMode" id="btn" class="join" @click.stop="joinButtonClicked()">
-        <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
-          <span class="sr-only">Loading...</span>
-        </div>
-        <span v-else >{{ getButtonStatus() }}</span>
-      </button>
-      <button v-else-if="isFull && !alreadyParticipating && !inEditMode" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
-      <button v-else-if="!inEditMode" id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
-        <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
-          <span class="sr-only">Loading...</span>
-        </div>
-        <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
-      </button>
+      <div v-show="!inEditMode">
+        <button v-if="!isFull && !alreadyParticipating" id="btn" class="join" @click.stop="joinButtonClicked()">
+          <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <span v-else >{{ getButtonStatus() }}</span>
+        </button>
+        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
+        <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
+          <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
+        </button>
+      </div>
       <button v-show="inEditMode" @click="onClickSaveButton">
         <span>Lagre</span>
       </button>
@@ -151,6 +145,10 @@ export default {
       type: Object,
       required: true,
     },
+    isLoggedIn: {
+      type: Object,
+      required: true,
+    },
     isActivityHost: {
       type: Boolean,
       required: true,
@@ -169,6 +167,7 @@ export default {
       queuePosition: 0,
       isInQueue: false,
       duration: "",
+      isDataReady: false,
 
       title: this.activity.title,
       category: this.activity.activityType.type,
@@ -196,14 +195,18 @@ export default {
     };
   },
 
-  mounted(){
-    this.getCategories();
-    this.getLevels();
-    this.getCurrentParticipantsNumber();
-    if(this.isLoggedIn){
-      this.isAlreadyParticipating();
+  async mounted(){
+    await this.getCategories();
+    await this.getLevels();
+    await this.getCurrentParticipantsNumber();
+    if (this.isLoggedIn) {
+      await this.isAlreadyParticipating();
+      if (this.currentParticipants == this.maxParticipants) {
+        this.isInQueue = true;
+      }
     }
     this.getDuration();
+    this.isDataReady = true;
   },
 
   methods: {

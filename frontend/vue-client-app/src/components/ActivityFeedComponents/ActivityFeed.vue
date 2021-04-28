@@ -36,7 +36,7 @@
       </div>
     </div>
     <div id="calendar-mini">
-      <p class="header">Kommende aktiviteter</p>
+      <p class="header">Dine aktiviteter</p>
       <div class="horizontal-line" />
       <div id="coming-activities">
         <!-- TODO: refresh joined activity list when activity is joined or removed -->
@@ -136,7 +136,8 @@ export default {
         .then((data) => {
           console.log(`Joined activities:`);
           console.log(data);
-          this.joinedActivities = data;
+          let sorted = data.sort((x,y) => x.startTime - y.startTime);
+          this.joinedActivities = sorted;
         })
         .catch((error) => console.log(error));
     },
