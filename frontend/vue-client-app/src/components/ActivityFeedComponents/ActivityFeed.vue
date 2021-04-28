@@ -3,28 +3,28 @@
     <div id="feed">
       <div class="sortingContainer">
         <div class="categoryDropdown">
-            <b-form-select v-model="selected" :options="categories" @change="modifyActivities()" class="categoryBox">
+            <b-form-select v-model="category" :options="categories" @change="filterByCategory()" class="categoryBox">
                 <template #first>
                     <b-form-select-option :value="null">Kategori</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="levelDropdown">
-            <b-form-select v-model="selected" :options="levels" @change="modifyActivities()" class="levelBox">
+            <b-form-select v-model="level" :options="levels" @change="filterByLevel()" class="levelBox">
                 <template #first>
                     <b-form-select-option :value="null">Nivå</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="locationDropdown">
-            <b-form-select v-model="selected" :options="locations" @change="modifyActivities()" class="locationBox">
+            <b-form-select v-model="location" :options="locations" @change="filterByLocation()" class="locationBox">
                 <template #first>
                     <b-form-select-option :value="null">Sted</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="sortingDropdown">
-            <b-form-select v-model="chosen" :options="sorts" @change="modifyActivities()" class="sortingBox">
+            <b-form-select v-model="sort" :options="sorts" @change="modifyActivities()" class="sortingBox">
                 <template #first>
                     <b-form-select-option :value="null">Sorter</b-form-select-option>
                 </template>
@@ -84,27 +84,19 @@ export default {
       //WeatherService: require('../../services/WeatherService.js'),
       selectedActivity: null,
       activities: {},
+      allCategories: {},
       joinedActivities: {},
       currentParticipants: 0,
       sortKey: "",
       isLoggedIn: false,
       modifiedActivities: {},
-      selected: null,
-      chosen: null,
-      categories: [
-          { value: "Fotball", text: "Fotball"},
-          { value: "Tur", text: "Tur"},
-          { value: "Topptur", text: "Topptur"},
-          { value: "Svømming", text: "Svømming"},
-          { value: "Gaming", text: "Gaming"}
-      ],
-      levels: [
-          { value: "Lett", text: "Lett"},
-          { value: "Middels", text: "Middels"},
-          { value: "Krevende", text: "Krevende"},
-          { value: "Hardt", text: "Hardt"},
-          { value: "Ekstremt", text: "Ekstremt"},
-      ],
+      category: null,
+      level: null,
+      location: null,
+      sort: null,
+      newList: [],
+      categories: [],
+      levels: [],
       locations: [
           { value: "Trondheim", text: "Trondheim"},
           { value: "Oslo", text: "Oslo"},
@@ -120,21 +112,23 @@ export default {
       filterKey: "",
     };
   },
-  mounted() {
-    this.getActivities();
+  async mounted() {
+    await this.getActivities();
+    await this.getCategories();
+    await this.getLevels();
     if (userService.isLoggedIn()) {
       this.isLoggedIn = true;
-      this.getJoinedActivities();
+      await this.getJoinedActivities();
     }
   },
   methods: {
-    getActivities() {
+    async getActivities() {
       const requestOptions = {
         method: "GET",
       };
 
       // Get all registered activites from database
-      fetch("http://localhost:8080/activities/", requestOptions)
+      await fetch("http://localhost:8080/activities/", requestOptions)
         .then((response) => response.json())
         .then((data) => {
           this.activities = data;
@@ -143,23 +137,87 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    modifyActivities() {
-      console.log(this.selected);
-      console.log(this.chosen);  
-      let filteredList = this.filterActivities();
-      let listSorted = this.sortActivities(filteredList);
-      this.modifiedActivities = listSorted;
-      this.activities = this.modifiedActivities;
+    async getCategories() {
+        const requestOptions = {
+            method: "GET"
+        };
+
+        await fetch("http://localhost:8080/activityTypes/", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                for(let i = 0; i < data.length; i++) {
+                    console.log(data[i].type)
+                    this.categories.push({
+                        value: data[i].type,
+                        text: data[i].type
+                    })
+                }
+                console.log(data[0]);
+            })
+            .catch((error) => console.log(error)); 
     },
 
-    filterActivities() {
+    async getLevels() {
+        const requestOptions = {
+            method: "GET"
+        };
+
+        await fetch("https://localhost:8080/levels/", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                for(let i = 0; i < data.length; i++) {
+                    console.log(data[i].description + "DESCRPTION XXXXXX");
+                    this.levels.push({
+                        value: data[i].description,
+                        text: data[i].description
+                    })
+                }
+                console.log(data[0]);
+            })
+            .catch((error) => console.log(error));
+    },
+
+    filterByCategory() {
         
         const filteredList = [];
 
-        if(this.selected !== "") {
+        if(this.category !== "") {
             for(let i = 0; i < this.activities.length; i++) {
-                if(this.activities[i].activityType.type.toLowerCase() === this.selected.toLowerCase()) {
-                    filteredList.push(this.activities[i])
+                if(this.activities[i].activityType.type.toLowerCase() === this.category.toLowerCase()) {
+                    console.log(this.activities[i].activityType.type + "TEST ACTIVITY TYPE XXXXXX")
+                    filteredList.push(this.activities[i]);
+                }
+            }
+            return filteredList;
+        }else {
+            return this.activities;
+        }
+    },
+
+    filterByLevel() {
+
+        const filteredList = [];
+
+        if(this.level !== "") {
+            for(let i = 0; i < this.activities.length; i++) {
+                if(this.activities[i].level.description.toLowerCase() === this.level.toLowerCase()) {
+                    filteredList.push(this.activities[i]);
+                }
+            }
+            return filteredList;
+        }else {
+            return this.activities;
+        }
+    },
+
+    filterByLocation() {
+
+        const filteredList = [];
+
+        if(this.location !== "") {
+            for(let i = 0; i < this.activities.length; i++) {
+                if(this.activities[i].location.toLowerCase() === this.location.toLowerCase()) {
+                    filteredList.push(this.activities[i]);
                 }
             }
             return filteredList;
@@ -170,19 +228,19 @@ export default {
 
     sortActivities(filteredList) {
         //Returnerer dette filteredList(sortert)?
-        if(this.chosen === 1) {
+        if(this.sort === 1) {
             filteredList.sort(function(a, b) {
                 return (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b)) - (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a));
             });
-        }else if(this.chosen === 2) {
+        }else if(this.sort === 2) {
             filteredList.sort(function(a, b) {
                 return (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a)) - (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b));
             });
-        }else if(this.chosen === 3) {
+        }else if(this.sort === 3) {
             filteredList.sort(function(a, b) {
                 return (activityButtonService.getCurrentParticipantsNumber(b)) - (activityButtonService.getCurrentParticipantsNumber(a))
             });
-        }else if(this.chosen === 4) {
+        }else if(this.sort === 4) {
             filteredList.sort(function(a, b) {
                 return (activityButtonService.getCurrentParticipantsNumber(a)) - (activityButtonService.getCurrentParticipantsNumber(b))
             });
