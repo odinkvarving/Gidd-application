@@ -70,7 +70,7 @@
 import Activity from "./Activity.vue";
 import { userService } from "../../services/UserService.js";
 import { weatherService } from "../../services/WeatherService.js";
-import { activityButtonService } from '../../services/ActivityButtonService';
+//import { activityButtonService } from '../../services/ActivityButtonService';
 
 export default {
   name: "ActivityFeed",
@@ -89,7 +89,8 @@ export default {
       currentParticipants: 0,
       sortKey: "",
       isLoggedIn: false,
-      modifiedActivities: {},
+      filteredActivities: [],
+      sortedActivities: [],
       category: null,
       level: null,
       location: null,
@@ -104,10 +105,14 @@ export default {
           { value: "Stavanger", text: "Stavanger"},
       ],
       sorts: [
-          { value: 1, text: "Ledige plasser høy-lav"},
-          { value: 2, text: "Ledige plasser lav-høy"},
-          { value: 3, text: "Antall påmeldte høy-lay"},
-          { value: 4, text: "Antall påmeldte lav-høy"},
+        { value: 1, text: "Tidspunkt tidlig-senest"},
+        { value: 2, text: "Tidspunkt senest-tidlig"},
+        { value: 3, text: "Varighet høy-lav"},
+        { value: 4, text: "Varighet lav-høy"},
+        { value: 5, text: "Ledige plasser høy-lav"},
+        { value: 6, text: "Ledige plasser lav-høy"},
+        { value: 7, text: "Antall påmeldte høy-lay"},
+        { value: 8, text: "Antall påmeldte lav-høy"},
       ],
       filterKey: "",
     };
@@ -226,27 +231,81 @@ export default {
         }
     },
 
-    sortActivities(filteredList) {
+    sortActivities() {
+      switch(this.sort) {
+        case 1: this.sortedActivities = this.sortByTimeEarliest(); break;
+        case 2: this.sortedActivities = this.sortByTimeLatest(); break;
+        case 3: this.sortedActivities = this.sortByDurationDesc(); break;
+        case 4: this.sortedActivities = this.sortByDurationAsc(); break;
+        case 5: this.sortedActivities = this.sortByFreeSpotsDesc(); break;
+        case 6: this.sortedActivities = this.sortByFreeSpotsAsc(); break;
+        case 7: this.sortedActivities = this.sortByCurrentParticipantsDesc(); break;
+        case 8: this.sortedActivities = this.sortByCurrentParticipantsAsc(); break;
+      }
+
+
         //Returnerer dette filteredList(sortert)?
-        if(this.sort === 1) {
+        /*if(this.sort === 1) { //Sort by free spots high-low
             filteredList.sort(function(a, b) {
                 return (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b)) - (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a));
             });
-        }else if(this.sort === 2) {
+        }else if(this.sort === 2) { //Sort by free spots low-high
             filteredList.sort(function(a, b) {
                 return (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a)) - (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b));
             });
-        }else if(this.sort === 3) {
+        }else if(this.sort === 3) { //Sort by current participants high-low
             filteredList.sort(function(a, b) {
                 return (activityButtonService.getCurrentParticipantsNumber(b)) - (activityButtonService.getCurrentParticipantsNumber(a))
             });
-        }else if(this.sort === 4) {
+        }else if(this.sort === 4) { //Sort by current participants low-high
             filteredList.sort(function(a, b) {
                 return (activityButtonService.getCurrentParticipantsNumber(a)) - (activityButtonService.getCurrentParticipantsNumber(b))
             });
         }else {
             return filteredList;
-        }
+        }*/
+    },
+
+    sortByTimeEarliest() {
+      return this.filteredActivities.sort((x,y) => {
+        let d1 = new Date(x.startTime);
+        let d2 = new Date(y.startTime);
+        d1 - d2;
+      });
+    },
+
+    sortByTimeLatest() {
+      return this.filteredActivities.sort((x,y) => {
+        let d1 = new Date(y.startTime);
+        let d2 = new Date(x.startTime);
+        d1 - d2;
+      });
+    },
+
+    sortByDurationDesc() {
+      return this.filteredActivities.sort((x,y) => {
+        
+      })
+    },
+
+    sortByDurationAsc() {
+
+    },
+
+    sortByFreeSpotsDesc() {
+
+    },
+
+    sortByFreeSpotsAsc() {
+
+    },
+
+    sortByCurrentParticipantsDesc() {
+
+    },
+
+    sortByCurrentParticipantsAsc() {
+
     },
 
     async getJoinedActivities() {
