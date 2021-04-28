@@ -373,4 +373,16 @@ public class ActivityService {
         }
         return false;
     }
+
+    public boolean addEquipmentToActivity(int activityId, String equipment){
+        Activity activity = activityRepository.findById(activityId).orElse(null);
+        if(activity != null){
+            activity.getEquipment().add(new Equipment(equipment));
+            activityRepository.save(activity);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

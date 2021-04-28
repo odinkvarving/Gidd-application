@@ -242,5 +242,8 @@ public class ActivityController {
         return notificationService.sendNotificationToAllParticipants(id, "was edited!   ");
     }
 
-
+    @PostMapping("/activities/{activity_id}/equipment")
+    public boolean addEquipmentToActivity(@PathVariable int activity_id, @RequestBody String equipment){
+        return activityService.addEquipmentToActivity(activity_id, equipment);
+    }
 }
