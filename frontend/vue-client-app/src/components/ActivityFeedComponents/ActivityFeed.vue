@@ -3,26 +3,39 @@
     <div id="feed">
       <div class="sortingContainer">
         <div class="categoryDropdown">
-            <b-form-select v-model="category" :options="categories" @change="filterByCategory()" class="categoryBox">
+            <b-form-select v-model="category" :options="categories" id="select-category" @change="filterByCategory()" class="categoryBox">
                 <template #first>
                     <b-form-select-option :value="null">Kategori</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="levelDropdown">
-            <b-form-select v-model="level" :options="levels" @change="filterByLevel()" class="levelBox">
+            <b-form-select v-model="level" :options="levels" id="select-level" @change="filterByLevel()" class="levelBox">
                 <template #first>
                     <b-form-select-option :value="null">Nivå</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
-        <div class="locationDropdown">
-            <b-form-select v-model="location" :options="locations" @change="filterByLocation()" class="locationBox">
-                <template #first>
-                    <b-form-select-option :value="null">Sted</b-form-select-option>
-                </template>
-            </b-form-select>
-        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body">
+                    <form>
+                        <div class="form-group row">
+                        <div class="col-sm-10">
+                            <select class="location-picker" id="select-location" @change="filterByLocation()" data-live-search="true">  
+                                <option data-tokens="Sted">Sted</option>
+                                <option v-for="item in locations" :key="item.id" data-tokens="" >{{item.value}}</option>                                    
+                            </select>
+                        </div>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>        
         <div class="sortingDropdown">
             <b-form-select v-model="sort" :options="sorts" @change="modifyActivities()" class="sortingBox">
                 <template #first>
@@ -31,9 +44,8 @@
             </b-form-select>
         </div>
       </div>
-
       <div
-        v-for="a in activities"
+        v-for="a in filteredActivities"
         :key="a.id"
         @click="handleActivityClicked(a)"
       >
@@ -67,6 +79,43 @@
   </div>
 </template>
 <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+   var input = document.getElementById('select-category');
+   if (localStorage['select-category']) { // if job is set
+       input.value = localStorage['select-category']; // set the value
+       this.selectedCategory = input.value;
+   }
+   input.onchange = function () {
+        localStorage['select-category'] = this.value; // change localStorage on change
+        this.selectedCategory = this.value;
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+   var input = document.getElementById('select-level');
+   if (localStorage['select-level']) { // if job is set
+       input.value = localStorage['select-level']; // set the value
+       this.selectedLevel = input.value;
+   }
+   input.onchange = function () {
+        localStorage['select-level'] = this.value; // change localStorage on change
+        this.selectedLevel = this.value;
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+   var input = document.getElementById('select-location');
+   if (localStorage['select-location']) { // if job is set
+       input.value = localStorage['select-location']; // set the value
+       this.selectedLocation = input.value;
+   }
+   input.onchange = function () {
+        localStorage['select-location'] = this.value; // change localStorage on change
+        this.selectedLocation = this.value;
+    }
+});
+
 import Activity from "./Activity.vue";
 import { userService } from "../../services/UserService.js";
 import { weatherService } from "../../services/WeatherService.js";
@@ -89,7 +138,7 @@ export default {
       currentParticipants: 0,
       sortKey: "",
       isLoggedIn: false,
-      modifiedActivities: {},
+      filteredActivities: [],
       category: null,
       level: null,
       location: null,
@@ -97,12 +146,11 @@ export default {
       newList: [],
       categories: [],
       levels: [],
-      locations: [
-          { value: "Trondheim", text: "Trondheim"},
-          { value: "Oslo", text: "Oslo"},
-          { value: "Bergen", text: "Bergen"},
-          { value: "Stavanger", text: "Stavanger"},
-      ],
+      locations: [],
+      selectedCategory: "",
+      selectedLevel: "",
+      selectedLocation: "",
+
       sorts: [
           { value: 1, text: "Ledige plasser høy-lav"},
           { value: 2, text: "Ledige plasser lav-høy"},
@@ -120,8 +168,10 @@ export default {
       this.isLoggedIn = true;
       await this.getJoinedActivities();
     }
+    this.filteredActivities = this.activities;
   },
   methods: {
+
     async getActivities() {
       const requestOptions = {
         method: "GET",
@@ -135,6 +185,16 @@ export default {
           console.log(data[0]);
         })
         .catch((error) => console.log(error));
+        for(let i = 0; i < this.activities.length; i++) {
+            this.locations.push({
+                value: this.activities[i].location,
+                text: this.activities[i].location,
+                id: (i+1),
+            })
+        }
+        for(let j = 0; j < this.locations.length; j++) {
+            console.log(this.locations[j].value)
+        }
     },
 
     async getCategories() {
@@ -162,11 +222,11 @@ export default {
             method: "GET"
         };
 
-        await fetch("https://localhost:8080/levels/", requestOptions)
+        await fetch("http://localhost:8080/levels/", requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 for(let i = 0; i < data.length; i++) {
-                    console.log(data[i].description + "DESCRPTION XXXXXX");
+                    console.log(data[i].description);
                     this.levels.push({
                         value: data[i].description,
                         text: data[i].description
@@ -177,53 +237,68 @@ export default {
             .catch((error) => console.log(error));
     },
 
-    filterByCategory() {
+    filterByCategory(list) {
         
         const filteredList = [];
 
         if(this.category !== "") {
-            for(let i = 0; i < this.activities.length; i++) {
-                if(this.activities[i].activityType.type.toLowerCase() === this.category.toLowerCase()) {
-                    console.log(this.activities[i].activityType.type + "TEST ACTIVITY TYPE XXXXXX")
-                    filteredList.push(this.activities[i]);
+            for(let i = 0; i < list.length; i++) {
+                if(list[i].activityType.type.toLowerCase() === this.category.toLowerCase()) {
+                    filteredList.push(list[i]);
                 }
             }
             return filteredList;
         }else {
-            return this.activities;
+            return list;
         }
     },
 
-    filterByLevel() {
+    filterByLevel(list) {
 
         const filteredList = [];
 
         if(this.level !== "") {
-            for(let i = 0; i < this.activities.length; i++) {
-                if(this.activities[i].level.description.toLowerCase() === this.level.toLowerCase()) {
-                    filteredList.push(this.activities[i]);
+            for(let i = 0; i < list.length; i++) {
+                if(list[i].level.description.toLowerCase() === this.level.toLowerCase()) {
+                    filteredList.push(list[i]);
                 }
             }
             return filteredList;
         }else {
-            return this.activities;
+            return list;
         }
     },
 
-    filterByLocation() {
+    filterByLocation(list) {
 
         const filteredList = [];
 
-        if(this.location !== "") {
-            for(let i = 0; i < this.activities.length; i++) {
-                if(this.activities[i].location.toLowerCase() === this.location.toLowerCase()) {
-                    filteredList.push(this.activities[i]);
+        if(this.selectedLocation !== "Sted") {
+            for(let i = 0; i < list.length; i++) {
+                if(list[i].location.toLowerCase() === this.selectedLocation.toLowerCase()) {
+                    filteredList.push(list[i]);
                 }
             }
             return filteredList;
         }else {
-            return this.activities;
+            return list;
         }
+    },
+
+    generateFilteredList() {
+        let list = this.activities;
+
+        if(this.selectedCategory !== "") {
+            list = this.filterByCategory(list);
+        }
+        if(this.selectedLevel !== "") {
+            list = this.filterByLevel(list);
+        }
+        if(this.selectedLocation !== "") {
+            list = this.filterByLocation(list);
+        }
+
+        this.filteredActivities = list;
     },
 
     sortActivities(filteredList) {
