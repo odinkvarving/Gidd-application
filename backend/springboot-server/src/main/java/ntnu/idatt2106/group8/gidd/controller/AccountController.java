@@ -1,10 +1,12 @@
 package ntnu.idatt2106.group8.gidd.controller;
 
+import ntnu.idatt2106.group8.gidd.model.DTO.FeedbackDTO;
 import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.entities.*;
 import ntnu.idatt2106.group8.gidd.service.AccountService;
+import ntnu.idatt2106.group8.gidd.service.MailService;
 import ntnu.idatt2106.group8.gidd.service.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,8 @@ public class AccountController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired MailService mailService;
 
 
     Logger logger = LoggerFactory.getLogger(AccountController.class);
@@ -278,5 +282,10 @@ public class AccountController {
     @GetMapping("/accounts/{account_id}/accountInfo/notificationSettings")
     public NotificationSettings getAccountsNotificationSettings(@PathVariable int account_id){
         return notificationService.getNotificationSettingsByAccountId(account_id);
+    }
+
+    @PostMapping("/feedback")
+    public boolean sendFeedbackEmail(@RequestBody FeedbackDTO feedbackDTO) {
+        return mailService.sendFeedbackEmail(feedbackDTO);
     }
 }

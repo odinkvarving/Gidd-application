@@ -6,6 +6,7 @@ import ProfilePage from "./ProfilePage.vue"
 import Dashboard from "./Dashboard.vue"
 import Activity from "./Activity.vue"
 import CreateActivity from "./CreateActivity.vue"
+import Feedback from "./Feedback.vue"
 
 import ResetPasswordPage from "./ResetPasswordPage.vue"
 
@@ -61,6 +62,11 @@ const routes = [
     path: "/dashboard/createActivity",
     name: "CreateActivity",
     component: CreateActivity
+  },
+  {
+    path: "/feedback",
+    name: "Feedback",
+    component: Feedback
   }
 ];
 
