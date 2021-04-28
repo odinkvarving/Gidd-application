@@ -110,6 +110,7 @@ img {
 .time {
   opacity: 0.5;
   padding-left: 15px;
+  font-size: 12px;
 }
 .message {
   border-bottom: lightgray 2px solid;
