@@ -377,7 +377,7 @@ public class ActivityService {
     public boolean addEquipmentToActivity(int activityId, String equipment){
         Activity activity = activityRepository.findById(activityId).orElse(null);
         if(activity != null){
-            activity.getEquipment().add(new Equipment(equipment));
+            activity.getEquipment().add(new Equipment(equipment.substring(1, equipment.length() - 1)));
             activityRepository.save(activity);
             return true;
         }else{
