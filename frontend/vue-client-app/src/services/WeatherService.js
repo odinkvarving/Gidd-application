@@ -19,21 +19,18 @@ export const weatherService = {
 let weather = null;
 
 /**
- * getWeather is an asynchronous function which finds the weather in a given place,
- * if startTime is within 7 days of current time.
- * 
- * @param latitude: latitude of activity place
- * @param longitude: longitude of activity place
+ * getWeather is a function which finds the weather at a given location,
+ *  if startTime is within 7 days of current time.
+ * @param latitude: latitude of activity location
+ * @param longitude: longitude of activity location
  * @param time: startTime of activity
- * @returns weather of activity place
+ * @returns weather at activity location
  */
 async function getWeather(latitude, longitude, time) {
     const startTime = new Date(time).getTime();
     const start = (startTime-(startTime%1000))/1000; //Start time
-    console.log("Start time: " + start);
     const currentTime = Date.now();
     const current = (currentTime-(currentTime%1000))/1000; //Current time
-    console.log("Current time: " + current);
     const diff = start - current; //Difference in milliseconds between current date and start date of activity
     if ((diff >= 0) && (diff <= 604800000)) { //Checking if difference is bigger than 7 days
         //Fetching weather from openweathermap API
