@@ -3,7 +3,7 @@
     <div class="filter-sort-container">
       <div class="dropdownlists">
         <div id="category-container">
-            <b-form-select v-model="selectedCategory" :options="categories" class="picker">
+            <b-form-select v-model="selectedCategory" :options="categories" id="select-category" class="picker">
                 <template #first>
                     <b-form-select-option style="display: none" disabled selected value>Kategori</b-form-select-option>
                 </template>
@@ -17,7 +17,7 @@
             </b-form-select>
         </div>
         <div id="location-container">
-            <b-form-select v-model="selectedLocation" :options="locations" class="picker" id="select-location" data-live-search="true">  
+            <b-form-select v-model="selectedLocation" :options="locations" id="select-location" class="picker" data-live-search="true">  
                 <template #first>
                     <b-form-select-option style="display: none" disabled selected value>Sted</b-form-select-option>
                 </template>                                   
@@ -28,7 +28,7 @@
             <button v-show="isFiltered" id="filter-button" type="button" @click="generateFilteredList()" >Reset</button> 
         </div>       
         <div id="sorting-container">
-            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" class="picker">
+            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" id="select-sort" class="picker">
                 <template #first>
                     <b-form-select-option style="display: none" disabled selected :value="null">Sorter</b-form-select-option>
                 </template>
@@ -650,6 +650,9 @@ export default {
     display: inline-block;
     padding-right: 10px;
     padding-left: 10px;
+    width: 130px;
+    height: 35px;
+    cursor: pointer;
 }
 
 #location-container {
@@ -658,16 +661,20 @@ export default {
     padding-right: 10px;
     padding-bottom: 3px;
     padding-top: 1px;
+    width: 130px;
+    height: 35px;
+    cursor: pointer;
 }
 
 #location-picker {
     width: 100%;
     height: 100%;
-    color: #495057;
-    border: 1px solid #ced4da;
     padding-left: 10px;
     padding-bottom: 2px;
     border-radius: 4px;
+    width: 130px;
+    height: 35px;
+    cursor: pointer;
 }
 
 #button-container {
@@ -696,6 +703,8 @@ export default {
   display: inline-block;
   margin-left: 335px;
   width: 130px;
+  height: 35px;
+  cursor: pointer;
 }
 
 @media (max-width: 1200px) {
@@ -708,11 +717,35 @@ export default {
   }
 
   .dropdownlists {
+    display: flex;
     flex-direction: row;
+    margin-left: -50px;
+  }
+
+  .picker {
+    width: 70px;
+    margin-left: -10px;
+  }
+
+  #select-level {
+    margin-left: -17px;
+  }
+
+  #select-location {
+    margin-left: -73px;
   }
 
   #sorting-container {
-    margin-left: -230px;
+    margin-left: -40px;
+  }
+
+  #select-sort {
+    width: 80px;
+  }
+
+  #filter-button {
+    width: 60px;
+    margin-left: -115px;
   }
 }
 
