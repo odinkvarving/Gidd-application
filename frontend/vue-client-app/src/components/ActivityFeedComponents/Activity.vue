@@ -146,6 +146,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 if(this.currentParticipants == this.activity.maxParticipants){
                     this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
                 }
+                this.$emit('currentParticipantsFound', this.activity.id, this.currentParticipants);
             },
             
             async addParticipantToActivity(){

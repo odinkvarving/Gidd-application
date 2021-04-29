@@ -28,7 +28,7 @@
             <button v-show="isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >Reset</button> 
         </div>       
         <div class="sorting-container">
-            <b-form-select v-model="sort" :options="sorts" @change="modifyActivities()" class="sorting-picker">
+            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" class="sorting-picker">
                 <template #first>
                     <b-form-select-option :value="null">Sorter</b-form-select-option>
                 </template>
@@ -39,11 +39,12 @@
         v-for="a in filteredActivities"
         :key="a.id"
         @click="handleActivityClicked(a)"
-      >
+      > <!-- evt sortedActivities -->
         <Activity
           :activity="a"
           v-on:refresh-list="refreshList"
           :isLoggedIn="isLoggedIn"
+          v-on:currentParticipantsFound="findCurrentParticipants"
         />
       </div>
     </div>
@@ -74,7 +75,6 @@
 import Activity from "./Activity.vue";
 import { userService } from "../../services/UserService.js";
 import { weatherService } from "../../services/WeatherService.js";
-import { activityButtonService } from '../../services/ActivityButtonService';
 
 export default {
   name: "ActivityFeed",
@@ -87,13 +87,14 @@ export default {
     return {
       //WeatherService: require('../../services/WeatherService.js'),
       selectedActivity: null,
-      activities: {},
+      activities: [],
       allCategories: {},
       joinedActivities: {},
-      currentParticipants: 0,
+      currentParticipantsAll: [],
       sortKey: "",
       isLoggedIn: false,
       filteredActivities: [],
+      sortedActivities: [],
       category: null,
       level: null,
       location: null,
@@ -108,10 +109,18 @@ export default {
       isFiltered: false,
 
       sorts: [
-          { value: 1, text: "Ledige plasser høy-lav"},
-          { value: 2, text: "Ledige plasser lav-høy"},
-          { value: 3, text: "Antall påmeldte høy-lay"},
-          { value: 4, text: "Antall påmeldte lav-høy"},
+        { value: 1, text: "Navn A-Å"},
+        { value: 2, text: "Navn Å-A"},
+        { value: 3, text: "Tidspunkt tidlig-senest"},
+        { value: 4, text: "Tidspunkt senest-tidlig"},
+        { value: 5, text: "Varighet høy-lav"},
+        { value: 6, text: "Varighet lav-høy"},
+        { value: 7, text: "Ledige plasser høy-lav"},
+        { value: 8, text: "Ledige plasser lav-høy"},
+        { value: 9, text: "Antall påmeldte høy-lay"},
+        { value: 10, text: "Antall påmeldte lav-høy"},
+        { value: 11, text: "Nivå høy-lav"},
+        { value: 12, text: "Nivå lav-høy"}
       ],
       filterKey: "",
     };
@@ -138,7 +147,6 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.activities = data;
-          console.log(data[0]);
         })
         .catch((error) => console.log(error));
         for(let i = 0; i < this.activities.length; i++) {
@@ -151,6 +159,8 @@ export default {
         for(let j = 0; j < this.locations.length; j++) {
             console.log(this.locations[j].value)
         }
+
+      this.sortedActivities = this.sortByTimeEarliest();
     },
 
     async getCategories() {
@@ -162,13 +172,11 @@ export default {
             .then((response) => response.json())
             .then((data) => {
                 for(let i = 0; i < data.length; i++) {
-                    console.log(data[i].type)
                     this.categories.push({
                         value: data[i].type,
                         text: data[i].type
                     })
                 }
-                console.log(data[0]);
             })
             .catch((error) => console.log(error)); 
     },
@@ -188,7 +196,6 @@ export default {
                         text: data[i].description
                     })
                 }
-                console.log(data[0]);
             })
             .catch((error) => console.log(error));
     },
@@ -265,27 +272,168 @@ export default {
         this.isFiltered = !this.isFiltered;
     },
 
-    sortActivities(filteredList) {
-        //Returnerer dette filteredList(sortert)?
-        if(this.sort === 1) {
-            filteredList.sort(function(a, b) {
-                return (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b)) - (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a));
-            });
-        }else if(this.sort === 2) {
-            filteredList.sort(function(a, b) {
-                return (a.maxParticipants - activityButtonService.getCurrentParticipantsNumber(a)) - (b.maxParticipants - activityButtonService.getCurrentParticipantsNumber(b));
-            });
-        }else if(this.sort === 3) {
-            filteredList.sort(function(a, b) {
-                return (activityButtonService.getCurrentParticipantsNumber(b)) - (activityButtonService.getCurrentParticipantsNumber(a))
-            });
-        }else if(this.sort === 4) {
-            filteredList.sort(function(a, b) {
-                return (activityButtonService.getCurrentParticipantsNumber(a)) - (activityButtonService.getCurrentParticipantsNumber(b))
-            });
-        }else {
-            return filteredList;
+    findCurrentParticipants(activityId, currentParticipants) {
+      this.currentParticipantsAll.push({
+        id: activityId,
+        currentParticipants: currentParticipants
+      });
+    },
+
+    sortActivities() {
+      switch(this.sort) {
+        case 1: {
+          this.sortedActivities = this.sortByNameAsc();
+          break;
         }
+        case 2: {
+          this.sortedActivities = this.sortByNameDesc();
+          break;
+        }
+        case 3: {
+          this.sortedActivities = this.sortByTimeEarliest();
+          break;
+        }
+        case 4: {
+          this.sortedActivities = this.sortByTimeLatest();
+          break;
+        }
+        case 5: {
+          this.sortedActivities = this.sortByDurationDesc();
+          break;
+        }
+        case 6: {
+          this.sortedActivities = this.sortByDurationAsc();
+          break;
+        }
+        case 7: {
+          this.sortedActivities = this.sortByFreeSpotsDesc();
+          break;
+        }
+        case 8: {
+          this.sortedActivities = this.sortByFreeSpotsAsc();
+          break;
+        }       
+        case 9: {
+          this.sortedActivities = this.sortByCurrentParticipantsDesc();
+          break;
+        }
+        case 10: {
+          this.sortedActivities = this.sortByCurrentParticipantsAsc();
+          break;
+        }
+        case 11: {
+          this.sortedActivities = this.sortByLevelDesc();
+          break;
+        }
+        case 12: {
+          this.sortedActivities = this.sortByLevelAsc();
+          break;
+        }
+      }
+    },
+
+    sortByNameAsc() {
+      console.log(">> sortByNameAsc() called");
+      return this.activities.sort((x,y) => {
+        if (x.title < y.title) return -1;
+        else if (x.title > y.title) return 1;
+        return 0;
+      });
+    },
+
+    sortByNameDesc() {
+      console.log(">> sortByNameDesc() called");
+      return this.activities.sort((x,y) => {
+        if (x.title < y.title) return 1;
+        else if (x.title > y.title) return -1;
+        return 0;
+      });
+    },
+
+    sortByTimeEarliest() {
+      console.log(">> sortByTimeEarliest() called");
+      return this.activities.sort((x,y) => {
+        return new Date(x.startTime) - new Date(y.startTime);
+      });
+    },
+
+    sortByTimeLatest() {
+      console.log(">> sortByTimeLatest() called");
+      return this.activities.sort((x,y) => {
+        return new Date(y.startTime) - new Date(x.startTime);
+      });
+    },
+
+    sortByDurationDesc() {
+      console.log(">> sortByDurationDesc() called");
+      return this.activities.sort((x,y) => {
+        let d1 = new Date(y.endTime) - new Date(y.startTime);
+        let d2 = new Date(x.endTime) - new Date(x.startTime);
+        return d1 - d2;
+      });
+    },
+
+    sortByDurationAsc() {
+      console.log(">> sortByDurationAsc() called");
+      return this.activities.sort((x,y) => {
+        let d1 = new Date(x.endTime) - new Date(x.startTime);
+        let d2 = new Date(y.endTime) - new Date(y.startTime);
+        return d1 - d2;
+      })
+    },
+
+    sortByFreeSpotsDesc() {
+      console.log(">> sortByFreeSpotsDesc() called");
+      return this.activities.sort((x,y) => {
+        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        let free1 = y.maxParticipants - current1;
+        let free2 = x.maxParticipants - current2;
+        return free1 - free2;
+      });
+    },
+
+    sortByFreeSpotsAsc() {
+      console.log(">> sortByFreeSpotsAsc() called");
+      return this.activities.sort((x,y) => {
+        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        let free1 = x.maxParticipants - current1;
+        let free2 = y.maxParticipants - current2;
+        return free1 - free2;
+      });
+    },
+
+    sortByCurrentParticipantsDesc() {
+      console.log(">> sortByCurrentParticipantsDesc() called");
+      return this.activities.sort((x,y) => {
+        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        return current1 - current2;
+      });
+    },
+
+    sortByCurrentParticipantsAsc() {
+      console.log(">> sortByCurrentParticipantsAsc() called");
+      return this.activities.sort((x,y) => {
+        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        return current1 - current2;
+      });
+    },
+
+    sortByLevelDesc() {
+      console.log(">> sortByLevelDesc() called");
+      return this.activities.sort((x,y) => {
+        return y.level.id - x.level.id;
+      });
+    },
+
+    sortByLevelAsc() {
+      console.log(">> sortByLevelAsc() called");
+      return this.activities.sort((x,y) => {
+        return x.level.id - y.level.id;
+      });
     },
 
     async getJoinedActivities() {
