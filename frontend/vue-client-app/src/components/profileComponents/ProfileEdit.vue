@@ -153,15 +153,17 @@ export default {
         if(this.exists(this.firstName)||this.exists(this.lastName)||
             this.exists(this.description)){
               newAccount.notificationSettings = this.notificationSettings;
-          let res=userService.setAccount(newAccount,this.$route.params.userId);
-          console.log(res)
+          let res= await userService.setAccount(newAccount,this.$route.params.userId);
+          console.log('setAccount res:'+res)
         }
         console.log('Current image status')
         console.log(this.newImageFile)
 
         if(this.exists(this.newImageFile)){
-          let res=await userService.sendImage(this.newImageFile,this.$route.params.userId)
-          console.log(res)
+          let formData=new FormData()
+          formData.append('file',this.newImageFile)
+          let res= await userService.sendImage(formData,this.$route.params.userId)
+          console.log('sendImage res'+res)
         }
 
       }

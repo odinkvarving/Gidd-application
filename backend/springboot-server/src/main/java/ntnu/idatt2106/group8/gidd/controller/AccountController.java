@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.io.Console;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -321,6 +323,7 @@ public class AccountController {
 
     @PostMapping("/accounts/{id}/profilepicture")
     public boolean uploadImageToUser(@PathVariable int id, @RequestBody MultipartFile file) {
+        System.out.println(file);
         return this.imageService.uploadPictureToAccount(file, id);
     }
 

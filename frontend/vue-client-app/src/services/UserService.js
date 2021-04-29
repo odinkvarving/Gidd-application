@@ -37,13 +37,15 @@ function login(email, password) {
 }
 
 function sendImage(image,id){
+    console.log(image.get('file'))
     let user = JSON.parse(localStorage.getItem('user'));
-        return fetch(`http://localhost:8080/accounts/${id}/profileImage`,{
+        return fetch(`http://localhost:8080/accounts/${id}/profilepicture`,{
             method:'POST',
             headers:{
-                'Content-Type':image.type,
+                'Accept':image.get('file').type,
                 'Authorization': `Bearer ${user.jwtToken}`
-            }
+            },
+            body:image
         }).then(handleResponse)
 
 }
