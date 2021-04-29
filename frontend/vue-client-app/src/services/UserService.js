@@ -11,7 +11,8 @@ export const userService = {
     sendImage,
     authorizationHeader,
     getTokenString,
-    getCurrentLocation
+    getCurrentLocation,
+    getAccountInfo
 }
 
 
@@ -180,4 +181,20 @@ function getCurrentLocation(){
         }
         return currentLocation;
     })
+}
+
+async function getAccountInfo(accountId){
+    let url = `http://localhost:8080/accounts/${accountId}/info`;
+
+    const requestOptions = {
+        method: 'GET',
+        headers: authorizationHeader()
+    }
+
+    return await fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => console.log(error));
 }

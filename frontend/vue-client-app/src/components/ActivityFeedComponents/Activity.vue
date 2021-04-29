@@ -391,7 +391,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         width: 160px;
         border-radius: 6px;
         font-size: 20px;
-        background-color: #FF5B3E;
+        background-color: #e87c86;
         color: white;
         border: 0;
         outline: none;

@@ -115,7 +115,9 @@ export default {
         await this.sendNewUserToServer();
         userService.logout();
         await userService.login(this.emailValue, this.passwordValue);
-        await setTimeout(() => this.$router.push({ path: "/dashboard" }), 3000);
+        this.emailValue = "";
+        this.passwordValue = "";
+        setTimeout(() => this.$router.push({ path: "/dashboard" }), 3000);
       }
     },
     validInputs() {
@@ -174,8 +176,6 @@ export default {
             this.$bvModal.show("success-modal");
             this.nameValue = "";
             this.phoneValue = "";
-            this.emailValue = "";
-            this.passwordValue = "";
           } else {
             console.log("email already exists, showing error modal");
             this.didSend = false;
