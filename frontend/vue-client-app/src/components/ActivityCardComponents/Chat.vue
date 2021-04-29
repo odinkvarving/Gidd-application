@@ -126,4 +126,9 @@ export default {
   margin-right: 8%;
   display: fixed;
 }
+
+#chat {
+  width: 80vw;
+  margin-bottom: 100px;
+}
 </style>

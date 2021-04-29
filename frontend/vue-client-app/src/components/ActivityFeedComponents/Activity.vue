@@ -17,7 +17,7 @@
             <div class="vertical-line"/>
             <div class="detail-container">
                 <p class="detail-header">Nivå</p> 
-                <p class="detail-value" style="font-size:18px;"> {{ activity.level.description }}</p>
+                <p class="detail-value"> {{ activity.level.description }}</p>
             </div>
             <div class="vertical-line"/>
             <div class="detail-container">
@@ -26,7 +26,7 @@
             </div>
         </div>
         <div id="map-preview">
-            <div v-if="activity.latitude == undefined && activity.longitude == undefined" style="width: 245px; height: 161px; background-color: #f6f6f6">
+            <div v-if="activity.latitude == 0 && activity.longitude == 0" style="width: 245px; height: 161px; background-color: #f6f6f6">
                 <p>Location not found!</p>
             </div>
             <GmapMap 
@@ -49,19 +49,29 @@
         <!--<div>
             <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
         </div>-->
-        <button v-if="!isFull && !alreadyParticipating" id="btn" class="join" @click.stop="joinButtonClicked()">
-            <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
-                <span class="sr-only">Loading...</span>
-            </div>
-            <span v-else >{{ getButtonStatus() }}</span>
-        </button>
-        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
-        <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
-            <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
-                <span class="sr-only">Loading...</span>
-            </div>
-            <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
-        </button>
+        <div v-show="!activity.cancelled">
+            <button v-if="!isFull && !alreadyParticipating" id="btn" class="join" @click.stop="joinButtonClicked()">
+                <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <span v-else >{{ getButtonStatus() }}</span>
+            </button>
+            <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
+            <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
+                <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
+            </button>
+        </div>
+        <b-button
+            disabled
+            v-show="activity.cancelled"
+            @click="() => console.log(activity.cancelled)"
+            class="cancel-button"
+            variant="danger"
+            >Aktivitet avlyst!</b-button
+        >
     </div>
 </template>
 <script>
@@ -88,14 +98,15 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 participantsInQueue: 0,
                 queuePosition: 0,
                 isInQueue: false,
-                isDataReady: false
+                isDataReady: false,
             }
         },
+
         async mounted(){
             await this.getCurrentParticipantsNumber();
             if(this.isLoggedIn){
                 await this.isAlreadyParticipating();
-                if (this.currentParticipants == this.activity.maxParticipants) {
+                if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
                     this.isInQueue = true;
                 }
             }
@@ -106,6 +117,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
             checkIfLoggedIn() {
                 return userService.isLoggedIn();
             },
+
             joinButtonClicked(){
                 this.showJoinSpinner = true;
                 if (activityButtonService.joinButtonClicked()) {
@@ -119,7 +131,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                     const data = await activityButtonService.removeParticipantFromActivity(this.activity);
                     if (data) {
                         this.showRemoveSpinner = false;
-                        if (this.currentParticipants === this.activity.maxParticipants) {
+                        if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
                             this.participantsInQueue --;
                         } else {
                             this.currentParticipants --;
@@ -152,6 +164,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 if(this.currentParticipants == this.activity.maxParticipants){
                     this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
                 }
+                this.$emit('currentParticipantsFound', this.activity.id, this.currentParticipants);
             },
             
             async addParticipantToActivity(){
@@ -181,7 +194,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 if(this.queuePosition > 0){
                     this.isInQueue = true;
                 }
-            },            
+            },
         }
     }
 </script>
@@ -214,6 +227,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         font-size: 20px;
         padding: 0;
     }
+    
     #ownerInfo{
         display: flex;
         align-items: center;
@@ -221,6 +235,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         width: 100%;
         margin: 20px 0 0 65px;
     }
+    
     #ownerInfo img{
         width: 50px;
         height: 50px;
@@ -240,6 +255,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         font-size: 20px;
         margin: 0;
         opacity: 75%;
+        width: 80%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -307,9 +323,9 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         color: white;
         border: 0;
         outline: none;
-        position: absolute;
         bottom: 30px;
     }
+    
     #btn:hover {
         background-color: #eca82b;
         transition: 0.2s;
@@ -318,13 +334,16 @@ import { activityButtonService } from '../../services/ActivityButtonService';
     #btn.full{
         background-color: #FF5B3E;
     }
+    
     #btn.full:hover{
         background-color: #91301f;
         transition: 0.2s;
     }
+    
     #btn.full:hover span{
         display: none;
     }
+    
     #btn.full:hover:before{
         content: "Venteliste";
     }
@@ -333,32 +352,47 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         background-color: #4a934a;
         transition: 0.2s;
     }
+    
     #btn.participating:hover{
         background-color: #408140;
         transition: 0.2s;
     }
+    
     #btn.participating:hover span{
         display: none;
     }
+    
     #btn.participating:hover:before{
         content: "Meld av";
     }
+    
     #btn.inQueue{
         background-color: #FF5B3E;
     }
+    
     #btn.inQueue:hover{
         background-color: #91301f;
         transition: 0.2s;
     }
+
     #btn.inQueue:hover span{
         display: none;
     }
+
     #btn.inQueue:hover:before{
         content: "Meld av";
     }
 
     .queue-list{
         opacity: 70%;
+    }
+
+    @media (max-width: 550px) {
+        #card {
+            width: 330px;
+        }
+
+  
     }
 
 </style>

@@ -198,8 +198,8 @@ public class ActivityController {
      * @param equipment requesting a String parameter for the description of the Equipment
      * @return true or false
      */
-    @DeleteMapping("/{id}/equipment")
-    public boolean deleteEquipmentFromActivity(@PathVariable("id") int id, @RequestParam String equipment) {
+    @DeleteMapping("activities/{id}/equipment")
+    public boolean deleteEquipmentFromActivity(@PathVariable("id") int id, @RequestBody String equipment) {
         return activityService.deleteEquipmentFromActivity(id, equipment);
     }
 

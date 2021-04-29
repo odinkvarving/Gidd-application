@@ -1,7 +1,7 @@
 <template>
   <b-navbar class="bg-white" fixed="top" v-show="onHomePage">
     <div class="collapse navbar-collapse">
-      <router-link to="/">
+      <router-link to="/dashboard/">
         <div class="logo">
           <div class="circle-2">
             <div class="circle-3" />
@@ -258,7 +258,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .logo {
   width: 59px;
   height: 59px;
