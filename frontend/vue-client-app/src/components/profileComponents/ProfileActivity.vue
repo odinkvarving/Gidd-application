@@ -1,11 +1,11 @@
 <template>
   <div class="activity">
-    <h1>Activity</h1>
+    <h1>Aktiviteter</h1>
     <div class="profileActivityDisplay">
 
       <div class="profileActivityID" ><b>ID</b></div>
-      <div class="profileActivityTitle"><b>TITLE</b></div>
-      <div class="profileActivityStartTime"><b>START TIME</b></div>
+      <div class="profileActivityTitle"><b>TITTEL</b></div>
+      <div class="profileActivityStartTime"><b>START TID</b></div>
     </div>
     <hr>
     <div v-for="activity in activities" :key="activity.id" class="profileActivityDisplay">

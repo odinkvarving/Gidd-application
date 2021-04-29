@@ -1,27 +1,27 @@
 <template>
   <div class="edit">
-    <h1 class="edit-title" >Edit Profile</h1><br>
+    <h1 class="edit-title" >Endre profil</h1><br>
     <form class="edit-form" @submit="checkform">
       <div v-if="errors.length">
-        <b>Unable to edit account information for the following reasons:</b>
+        <b>Kan ikke endre profil av følgende grunner:</b>
         <ul class="error-list">
           <li v-for="error in errors" :key="error">{{error}}</li>
         </ul>
       </div>
       <fieldset class="edit-general">
-        <legend>General account information</legend>
+        <legend>Generell bruker informasjon</legend>
         <div class="edit-name">
-          <label for="first-name-form">First name:</label>
+          <label for="first-name-form">Fornavn:</label>
           <input type="text" id="first-name-form"  v-model="firstName" :placeholder="AccountInfo.firstname">
-          <label for="last-name-form">Last name:</label>
+          <label for="last-name-form">Etternavn:</label>
           <input type="text" id="last-name-form" v-model="lastName" :placeholder="AccountInfo.surname">
         </div>
         <div class="edit-image">
-          <label for="image-form">New profile image:</label>
-          <input type="text" id="image-form" v-model="imageURL" placeholder="Link to image here">
+          <label for="image-form">Nytt profil bilde:</label>
+          <input type="file" accept="image/png,image/gif,image/jpeg" id="image-form" value="Velg fil" @change="handleFiles($event)">
         </div>
         <div class="edit-notification-settings">
-          <label style="font-size: 20px; margin: 20px 10px 10px 10px">Edit notification settings</label>
+          <label style="font-size: 20px; margin: 20px 10px 10px 10px">Endre notifikasjons instilinger</label>
           <div class="on-cancelled-activity notification-settings-item">
             <label for="">Når aktivitet blir avlyst: </label>
             <b-form-select v-model="cancelledActivityOption" :options="notificationOptions">
@@ -42,14 +42,14 @@
           </div>
         </div>
         <div class="edit-description">
-          <label for="description-form">Description</label>
-          <textarea type="text" id="description-form" rows=5 cols=80 placeholder="Please tell us something about you|" v-model="description"></textarea>
+          <label for="description-form">Beskrivelse</label>
+          <textarea type="text" id="description-form" rows=5 cols=80 placeholder="Vennligst fortell oss noe om deg selv" v-model="description"></textarea>
         </div>
 
       </fieldset>
-      <input type="button" @click="sendChangePasswordForm" id="change-password" value="Send change password form">
-      <input type="password" v-model="old_password" id="old-password-form" placeholder="Old password to save">
-      <input type="submit" value="Save changes" id="edit-submit">
+      <input type="button" @click="sendChangePasswordForm" id="change-password" value="Klikk her for å sende mail for å bytte passord">
+      <input type="password" v-model="old_password" id="old-password-form" placeholder="Vennligst skriv inn gammelt passord">
+      <input type="submit" value="Lagre endringer" id="edit-submit">
 
     </form>
   </div>
@@ -67,8 +67,8 @@ export default {
       firstName:"",
       lastName:"",
       description:"",
-      imageURL:"",
       old_password:"",
+      newImageFile:{},
       notificationOptions: ["Notifikasjon og mail", "Kun notifikasjon", "Kun mail", "Ingen av delene"],
       cancelledActivityOption: null,
       editedActivityOption: null,
@@ -90,18 +90,12 @@ export default {
     exists(obj){
       return (obj!==null&&typeof obj!=='undefined'&&obj!=="")
     },
-    validURL(str){
-      let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-          '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-          '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-          '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-      return !!pattern.test(str);
+    validFile(image){
+      return image.type==='image/jpeg'||image.type==='image/gif'||image.type==='image/png'
     },
     async sendChangePasswordForm(){
       console.log("Sending mail for password change to "+this.AccountInfo.email)
-      fetch("http://localhost:8080/reset/"+this.AccountInfo.email,{
+      fetch(`http://localhost:8080/reset/${this.AccountInfo.email}`,{
         method:"POST",
       });
     },
@@ -122,7 +116,12 @@ export default {
         console.log('changing description to '+this.description)
         newAccount.profileDescription=this.description
       }
-
+      if(this.exists(this.newImageFile)){
+        console.log('Changing image to '+this.newImageFile.name)
+        if(!this.validFile(this.newImageFile)){
+          this.errors.push('Ugyldig fil type. Støttede filtyper er som følger: .png .jpg .gif')
+        }
+      }
       if(this.cancelledActivityOption !== null){
         this.getOnCancelledSettings();
       }
@@ -134,46 +133,51 @@ export default {
       if(this.outOfQueueOption !== null){
         this.getOnOutOfQueueSettings();
       }
-
-      if(this.exists(this.imageURL)){
-        if(this.validURL(this.imageURL)||this.imageURL===""){
-          console.log('Changing image url to '+this.imageURL)
-          newAccount.imageURL=this.imageURL
-        }else{
-          this.errors.push('This is not a valid URL')
-        }
-      }
       if(userService.getAccountDetails().sub===this.AccountInfo.email) {
         userService.login(this.AccountInfo.email, this.old_password).then(res => {
           console.log('getting jwtToken')
           if (!res.jwtToken) {
             console.log('Authentication failed')
-            this.errors.push('Old password does not match the account')
+            this.errors.push('Gammelt passord stemmer ikke med brukeren')
           }else console.log('Login successful')
         })
       }else{
-        this.errors.push('Your account does not have the rights to change the account for ' + this.AccountInfo.email)
+        this.errors.push('Denne brukeren kan ikke gjøre endringer på ' + this.AccountInfo.email+' sin bruker.')
       }
       if(this.errors.length){
         console.log('preventing post call '+this.errors.length+ ' errors')
         e.preventDefault()
       }else{
-
         console.log('sending following json')
         console.log(newAccount)
         if(this.exists(this.firstName)||this.exists(this.lastName)||
-            this.exists(this.description)||this.exists(this.imageURL)){
+            this.exists(this.description)){
               newAccount.notificationSettings = this.notificationSettings;
-          let res=userService.setAccount(newAccount,this.$route.params.userId);
-          console.log(res)
+          let res= await userService.setAccount(newAccount,this.$route.params.userId);
+          console.log('setAccount res:'+res)
         }
+        console.log('Current image status')
+        console.log(this.newImageFile)
+
+        if(this.exists(this.newImageFile)){
+          let formData=new FormData()
+          formData.append('file',this.newImageFile)
+          let res= await userService.sendImage(formData,this.$route.params.userId)
+          console.log('sendImage res'+res)
+        }
+
       }
-      if(this.getOnCancelledSettings !== null || this.getOnEditedSettings !== null 
+      if(this.getOnCancelledSettings !== null || this.getOnEditedSettings !== null
           || this.outOfQueueOption !== null){
             console.log(this.notificationSettings.id);
             let res = notificationService.updateAccountsNotificationSettings(this.$route.params.userId, this.notificationSettings);
             console.log(res);
       }
+    },
+    handleFiles(event){
+      console.log('The image is being set to:')
+      console.log(event.target.files[0])
+      this.newImageFile=event.target.files[0]
     },
     getOnCancelledSettings(){
       if(this.cancelledActivityOption === this.notificationOptions[0]){

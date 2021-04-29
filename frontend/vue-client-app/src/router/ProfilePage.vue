@@ -3,7 +3,7 @@
     <NavBar />
     <img src="../assets/Default_cover.jpg" alt="Cover photo"
          id="cover_photo"/>
-    <img :src=AccountInfo.imageURL @error="getDefaultImg" alt="Profile photo"
+    <img :src=AccountInfo.imageURL @error="getDefaultImg" alt="Profil bilde"
          width="170" height="170"
          id="profile_photo">
     <div class="profile_info">
@@ -11,12 +11,6 @@
       <p id="description">{{ AccountInfo.description }}</p>
 
       <ul id="info_list">
-        <li>
-          {{ AccountInfo.telephone }}
-        </li>
-        <li>
-          {{ AccountInfo.address }}
-        </li>
         <li>
           {{ AccountInfo.email }}
         </li>
@@ -80,7 +74,7 @@ export default {
     getUserInfo(){
       console.log(this.$route.params.userId)
       //Getting the user data
-      fetch(path_to_db+'accounts/'+this.$route.params.userId+'/info',{
+      fetch(path_to_db+`accounts/${this.$route.params.userId}/info`,{
         method:'GET',
         headers:{
           'Content-Type':'application/json',
@@ -121,7 +115,7 @@ export default {
           .catch(e=>console.log(e))
     },
     getAllActivities(){
-      fetch(path_to_db+'accounts/'+this.$route.params.userId+'/activities',{
+      fetch(path_to_db+`accounts/${this.$route.params.userId}/activities`,{
         method:'GET',
             headers:{
           'Content-Type':'application/json',
@@ -155,7 +149,7 @@ export default {
         let events=[]
         this.activities.forEach(item => {
           if (item.title === null || typeof item.title === 'undefined') {
-            item.title = 'Unnamed activity'
+            item.title = 'Ingen navn'
           }
           events.push({
             id: item.id,
@@ -177,13 +171,11 @@ export default {
     currentComp: 'profileCalendar',
     originalAccount:Object,
     AccountInfo:{
-      firstname:"No first name",
-      surname:"No last name",
+      firstname:"Ingen fornavn",
+      surname:"Ingen etternavn",
       imageURL:"../assets/Default_profile.png",
-      telephone:"No telephone number found",
-      address:"No address found",
-      email:"No email found",
-      description:"No description found"
+      email:"Ingen email funnet",
+      description:"Ingen beskrivelse funnet"
     },
     activities:[{
         id:-1,

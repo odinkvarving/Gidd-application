@@ -8,6 +8,7 @@ export const userService = {
     getAll,
     getAccountDetails,
     isLoggedIn,
+    sendImage,
     authorizationHeader,
     getTokenString,
     getCurrentLocation
@@ -35,7 +36,19 @@ function login(email, password) {
         });
 }
 
+function sendImage(image,id){
+    console.log(image.get('file'))
+    let user = JSON.parse(localStorage.getItem('user'));
+        return fetch(`http://localhost:8080/accounts/${id}/profilepicture`,{
+            method:'POST',
+            headers:{
+                'Accept':image.get('file').type,
+                'Authorization': `Bearer ${user.jwtToken}`
+            },
+            body:image
+        }).then(handleResponse)
 
+}
 
 function getAccountByEmail(){
     try{
@@ -126,7 +139,7 @@ function setAccount(newAccount,id){
     if(!user || !user.jwtToken){
         return false;
     }
-    return fetch("http://localhost:8080/accounts/"+id+"/accountInfo",{
+    return fetch(`http://localhost:8080/accounts/${id}/accountInfo`,{
         method:'PUT',
         headers:{
             'Content-Type':'application/json',

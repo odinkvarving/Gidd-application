@@ -6,17 +6,15 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 
 /**
- * A entity-class that represents the user-table of the database
+ * A entity-class that represents the accountinfo-table of the database
  *
  * @author Endré Hadzalic
  */
-
 // TODO: Refactor to embedded(?)
 //  - Any security reasons?
 //  - Does not have it's own life cycle,    it's dependent on Account
 //  - Does not have it's own identity,      ''
 //  - Does not have any shared dependents,
-
 @Entity
 @Table(name = "accountinfo")
 public class AccountInfo {
@@ -35,7 +33,7 @@ public class AccountInfo {
 
     @JsonBackReference
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="notificationSettings", referencedColumnName = "id")
+    @JoinColumn(name = "notificationSettings", referencedColumnName = "id")
     private NotificationSettings notificationSettings;
 
     private String imageURL;
@@ -46,6 +44,7 @@ public class AccountInfo {
 
     protected AccountInfo() {
     }
+
 
     private AccountInfo(Level userLevel, String imageURL, String firstname, String surname,
                         String profileDescription, int points) {
@@ -70,7 +69,7 @@ public class AccountInfo {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -130,8 +129,20 @@ public class AccountInfo {
         this.points = points;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("id: " + this.id + "\n");
+        builder.append("firstname: " + this.firstname + "\n");
+        builder.append("surname: " + this.surname + "\n");
+        builder.append("description: " + this.profileDescription + "\n");
+        builder.append("points: " + this.points + "\n");
+        builder.append("Profile picture URL: " + this.imageURL + "\n");
+        return builder.toString();
+    }
+
     /**
-     * A class used to build a new UserInfo-object.
+     * A class used to build a new AccountInfo-object.
      *
      * @author Endré Hadzalic
      */
