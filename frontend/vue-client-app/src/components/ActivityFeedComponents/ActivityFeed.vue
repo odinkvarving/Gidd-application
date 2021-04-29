@@ -3,25 +3,28 @@
     <div id="feed">
       <div class="filter-sort-container">
         <div class="category-container">
-            <b-form-select v-model="category" :options="categories" id="select-category" @change="filterByCategory()" class="category-picker">
+            <b-form-select v-model="category" :options="categories" id="select-category" class="category-picker">
                 <template #first>
                     <b-form-select-option :value="null">Kategori</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="level-container">
-            <b-form-select  v-model="level" :options="levels" id="select-level" @change="filterByLevel()" class="level-picker">
+            <b-form-select  v-model="level" :options="levels" id="select-level" class="level-picker">
                 <template #first>
                     <b-form-select-option :value="null">Nivå</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="location-container">
-            <select class="location-picker" id="select-location" @change="filterByLocation()" data-live-search="true">  
+            <select class="location-picker" id="select-location" data-live-search="true">  
                 <option data-tokens="Sted">Sted</option>
                 <option v-for="item in locations" :key="item.id" data-tokens="" >{{item.value}}</option>                                    
             </select>
-        </div>        
+        </div>
+        <div class="button-container">
+            <button class="filter-button" type="button" @click="generateFilteredList()" >filtrer</button> 
+        </div>       
         <div class="sorting-container">
             <b-form-select v-model="sort" :options="sorts" @change="modifyActivities()" class="sorting-picker">
                 <template #first>
@@ -75,8 +78,15 @@ document.addEventListener('DOMContentLoaded', function () {
    input.onchange = function () {
         localStorage['select-category'] = this.value; // change localStorage on change
         this.selectedCategory = this.value;
+        console.log("Selected Category: " + this.selectedCategory)
+        //MAKE EVENT LISTENER CALL METHOD INSTEAD OF JUST UPDATING VARIABLE?
+        //generateFilteredList(this.value)?
+        //NO NEED FOR BUTTON?
+        //NOTE: MIGHT NOT WORK BECAUSE YOU NEED TO CHECK ALL 3 FILTERS(!)
     }
 });
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
    var input = document.getElementById('select-level');
@@ -87,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
    input.onchange = function () {
         localStorage['select-level'] = this.value; // change localStorage on change
         this.selectedLevel = this.value;
+        console.log("Selected Level: " + this.selectedLevel)
     }
 });
 
@@ -99,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
    input.onchange = function () {
         localStorage['select-location'] = this.value; // change localStorage on change
         this.selectedLocation = this.value;
+        console.log("Selected Location: " + this.selectedLocation)
     }
 });
 
@@ -227,9 +239,9 @@ export default {
         
         const filteredList = [];
 
-        if(this.category !== "") {
+        if(this.selectedCategory !== "Kategori") {
             for(let i = 0; i < list.length; i++) {
-                if(list[i].activityType.type.toLowerCase() === this.category.toLowerCase()) {
+                if(list[i].activityType.type.toLowerCase() === this.selectedCategory.toLowerCase()) {
                     filteredList.push(list[i]);
                 }
             }
@@ -243,9 +255,9 @@ export default {
 
         const filteredList = [];
 
-        if(this.level !== "") {
+        if(this.selectedLevel !== "Nivå") {
             for(let i = 0; i < list.length; i++) {
-                if(list[i].level.description.toLowerCase() === this.level.toLowerCase()) {
+                if(list[i].level.description.toLowerCase() === this.selectedLevel.toLowerCase()) {
                     filteredList.push(list[i]);
                 }
             }
@@ -271,7 +283,9 @@ export default {
         }
     },
 
-    generateFilteredList() {
+    async generateFilteredList() {
+        //TRIED PASSING ALL FILTER PARAMETERS IN BUTTON METHOD - DID NOT WORK
+        console.log(this.selectedCategory + "SELECTED CATEGORY WHEN BUTTON CLICKED")
         let list = this.activities;
 
         if(this.selectedCategory !== "") {
@@ -280,8 +294,8 @@ export default {
         if(this.selectedLevel !== "") {
             list = this.filterByLevel(list);
         }
-        if(this.selectedLocation !== "") {
-            list = this.filterByLocation(list);
+        if(location !== "") {
+            list = this.filterByLocation(list, location);
         }
 
         this.filteredActivities = list;
@@ -512,16 +526,36 @@ export default {
 }
 
 .location-container {
-    width: 200px;
+    width: 150px;
     padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 3px;
+    padding-top: 1px;
 }
 
 .location-picker {
-    width: 70%;
+    width: 100%;
     height: 100%;
     color: #495057;
     border: 1px solid #ced4da;
     padding-left: 10px;
+    padding-bottom: 2px;
+    border-radius: 4px;
+}
+
+.button-container {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 1px;
+}
+
+.filter-button {
+    padding-top: 5px;
+    background-color: #ffbd3e;
+    color: #495057;
+    border: 1px solid #ced4da;
+    border-radius: 10%;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .sorting-container {
