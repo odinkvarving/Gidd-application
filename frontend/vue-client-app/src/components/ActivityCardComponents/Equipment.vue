@@ -40,34 +40,68 @@
   </div>
 </template>
 <script>
+/**
+ * Necessary services are imported for efficient use of functions.
+ */
 import { notificationService } from "../../services/NotificationService";
 import { userService } from "../../services/UserService";
+
+/**
+ * Equipment is a component which displays equipment for current activity.
+ * The component is editable.
+ * 
+ * @author Mattias Agentoft Eggen
+ * @author Scott Rydberg Sonen
+ */
 export default {
   name: "Equipments",
 
   data() {
     return {
+      /**
+       * inEditMode represents the state of edit mode.
+       */
       inEditMode: false,
+      /**
+       * equipment is a pointer to activity's equipment and can be edited in edit mode.
+       */
       equipment: this.activity.equipment,
+      /**
+       * newEquipment represents new equipment which will be added to display and to the database.
+       */
       newEquipment: "",
     };
   },
 
   props: {
+    /**
+     * activity is an object passed from ActivityCard which represents current activity.
+     */
     activity: {
       type: Object,
       required: true,
     },
+    /**
+     * isActivityHost is a boolean passed from ActivityCard
+     *  which tells us whether or not the account is the creator of current activity.
+     */
     isActivityHost: {
       type: Boolean,
       required: true,
     },
   },
   methods: {
+    /**
+     * edit is a function which changes edit mode.
+     */
     edit() {
       this.inEditMode = !this.inEditMode;
     },
 
+    /**
+     * removeEquipment is a function which removes an equipment with given index.
+     * A DELETE request is sent, and all participants will be notified about the update.
+     */
     removeEquipment(index) {
       const requestOptions = {
         method: "DELETE",
@@ -105,6 +139,12 @@ export default {
       this.equipment.splice(index, 1);
     },
 
+    /**
+     * addEquipment is a function which adds a new equipment to equipment list in activities.
+     * A POST request is sent with the new equipment list.
+     * New equipment is then displayed.
+     * All participants will be notified about the change.
+     */
     async addEquipment() {
       if (this.newEquipment != "") {
         this.equipment.push({ description: this.newEquipment });

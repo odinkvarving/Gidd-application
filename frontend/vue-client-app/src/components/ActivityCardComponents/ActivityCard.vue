@@ -72,6 +72,9 @@ import ConfirmModal from "../PopUpComponents/ConfirmModal.vue"
  * The component is found in router/Activity.
  * The component itself contains four other components: Info, Map, Equipment and Chat.
  * Each of these components represents their own part of an activity.
+ * 
+ * @author Scott Rydberg Sonen
+ * @author Magnus Bredeli
  */
 export default {
   name: "ActivityCard",
@@ -86,13 +89,17 @@ export default {
 
   props: {
     /**
-     * activity is a prop passed from router/Activity to ActivityCard.
+     * activity is an object passed from router/Activity.
      * The activity represents the clicked activity in activity feed.
      */
     activity: {
       type: Object,
       required: true,
     },
+    /**
+     * weather is an object passed from router/Activity.
+     * The object represents weather at the activity's location.
+     */
     weather: {
       type: Object,
       required: true,
@@ -107,12 +114,19 @@ export default {
        */
       isChatVisible: true,
       /**
-       * isLoggedIn is a boolean to check if the client is logged in or not
+       * isLoggedIn is a boolean to check if the account is logged in or not.
        */
       isLoggedIn: false,
+      /**
+       * isActivityHost is a boolean which tells us if the account is the creator of the activity.
+       */
       isActivityHost: false,
     };
   },
+
+  /**
+   * mounted runs when ActivityCard renders and defines two important variables.
+   */
   async mounted() {
     this.isLoggedIn = await userService.isLoggedIn();
     this.isActivityHost = await this.checkIfActivityHost();
@@ -131,6 +145,10 @@ export default {
         btn.childNodes[0].nodeValue = "Vis kommentarfelt";
       }
     },
+
+    /**
+     * checkIfActivityHost is a function which checks if the account is the creator of the current activity.
+     */
     async checkIfActivityHost() {
       if (this.isLoggedIn) {
         let accountId = await userService.getAccountByEmail().then((data) => {
@@ -142,6 +160,11 @@ export default {
         return false;
       }
     },
+
+    /**
+     * cancelActivity is a function which sends a PUT request to backend which then updates the activity.
+     * Activity's cancelled-variable is then changed to true.
+     */
     cancelActivity() {
 
       let url = `http://localhost:8080/activities/${this.activity.id}/cancel`;
