@@ -18,7 +18,7 @@
         </div>
         <div class="edit-image">
           <label for="image-form">New profile image:</label>
-          <input type="file" accept="image/*" id="image-form" @change="handleFiles($event)">
+          <input type="file" accept="image/x-png,image/gif,image/jpeg" id="image-form" @change="handleFiles($event)">
         </div>
         <div class="edit-notification-settings">
           <label style="font-size: 20px; margin: 20px 10px 10px 10px">Edit notification settings</label>
@@ -91,17 +91,8 @@ export default {
     exists(obj){
       return (obj!==null&&typeof obj!=='undefined'&&obj!=="")
     },
-    validURL(str){
-      let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-          '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-          '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-          '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-      return !!pattern.test(str);
-    },
-    validImg(){
-      return true
+    validFile(image){
+      return image.type==='image/jpeg'||image.type==='image/gif'||image.type==='image/png'
     },
     async sendChangePasswordForm(){
       console.log("Sending mail for password change to "+this.AccountInfo.email)
@@ -126,7 +117,12 @@ export default {
         console.log('changing description to '+this.description)
         newAccount.profileDescription=this.description
       }
-
+      if(this.exists(this.newImageFile)){
+        console.log('Changing image to '+this.newImageFile.name)
+        if(!this.validFile(this.newImageFile)){
+          this.errors.push('Invalid image file extension. Supported extensions are: .png .jpg .gif')
+        }
+      }
       if(this.cancelledActivityOption !== null){
         this.getOnCancelledSettings();
       }
@@ -137,14 +133,6 @@ export default {
 
       if(this.outOfQueueOption !== null){
         this.getOnOutOfQueueSettings();
-      }
-
-      if(this.exists(this.imageURL)){
-        if(this.validImg(this.imageURL)){
-          console.log('Changing image to '+this.imageURL)
-        }else{
-          this.errors.push('This is not a valid file type')
-        }
       }
       if(userService.getAccountDetails().sub===this.AccountInfo.email) {
         userService.login(this.AccountInfo.email, this.old_password).then(res => {
@@ -161,7 +149,6 @@ export default {
         console.log('preventing post call '+this.errors.length+ ' errors')
         e.preventDefault()
       }else{
-        e.preventDefault()
         console.log('sending following json')
         console.log(newAccount)
         if(this.exists(this.firstName)||this.exists(this.lastName)||

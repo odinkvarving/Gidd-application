@@ -38,18 +38,14 @@ function login(email, password) {
 
 function sendImage(image,id){
     let user = JSON.parse(localStorage.getItem('user'));
-    try{
         return fetch(`http://localhost:8080/accounts/${id}/profileImage`,{
             method:'POST',
             headers:{
-                'Content-Type':'image/jpg',
+                'Content-Type':image.type,
                 'Authorization': `Bearer ${user.jwtToken}`
             }
         }).then(handleResponse)
-            .catch(e=>console.error(e))
-    }catch(error){
-        console.error('Failed to send image')
-    }
+
 }
 
 function getAccountByEmail(){
