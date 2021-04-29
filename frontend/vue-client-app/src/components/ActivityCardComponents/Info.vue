@@ -1,27 +1,17 @@
 <template>
-  <div class="info-box-container" v-if="activity && isDataReady">
-    <div class="box">
-      <div class="title-container">
-        <h1 class="title" v-show="!inEditMode">{{ activity.title }}</h1>
-        <h1 class="edit" v-show="inEditMode">
-          <input
-            class="title"
-            type="text"
-            :placeholder="title"
-            v-model="title"
-            style="heigth: 68px;"
-          />
-        </h1>
-        <div class="edit">
-          <b-icon
-            class="toggle-edit-button"
-            icon="pencil"
-            @click="toggleEditMode"
-            v-show="isActivityHost && !activity.cancelled"
-            font-scale="1.5"
-          ></b-icon>
-        </div>
-      </div>
+  <div id="infobox" v-if="activity && isDataReady">
+    <div class="header-description-section">
+      <b-icon
+        class="toggle-edit-button"
+        icon="pencil"
+        @click="toggleEditMode"
+        v-show="isActivityHost && !activity.cancelled"
+      ></b-icon>
+
+      <h1 v-show="!inEditMode">{{ activity.title }}</h1>
+      <h1 class="edit" v-show="inEditMode">
+        <input class="title" type="text" :placeholder="title" v-model="title" />
+      </h1>
       <div id="ownerInfo">
         <img :src="require('@/assets/kari.jpg')" />
         <h3 class="txt">{{ activity.creator.email }}</h3>
@@ -37,8 +27,8 @@
         />
       </p>
     </div>
+    <h3>Informasjon:</h3>
     <div class="box" id="bottom">
-      <h3>Informasjon:</h3>
       <ul class="list" id="list1">
         <li class="txt">Kategori:</li>
         <li class="txt">Sted:</li>
@@ -632,84 +622,65 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #infobox {
-  display: grid;
-  grid-template-areas:
-    "top"
-    "bottom";
-  height: 50vh;
+  width: 40vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.box{
+  text-align: center;
+  align-items: center;
+}
+
+.header-description-section{
+  margin-top: 20px;
+  height: 50%;
   text-align: center;
 }
-/*.box{
-        margin: 2vh 2vw 2vh 2vw;
-    }*/
+
+.info-section {
+  width: 100%;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 30px;
+}
+
 .txt {
   font-size: 20px;
 }
-#top {
-  grid-area: top;
-  display: grid;
-  grid-template-areas:
-    "title"
-    "ownerInfo"
-    "desc";
-}
-#top h1 {
-  grid-area: title;
-}
+
 #ownerInfo {
-  grid-area: ownerInfo;
-  display: grid;
-  grid-template-areas: "image name";
-  margin: auto;
-  width: 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-around;
+  margin: 30px;
 }
 #ownerInfo img {
-  grid-area: image;
   width: 70px;
   height: 70px;
   border-radius: 35px;
   box-shadow: 0px 4px 4px 0px #0000001a;
+  margin: 5px;
 }
 #ownerInfo h3 {
-  grid-area: name;
   margin: auto;
 }
-#top p {
-  grid-area: desc;
-  height: 100px;
-}
-.list {
-  list-style-type: none;
-}
-#bottom {
-  grid-area: bottom;
-  display: grid;
-  grid-template-areas:
-    "infoTitle infoTitle"
-    "list1 list2"
-    "btn btn";
-}
-#bottom h3 {
-  grid-area: infoTitle;
-}
-#list1 {
-  grid-area: list1;
-  text-align: left;
-  margin-left: 0;
-}
-#list2 {
-  grid-area: list2;
-  text-align: right;
-  margin-right: 40px;
-}
-#icon {
-  width: 25px;
-  height: 25px;
+
+#icon{
+  width: 30px;
+  height: 30px;
   margin-right: 10px;
 }
-#btn {
+
+#btn{
   height: 50px;
   width: 160px;
   border-radius: 6px;
@@ -719,6 +690,7 @@ export default {
   color: white;
   border: 0;
   outline: none;
+  margin: 40px;
 }
 #btn:hover {
   background-color: #eca82b;
@@ -771,9 +743,9 @@ export default {
 }
 
 .box {
+  display: flex;
   width: 100%;
 }
-
 
 .pencil {
   cursor: pointer;
@@ -804,15 +776,47 @@ export default {
   min-width: 110px !important;
 }
 
-.title-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 12px;
+.cancel-button {
+  margin: 40px;
 }
 
 .expired-button {
   height: 50px;
   width: 160px;
+}
+
+#list1{
+   margin-left: 20%;
+}
+
+@media (max-width: 1200px) {
+  
+  h1{
+    font-size: 24px;
+  }
+
+  h3{
+    font-size: 20px;
+  }
+
+  .header-description-section {
+    height: 50%;
+  }
+
+  #infobox{
+    width: 80vw;
+  }
+
+  #list1{
+    margin-left: 10vw;
+  }
+
+  .txt {
+    font-size: 15px;
+  }
+
+  .info-row {
+    margin: 0;
+  }
 }
 </style>

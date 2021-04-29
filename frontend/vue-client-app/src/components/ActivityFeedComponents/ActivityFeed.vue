@@ -39,7 +39,7 @@
         v-for="a in filteredActivities"
         :key="a.id"
         @click="handleActivityClicked(a)"
-      > <!-- evt sortedActivities -->
+      >
         <Activity
           :activity="a"
           v-on:refresh-list="refreshList"
@@ -688,6 +688,16 @@ export default {
 .sorting-picker {
     width: 100%;
     background: #6C757D;
+}
+
+@media (max-width: 1200px) {
+  #calendar-mini{
+    display: none;
+  }
+
+  #feed {
+    width: 100vw;
+  }
 }
 
 </style>

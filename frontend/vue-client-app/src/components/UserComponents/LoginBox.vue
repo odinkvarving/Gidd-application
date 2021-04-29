@@ -6,24 +6,6 @@
     ></router-link>
     <h2 class="header">GIDD og logg deg inn da</h2>
 
-    <div id="facebook-btn">
-      <img
-        src="../../assets/facebook.png"
-        alt="facebook logo"
-        style="width: 32px; height: 32px"
-      />
-      <p class="text">Logg inn med Facebook</p>
-    </div>
-    <div id="google-btn">
-      <img
-        src="../../assets/google.png"
-        alt="google logo"
-        style="width: 32px; height: 32px"
-      />
-      <p class="text">Logg inn med Google</p>
-    </div>
-    <p class="or-text">eller bruk epost</p>
-
     <div class="input-container">
       <p v-if="!isEmailValid">Skriv inn en gyldig e-postadresse</p>
       <input
@@ -114,12 +96,6 @@ export default {
         this.showLoginError = true;
       }
     },
-    handleLoginWithFacebook() {
-      //Implement facebook compability
-    },
-    handleLoginWithGoogle() {
-      //Implement google compability
-    },
     closeInvalidLoginError() {
       this.showLoginError = false;
     },
@@ -144,68 +120,9 @@ export default {
   background: white;
 }
 
-#facebook-btn {
-  margin: 15px 0;
-  width: 394px;
-  height: 51px;
-  background-color: #3b5998;
-  border-radius: 6px;
-  border: 1px solid #dfdfe8;
-  color: white;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#facebook-btn p {
-  margin-top: 15px;
-  margin-right: 80px;
-}
-#facebook-btn img {
-  margin: 0 10px;
-}
-
-#facebook-btn:hover {
-  background-color: #2f4779;
-  cursor: pointer;
-}
-
-#google-btn {
-  margin: 15px 0 0 0;
-  width: 394px;
-  height: 51px;
-  border-radius: 6px;
-  border: 1px solid #dfdfe8;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#google-btn img {
-  margin: 0 10px;
-}
-
-#google-btn p {
-  margin-top: 15px;
-  margin-right: 85px;
-}
-
-#google-btn:hover {
-  background-color: #f1f1f1;
-  cursor: pointer;
-}
-
-.or-text {
-  font-size: 13px;
-  opacity: 75%;
-  margin-top: 17px;
-}
-
 .input-container {
   font-family: "Mulish";
+  width: 70%;
   margin: 10px 0;
   display: flex;
   flex-flow: column;
@@ -219,7 +136,7 @@ export default {
 }
 
 .input {
-  width: 372px;
+  width: 100%;
   height: 50px;
   padding: 0 10px;
   background-color: #f6f6f6;
@@ -296,5 +213,15 @@ export default {
 
 .spacing {
   margin-bottom: 40px;
+}
+
+@media (max-width: 600px) {
+  .login-box{
+    width: 380px;
+  }  
+
+  .header {
+    font-size: 28px;
+  }
 }
 </style>
