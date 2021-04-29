@@ -74,7 +74,11 @@ public class NotificationService {
         Optional<Account> account = accountRepository.findById(accountId);
         if(account.isPresent()){
             AccountInfo accountInfo = account.get().getAccountInfo();
-            return accountInfo.getNotificationSettings();
+            if(accountInfo.getNotificationSettings() == null){
+                return new NotificationSettings(true, true, true, true, true, true);
+            }else {
+                return accountInfo.getNotificationSettings();
+            }
         }else{
             return null;
         }
