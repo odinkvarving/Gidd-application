@@ -8,23 +8,6 @@
       Registrer deg hos GIDD idag<br />Det er bare å GIDDE
     </h2>
 
-    <div id="facebook-btn">
-      <img
-        src="../../assets/facebook.png"
-        alt="facebook logo"
-        style="width: 32px; height: 32px"
-      />
-      <p class="text">Registrer deg med Facebook</p>
-    </div>
-    <div id="google-btn">
-      <img
-        src="../../assets/google.png"
-        alt="google logo"
-        style="width: 32px; height: 32px"
-      />
-      <p class="text">Registrer deg med Google</p>
-    </div>
-    <p class="or-text">eller bruk epost</p>
 
     <div class="input-container">
       <p v-if="!nameValid">Ikke gyldig navn!</p>

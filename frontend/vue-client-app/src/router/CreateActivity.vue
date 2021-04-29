@@ -11,6 +11,7 @@
             type="text"
             placeholder="Navn på aktivitet"
             v-model="name"
+            maxlength="40"
           ></b-form-input>
         </li>
         <li class="menu-item category">
@@ -108,35 +109,14 @@
           <label>
             Deltakere<p style="color: red; display: inline; margin-left: 3px">*</p>
           </label>
-          <input style="width:80%;" class="input-field" type="number" min="2" v-model="participants"/>
+          <input class="input-field" type="number" min="2" v-model="participants"/>
         </li>
         <li class="menu-item description">
             <div class="description-container">
                 <label>
                     Beskrivelse<p style="color: red; display: inline; margin-left: 3px">*</p>
                 </label>
-                <b-form-textarea :state="descriptionState" class="description-input" type="text" v-model="description"  no-resize></b-form-textarea>
-          </div>
-        </li>
-        <li class="menu-item visibility">
-          <div class="participation-container">
-            <label>
-              Hvem kan delta<p style="color: red; display: inline; margin-left: 3px">*</p>
-            </label>
-            <div>
-              <b-dropdown
-                class="participant-selector"
-                :text="participantValue"
-                size="sm"
-              >
-                <b-dropdown-item @click="participantValue = 'Alle'"
-                  >Alle</b-dropdown-item
-                >
-                <b-dropdown-item @click="participantValue = 'Privat'"
-                  >Privat</b-dropdown-item
-                >
-              </b-dropdown>
-            </div>
+                <b-form-textarea :state="descriptionState" class="description-input" type="text" v-model="description"  no-resize maxLength="256"></b-form-textarea>
           </div>
         </li>
         <li class="menu-item btn">
@@ -380,6 +360,7 @@ data() {
         box-shadow: 0px 4px 4px 0px #0000001A;
         display: flex;
         flex-direction: column;
+        margin-bottom: 40px;
     }
     ul {
         padding: 0;
@@ -462,7 +443,7 @@ data() {
     }
 
     .input-field {
-        width: 100%;
+      width: 100px;
     }
 
     .btn {
@@ -531,5 +512,27 @@ data() {
         font-size: 20px;
     }
 
+    @media (max-width: 1400px) {
+      #create-activity-form{
+        width: 60vw;
+      }
+    }
+    @media (max-width: 1000px) {
+      #create-activity-form{
+        width: 70vw;
+      }
+    }
+
+    @media (max-width: 600px) {
+      #create-activity-form{
+        width: 85vw;
+      }
+      h1{
+        font-size: 30px;
+      }
+      .menu-item label{
+        font-size: 14px;
+      }
+    }
 </style>
 

@@ -16,7 +16,9 @@
         <img :src="require('@/assets/kari.jpg')" />
         <h3 class="txt">{{ activity.creator.email }}</h3>
       </div>
-      <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>
+      <div class="description-container">
+        <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>
+      </div>
 
       <p class="txt edit" v-show="inEditMode">
         <input
@@ -192,6 +194,7 @@
       disabled
       v-show="isExpired"
       class="expired-button"
+      style="margin-bottom: 30px"
       >Utgått!</b-button
     >
   </div>
@@ -220,7 +223,7 @@ export default {
       required: true,
     },
     isLoggedIn: {
-      type: Object,
+      type: Boolean,
       required: true,
     },
     isActivityHost: {
@@ -641,6 +644,10 @@ export default {
   text-align: center;
 }
 
+h1{
+  margin: 10px;
+}
+
 .info-section {
   width: 100%;
 }
@@ -654,6 +661,12 @@ export default {
 
 .txt {
   font-size: 20px;
+  text-align: start;
+  width: 100%;
+}
+
+.description-container {
+  margin: 20px;
 }
 
 #ownerInfo {
@@ -783,10 +796,6 @@ export default {
 .expired-button {
   height: 50px;
   width: 160px;
-}
-
-#list1{
-   margin-left: 20%;
 }
 
 @media (max-width: 1200px) {
