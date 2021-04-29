@@ -10,10 +10,14 @@
   </div>
 </template>
 <script>
+/**
+ * NavBar and ActivityCard are components which are used for displaying a navbar and activity feed.
+ * userService and weatherService are imported for efficient use of different functions which will be useful.
+ */
+import NavBar from "../components/Nav/NavBar.vue"
 import ActivityCard from "../components/ActivityCardComponents/ActivityCard.vue";
 import { userService } from "../services/UserService.js";
 import { weatherService } from "../services/WeatherService.js";
-import NavBar from "../components/Nav/NavBar.vue"
 
 /**
  * Activity is a router, which will display an activity.
