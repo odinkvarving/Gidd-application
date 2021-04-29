@@ -1,46 +1,47 @@
 <template>
   <div id="activity" v-if="activity != null">
-    <div v-show="isActivityHost" class="cancel-button-container">
-      <b-button
-        :disabled="this.activity.cancelled"
-        @click="cancelActivity()"
-        class="cancel-button"
-        variant="danger"
-        >Avlys aktivitet</b-button
-      >
-    </div>
-    <div class="upper-row">
-      <Info
-        class="comp"
-        id="info"
-        :activity="activity"
-        :weather="weather"
-        :isLoggedIn="isLoggedIn"
-        :isActivityHost="isActivityHost"
-      />
-      <div class="map-equipment-container">
-        <Map
+    <div style="margin-top: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center">
+      <div v-show="isActivityHost" class="cancel-button-container">
+        <b-button
+          :disabled="this.activity.cancelled"
+          @click="cancelActivity()"
+          class="cancel-button"
+          variant="danger"
+          >Avlys aktivitet</b-button
+        >
+      </div>
+      <div class="upper-row">
+        <Info
           class="comp"
-          id="map"
-          :latitude="activity.latitude"
-          :longitude="activity.longitude"
-        />
-        <Equipment
-          class="comp"
-          id="equipment"
           :activity="activity"
+          :weather="weather"
+          :isLoggedIn="isLoggedIn"
           :isActivityHost="isActivityHost"
         />
+        <div class="map-equipment-container">
+          <Map
+            class="comp"
+            id="map"
+            :latitude="activity.latitude"
+            :longitude="activity.longitude"
+          />
+          <Equipment
+            class="comp"
+            id="equipment"
+            :activity="activity"
+            :isActivityHost="isActivityHost"
+          />
+        </div>
       </div>
+        <button
+          :disabled="this.activity.cancelled"
+          id="btnVisible"
+          @click="changeChatVisibility"
+        >
+          Skjul kommentarfelt
+        </button>
+        <Chat class="chat" id="chat" :activity="activity" v-show="isChatVisible" />
     </div>
-    <button
-      :disabled="this.activity.cancelled"
-      id="btnVisible"
-      @click="changeChatVisibility"
-    >
-      Skjul kommentarfelt
-    </button>
-    <Chat class="chat" id="chat" :activity="activity" v-show="isChatVisible" />
   </div>
 </template>
 <script>
@@ -150,7 +151,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .cancel-button-container {
   width: 100%;
   display: flex;
@@ -161,21 +162,21 @@ export default {
 .cancel-button {
   width: 200px;
   height: 40px;
-  margin: 20px 60px 20px 20px;
+  margin: 20px;
 }
 
 #activity {
   display: flex;
-  /*display: flex;
-        flex-wrap: wrap;
-        flex-direction: row;
-        background-color: #F6F6F6;*/
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #F6F6F6;
 }
 
 .upper-row {
   display: flex;
-  flex-direction: row wrap;
-  height: 85vh;
+  flex-direction: row;
+  margin: 50px 0;
 }
 .comp {
   background-color: white;
@@ -208,7 +209,33 @@ export default {
   color: white;
 }
 #chat {
-  width: 87vw;
+  width: 80vw;
   margin-top: 1%;
+}
+
+@media (max-width: 1200px) {
+  .upper-row {
+    flex-direction: column;
+  }
+
+  #info {
+    width: 80vw;
+  }
+
+  .map-equipment-container {
+    margin-left: 0;
+    align-items: center;
+    width: 80vw;
+    margin: 30px 0;
+  }
+
+  #map {
+    width: 80vw;
+    margin: 30px 0;
+  }
+
+  #equipment {
+    width: 80vw;
+  }
 }
 </style>

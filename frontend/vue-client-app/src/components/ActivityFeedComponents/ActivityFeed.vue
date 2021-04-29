@@ -319,4 +319,14 @@ export default {
     width: 180px;
 }
 
+@media (max-width: 1200px) {
+  #calendar-mini{
+    display: none;
+  }
+
+  #feed {
+    width: 100vw;
+  }
+}
+
 </style>

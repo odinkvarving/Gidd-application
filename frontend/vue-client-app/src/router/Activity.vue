@@ -84,9 +84,5 @@ export default {
 };
 </script>
 <style>
-#card {
-  background-color: #f6f6f6;
-  padding: 2% 5%;
-  margin-top: 2%;
-}
+
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="infobox" v-if="activity && isDataReady">
-    <div class="box" id="top">
+    <div class="header-description-section">
       <b-icon
         class="toggle-edit-button"
         icon="pencil"
@@ -23,30 +23,31 @@
         
       </p>
     </div>
-    <div class="box" id="bottom">
-      <h3>Informasjon:</h3>
-      <ul class="list" id="list1">
-        <li class="txt">Kategori:</li>
-        <li class="txt">Sted:</li>
-        <li class="txt">Tid:</li>
-        <li class="txt">Varighet:</li>
-        <li class="txt">Værmelding:</li>
-        <li class="txt">Deltakere:</li>
-      </ul>
-      <ul class="list" id="list2" v-show="!inEditMode">
-        <li class="txt">{{ activity.activityType.type }}</li>
-        <li class="txt">{{ activity.location }}</li>
-        <li class="txt">{{ activity.startTime }}</li>
-        <li class="txt">{{ duration }}</li> <!-- Implement duration -->
-        <li class="txt" v-if="weather">
-          <img id="icon" alt="weather icon" :src="require('@/assets/weatherIcons/' + weather.icon + '.png')"/>
-          {{ weather.temp }} C°
-        </li>
-        <li class="txt" v-else>Ingen værmelding</li>
-        <li class="txt">{{ currentParticipants }} / {{ activity.maxParticipants }}</li>
-        <li style="font-size: 13px; opacity: 70%" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</li>
-      </ul>
-
+    <div class="info-section">
+      <h3 style="text-align: center">Informasjon:</h3>
+      <div class="info-row">
+        <ul class="list" id="list1">
+          <li class="txt">Kategori:</li>
+          <li class="txt">Sted:</li>
+          <li class="txt">Tid:</li>
+          <li class="txt">Varighet:</li>
+          <li class="txt">Værmelding:</li>
+          <li class="txt">Deltakere:</li>
+        </ul>
+        <ul class="list" id="list2" v-show="!inEditMode">
+          <li class="txt">{{ activity.activityType.type }}</li>
+          <li class="txt">{{ activity.location }}</li>
+          <li class="txt">{{ activity.startTime }}</li>
+          <li class="txt">{{ duration }}</li> <!-- Implement duration -->
+          <li class="txt" v-if="weather">
+            <img id="icon" alt="weather icon" :src="require('@/assets/weatherIcons/' + weather.icon + '.png')"/>
+            {{ weather.temp }} C°
+          </li>
+          <li class="txt" v-else>Ingen værmelding</li>
+          <li class="txt">{{ currentParticipants }} / {{ activity.maxParticipants }}</li>
+          <li style="font-size: 13px; opacity: 70%" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</li>
+        </ul>
+      </div>
       <ul class="list" id="list2" v-show="inEditMode">
         <li class="txt">
           <b-form-select size="sm" :state="categoryState" v-model="category" :options="categories" style="width: 80%;">
@@ -508,83 +509,57 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #infobox {
-  display: grid;
-  grid-template-areas:
-    "top"
-    "bottom";
-  height: 50vh;
-  text-align: center;
+  width: 40vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 /*.box{
         margin: 2vh 2vw 2vh 2vw;
     }*/
+
+.header-description-section{
+  margin-top: 20px;
+  height: 50%;
+  text-align: center;
+}
+
+.info-section {
+  width: 100%;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 30px;
+}
+
 .txt {
   font-size: 20px;
 }
-#top {
-  grid-area: top;
-  display: grid;
-  grid-template-areas:
-    "title"
-    "ownerInfo"
-    "desc";
-}
-#top h1 {
-  grid-area: title;
-}
+
 #ownerInfo {
-  grid-area: ownerInfo;
-  display: grid;
-  grid-template-areas: "image name";
-  margin: auto;
-  width: 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-around;
+  margin: 30px;
 }
 #ownerInfo img {
-  grid-area: image;
   width: 70px;
   height: 70px;
   border-radius: 35px;
   box-shadow: 0px 4px 4px 0px #0000001a;
+  margin: 5px;
 }
 #ownerInfo h3 {
-  grid-area: name;
   margin: auto;
 }
-#top p {
-  grid-area: desc;
-  height: 100px;
-}
-.list {
-  list-style-type: none;
-}
-#bottom {
-  grid-area: bottom;
-  display: grid;
-  grid-template-areas:
-    "infoTitle infoTitle"
-    "list1 list2"
-    "btn btn";
-}
-#bottom h3 {
-  grid-area: infoTitle;
-}
-#list1 {
-  grid-area: list1;
-  text-align: left;
-  margin-left: 0;
-}
-#list2 {
-  grid-area: list2;
-  text-align: right;
-  margin-right: 40px;
-}
-#icon{
-  width: 25px;
-  height: 25px;
-  margin-right: 10px;
-}
+
 #btn{
   height: 50px;
   width: 160px;
@@ -595,6 +570,7 @@ export default {
   color: white;
   border: 0;
   outline: none;
+  margin: 40px;
 }
 #btn:hover {
   background-color: #eca82b;
@@ -647,6 +623,7 @@ export default {
 }
 
 .box {
+  display: flex;
   width: 100%;
 }
 
@@ -685,5 +662,34 @@ export default {
   min-width: 110px !important;
 }
 
+.cancel-button {
+  margin: 40px;
+}
 
+@media (max-width: 1200px) {
+  
+  h1{
+    font-size: 24px;
+  }
+
+  h3{
+    font-size: 20px;
+  }
+
+  .header-description-section {
+    height: 50%;
+  }
+
+  #infobox{
+    width: 80vw;
+  }
+
+  .txt {
+    font-size: 15px;
+  }
+
+  .info-row {
+    margin: 0;
+  }
+}
 </style>
