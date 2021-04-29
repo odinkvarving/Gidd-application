@@ -29,26 +29,34 @@ export default {
   data() {
     return {
       /**
-       * activity is a variable which represents the clicked activity in the activity feed.
+       * activity is an object which represents the clicked activity in the activity feed.
        */
       activity: {},
-      activities: {},
+      /**
+       * weather is an object containing weather at the activity's location if startdate is within 7 days
+       */
       weather: {},
+      /**
+       * isDataReady is a flag which tells us when fetched data is ready for utilization.
+       */
       isDataReady: false,
     };
   },
 
+  /**
+   * mounted is a function which runs before Activity renders.
+   * activity and weather are defined in mounted function
+   */
   async mounted() {
-    /**
-     * activity is defined here.
-     * We use await because we are waiting for getActivity to return an activity based on ID in path.
-     */
     await this.getActivity();
     await this.getWeather();
     this.isDataReady = true;
   },
 
   methods: {
+    /**
+     * getActivity is a function which receives an activity when requesting an activity with a given ID.
+     */
     async getActivity() {
       const activityId = parseInt(this.$route.params.id);
       const requestOptions = {
@@ -65,7 +73,7 @@ export default {
     },
 
     /**
-     * getWeather is an asynchronous function which returns weather of the activity.
+     * getWeather is a function which returns weather at the activity location if startTime is within 7 days of current time.
      * The weather object is fetched in services/WeatherService.
      * To find the weather, WeatherService requires latitude, longitude and startTime of activity.
      */
