@@ -64,7 +64,6 @@ class AccountServiceTest {
         this.testAccount1 = new Account("email1@email.com", "password1");
         this.testAccount1.setAccountInfo(this.testInfo1);
 
-
         //set up the second account and info
         this.testInfo2 = new
                 AccountInfo.Builder()
@@ -81,7 +80,7 @@ class AccountServiceTest {
                 AccountInfo.Builder()
                 .setFirstname("firstname3")
                 .setSurname("surname3")
-                .setPoints(2)
+                .setPoints(3)
                 .setProfileDescription("testprofile3")
                 .setImageURL("imageURL3")
                 .build();

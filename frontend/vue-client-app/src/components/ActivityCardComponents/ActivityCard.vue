@@ -1,6 +1,6 @@
 <template>
   <div id="activity" v-if="activity != null">
-    <div style="margin-top: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center">
+    <div style="margin-top: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center">
       <div v-show="isActivityHost" class="cancel-button-container">
         <b-button
           :disabled="this.activity.cancelled"
@@ -34,6 +34,7 @@
         </div>
       </div>
         <button
+          class="btn btn-lg"
           :disabled="this.activity.cancelled"
           id="btnVisible"
           @click="changeChatVisibility"
@@ -42,6 +43,18 @@
         </button>
         <Chat class="chat" id="chat" :activity="activity" v-show="isChatVisible" />
     </div>
+    <ConfirmModal
+      name="cancelling-success"
+      header="Vellyket!"
+      info="Avlysing av aktivitet var vellykket!"
+      buttonText="OK"
+    />
+    <ErrorModal
+      name="cancelling-error"
+      header="Error"
+      info="Avlysing av aktivitet gikk galt!"
+      buttonText="OK"
+    />
   </div>
 </template>
 <script>
@@ -50,6 +63,8 @@ import Map from "./Map.vue";
 import Equipment from "./Equipment.vue";
 import Chat from "./Chat.vue";
 import { userService } from "../../services/UserService.js";
+import ErrorModal from "../PopUpComponents/ErrorModal.vue"
+import ConfirmModal from "../PopUpComponents/ConfirmModal.vue"
 //import {weatherService} from '../../services/WeatherService.js'
 
 /**
@@ -65,6 +80,8 @@ export default {
     Map,
     Equipment,
     Chat,
+    ErrorModal,
+    ConfirmModal
   },
 
   props: {
@@ -126,7 +143,6 @@ export default {
       }
     },
     cancelActivity() {
-      // TODO: add alert box making sure the host wants to cancel activity
 
       let url = `http://localhost:8080/activities/${this.activity.id}/cancel`;
 
@@ -139,11 +155,13 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           if (data === true) {
-            console.log(
-              "Cancelling activity was successful and all participants is notified"
-            );
+            console.log("Cancelling activity was successful and all participants is notified");
+            this.$bvModal.show("cancelling-success");
+            this.activity.cancelled = true;
+            this.isChatVisible = false;
           } else {
             console.log("Error cancelling activity! Something went wrong!");
+            this.$bvModal.show("cancelling-error");
           }
         })
         .catch((error) => console.log(error));
@@ -184,7 +202,6 @@ export default {
 }
 #info {
   width: 40vw;
-  text-align: center;
 }
 
 .map-equipment-container {
@@ -197,6 +214,7 @@ export default {
 #map {
   width: 40vw;
   height: 40vh;
+  margin: 0 0 30px 0;
 }
 #equipment {
   text-align: left;
@@ -207,6 +225,7 @@ export default {
   border: none;
   background-color: #ffbd3e;
   color: white;
+  margin-bottom: 20px;
 }
 #chat {
   width: 80vw;

@@ -16,7 +16,9 @@
         <img :src="require('@/assets/kari.jpg')" />
         <h3 class="txt">{{ activity.creator.email }}</h3>
       </div>
-      <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>
+      <div class="description-container">
+        <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>
+      </div>
 
       <p class="txt edit" v-show="inEditMode">
         <input
@@ -27,31 +29,41 @@
         />
       </p>
     </div>
-    <div class="info-section">
-      <h3 style="text-align: center">Informasjon:</h3>
-      <div class="info-row">
-        <ul class="list" id="list1">
-          <li class="txt">Kategori:</li>
-          <li class="txt">Sted:</li>
-          <li class="txt">Tid:</li>
-          <li class="txt">Varighet:</li>
-          <li class="txt">Værmelding:</li>
-          <li class="txt">Deltakere:</li>
-        </ul>
-        <ul class="list" id="list2" v-show="!inEditMode">
-          <li class="txt">{{ activity.activityType.type }}</li>
-          <li class="txt">{{ activity.location }}</li>
-          <li class="txt">{{ activity.startTime }}</li>
-          <li class="txt">{{ duration }}</li> <!-- Implement duration -->
-          <li class="txt" v-if="weather">
-            <img id="icon" alt="weather icon" :src="require('@/assets/weatherIcons/' + weather.icon + '.png')"/>
-            {{ weather.temp }} C°
-          </li>
-          <li class="txt" v-else>Ingen værmelding</li>
-          <li class="txt">{{ currentParticipants }} / {{ activity.maxParticipants }}</li>
-          <li style="font-size: 13px; opacity: 70%" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</li>
-        </ul>
-      </div>
+    <h3>Informasjon:</h3>
+    <div class="box" id="bottom">
+      <ul class="list" id="list1">
+        <li class="txt">Kategori:</li>
+        <li class="txt">Sted:</li>
+        <li class="txt">Tid:</li>
+        <li class="txt">Varighet:</li>
+        <li class="txt">Værmelding:</li>
+        <li class="txt">Deltakere:</li>
+      </ul>
+      <ul class="list" id="list2" v-show="!inEditMode">
+        <li class="txt">{{ activity.activityType.type }}</li>
+        <li class="txt">{{ activity.location }}</li>
+        <li class="txt">{{ activity.startTime }}</li>
+        <li class="txt">{{ duration }}</li>
+        <li class="txt" v-if="weather">
+          <img
+            id="icon"
+            alt="weather icon"
+            :src="require('@/assets/weatherIcons/' + weather.icon + '.png')"
+          />
+          {{ weather.temp }} C°
+        </li>
+        <li class="txt" v-else>Ingen værmelding</li>
+        <li class="txt">
+          {{ currentParticipants }} / {{ activity.maxParticipants }}
+        </li>
+        <li
+          style="font-size: 13px; opacity: 70%"
+          v-if="participantsInQueue > 0"
+        >
+          + {{ participantsInQueue }} på venteliste
+        </li>
+      </ul>
+
       <ul class="list" id="list2" v-show="inEditMode">
         <li class="txt">
           <b-form-select
@@ -172,7 +184,7 @@
     </div>
     <b-button
       disabled
-      v-show="activity.cancelled"
+      v-show="activity.cancelled && !isExpired"
       @click="cancelActivity()"
       class="cancel-button"
       variant="danger"
@@ -182,6 +194,7 @@
       disabled
       v-show="isExpired"
       class="expired-button"
+      style="margin-bottom: 30px"
       >Utgått!</b-button
     >
   </div>
@@ -210,7 +223,7 @@ export default {
       required: true,
     },
     isLoggedIn: {
-      type: Object,
+      type: Boolean,
       required: true,
     },
     isActivityHost: {
@@ -266,7 +279,7 @@ export default {
     await this.getCurrentParticipantsNumber();
     if (this.isLoggedIn) {
       await this.isAlreadyParticipating();
-      if (this.currentParticipants == this.maxParticipants) {
+      if ((this.currentParticipants === this.maxParticipants) && (this.queuePosition > 0)) {
         this.isInQueue = true;
       }
     }
@@ -280,13 +293,9 @@ export default {
       const today = Date.now();
       const start = new Date(this.activity.startTime);
       const check = start - today;
-      console.log("TODAY: " + today);
-      console.log("START: " + start);
-      console.log("TODAY - START: " + check);
       if (check < 0) {
         this.isExpired = true;
       } 
-      console.log("EXPIRED: " + this.isExpired);
     },
 
     checkIfLoggedIn() {
@@ -307,7 +316,7 @@ export default {
         );
         if (data) {
           this.showRemoveSpinner = false;
-          if (this.currentParticipants === this.activity.maxParticipants) {
+          if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
             this.participantsInQueue--;
           } else {
             this.currentParticipants--;
@@ -624,14 +633,19 @@ export default {
   align-items: center;
   justify-content: space-between;
 }
-/*.box{
-        margin: 2vh 2vw 2vh 2vw;
-    }*/
+.box{
+  text-align: center;
+  align-items: center;
+}
 
 .header-description-section{
   margin-top: 20px;
   height: 50%;
   text-align: center;
+}
+
+h1{
+  margin: 10px;
 }
 
 .info-section {
@@ -647,6 +661,12 @@ export default {
 
 .txt {
   font-size: 20px;
+  text-align: start;
+  width: 100%;
+}
+
+.description-container {
+  margin: 20px;
 }
 
 #ownerInfo {
@@ -665,6 +685,12 @@ export default {
 }
 #ownerInfo h3 {
   margin: auto;
+}
+
+#icon{
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
 }
 
 #btn{
@@ -734,7 +760,6 @@ export default {
   width: 100%;
 }
 
-
 .pencil {
   cursor: pointer;
 }
@@ -768,6 +793,11 @@ export default {
   margin: 40px;
 }
 
+.expired-button {
+  height: 50px;
+  width: 160px;
+}
+
 @media (max-width: 1200px) {
   
   h1{
@@ -786,6 +816,10 @@ export default {
     width: 80vw;
   }
 
+  #list1{
+    margin-left: 10vw;
+  }
+
   .txt {
     font-size: 15px;
   }
@@ -793,10 +827,5 @@ export default {
   .info-row {
     margin: 0;
   }
-}
-
-.expired-button {
-  height: 50px;
-  width: 160px;
 }
 </style>

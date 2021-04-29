@@ -18,20 +18,20 @@ public class FeedbackDTO {
         return sender;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
     public void setSender(String sender) {
         this.sender = sender;
     }
 
+    public String getText() {
+        return text;
+    }
+
     public void setText(String text) {
         this.text = text;
+    }
+
+    public int getRating() {
+        return rating;
     }
 
     public void setRating(int rating) {

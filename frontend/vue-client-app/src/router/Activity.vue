@@ -1,6 +1,6 @@
 <template>
   <div id="card">
-    <NavBar />
+    <NavBar id="navbar"/>
     <ActivityCard
       id="card"
       :activity="activity"
@@ -84,5 +84,7 @@ export default {
 };
 </script>
 <style>
-
+  #card{
+    background-color: #F6F6F6;
+  }
 </style>

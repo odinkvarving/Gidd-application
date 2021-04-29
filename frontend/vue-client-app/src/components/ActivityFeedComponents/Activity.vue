@@ -1,8 +1,12 @@
 <template>
     <div id="card" v-if="isDataReady">
-        <h1 style="margin-top: 15px; opacity: 75%;">{{ activity.title }}</h1>
+        <h1 style="margin-top: 15px; opacity: 75%; height: 60px;">{{ activity.title }}</h1>
         <div id="ownerInfo">
-            <img alt="Activity host profile picture" :src="require('@/assets/kari.jpg') ">
+            
+            
+            <img v-if="accountInfo.imageURL !== '' " alt="Activity host profile picture" :src="accountInfo.imageURL">
+            <img v-else src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="default pic">
+
             <!-- Add profile pic! -->
             <div class="owner-time">
                 <h3>{{ activity.creator.email }}</h3>
@@ -49,19 +53,28 @@
         <!--<div>
             <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
         </div>-->
-        <button v-if="!isFull && !alreadyParticipating" id="btn" class="join" @click.stop="joinButtonClicked()">
-            <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
-                <span class="sr-only">Loading...</span>
-            </div>
-            <span v-else >{{ getButtonStatus() }}</span>
-        </button>
-        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
-        <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
-            <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
-                <span class="sr-only">Loading...</span>
-            </div>
-            <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
-        </button>
+        <div v-show="!activity.cancelled">
+            <button v-if="!isFull && !alreadyParticipating" id="btn" class="join" @click.stop="joinButtonClicked()">
+                <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <span v-else >{{ getButtonStatus() }}</span>
+            </button>
+            <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
+            <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
+                <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
+            </button>
+        </div>
+        <button
+            disabled
+            v-show="activity.cancelled"
+            @click="() => console.log(activity.cancelled)"
+            class="cancel-button"
+            >Aktivitet avlyst!</button
+        >
     </div>
 </template>
 <script>
@@ -88,16 +101,20 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 participantsInQueue: 0,
                 queuePosition: 0,
                 isInQueue: false,
-                isDataReady: false
+                isDataReady: false,
+                accountInfo: {}
             }
         },
+
         async mounted(){
             await this.getCurrentParticipantsNumber();
             if(this.isLoggedIn){
                 await this.isAlreadyParticipating();
-                if (this.currentParticipants == this.activity.maxParticipants) {
+                if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
                     this.isInQueue = true;
                 }
+                this.accountInfo = await userService.getAccountInfo(this.activity.creator.id);
+                console.log(this.accountInfo);
             }
             this.isDataReady = true;
         },
@@ -106,6 +123,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
             checkIfLoggedIn() {
                 return userService.isLoggedIn();
             },
+
             joinButtonClicked(){
                 this.showJoinSpinner = true;
                 if (activityButtonService.joinButtonClicked()) {
@@ -119,7 +137,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                     const data = await activityButtonService.removeParticipantFromActivity(this.activity);
                     if (data) {
                         this.showRemoveSpinner = false;
-                        if (this.currentParticipants === this.activity.maxParticipants) {
+                        if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
                             this.participantsInQueue --;
                         } else {
                             this.currentParticipants --;
@@ -182,7 +200,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 if(this.queuePosition > 0){
                     this.isInQueue = true;
                 }
-            },            
+            },
         }
     }
 </script>
@@ -215,6 +233,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         font-size: 20px;
         padding: 0;
     }
+    
     #ownerInfo{
         display: flex;
         align-items: center;
@@ -222,6 +241,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         width: 100%;
         margin: 20px 0 0 65px;
     }
+    
     #ownerInfo img{
         width: 50px;
         height: 50px;
@@ -241,7 +261,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         font-size: 20px;
         margin: 0;
         opacity: 75%;
-        width: 200px;
+        width: 80%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -309,9 +329,9 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         color: white;
         border: 0;
         outline: none;
-        position: absolute;
-        bottom: 30px;
+        margin-top: 40px;
     }
+    
     #btn:hover {
         background-color: #eca82b;
         transition: 0.2s;
@@ -320,13 +340,16 @@ import { activityButtonService } from '../../services/ActivityButtonService';
     #btn.full{
         background-color: #FF5B3E;
     }
+    
     #btn.full:hover{
         background-color: #91301f;
         transition: 0.2s;
     }
+    
     #btn.full:hover span{
         display: none;
     }
+    
     #btn.full:hover:before{
         content: "Venteliste";
     }
@@ -335,32 +358,51 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         background-color: #4a934a;
         transition: 0.2s;
     }
+    
     #btn.participating:hover{
         background-color: #408140;
         transition: 0.2s;
     }
+    
     #btn.participating:hover span{
         display: none;
     }
+    
     #btn.participating:hover:before{
         content: "Meld av";
     }
+    
     #btn.inQueue{
         background-color: #FF5B3E;
     }
+    
     #btn.inQueue:hover{
         background-color: #91301f;
         transition: 0.2s;
     }
+
     #btn.inQueue:hover span{
         display: none;
     }
+
     #btn.inQueue:hover:before{
         content: "Meld av";
     }
 
     .queue-list{
         opacity: 70%;
+    }
+
+    .cancel-button {
+        height: 50px;
+        width: 160px;
+        border-radius: 6px;
+        font-size: 20px;
+        background-color: #e87c86;
+        color: white;
+        border: 0;
+        outline: none;
+        margin-top: 40px;
     }
 
     @media (max-width: 550px) {

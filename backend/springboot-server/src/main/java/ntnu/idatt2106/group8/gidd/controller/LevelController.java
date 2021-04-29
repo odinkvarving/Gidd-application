@@ -18,10 +18,8 @@ public class LevelController {
     private LevelService levelService;
 
 
-
-
     @GetMapping("levels/")
-    public List<Level> getLevels(){
+    public List<Level> getLevels() {
         return levelService.getLevels();
     }
 }
