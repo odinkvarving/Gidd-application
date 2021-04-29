@@ -146,7 +146,9 @@ export default {
       await fetch("http://localhost:8080/activities/", requestOptions)
         .then((response) => response.json())
         .then((data) => {
-          this.activities = data;
+          this.activities = data.sort((x,y) => {
+            return new Date(x.startTime) - new Date(y.startTime);
+          })
         })
         .catch((error) => console.log(error));
         for(let i = 0; i < this.activities.length; i++) {
@@ -159,9 +161,7 @@ export default {
         for(let j = 0; j < this.locations.length; j++) {
             console.log(this.locations[j].value)
         }
-
-      this.sortedActivities = this.sortByTimeEarliest();
-    },
+      },
 
     async getCategories() {
         const requestOptions = {
