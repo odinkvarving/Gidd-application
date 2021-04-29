@@ -24,7 +24,8 @@
             </b-form-select>
         </div>
         <div class="button-container">
-            <button class="filter-button" type="button" @click="generateFilteredList()" >filtrer</button> 
+            <button v-show="!isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >filtrer</button> 
+            <button v-show="isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >reset</button> 
         </div>       
         <div class="sorting-container">
             <b-form-select v-model="sort" :options="sorts" @change="modifyActivities()" class="sorting-picker">
@@ -104,6 +105,7 @@ export default {
       selectedCategory: "",
       selectedLevel: "",
       selectedLocation: "",
+      isFiltered: false,
 
       sorts: [
           { value: 1, text: "Ledige plasser høy-lav"},
@@ -260,6 +262,7 @@ export default {
         this.selectedCategory = "";
         this.selectedLevel = "";
         this.selectedLocation = "";
+        this.isFiltered = !this.isFiltered;
     },
 
     sortActivities(filteredList) {
@@ -505,18 +508,20 @@ export default {
 }
 
 .button-container {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 1px;
+    display: flex;
+    align-items: center;
 }
 
 .filter-button {
-    padding-top: 5px;
     background-color: #ffbd3e;
     color: #495057;
     border: 1px solid #ced4da;
     border-radius: 10%;
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    width: 60px;
+    height: 25px;
+    text-align: center;
+    padding: 0;
 }
 
 .sorting-container {
