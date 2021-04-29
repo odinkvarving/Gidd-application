@@ -16,11 +16,15 @@
         <img :src="require('@/assets/kari.jpg')" />
         <h3 class="txt">{{ activity.creator.email }}</h3>
       </div>
-      <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>   
+      <p class="txt" v-show="!inEditMode">{{ activity.description }}</p>
 
       <p class="txt edit" v-show="inEditMode">
-        <input class="description" type="text" :placeholder="description" v-model="description" />
-        
+        <input
+          class="description"
+          type="text"
+          :placeholder="description"
+          v-model="description"
+        />
       </p>
     </div>
     <div class="info-section">
@@ -50,9 +54,17 @@
       </div>
       <ul class="list" id="list2" v-show="inEditMode">
         <li class="txt">
-          <b-form-select size="sm" :state="categoryState" v-model="category" :options="categories" style="width: 80%;">
+          <b-form-select
+            size="sm"
+            :state="categoryState"
+            v-model="category"
+            :options="categories"
+            style="width: 80%;"
+          >
             <template #first>
-              <b-form-select-option :value="null" disabled>-- Velg en kategori --</b-form-select-option>
+              <b-form-select-option :value="null" disabled
+                >-- Velg en kategori --</b-form-select-option
+              >
             </template>
           </b-form-select>
         </li>
@@ -73,7 +85,9 @@
             v-model="startTimeStamp"
             size="sm"
           ></b-form-timepicker>
-          <li>
+        </li>
+
+        <li>
           <b-form-datepicker
             class="datepicker"
             placeholder="Velg dato"
@@ -87,11 +101,18 @@
             size="sm"
           ></b-form-timepicker>
         </li>
-        <b-form-select :state="levelState" v-model="level" :options="levels" style="width:80%">
-            <template #first>
-              <b-form-select-option :value="null" disabled>-- Velg et nivå --</b-form-select-option>
-            </template>
-          </b-form-select>
+        <b-form-select
+          :state="levelState"
+          v-model="level"
+          :options="levels"
+          style="width:80%"
+        >
+          <template #first>
+            <b-form-select-option :value="null" disabled
+              >-- Velg et nivå --</b-form-select-option
+            >
+          </template>
+        </b-form-select>
         <li class="txt">
           <input type="text" placeholder="Antall" v-model="maxParticipants" />
         </li>
@@ -102,34 +123,70 @@
     </div>-->
     <div v-show="!activity.cancelled">
       <div v-show="!inEditMode">
-        <button v-if="!isFull && !alreadyParticipating" id="btn" class="join" @click.stop="joinButtonClicked()">
-          <div v-if="showJoinSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+        <button
+          v-if="!isFull && !alreadyParticipating"
+          id="btn"
+          class="join"
+          @click.stop="joinButtonClicked()"
+        >
+          <div
+            v-if="showJoinSpinner"
+            class="spinner-border"
+            role="status"
+            style="margin-top: 4px"
+          >
             <span class="sr-only">Loading...</span>
           </div>
-          <span v-else >{{ getButtonStatus() }}</span>
+          <span v-else>{{ getButtonStatus() }}</span>
         </button>
-        <button v-else-if="isFull && !alreadyParticipating" id="btn" class="full" @click.stop="joinButtonClicked()"><span>{{ getButtonStatus() }}</span></button>
-        <button v-else id="btn" :class="{ 'inQueue': isInQueue, 'participating': !isInQueue }" @click.stop="removeParticipantClicked()">
-          <div v-if="showRemoveSpinner" class="spinner-border" role="status" style="margin-top: 4px">
+        <button
+          v-else-if="isFull && !alreadyParticipating"
+          id="btn"
+          class="full"
+          @click.stop="joinButtonClicked()"
+        >
+          <span>{{ getButtonStatus() }}</span>
+        </button>
+        <button
+          v-else
+          id="btn"
+          :class="{ inQueue: isInQueue, participating: !isInQueue }"
+          @click.stop="removeParticipantClicked()"
+        >
+          <div
+            v-if="showRemoveSpinner"
+            class="spinner-border"
+            role="status"
+            style="margin-top: 4px"
+          >
             <span class="sr-only">Loading...</span>
           </div>
-          <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
+          <span id="test-id" v-else>{{
+            isInQueue ? "På venteliste" : "Påmeldt"
+          }}</span>
         </button>
       </div>
       <button v-show="inEditMode" @click="onClickSaveButton">
         <span>Lagre</span>
       </button>
     </div>
-    <b-button disabled v-show="activity.cancelled" @click="cancelActivity()" class="cancel-button" variant="danger">Aktivitet avlyst!</b-button>
+    <b-button
+      disabled
+      v-show="activity.cancelled"
+      @click="cancelActivity()"
+      class="cancel-button"
+      variant="danger"
+      >Aktivitet avlyst!</b-button
+    >
   </div>
 </template>
 
 <script>
 import { userService } from "../../services/UserService";
-import { activityButtonService } from "../../services/ActivityButtonService"
+import { activityButtonService } from "../../services/ActivityButtonService";
 import moment from "moment";
 import LocationSearchBar from "../createActivityComponents/LocationSearchBar.vue";
-import { notificationService } from '../../services/NotificationService';
+import { notificationService } from "../../services/NotificationService";
 
 export default {
   name: "Info",
@@ -153,7 +210,7 @@ export default {
     isActivityHost: {
       type: Boolean,
       required: true,
-    }
+    },
   },
 
   data() {
@@ -196,7 +253,7 @@ export default {
     };
   },
 
-  async mounted(){
+  async mounted() {
     await this.getCategories();
     await this.getLevels();
     await this.getCurrentParticipantsNumber();
@@ -214,79 +271,102 @@ export default {
     checkIfLoggedIn() {
       return userService.isLoggedIn();
     },
-    joinButtonClicked(){
+    joinButtonClicked() {
       this.showJoinSpinner = true;
       if (activityButtonService.joinButtonClicked()) {
         this.addParticipantToActivity(this.activity);
       }
     },
-    
-    async removeParticipantClicked(){
+
+    async removeParticipantClicked() {
       if (activityButtonService.showRemoveAlert()) {
         this.showRemoveSpinner = true;
-        const data = await activityButtonService.removeParticipantFromActivity(this.activity);
+        const data = await activityButtonService.removeParticipantFromActivity(
+          this.activity
+        );
         if (data) {
           this.showRemoveSpinner = false;
           if (this.currentParticipants === this.activity.maxParticipants) {
-            this.participantsInQueue --;
+            this.participantsInQueue--;
           } else {
-            this.currentParticipants --;
+            this.currentParticipants--;
           }
           this.alreadyParticipating = false;
           this.isInQueue = false;
-          this.$emit('refresh-list', this.activity.id, false);
+          this.$emit("refresh-list", this.activity.id, false);
         }
       }
     },
-    
+
     getButtonStatus() {
-      let status = activityButtonService.getButtonStatus(this.alreadyParticipating, this.currentParticipants, this.activity);
+      let status = activityButtonService.getButtonStatus(
+        this.alreadyParticipating,
+        this.currentParticipants,
+        this.activity
+      );
       if (status === "Fullt") {
         this.isFull = true;
       }
       return status;
     },
-    
+
     async isAlreadyParticipating() {
-      this.alreadyParticipating = await activityButtonService.isAlreadyParticipating(this.activity);
+      this.alreadyParticipating = await activityButtonService.isAlreadyParticipating(
+        this.activity
+      );
       if (this.alreadyParticipating) {
         this.getQueuePosition();
       }
     },
 
-    async getCurrentParticipantsNumber(){
+    async getCurrentParticipantsNumber() {
       // Get number of participators on this activity
-      this.currentParticipants = await activityButtonService.getCurrentParticipantsNumber(this.activity);
-      if(this.currentParticipants == this.activity.maxParticipants){
-        this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
+      this.currentParticipants = await activityButtonService.getCurrentParticipantsNumber(
+        this.activity
+      );
+      if (this.currentParticipants == this.activity.maxParticipants) {
+        this.participantsInQueue = await activityButtonService.countAccountsInQueue(
+          this.activity
+        );
       }
     },
-    
-    async addParticipantToActivity(){
-      let data = await activityButtonService.addParticipantToActivity(this.activity);
-      let accountId = await userService.getAccountByEmail().then(data => accountId = data.id);
-      if(data.activityId === this.activity.id && data.accountId === accountId){
+
+    async addParticipantToActivity() {
+      let data = await activityButtonService.addParticipantToActivity(
+        this.activity
+      );
+      let accountId = await userService
+        .getAccountByEmail()
+        .then((data) => (accountId = data.id));
+      if (
+        data.activityId === this.activity.id &&
+        data.accountId === accountId
+      ) {
         console.log("Joining activity was successful! Changing button style");
-        if(this.currentParticipants === this.activity.maxParticipants){
-          this.participantsInQueue ++;
+        if (this.currentParticipants === this.activity.maxParticipants) {
+          this.participantsInQueue++;
           this.isInQueue = true;
-        }else{
-          this.currentParticipants ++;
+        } else {
+          this.currentParticipants++;
         }
         this.alreadyParticipating = true;
         this.showJoinSpinner = false;
-        this.$emit('refresh-list', this.activity.id, true);
+        this.$emit("refresh-list", this.activity.id, true);
       }
     },
-    
-    async countAccountsInQueue(){
-      this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
+
+    async countAccountsInQueue() {
+      this.participantsInQueue = await activityButtonService.countAccountsInQueue(
+        this.activity
+      );
     },
 
-    async getQueuePosition(){
-      this.queuePosition = await activityButtonService.getQueuePosition(this.activity);
+    async getQueuePosition() {
+      this.queuePosition = await activityButtonService.getQueuePosition(
+        this.activity
+      );
 
-      if(this.queuePosition > 0){
+      if (this.queuePosition > 0) {
         this.isInQueue = true;
       }
     },
@@ -317,7 +397,7 @@ export default {
       console.log("Edit Mode: " + this.inEditMode);
     },
 
-    onClickSaveButton() {      
+    onClickSaveButton() {
       this.showSpinner = true;
       this.equipmentState = true;
       this.name === "" ? (this.nameState = false) : (this.nameState = true);
@@ -325,22 +405,22 @@ export default {
         ? (this.descriptionState = false)
         : (this.descriptionState = true);
       this.validStartAndEndDate();
-       if (
-        this.nameState === true &&
-        this.descriptionState === true
-      ) { 
+      if (this.nameState === true && this.descriptionState === true) {
         this.editActivity();
         console.log("Activity updated!");
       }
     },
 
-    setLocation(location){
-      if(location.geometry){
+    setLocation(location) {
+      if (location.geometry) {
         this.currentLocation = location;
-        this.center = {lat:this.currentLocation.geometry.location.lat(), lng:this.currentLocation.geometry.location.lng()}
+        this.center = {
+          lat: this.currentLocation.geometry.location.lat(),
+          lng: this.currentLocation.geometry.location.lng(),
+        };
         this.geometryFound = true;
         this.newLocation = true;
-      }else{
+      } else {
         this.geometryFound = false;
         this.newLocation = false;
         this.currentLocation = location;
@@ -365,10 +445,10 @@ export default {
           type: this.category,
         },
         level: {
-          description: this.level
+          description: this.level,
         },
         creator: accountDetails,
-      }
+      };
 
       if (this.startDate === "" || this.startTimeStamp === "") {
         activity.startTime = this.activity.startTime;
@@ -419,12 +499,18 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           // If update activity was successfull
-          if(data !== null){
-            let result = notificationService.sendNotificationToAllParticipants(this.activity.id);
-            if(result === true){
-              console.log("Sucessfully notified all participants about the edit!");
-            }else{
-              console.log("Error! Something went wrong when notifying participants!");
+          if (data !== null) {
+            let result = notificationService.sendNotificationToAllParticipants(
+              this.activity.id
+            );
+            if (result === true) {
+              console.log(
+                "Sucessfully notified all participants about the edit!"
+              );
+            } else {
+              console.log(
+                "Error! Something went wrong when notifying participants!"
+              );
             }
           }
         })
@@ -566,7 +652,7 @@ export default {
   border-radius: 6px;
   font-size: 20px;
   cursor: pointer;
-  background-color: #FFBD3E;
+  background-color: #ffbd3e;
   color: white;
   border: 0;
   outline: none;
@@ -577,48 +663,48 @@ export default {
   transition: 0.2s;
 }
 
-#btn.full{
-  background-color: #FF5B3E;
+#btn.full {
+  background-color: #ff5b3e;
 }
-#btn.full:hover{
+#btn.full:hover {
   background-color: #91301f;
   transition: 0.2s;
 }
-#btn.full:hover span{
+#btn.full:hover span {
   display: none;
 }
-#btn.full:hover:before{
+#btn.full:hover:before {
   content: "Venteliste";
 }
 
-#btn.participating{
+#btn.participating {
   background-color: #4a934a;
   transition: 0.2s;
 }
-#btn.participating:hover{
+#btn.participating:hover {
   background-color: #408140;
   transition: 0.2s;
 }
-#btn.participating:hover span{
+#btn.participating:hover span {
   display: none;
 }
-#btn.participating:hover:before{
+#btn.participating:hover:before {
   content: "Meld av";
 }
-#btn.inQueue{
-  background-color: #FF5B3E;
+#btn.inQueue {
+  background-color: #ff5b3e;
 }
-#btn.inQueue:hover{
+#btn.inQueue:hover {
   background-color: #91301f;
   transition: 0.2s;
 }
-#btn.inQueue:hover span{
+#btn.inQueue:hover span {
   display: none;
 }
-#btn.inQueue:hover:before{
+#btn.inQueue:hover:before {
   content: "Meld av";
 }
-.queue-list{
+.queue-list {
   opacity: 70%;
 }
 
@@ -627,13 +713,9 @@ export default {
   width: 100%;
 }
 
-.edit {
-  display: flex;
-}
 
 .pencil {
   cursor: pointer;
-  z-index: 9;
 }
 
 .toggle-edit-button {
@@ -641,7 +723,6 @@ export default {
 }
 
 .edit .title {
-  margin: 0 auto;
   width: 75%;
   text-align: center;
 }

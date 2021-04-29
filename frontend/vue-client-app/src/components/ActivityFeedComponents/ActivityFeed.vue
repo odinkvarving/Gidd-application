@@ -1,37 +1,50 @@
 <template>
   <div id="container">
     <div id="feed">
-      <div class="sortingContainer">
-        <div class="sortingDropdown">
-          <b-dropdown text="Sortering" class="sortingBox">
-            <b-dropdown-item href="#">Ledige plasser høy-lav</b-dropdown-item>
-            <b-dropdown-item href="#">Ledige plasser lav-høy</b-dropdown-item>
-            <b-dropdown-item href="#">Antall påmeldte høy-lav</b-dropdown-item>
-            <b-dropdown-item href="#">Antall påmeldte lav-høy</b-dropdown-item>
-          </b-dropdown>
+      <div class="filter-sort-container">
+        <div class="category-container">
+            <b-form-select v-model="selectedCategory" :options="categories" id="select-category" class="category-picker" style="cursor:pointer">
+                <template #first>
+                    <b-form-select-option style="display: none" disabled selected value>Kategori</b-form-select-option>
+                </template>
+            </b-form-select>
         </div>
-        <div class="filteringDropdown">
-          <b-dropdown text="Filtrering" class="filteringBox">
-            <b-dropdown text="Aktivitetstype" class="m-2">
-                <b-dropdown-item href="#">Tur</b-dropdown-item>
-                <b-dropdown-item href="#">Tur</b-dropdown-item>
-            </b-dropdown>
-
-            <b-dropdown-item href="#">Nivå</b-dropdown-item>
-            <b-dropdown-item href="#">Kategori</b-dropdown-item>
-          </b-dropdown>
+        <div class="level-container">
+            <b-form-select  v-model="selectedLevel" :options="levels" id="select-level" class="level-picker" style="cursor:pointer">
+                <template #first>
+                    <b-form-select-option style="display: none" disabled selected value>Nivå</b-form-select-option>
+                </template>
+            </b-form-select>
+        </div>
+        <div class="location-container">
+            <b-form-select v-model="selectedLocation" :options="locations" class="location-picker" id="select-location" data-live-search="true" style="cursor:pointer">  
+                <template #first>
+                    <b-form-select-option style="display: none" disabled selected value>Sted</b-form-select-option>
+                </template>                                   
+            </b-form-select>
+        </div>
+        <div class="button-container">
+            <button v-show="!isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >Filtrer</button> 
+            <button v-show="isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >Reset</button> 
+        </div>       
+        <div class="sorting-container">
+            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" class="sorting-picker" style="cursor:pointer">
+                <template #first>
+                    <b-form-select-option :value="null">Sorter</b-form-select-option>
+                </template>
+            </b-form-select>
         </div>
       </div>
-
       <div
-        v-for="a in activities"
+        v-for="a in filteredActivities"
         :key="a.id"
         @click="handleActivityClicked(a)"
-      >
+      > <!-- evt sortedActivities -->
         <Activity
           :activity="a"
           v-on:refresh-list="refreshList"
           :isLoggedIn="isLoggedIn"
+          v-on:currentParticipantsFound="findCurrentParticipants"
         />
       </div>
     </div>
@@ -58,6 +71,7 @@
   </div>
 </template>
 <script>
+
 import Activity from "./Activity.vue";
 import { userService } from "../../services/UserService.js";
 import { weatherService } from "../../services/WeatherService.js";
@@ -73,49 +87,354 @@ export default {
     return {
       //WeatherService: require('../../services/WeatherService.js'),
       selectedActivity: null,
-      activities: {},
+      activities: [],
+      allCategories: {},
       joinedActivities: {},
+      currentParticipantsAll: [],
       sortKey: "",
       isLoggedIn: false,
-      modifiedActivities: {},
-      filter: [],
+      filteredActivities: [],
+      sortedActivities: [],
+      category: null,
+      level: null,
+      location: null,
+      sort: null,
+      newList: [],
+      categories: [],
+      levels: [],
+      locations: [],
+      selectedCategory: "",
+      selectedLevel: "",
+      selectedLocation: "",
+      isFiltered: false,
+
+      sorts: [
+        { value: 1, text: "Navn A-Å"},
+        { value: 2, text: "Navn Å-A"},
+        { value: 3, text: "Tidspunkt tidlig-senest"},
+        { value: 4, text: "Tidspunkt senest-tidlig"},
+        { value: 5, text: "Varighet høy-lav"},
+        { value: 6, text: "Varighet lav-høy"},
+        { value: 7, text: "Ledige plasser høy-lav"},
+        { value: 8, text: "Ledige plasser lav-høy"},
+        { value: 9, text: "Antall påmeldte høy-lay"},
+        { value: 10, text: "Antall påmeldte lav-høy"},
+        { value: 11, text: "Nivå høy-lav"},
+        { value: 12, text: "Nivå lav-høy"}
+      ],
       filterKey: "",
     };
   },
-  mounted() {
-    this.getActivities();
+  async mounted() {
+    await this.getActivities();
+    await this.getCategories();
+    await this.getLevels();
     if (userService.isLoggedIn()) {
       this.isLoggedIn = true;
-      this.getJoinedActivities();
+      await this.getJoinedActivities();
     }
+    this.filteredActivities = this.activities;
   },
   methods: {
-    getActivities() {
+
+    async getActivities() {
       const requestOptions = {
         method: "GET",
       };
 
       // Get all registered activites from database
-      fetch("http://localhost:8080/activities/", requestOptions)
+      await fetch("http://localhost:8080/activities/", requestOptions)
         .then((response) => response.json())
         .then((data) => {
-          this.activities = data;
-          console.log(data[0]);
+          this.activities = data.sort((x,y) => {
+            return new Date(x.startTime) - new Date(y.startTime);
+          })
         })
         .catch((error) => console.log(error));
+        for(let i = 0; i < this.activities.length; i++) {
+            this.locations.push({
+                value: this.activities[i].location,
+                text: this.activities[i].location,
+                id: (i+1),
+            })
+        }
+        for(let j = 0; j < this.locations.length; j++) {
+            console.log(this.locations[j].value)
+        }
+      },
+
+    async getCategories() {
+        const requestOptions = {
+            method: "GET"
+        };
+
+        await fetch("http://localhost:8080/activityTypes/", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                for(let i = 0; i < data.length; i++) {
+                    this.categories.push({
+                        value: data[i].type,
+                        text: data[i].type
+                    })
+                }
+            })
+            .catch((error) => console.log(error)); 
     },
 
-    modifyActivities() {
-      let listFiltered = this.filterActivities();
-      let listSorted = this.sortActivities(listFiltered);
-      this.modifiedActivities = listSorted;
+    async getLevels() {
+        const requestOptions = {
+            method: "GET"
+        };
+
+        await fetch("http://localhost:8080/levels/", requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                for(let i = 0; i < data.length; i++) {
+                    console.log(data[i].description);
+                    this.levels.push({
+                        value: data[i].description,
+                        text: data[i].description
+                    })
+                }
+            })
+            .catch((error) => console.log(error));
     },
 
-    filterActivities() {
-      //if(this.filterKey === )
+    filterByCategory(list) {
+        
+        const filteredList = [];
+
+        if(this.selectedCategory !== "Kategori") {
+            for(let i = 0; i < list.length; i++) {
+                if(list[i].activityType.type.toLowerCase() === this.selectedCategory.toLowerCase()) {
+                    filteredList.push(list[i]);
+                }
+            }
+            return filteredList;
+        }else {
+            return list;
+        }
     },
 
-    sortActivities() {},
+    filterByLevel(list) {
+
+        const filteredList = [];
+
+        if(this.selectedLevel !== "Nivå") {
+            for(let i = 0; i < list.length; i++) {
+                if(list[i].level.description.toLowerCase() === this.selectedLevel.toLowerCase()) {
+                    filteredList.push(list[i]);
+                }
+            }
+            return filteredList;
+        }else {
+            return list;
+        }
+    },
+
+    filterByLocation(list) {
+
+        const filteredList = [];
+
+        if(this.selectedLocation !== "Sted") {
+            for(let i = 0; i < list.length; i++) {
+                if(list[i].location.toLowerCase() === this.selectedLocation.toLowerCase()) {
+                    filteredList.push(list[i]);
+                }
+            }
+            return filteredList;
+        }else {
+            return list;
+        }
+    },
+
+    generateFilteredList() {
+        console.log(this.selectedCategory + "SELECTED CATEGORY WHEN BUTTON CLICKED")
+        console.log(this.selectedLevel + "SELECTED LEVEL WHEN BUTTON CLICKED")
+        console.log(this.selectedLocation + "SELECTED LOCATION WHEN BUTTON CLICKED")
+        
+        let list = this.activities;
+
+        if(this.selectedCategory !== "") {
+            list = this.filterByCategory(list);
+        }
+        if(this.selectedLevel !== "") {
+            list = this.filterByLevel(list);
+        }
+        if(this.selectedLocation !== "") {
+            list = this.filterByLocation(list);
+        }
+
+        this.filteredActivities = list;
+        this.selectedCategory = "";
+        this.selectedLevel = "";
+        this.selectedLocation = "";
+        this.isFiltered = !this.isFiltered;
+    },
+
+    findCurrentParticipants(activityId, currentParticipants) {
+      this.currentParticipantsAll.push({
+        id: activityId,
+        currentParticipants: currentParticipants
+      });
+    },
+
+    sortActivities() {
+      switch(this.sort) {
+        case 1: {
+          this.sortedActivities = this.sortByNameAsc();
+          break;
+        }
+        case 2: {
+          this.sortedActivities = this.sortByNameDesc();
+          break;
+        }
+        case 3: {
+          this.sortedActivities = this.sortByTimeEarliest();
+          break;
+        }
+        case 4: {
+          this.sortedActivities = this.sortByTimeLatest();
+          break;
+        }
+        case 5: {
+          this.sortedActivities = this.sortByDurationDesc();
+          break;
+        }
+        case 6: {
+          this.sortedActivities = this.sortByDurationAsc();
+          break;
+        }
+        case 7: {
+          this.sortedActivities = this.sortByFreeSpotsDesc();
+          break;
+        }
+        case 8: {
+          this.sortedActivities = this.sortByFreeSpotsAsc();
+          break;
+        }       
+        case 9: {
+          this.sortedActivities = this.sortByCurrentParticipantsDesc();
+          break;
+        }
+        case 10: {
+          this.sortedActivities = this.sortByCurrentParticipantsAsc();
+          break;
+        }
+        case 11: {
+          this.sortedActivities = this.sortByLevelDesc();
+          break;
+        }
+        case 12: {
+          this.sortedActivities = this.sortByLevelAsc();
+          break;
+        }
+      }
+    },
+
+    sortByNameAsc() {
+      console.log(">> sortByNameAsc() called");
+      return this.filteredActivities.sort((x,y) => {
+        if (x.title < y.title) return -1;
+        else if (x.title > y.title) return 1;
+        return 0;
+      });
+    },
+
+    sortByNameDesc() {
+      console.log(">> sortByNameDesc() called");
+      return this.filteredActivities.sort((x,y) => {
+        if (x.title < y.title) return 1;
+        else if (x.title > y.title) return -1;
+        return 0;
+      });
+    },
+
+    sortByTimeEarliest() {
+      console.log(">> sortByTimeEarliest() called");
+      return this.filteredActivities.sort((x,y) => {
+        return new Date(x.startTime) - new Date(y.startTime);
+      });
+    },
+
+    sortByTimeLatest() {
+      console.log(">> sortByTimeLatest() called");
+      return this.filteredActivities.sort((x,y) => {
+        return new Date(y.startTime) - new Date(x.startTime);
+      });
+    },
+
+    sortByDurationDesc() {
+      console.log(">> sortByDurationDesc() called");
+      return this.filteredActivities.sort((x,y) => {
+        let d1 = new Date(y.endTime) - new Date(y.startTime);
+        let d2 = new Date(x.endTime) - new Date(x.startTime);
+        return d1 - d2;
+      });
+    },
+
+    sortByDurationAsc() {
+      console.log(">> sortByDurationAsc() called");
+      return this.filteredActivities.sort((x,y) => {
+        let d1 = new Date(x.endTime) - new Date(x.startTime);
+        let d2 = new Date(y.endTime) - new Date(y.startTime);
+        return d1 - d2;
+      })
+    },
+
+    sortByFreeSpotsDesc() {
+      console.log(">> sortByFreeSpotsDesc() called");
+      return this.filteredActivities.sort((x,y) => {
+        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        let free1 = y.maxParticipants - current1;
+        let free2 = x.maxParticipants - current2;
+        return free1 - free2;
+      });
+    },
+
+    sortByFreeSpotsAsc() {
+      console.log(">> sortByFreeSpotsAsc() called");
+      return this.filteredActivities.sort((x,y) => {
+        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        let free1 = x.maxParticipants - current1;
+        let free2 = y.maxParticipants - current2;
+        return free1 - free2;
+      });
+    },
+
+    sortByCurrentParticipantsDesc() {
+      console.log(">> sortByCurrentParticipantsDesc() called");
+      return this.filteredActivities.sort((x,y) => {
+        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        return current1 - current2;
+      });
+    },
+
+    sortByCurrentParticipantsAsc() {
+      console.log(">> sortByCurrentParticipantsAsc() called");
+      return this.filteredActivities.sort((x,y) => {
+        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+        return current1 - current2;
+      });
+    },
+
+    sortByLevelDesc() {
+      console.log(">> sortByLevelDesc() called");
+      return this.filteredActivities.sort((x,y) => {
+        return y.level.id - x.level.id;
+      });
+    },
+
+    sortByLevelAsc() {
+      console.log(">> sortByLevelAsc() called");
+      return this.filteredActivities.sort((x,y) => {
+        return x.level.id - y.level.id;
+      });
+    },
 
     async getJoinedActivities() {
       let accountId;
@@ -136,7 +455,7 @@ export default {
         .then((data) => {
           console.log(`Joined activities:`);
           console.log(data);
-          let sorted = data.sort((x,y) => x.startTime - y.startTime);
+          let sorted = data.sort((x,y) => new Date(x.startTime) - new Date(y.startTime));
           this.joinedActivities = sorted;
         })
         .catch((error) => console.log(error));
@@ -292,31 +611,82 @@ export default {
   margin: 0;
 }
 
-.sortingContainer {
+.filter-sort-container {
     width: 100%;
     display: flex;
     padding-bottom: 20px;
     padding-left: 55px;
 }
 
-.sortingDropdown {
+.category-container {
   display: inline-block;
   padding-right: 10px;
   padding-left: 10px;
 }
 
-.sortingBox {
-    width: 180px;
+.category-picker {
+    width: 130px;
 }
 
-.filteringDropdown {
+.level-container {
+    display: inline-block;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.level-picker {
+    width: 130px;
+}
+
+.location-container {
+    width: 150px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 3px;
+    padding-top: 1px;
+}
+
+.location-picker {
+    width: 100%;
+    height: 100%;
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding-left: 10px;
+    padding-bottom: 2px;
+    border-radius: 4px;
+}
+
+.button-container {
+    display: flex;
+    align-items: center;
+}
+
+.filter-button {
+    background-color: #ffbd3e;
+    color: white;
+    /* border: 1px solid #ced4da; */
+    border: none;
+    border-radius: 6px;
+    width: 60px;
+    height: 35px;
+    text-align: center;
+    padding: 0;
+}
+
+.filter-button:hover {
+  background-color: #eca82b;
+  transition: 0.2s;
+}
+
+.sorting-container {
   display: inline-block;
   padding-right: 10px;
-  padding-left: 10px;
+  padding-left: 265px;
 }
 
-.filteringBox {
-    width: 180px;
+.sorting-picker {
+    width: 100%;
+    background: #6C757D;
 }
 
 @media (max-width: 1200px) {
