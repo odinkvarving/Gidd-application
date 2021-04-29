@@ -115,6 +115,8 @@ export default {
         { value: 8, text: "Ledige plasser lav-høy"},
         { value: 9, text: "Antall påmeldte høy-lay"},
         { value: 10, text: "Antall påmeldte lav-høy"},
+        { value: 11, text: "Nivå høy-lav"},
+        { value: 12, text: "Nivå lav-høy"}
       ],
       filterKey: "",
     };
@@ -279,6 +281,14 @@ export default {
           this.sortedActivities = this.sortByCurrentParticipantsAsc();
           break;
         }
+        case 11: {
+          this.sortedActivities = this.sortByLevelDesc();
+          break;
+        }
+        case 12: {
+          this.sortedActivities = this.sortByLevelAsc();
+          break;
+        }
       }
     },
 
@@ -369,6 +379,20 @@ export default {
         let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
         let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
         return current1 - current2;
+      });
+    },
+
+    sortByLevelDesc() {
+      console.log(">> sortByLevelDesc() called");
+      return this.activities.sort((x,y) => {
+        return y.level.id - x.level.id;
+      });
+    },
+
+    sortByLevelAsc() {
+      console.log(">> sortByLevelAsc() called");
+      return this.activities.sort((x,y) => {
+        return x.level.id - y.level.id;
       });
     },
 
