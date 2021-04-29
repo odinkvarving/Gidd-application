@@ -3,6 +3,7 @@
     <router-link to="/dashboard">
       <img
         src="../../assets/Logo.jpg"
+        alt="GIDD logo"
         width="50px"
         height="50px"
         style="margin-right: 10px; margin-left: 10px"
@@ -60,8 +61,12 @@
         </b-nav-form>
 
         <b-nav-item-dropdown right>
-          <template slot="button-content"><img class="profile-pic" src="../../assets/berit.jpg" height="40px" width="40px"></template>
-          <b-dropdown-item :to="user[0].link">
+          <template slot="button-content">
+            <img v-if="accountInfo.imageURL !== ''" class="profile-pic" alt="Profile picture" :src="this.accountInfo.imageURL" height="40px" width="40px">
+            <img v-else src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="default pic" class="profile-pic" height="40px" width="40px">
+
+          </template>
+          <b-dropdown-item :to="`${user[0].link}`">
             Min profil
           </b-dropdown-item>
           <b-dropdown-item to="/feedback">
@@ -110,9 +115,14 @@ export default {
     NotificationsDropdown,
   },
 
-  mounted() {
+  async mounted() {
     document.addEventListener("click", this.handleClickOutside);
     this.getActivities();
+    this.isLoggedIn = await userService.isLoggedIn();
+    if(this.isLoggedIn){
+      let account = await userService.getAccountByEmail();
+      this.accountInfo = await userService.getAccountInfo(account.id);
+    }
   },
   destroyed() {
     document.removeEventListener("click", this.handleClickOutside);
@@ -152,7 +162,7 @@ export default {
           },
         },
       ],
-      isLoggedIn: userService.isLoggedIn(),
+      isLoggedIn: false,
       notifications: [{}],
       activities: {},
       search: "",
@@ -160,6 +170,7 @@ export default {
       results: [],
       isOpen: false,
       arrowCounter: -1,
+      accountInfo: {}
     };
   },
   computed: {

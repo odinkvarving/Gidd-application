@@ -43,6 +43,7 @@ class AccountServiceTest {
 
     private AccountInfo testInfo1;
     private AccountInfo testInfo2;
+    private AccountInfo testInfo3;
 
     private Activity testActivity1;
     private Activity testActivity2;
@@ -60,6 +61,7 @@ class AccountServiceTest {
                 .setImageURL("imageURL1")
                 .build();
         this.testAccount1 = new Account("email1@email.com", "password1");
+        this.testAccount1.setAccountInfo(this.testInfo1);
 
         //set up the second account and info
         this.testInfo2 = new
@@ -71,8 +73,18 @@ class AccountServiceTest {
                 .setImageURL("imageURL2")
                 .build();
         this.testAccount2 = new Account("email2@email.com", "password2");
+        this.testAccount2.setAccountInfo(this.testInfo2);
 
+        this.testInfo3 = new
+                AccountInfo.Builder()
+                .setFirstname("firstname3")
+                .setSurname("surname3")
+                .setPoints(3)
+                .setProfileDescription("testprofile3")
+                .setImageURL("imageURL3")
+                .build();
         this.testAccount3 = new Account("email3@email.com", "password3");
+        this.testAccount3.setAccountInfo(this.testInfo3);
 
         //set up the first activity
         this.testActivity1 = new
@@ -245,34 +257,34 @@ class AccountServiceTest {
         }
 
         assertEquals(0, this.accountService
-                        .findAccountActivity(this.testActivity2.getId(), this.testAccount1.getId()).getQueuePosition()
+                        .findAccountActivity(this.testAccount1.getId(), this.testActivity2.getId()).getQueuePosition()
                 , "wrong queue position on account1");
         assertEquals(1, this.accountService
-                        .findAccountActivity(this.testActivity2.getId(), this.testAccount2.getId()).getQueuePosition()
+                        .findAccountActivity(this.testAccount2.getId(), this.testActivity2.getId()).getQueuePosition()
                 , "wrong queue position on account2");
         assertEquals(2, this.accountService
-                        .findAccountActivity(this.testActivity2.getId(), this.testAccount3.getId()).getQueuePosition()
+                        .findAccountActivity(this.testAccount3.getId(), this.testActivity2.getId()).getQueuePosition()
                 , "wrong queue position on account3");
 
         this.accountService.removeAccountFromActivity(this.testActivity2.getId(), this.testAccount2.getId());
         assertEquals(0, this.accountService
-                        .findAccountActivity(this.testActivity2.getId(), this.testAccount1.getId()).getQueuePosition()
+                        .findAccountActivity(this.testAccount1.getId(), this.testActivity2.getId()).getQueuePosition()
                 , "wrong queue position on account1, after first removal");
         assertEquals(1, this.accountService
-                        .findAccountActivity(this.testActivity2.getId(), this.testAccount3.getId()).getQueuePosition()
+                        .findAccountActivity(this.testAccount3.getId(), this.testActivity2.getId()).getQueuePosition()
                 , "wrong queue position on account3, after first removal");
 
         this.accountService.addAccountToActivity(this.testActivity2.getId(), this.testAccount2.getId());
         assertEquals(2, this.accountService
-                        .findAccountActivity(this.testActivity2.getId(), this.testAccount2.getId()).getQueuePosition()
+                        .findAccountActivity(this.testAccount2.getId(), this.testActivity2.getId()).getQueuePosition()
                 , "wrong queue position on account2 after adding it to the database again");
 
         this.accountService.removeAccountFromActivity(this.testActivity2.getId(), this.testAccount1.getId());
         assertEquals(0, this.accountService
-                        .findAccountActivity(this.testActivity2.getId(), this.testAccount3.getId()).getQueuePosition(),
+                        .findAccountActivity(this.testAccount3.getId(), this.testActivity2.getId()).getQueuePosition(),
                 "Wrong queue position for account3 after removing the user that is at 0 in queue");
         assertEquals(1, this.accountService
-                        .findAccountActivity(this.testActivity2.getId(), this.testAccount2.getId()).getQueuePosition(),
+                        .findAccountActivity(this.testAccount2.getId(), this.testActivity2.getId()).getQueuePosition(),
                 "Wrong queue position for account2 after removing the user that is at 0 in queue");
     }
 }

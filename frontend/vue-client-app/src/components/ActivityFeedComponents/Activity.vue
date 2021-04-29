@@ -2,7 +2,11 @@
     <div id="card" v-if="isDataReady">
         <h1 style="margin-top: 15px; opacity: 75%; height: 60px;">{{ activity.title }}</h1>
         <div id="ownerInfo">
-            <img alt="Activity host profile picture" :src="require('@/assets/kari.jpg') ">
+            
+            
+            <img v-if="accountInfo.imageURL !== '' " alt="Activity host profile picture" :src="accountInfo.imageURL">
+            <img v-else src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="default pic">
+
             <!-- Add profile pic! -->
             <div class="owner-time">
                 <h3>{{ activity.creator.email }}</h3>
@@ -98,6 +102,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 queuePosition: 0,
                 isInQueue: false,
                 isDataReady: false,
+                accountInfo: {}
             }
         },
 
@@ -108,6 +113,8 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
                     this.isInQueue = true;
                 }
+                this.accountInfo = await userService.getAccountInfo(this.activity.creator.id);
+                console.log(this.accountInfo);
             }
             this.isDataReady = true;
         },
