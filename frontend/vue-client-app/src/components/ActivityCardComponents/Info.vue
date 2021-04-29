@@ -142,7 +142,7 @@
     <!--<div>
       <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
     </div>-->
-    <div v-show="!activity.cancelled">
+    <div v-show="!activity.cancelled && !isExpired">
       <div v-show="!inEditMode">
         <button
           v-if="!isFull && !alreadyParticipating"
@@ -199,6 +199,12 @@
       variant="danger"
       >Aktivitet avlyst!</b-button
     >
+    <b-button
+      disabled
+      v-show="isExpired"
+      class="expired-button"
+      >Utgått!</b-button
+    >
   </div>
 </template>
 
@@ -247,6 +253,7 @@ export default {
       isInQueue: false,
       duration: "",
       isDataReady: false,
+      isExpired: false,
 
       title: this.activity.title,
       category: this.activity.activityType.type,
@@ -285,10 +292,24 @@ export default {
       }
     }
     this.getDuration();
+    this.checkIfExpired();
     this.isDataReady = true;
   },
 
   methods: {
+    checkIfExpired() {
+      const today = Date.now();
+      const start = new Date(this.activity.startTime);
+      const check = start - today;
+      console.log("TODAY: " + today);
+      console.log("START: " + start);
+      console.log("TODAY - START: " + check);
+      if (check < 0) {
+        this.isExpired = true;
+      } 
+      console.log("EXPIRED: " + this.isExpired);
+    },
+
     checkIfLoggedIn() {
       return userService.isLoggedIn();
     },
@@ -793,5 +814,10 @@ export default {
   align-items: center;
   justify-content: center;
   margin-left: 12px;
+}
+
+.expired-button {
+  height: 50px;
+  width: 160px;
 }
 </style>
