@@ -1,62 +1,82 @@
 <template>
-  <b-navbar class="bg-white" fixed="top" v-show="onHomePage">
-    <div class="collapse navbar-collapse">
-      <router-link to="/">
-        <div class="logo">
-          <div class="circle-2">
-            <div class="circle-3" />
+  <b-navbar class="bg-white" toggleable="md" fixed="top" v-show="onHomePage">
+    <router-link to="/dashboard">
+      <img
+        src="../../assets/Logo.jpg"
+        width="50px"
+        height="50px"
+        style="margin-right: 10px; margin-left: 10px"
+      />
+    </router-link>
+    <router-link class="mr-auto" to="/dashboard">
+      <b-navbar-brand>GIDD</b-navbar-brand>
+    </router-link>
+    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+    <b-collapse id="nav-collapse" is-nav>
+      <b-navbar-nav class="ml-auto nav-container-center" justified>
+        <b-nav-form right>
+          <div class="search-field">
+            <input
+              v-model="search"
+              type="text"
+              @input="onChange"
+              @keydown.down="onArrowDown"
+              @keydown.up="onArrowUp"
+              @keydown.enter="onEnter"
+              placeholder="Søk"
+            />
+            <div class="wrapper">
+              <ul v-show="isOpen" class="autocomplete-results">
+                <li v-if="isLoading" class="loading">Loading results...</li>
+                <li
+                  v-else
+                  v-for="(result, i) in results"
+                  :key="i"
+                  class="autocomplete-result"
+                  :class="{ 'is-active': i === arrowCounter }"
+                >
+                  <p @click="resultClicked(result.id)">
+                    <span class="title">{{ result.title }}</span>
+                    <span class="email">{{ result.creator.email }}</span>
+                  </p>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
-      </router-link>
-      <ul class="navbar-nav ml-auto">
-        <div class="search-field">
-          <input
-            v-model="search"
-            type="text"
-            @input="onChange"
-            @keydown.down="onArrowDown"
-            @keydown.up="onArrowUp"
-            @keydown.enter="onEnter"
-            placeholder="Søk"
-          />
-          <div class="wrapper">
-            <ul v-show="isOpen" class="autocomplete-results">
-              <li v-if="isLoading" class="loading">Loading results...</li>
-              <li
-                v-else
-                v-for="(result, i) in results"
-                :key="i"
-                class="autocomplete-result"
-                :class="{ 'is-active': i === arrowCounter }"
-              >
-                <p @click="resultClicked(result.id)">
-                  <span class="title">{{ result.title }}</span>
-                  <span class="email">{{ result.creator.email }}</span>
-                </p>
-              </li>
-            </ul>
-          </div>
-        </div>
+        </b-nav-form>
+        <b-nav-item>
+          <router-link v-if="isLoggedIn" to="/dashboard/createActivity">
+            <div class="menu-item create-activity">Lag aktivitet</div>
+          </router-link>
+          <router-link v-else to="/login">
+            <div class="menu-item create-activity">
+              Logg inn
+            </div>
+          </router-link>
+        </b-nav-item>
 
-        <router-link v-if="isLoggedIn" to="/dashboard/createActivity">
-          <div class="menu-item create-activity">Lag aktivitet</div>
-        </router-link>
+        <b-nav-form>
+          <NotificationsDropdown class="notification-icon" icon="bell.png" />
+        </b-nav-form>
 
-        <router-link v-else to="/login">
-          <div class="menu-item create-activity">
-            Logg inn
-          </div>
-        </router-link>
-
-        <NotificationsDropdown class="notification-icon" icon="bell.png" />
-        <Dropdown icon="user.png" :items="user" />
-      </ul>
-    </div>
+        <b-nav-item-dropdown right>
+          <template slot="button-content"><img class="profile-pic" src="../../assets/berit.jpg" height="40px" width="40px"></template>
+          <b-dropdown-item :to="user[0].link">
+            Min profil
+          </b-dropdown-item>
+          <b-dropdown-item to="/feedback">
+            Gi tilbakemelding
+          </b-dropdown-item>
+          <b-dropdown-item @click="logoutClicked()" to="/">
+            Logg ut
+          </b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    </b-collapse>
   </b-navbar>
 </template>
 
 <script>
-import Dropdown from "./Dropdown.vue";
 import NotificationsDropdown from "./NotificationsDropdown.vue";
 import { userService } from "../../services/UserService.js";
 
@@ -87,7 +107,6 @@ export default {
   },
 
   components: {
-    Dropdown,
     NotificationsDropdown,
   },
 
@@ -122,7 +141,7 @@ export default {
           link: "/feedback",
           method: () => {
             this.$router.push("/feedback");
-          }
+          },
         },
         {
           title: "Logg Ut",
@@ -254,38 +273,14 @@ export default {
       this.search = this.results[this.arrowCounter];
       this.arrowCounter = -1;
     },
+    logoutClicked() {
+      userService.logout();
+    },
   },
 };
 </script>
 
 <style>
-.logo {
-  width: 59px;
-  height: 59px;
-  background-color: black;
-  border-radius: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.circle-2 {
-  width: 42px;
-  height: 42px;
-  background-color: white;
-  border-radius: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.circle-3 {
-  width: 21px;
-  height: 21px;
-  background-color: #ff0000;
-  border-radius: 100%;
-}
-
 .menu-item {
   margin: 0 10px;
 }
@@ -305,20 +300,16 @@ export default {
 }
 
 .search-field {
-  padding: 0px 20px;
   margin: 0px 10px;
-  width: 300px;
+  width: 180px;
   align-content: center;
   align-self: center;
   position: relative;
-}
-
-.search-box::placeholder {
-  color: rgb(50, 50, 50);
+  padding: 8px 0;
 }
 
 input {
-  padding: 0 20px;
+  padding: 0 5px;
   height: 30px;
   min-width: 100%;
   display: flex;
@@ -356,15 +347,6 @@ input {
   padding-bottom: 0px;
 }
 
-.email {
-  font-size: small;
-  display: block;
-}
-
-.title {
-  font-weight: bold;
-}
-
 .autocomplete-result.is-active,
 .autocomplete-result:hover {
   background-color: #ffbd3e;
@@ -375,7 +357,6 @@ input {
   background-color: #ffbd3e;
   color: white;
   border-radius: 6px;
-  padding: 0 20px;
   height: 30px;
   min-width: 180px;
   display: flex;
@@ -384,11 +365,27 @@ input {
   align-self: center;
 }
 
-nav .create-activity a {
-  color: white;
-}
-
 .bg-white {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+a.nav-link {
+  outline: none;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-toggle:after {
+ display: none !important;
+}
+
+.profile-pic {
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 100%;
+}
+
+.notification-icon {
+  
 }
 </style>
