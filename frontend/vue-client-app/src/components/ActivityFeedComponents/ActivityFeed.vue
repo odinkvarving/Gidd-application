@@ -24,8 +24,8 @@
             </b-form-select>
         </div>
         <div class="button-container">
-            <button v-show="!isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >filtrer</button> 
-            <button v-show="isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >reset</button> 
+            <button v-show="!isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >Filtrer</button> 
+            <button v-show="isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >Reset</button> 
         </div>       
         <div class="sorting-container">
             <b-form-select v-model="sort" :options="sorts" @change="modifyActivities()" class="sorting-picker">
@@ -517,7 +517,6 @@ export default {
     color: #495057;
     border: 1px solid #ced4da;
     border-radius: 10%;
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     width: 60px;
     height: 25px;
     text-align: center;
