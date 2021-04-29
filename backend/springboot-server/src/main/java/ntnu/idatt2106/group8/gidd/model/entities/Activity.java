@@ -1,7 +1,6 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;

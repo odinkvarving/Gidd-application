@@ -1,14 +1,16 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * @author Magnus Bredeli
+ */
 @Entity
 @Table(name = "notification")
-public class Notification  {
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,6 +29,15 @@ public class Notification  {
     public Notification() {
     }
 
+    /**
+     * constructor for a notification object.
+     *
+     * @param account    the account the notification belongs to.
+     * @param activityId the id of the activity the notification comes from.
+     * @param message    the message in the notification.
+     * @param date       the date the notification was sent.
+     * @param isSeen     defines whether the notification is seen or not.
+     */
     public Notification(Account account, int activityId, String message, String date, boolean isSeen) {
         this.account = account;
         this.activityId = activityId;

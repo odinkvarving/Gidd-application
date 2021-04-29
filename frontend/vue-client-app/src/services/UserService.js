@@ -8,9 +8,11 @@ export const userService = {
     getAll,
     getAccountDetails,
     isLoggedIn,
+    sendImage,
     authorizationHeader,
     getTokenString,
-    getCurrentLocation
+    getCurrentLocation,
+    getAccountInfo
 }
 
 
@@ -35,7 +37,19 @@ function login(email, password) {
         });
 }
 
+function sendImage(image,id){
+    console.log(image.get('file'))
+    let user = JSON.parse(localStorage.getItem('user'));
+        return fetch(`http://localhost:8080/accounts/${id}/profilepicture`,{
+            method:'POST',
+            headers:{
+                'Accept':image.get('file').type,
+                'Authorization': `Bearer ${user.jwtToken}`
+            },
+            body:image
+        }).then(handleResponse)
 
+}
 
 function getAccountByEmail(){
     try{
@@ -126,7 +140,7 @@ function setAccount(newAccount,id){
     if(!user || !user.jwtToken){
         return false;
     }
-    return fetch("http://localhost:8080/accounts/"+id+"/accountInfo",{
+    return fetch(`http://localhost:8080/accounts/${id}/accountInfo`,{
         method:'PUT',
         headers:{
             'Content-Type':'application/json',
@@ -167,4 +181,20 @@ function getCurrentLocation(){
         }
         return currentLocation;
     })
+}
+
+async function getAccountInfo(accountId){
+    let url = `http://localhost:8080/accounts/${accountId}/info`;
+
+    const requestOptions = {
+        method: 'GET',
+        headers: authorizationHeader()
+    }
+
+    return await fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => console.log(error));
 }

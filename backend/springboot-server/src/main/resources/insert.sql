@@ -24,7 +24,7 @@ VALUES (1, 'Jogging', 2.5),
 
 INSERT INTO activity(id, creator_id, level_id, type_id, longitude, latitude, start_time, end_time, title, description,
                      max_participants)
-VALUES (1,1, 2, 7, 10.40658, 63.41893, '2021-04-24 16:00:00', '2021-04-24 19:00:00', 'Ukentlig fredags fotball',
+VALUES (1, 1, 2, 7, 10.40658, 63.41893, '2021-04-24 16:00:00', '2021-04-24 19:00:00', 'Ukentlig fredags fotball',
         'Ballen må sparkes', 25),
        (2, 1, 2, 7, 10.40658, 63.41893, '2021-05-01 16:00:00', '2021-05-01 19:00:00', 'Ukentlig fredags fotball',
         'Ballen må sparkes', 25),

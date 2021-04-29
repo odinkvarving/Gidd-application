@@ -24,7 +24,7 @@ import java.util.function.Function;
 public class JwtUtil {
 
 
-    private String secret = "magnbred";
+    private final String secret = "magnbred";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -38,6 +38,7 @@ public class JwtUtil {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }

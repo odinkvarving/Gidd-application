@@ -11,7 +11,6 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 /**
- *
  * @author Endré Hadzalic
  */
 @Service
@@ -62,34 +61,34 @@ public class MailService {
      * Sends a email to the given recipient, with a given subject and a given message.
      *
      * @param recipient the email of the recipient ex: test@gmail.com.
-     * @param subject the subject of the message.
-     * @param message the message itself.
+     * @param subject   the subject of the message.
+     * @param message   the message itself.
      * @return true if the message was successfully sent, false if not.
      */
-    public boolean sendEmailMessage(String recipient, String subject, String message){
+    public boolean sendEmailMessage(String recipient, String subject, String message) {
         try {
-            Transport.send(getEmailMessage(getGmailSession(),recipient,subject,message));
+            Transport.send(getEmailMessage(getGmailSession(), recipient, subject, message));
             logger.info("Sent a email-message to: " + recipient);
             return true;
-        }catch ( Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-    private Message getEmailMessage(Session session, String recipient, String subject,String message) {
+    private Message getEmailMessage(Session session, String recipient, String subject, String message) {
         logger.info("Preparing a new email-message to: " + recipient);
         Message mimeMessage = new MimeMessage(session);
         String textMessage =
-                "<H2>"+subject+"</H2> </br>" +
-                        "<p>"+message+"</p> </br>" +
+                "<H2>" + subject + "</H2> </br>" +
+                        "<p>" + message + "</p> </br>" +
                         "<h3>Best regards -The Gidd team.</h3>";
         try {
             mimeMessage.setFrom(new InternetAddress(MAIL_ADDRESS));
             mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
             mimeMessage.setSubject(subject);
-            mimeMessage.setContent(textMessage,"text/html");
+            mimeMessage.setContent(textMessage, "text/html");
         } catch (Exception e) {
-            logger.error("Something went wrong during "+subject+" message generation", e);
+            logger.error("Something went wrong during " + subject + " message generation", e);
         }
         return mimeMessage;
     }
@@ -127,7 +126,7 @@ public class MailService {
             message.setFrom(new InternetAddress(MAIL_ADDRESS));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
             message.setSubject("Password reset");
-            message.setContent(textMessage,"text/html");
+            message.setContent(textMessage, "text/html");
         } catch (Exception e) {
             logger.error("Something went wrong during password reset message generation", e);
         }

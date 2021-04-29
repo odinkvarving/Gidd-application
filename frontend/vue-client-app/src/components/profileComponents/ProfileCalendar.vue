@@ -7,6 +7,7 @@
         :events="getEvents"
         :disable-views="['years','year','month']"
         :on-event-click="onEventClick"
+        locale="no"
         cell-contextmenu/>
     <b-modal id="activity_modal" title="Activity pop-up">
       <Activity
@@ -21,6 +22,7 @@
 <script>
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
+import 'vue-cal/dist/i18n/no.js'
 import Activity from "../ActivityFeedComponents/Activity";
 import {userService} from "../../services/UserService";
 
@@ -81,7 +83,7 @@ export default {
             item.endTime = 'undefined'
           }
           if (item.title === null || typeof item.title === 'undefined') {
-            item.title = 'Unnamed activity'
+            item.title = 'Ingen navn'
           }
           events.push({
             id:item.id,

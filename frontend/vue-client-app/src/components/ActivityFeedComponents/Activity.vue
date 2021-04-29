@@ -1,8 +1,12 @@
 <template>
     <div id="card" v-if="isDataReady">
-        <h1 style="margin-top: 15px; opacity: 75%;">{{ activity.title }}</h1>
+        <h1 style="margin-top: 15px; opacity: 75%; height: 60px;">{{ activity.title }}</h1>
         <div id="ownerInfo">
-            <img alt="Activity host profile picture" :src="require('@/assets/kari.jpg') ">
+            
+            
+            <img v-if="accountInfo.imageURL !== '' " alt="Activity host profile picture" :src="accountInfo.imageURL">
+            <img v-else src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="default pic">
+
             <!-- Add profile pic! -->
             <div class="owner-time">
                 <h3>{{ activity.creator.email }}</h3>
@@ -64,13 +68,12 @@
                 <span id="test-id" v-else>{{ isInQueue ? "På venteliste" : "Påmeldt" }}</span>
             </button>
         </div>
-        <b-button
+        <button
             disabled
             v-show="activity.cancelled"
             @click="() => console.log(activity.cancelled)"
             class="cancel-button"
-            variant="danger"
-            >Aktivitet avlyst!</b-button
+            >Aktivitet avlyst!</button
         >
     </div>
 </template>
@@ -142,6 +145,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                  * isDataReady is a flag which tells us when fetched data is ready for utilization.
                  */
                 isDataReady: false,
+                accountInfo: {}
             }
         },
 
@@ -156,6 +160,8 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
                     this.isInQueue = true;
                 }
+                this.accountInfo = await userService.getAccountInfo(this.activity.creator.id);
+                console.log(this.accountInfo);
             }
             this.isDataReady = true;
         },
@@ -406,7 +412,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         color: white;
         border: 0;
         outline: none;
-        bottom: 30px;
+        margin-top: 40px;
     }
     
     #btn:hover {
@@ -468,6 +474,18 @@ import { activityButtonService } from '../../services/ActivityButtonService';
 
     .queue-list{
         opacity: 70%;
+    }
+
+    .cancel-button {
+        height: 50px;
+        width: 160px;
+        border-radius: 6px;
+        font-size: 20px;
+        background-color: #e87c86;
+        color: white;
+        border: 0;
+        outline: none;
+        margin-top: 40px;
     }
 
     @media (max-width: 550px) {

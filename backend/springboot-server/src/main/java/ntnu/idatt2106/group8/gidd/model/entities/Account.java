@@ -1,7 +1,6 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A entity-class representing the user table in the database.
+ * A entity-class representing the account table in the database.
  *
  * @author Endré Hadzalic
  */
@@ -29,14 +28,14 @@ public class Account {
 
     @JsonBackReference
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="accountInfo", referencedColumnName = "id")
+    @JoinColumn(name = "accountInfo", referencedColumnName = "id")
     private AccountInfo accountInfo;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Activity> createdActivities = new HashSet<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications = new ArrayList<>();
 
     public Account() {
