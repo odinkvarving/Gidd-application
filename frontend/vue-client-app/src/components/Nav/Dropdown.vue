@@ -1,3 +1,5 @@
+//IKKE I BRUK
+
 <template>
   <div
     class="menu-item"
