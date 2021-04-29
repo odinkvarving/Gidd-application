@@ -241,7 +241,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         font-size: 20px;
         margin: 0;
         opacity: 75%;
-        width: 200px;
+        width: 80%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

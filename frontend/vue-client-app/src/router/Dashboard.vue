@@ -1,7 +1,7 @@
 <template>
     <div id="container">
         <NavBar />
-        <ActivityFeed @activityClicked="onSelectedActivity()" id="activityFeed"/>
+        <ActivityFeed @activityClicked="onSelectedActivity()" id="activityFeed" style="background-color: #f6f6f6;"/>
     </div>
 </template>
 <script>
