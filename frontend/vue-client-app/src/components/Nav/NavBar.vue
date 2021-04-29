@@ -1,7 +1,7 @@
 <template>
   <b-navbar class="bg-white" fixed="top" v-show="onHomePage">
     <div class="collapse navbar-collapse">
-      <router-link to="/">
+      <router-link to="/dashboard/">
         <div class="logo">
           <div class="circle-2">
             <div class="circle-3" />

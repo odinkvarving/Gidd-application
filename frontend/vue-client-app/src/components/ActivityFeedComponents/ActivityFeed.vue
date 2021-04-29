@@ -39,7 +39,7 @@
         v-for="a in filteredActivities"
         :key="a.id"
         @click="handleActivityClicked(a)"
-      > <!-- evt sortedActivities -->
+      >
         <Activity
           :activity="a"
           v-on:refresh-list="refreshList"
@@ -146,7 +146,8 @@ export default {
       await fetch("http://localhost:8080/activities/", requestOptions)
         .then((response) => response.json())
         .then((data) => {
-          this.activities = data.sort((x,y) => {
+          let list = data.filter(a => new Date(a.startTime) >= Date.now());
+          this.activities = list.sort((x,y) => {
             return new Date(x.startTime) - new Date(y.startTime);
           })
         })

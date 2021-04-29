@@ -1,6 +1,6 @@
 <template>
   <div id="activity" v-if="activity != null">
-    <div style="margin-top: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center">
+    <div style="margin-top: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center">
       <div v-show="isActivityHost" class="cancel-button-container">
         <b-button
           :disabled="this.activity.cancelled"
