@@ -8,6 +8,7 @@ export const userService = {
     getAll,
     getAccountDetails,
     isLoggedIn,
+    sendImage,
     authorizationHeader,
     getTokenString,
     getCurrentLocation
@@ -35,7 +36,21 @@ function login(email, password) {
         });
 }
 
-
+function sendImage(image,id){
+    let user = JSON.parse(localStorage.getItem('user'));
+    try{
+        return fetch(`http://localhost:8080/accounts/${id}/profileImage`,{
+            method:'POST',
+            headers:{
+                'Content-Type':'image/jpg',
+                'Authorization': `Bearer ${user.jwtToken}`
+            }
+        }).then(handleResponse)
+            .catch(e=>console.error(e))
+    }catch(error){
+        console.error('Failed to send image')
+    }
+}
 
 function getAccountByEmail(){
     try{
@@ -126,7 +141,7 @@ function setAccount(newAccount,id){
     if(!user || !user.jwtToken){
         return false;
     }
-    return fetch("http://localhost:8080/accounts/"+id+"/accountInfo",{
+    return fetch(`http://localhost:8080/accounts/${id}/accountInfo`,{
         method:'PUT',
         headers:{
             'Content-Type':'application/json',

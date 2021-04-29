@@ -18,7 +18,7 @@
         </div>
         <div class="edit-image">
           <label for="image-form">New profile image:</label>
-          <input type="text" id="image-form" v-model="imageURL" placeholder="Link to image here">
+          <input type="file" accept="image/*" id="image-form" @change="handleFiles($event)">
         </div>
         <div class="edit-notification-settings">
           <label style="font-size: 20px; margin: 20px 10px 10px 10px">Edit notification settings</label>
@@ -69,6 +69,7 @@ export default {
       description:"",
       imageURL:"",
       old_password:"",
+      newImageFile:{},
       notificationOptions: ["Notifikasjon og mail", "Kun notifikasjon", "Kun mail", "Ingen av delene"],
       cancelledActivityOption: null,
       editedActivityOption: null,
@@ -99,9 +100,12 @@ export default {
           '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
       return !!pattern.test(str);
     },
+    validImg(){
+      return true
+    },
     async sendChangePasswordForm(){
       console.log("Sending mail for password change to "+this.AccountInfo.email)
-      fetch("http://localhost:8080/reset/"+this.AccountInfo.email,{
+      fetch(`http://localhost:8080/reset/${this.AccountInfo.email}`,{
         method:"POST",
       });
     },
@@ -136,11 +140,10 @@ export default {
       }
 
       if(this.exists(this.imageURL)){
-        if(this.validURL(this.imageURL)||this.imageURL===""){
-          console.log('Changing image url to '+this.imageURL)
-          newAccount.imageURL=this.imageURL
+        if(this.validImg(this.imageURL)){
+          console.log('Changing image to '+this.imageURL)
         }else{
-          this.errors.push('This is not a valid URL')
+          this.errors.push('This is not a valid file type')
         }
       }
       if(userService.getAccountDetails().sub===this.AccountInfo.email) {
@@ -158,22 +161,35 @@ export default {
         console.log('preventing post call '+this.errors.length+ ' errors')
         e.preventDefault()
       }else{
-
+        e.preventDefault()
         console.log('sending following json')
         console.log(newAccount)
         if(this.exists(this.firstName)||this.exists(this.lastName)||
-            this.exists(this.description)||this.exists(this.imageURL)){
+            this.exists(this.description)){
               newAccount.notificationSettings = this.notificationSettings;
           let res=userService.setAccount(newAccount,this.$route.params.userId);
           console.log(res)
         }
+        console.log('Current image status')
+        console.log(this.newImageFile)
+
+        if(this.exists(this.newImageFile)){
+          let res=await userService.sendImage(this.newImageFile,this.$route.params.userId)
+          console.log(res)
+        }
+
       }
-      if(this.getOnCancelledSettings !== null || this.getOnEditedSettings !== null 
+      if(this.getOnCancelledSettings !== null || this.getOnEditedSettings !== null
           || this.outOfQueueOption !== null){
             console.log(this.notificationSettings.id);
             let res = notificationService.updateAccountsNotificationSettings(this.$route.params.userId, this.notificationSettings);
             console.log(res);
       }
+    },
+    handleFiles(event){
+      console.log('The image is being set to:')
+      console.log(event.target.files[0])
+      this.newImageFile=event.target.files[0]
     },
     getOnCancelledSettings(){
       if(this.cancelledActivityOption === this.notificationOptions[0]){

@@ -80,7 +80,7 @@ export default {
     getUserInfo(){
       console.log(this.$route.params.userId)
       //Getting the user data
-      fetch(path_to_db+'accounts/'+this.$route.params.userId+'/info',{
+      fetch(path_to_db+`accounts/${this.$route.params.userId}/info`,{
         method:'GET',
         headers:{
           'Content-Type':'application/json',
@@ -121,7 +121,7 @@ export default {
           .catch(e=>console.log(e))
     },
     getAllActivities(){
-      fetch(path_to_db+'accounts/'+this.$route.params.userId+'/activities',{
+      fetch(path_to_db+`accounts/${this.$route.params.userId}/activities`,{
         method:'GET',
             headers:{
           'Content-Type':'application/json',
