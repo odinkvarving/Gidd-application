@@ -1,41 +1,43 @@
 <template>
   <div id="container">
-    <div id="feed">
-      <div class="filter-sort-container">
-        <div class="category-container">
-            <b-form-select v-model="selectedCategory" :options="categories" id="select-category" class="category-picker" style="cursor:pointer">
+    <div class="filter-sort-container">
+      <div class="dropdownlists">
+        <div id="category-container">
+            <b-form-select v-model="selectedCategory" :options="categories" class="picker">
                 <template #first>
                     <b-form-select-option style="display: none" disabled selected value>Kategori</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
-        <div class="level-container">
-            <b-form-select  v-model="selectedLevel" :options="levels" id="select-level" class="level-picker" style="cursor:pointer">
+        <div id="level-container">
+            <b-form-select  v-model="selectedLevel" :options="levels" id="select-level" class="picker">
                 <template #first>
                     <b-form-select-option style="display: none" disabled selected value>Nivå</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
-        <div class="location-container">
-            <b-form-select v-model="selectedLocation" :options="locations" class="location-picker" id="select-location" data-live-search="true" style="cursor:pointer">  
+        <div id="location-container">
+            <b-form-select v-model="selectedLocation" :options="locations" class="picker" id="select-location" data-live-search="true">  
                 <template #first>
                     <b-form-select-option style="display: none" disabled selected value>Sted</b-form-select-option>
                 </template>                                   
             </b-form-select>
         </div>
-        <div class="button-container">
-            <button v-show="!isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >Filtrer</button> 
-            <button v-show="isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >Reset</button> 
+        <div id="button-container">
+            <button v-show="!isFiltered" id="filter-button" type="button" @click="generateFilteredList()" >Filtrer</button> 
+            <button v-show="isFiltered" id="filter-button" type="button" @click="generateFilteredList()" >Reset</button> 
         </div>       
-        <div class="sorting-container">
-            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" class="sorting-picker" style="cursor:pointer">
+        <div id="sorting-container">
+            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" class="picker">
                 <template #first>
-                    <b-form-select-option :value="null">Sorter</b-form-select-option>
+                    <b-form-select-option style="display: none" disabled selected :value="null">Sorter</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
-      </div>
-      <div
+    </div>
+    </div>
+    <div id="feed">
+      <div id="feedloop"
         v-for="a in filteredActivities"
         :key="a.id"
         @click="handleActivityClicked(a)"
@@ -523,7 +525,6 @@ export default {
   min-height: 100vh;
 }
 #feed {
-  margin-left: 0;
   width: 70vw;
   display: flex;
   flex-flow: row wrap;
@@ -537,11 +538,14 @@ export default {
         justify-content: center;
         align-items: center;*/
 }
+#feedloop{
+  margin-top: 50px;
+}
 #calendar-mini {
   position: fixed;
   width: 340px;
   height: 625px;
-  top: 200px;
+  top: 150px;
   right: 100px;
   background: white;
   display: flex;
@@ -614,32 +618,41 @@ export default {
 
 .filter-sort-container {
     width: 100%;
+    height: 80px;
     display: flex;
-    padding-bottom: 20px;
-    padding-left: 55px;
+    margin-top: 70px;
+    z-index: 100;
+    padding-bottom: 0 25px;
+    position: fixed;
+    background-color: #F6F6F6;
 }
 
-.category-container {
+.dropdownlists {
+    margin-top: 8px;
+    display: flex;
+    padding-left: 53px;
+    padding-top: 15px;
+}
+
+.picker {
+  width: 130px;
+  height: 35px;
+  cursor: pointer;
+}
+
+#category-container {
   display: inline-block;
   padding-right: 10px;
   padding-left: 10px;
 }
 
-.category-picker {
-    width: 130px;
-}
-
-.level-container {
+#level-container {
     display: inline-block;
     padding-right: 10px;
     padding-left: 10px;
 }
 
-.level-picker {
-    width: 130px;
-}
-
-.location-container {
+#location-container {
     width: 150px;
     padding-left: 10px;
     padding-right: 10px;
@@ -647,7 +660,7 @@ export default {
     padding-top: 1px;
 }
 
-.location-picker {
+#location-picker {
     width: 100%;
     height: 100%;
     color: #495057;
@@ -657,37 +670,32 @@ export default {
     border-radius: 4px;
 }
 
-.button-container {
+#button-container {
     display: flex;
     align-items: center;
 }
 
-.filter-button {
+#filter-button {
     background-color: #ffbd3e;
     color: white;
-    /* border: 1px solid #ced4da; */
     border: none;
     border-radius: 6px;
     width: 60px;
     height: 35px;
     text-align: center;
-    padding: 0;
+    margin-left: 12px;
+    margin-bottom: 20px;
 }
 
-.filter-button:hover {
+#filter-button:hover {
   background-color: #eca82b;
   transition: 0.2s;
 }
 
-.sorting-container {
+#sorting-container {
   display: inline-block;
-  padding-right: 10px;
-  padding-left: 265px;
-}
-
-.sorting-picker {
-    width: 100%;
-    background: #6C757D;
+  margin-left: 335px;
+  width: 130px;
 }
 
 @media (max-width: 1200px) {
@@ -697,6 +705,14 @@ export default {
 
   #feed {
     width: 100vw;
+  }
+
+  .dropdownlists {
+    flex-direction: row;
+  }
+
+  #sorting-container {
+    margin-left: -230px;
   }
 }
 
