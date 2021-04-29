@@ -3,21 +3,21 @@
     <div id="feed">
       <div class="filter-sort-container">
         <div class="category-container">
-            <b-form-select v-model="selectedCategory" :options="categories" id="select-category" class="category-picker">
+            <b-form-select v-model="selectedCategory" :options="categories" id="select-category" class="category-picker" style="cursor:pointer">
                 <template #first>
                     <b-form-select-option style="display: none" disabled selected value>Kategori</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="level-container">
-            <b-form-select  v-model="selectedLevel" :options="levels" id="select-level" class="level-picker">
+            <b-form-select  v-model="selectedLevel" :options="levels" id="select-level" class="level-picker" style="cursor:pointer">
                 <template #first>
                     <b-form-select-option style="display: none" disabled selected value>Nivå</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="location-container">
-            <b-form-select v-model="selectedLocation" :options="locations" class="location-picker" id="select-location" data-live-search="true">  
+            <b-form-select v-model="selectedLocation" :options="locations" class="location-picker" id="select-location" data-live-search="true" style="cursor:pointer">  
                 <template #first>
                     <b-form-select-option style="display: none" disabled selected value>Sted</b-form-select-option>
                 </template>                                   
@@ -28,7 +28,7 @@
             <button v-show="isFiltered" class="filter-button" type="button" @click="generateFilteredList()" >Reset</button> 
         </div>       
         <div class="sorting-container">
-            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" class="sorting-picker">
+            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" class="sorting-picker" style="cursor:pointer">
                 <template #first>
                     <b-form-select-option :value="null">Sorter</b-form-select-option>
                 </template>
@@ -662,13 +662,19 @@ export default {
 
 .filter-button {
     background-color: #ffbd3e;
-    color: #495057;
-    border: 1px solid #ced4da;
-    border-radius: 10%;
+    color: white;
+    /* border: 1px solid #ced4da; */
+    border: none;
+    border-radius: 6px;
     width: 60px;
-    height: 25px;
+    height: 35px;
     text-align: center;
     padding: 0;
+}
+
+.filter-button:hover {
+  background-color: #eca82b;
+  transition: 0.2s;
 }
 
 .sorting-container {
