@@ -27,6 +27,7 @@ public class ActivityTypeService {
 
     /**
      * Method for finding all registered ActivityType
+     *
      * @return a list of ActivityTypes
      */
     public List<ActivityType> getAllActivityTypes() {
@@ -41,6 +42,7 @@ public class ActivityTypeService {
 
     /**
      * Method for finding a specific ActivityType
+     *
      * @param id the id of the ActivityType
      * @return the ActivityType
      */
@@ -55,6 +57,7 @@ public class ActivityTypeService {
 
     /**
      * Method for adding a new ActivityType
+     *
      * @param activityType the ActivityType to be added
      * @return the ActivityType that was added
      */
@@ -69,7 +72,8 @@ public class ActivityTypeService {
 
     /**
      * Method for updating a specified ActivityType
-     * @param id the id of the ActivityType
+     *
+     * @param id           the id of the ActivityType
      * @param activityType the updated ActivityType
      * @return the updated ActivityType
      */
@@ -84,6 +88,7 @@ public class ActivityTypeService {
 
     /**
      * Method for deleting a specific ActivityType
+     *
      * @param id the id of the ActivityType
      */
     public void deleteActivityType(int id) {
@@ -96,6 +101,7 @@ public class ActivityTypeService {
 
     /**
      * Method for finding all activities of a specific ActivityType
+     *
      * @param id the id the the ActivityType
      * @return a Set of Activities with this type
      */

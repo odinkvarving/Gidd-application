@@ -16,10 +16,9 @@ import java.util.NoSuchElementException;
 @Service
 public class ChatService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
     @Autowired
     private ChatMessageRepository chatMessageRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
 
     /**
      * Adds a message to the chatfield in a activity.

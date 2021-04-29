@@ -6,6 +6,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
+ * A entity class defining a chat-message in the database.
+ *
  * @author Endré Hadzalic
  */
 @Entity
@@ -26,6 +28,13 @@ public class ChatMessage {
     @Column(columnDefinition = "TEXT")
     private String message;
 
+    /**
+     * Constructor for a chat-message.
+     *
+     * @param accountId  the id of the account that created the message.
+     * @param activityId the activity the message is bound to.
+     * @param message    the message itself.
+     */
     public ChatMessage(int accountId, int activityId, String message) {
         this.accountId = accountId;
         this.activityId = activityId;

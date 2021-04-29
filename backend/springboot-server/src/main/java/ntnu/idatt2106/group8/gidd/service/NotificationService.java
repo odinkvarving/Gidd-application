@@ -20,24 +20,19 @@ import java.util.Optional;
 @Service
 public class NotificationService {
 
+    Logger logger = LoggerFactory.getLogger(NotificationService.class);
     @Autowired
     private NotificationRepository notificationRepository;
-
     @Autowired
     private AccountRepository accountRepository;
-
     @Autowired
     private NotificationSettingsRepository notificationSettingsRepository;
-
     @Autowired
     private AccountInfoRepository accountInfoRepository;
-
     @Autowired
     private ActivityService activityService;
 
-    Logger logger = LoggerFactory.getLogger(NotificationService.class);
-
-    public List<Notification> getAccountsNotifications(int account_id){
+    public List<Notification> getAccountsNotifications(int account_id) {
         Iterable<Notification> itNotifications = notificationRepository.findNotificationByAccountId(account_id);
         List<Notification> notifications = new ArrayList<>();
 
@@ -45,11 +40,12 @@ public class NotificationService {
 
         return notifications;
     }
-    public boolean sendNotification(Notification notification){
+
+    public boolean sendNotification(Notification notification) {
         try {
             Notification result = notificationRepository.save(notification);
             return result.equals(notification);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             logger.info("Could not save notifications. Something went wrong!");
             return false;
@@ -57,52 +53,52 @@ public class NotificationService {
     }
 
 
-     public boolean updateNotification(Notification notification){
+    public boolean updateNotification(Notification notification) {
         Optional<Notification> notificationToUpdate = notificationRepository.findById(notification.getId());
         Notification result;
 
-        if(notificationToUpdate.isPresent()){
+        if (notificationToUpdate.isPresent()) {
             notificationToUpdate.get().setSeen(true);
             result = notificationRepository.save(notificationToUpdate.get());
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public NotificationSettings getNotificationSettingsByAccountId(int accountId){
+    public NotificationSettings getNotificationSettingsByAccountId(int accountId) {
         Optional<Account> account = accountRepository.findById(accountId);
-        if(account.isPresent()){
+        if (account.isPresent()) {
             AccountInfo accountInfo = account.get().getAccountInfo();
             return accountInfo.getNotificationSettings();
-        }else{
+        } else {
             return null;
         }
     }
 
-    public boolean updateAccountsNotificationsSetting(int accountId, NotificationSettings notificationSettings){
+    public boolean updateAccountsNotificationsSetting(int accountId, NotificationSettings notificationSettings) {
         Optional<Account> account = accountRepository.findById(accountId);
-        if(account.isPresent()){
+        if (account.isPresent()) {
             AccountInfo accountInfo = account.get().getAccountInfo();
             notificationSettings.setId(accountInfo.getNotificationSettings().getId());
             accountInfo.setNotificationSettings(notificationSettings);
             accountInfoRepository.save(accountInfo);
             logger.info("Comes here!!!!");
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public boolean updateNotificationSettings(NotificationSettings notificationSettings){
+    public boolean updateNotificationSettings(NotificationSettings notificationSettings) {
         return notificationSettingsRepository.save(notificationSettings).equals(notificationSettings);
     }
 
-    public boolean sendNotificationToAllParticipants(int activityId, String msg){
+    public boolean sendNotificationToAllParticipants(int activityId, String msg) {
         List<Account> accounts = activityService.getAllAccountsInActivity(activityId);
         Activity activity = activityService.getActivity(activityId).orElse(null);
-        if(activity != null){
-            if(accounts.size() != 0) {
+        if (activity != null) {
+            if (accounts.size() != 0) {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 LocalDateTime now = LocalDateTime.now();
 
@@ -114,18 +110,18 @@ public class NotificationService {
                 });
             }
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public boolean deleteNotification(int notificationId){
+    public boolean deleteNotification(int notificationId) {
         Notification notification = notificationRepository.findById(notificationId).orElse(null);
-        if(notification != null){
+        if (notification != null) {
             notificationRepository.delete(notification);
-            logger.info(notification.toString() + " \nwas deleted");
+            logger.info(notification + " \nwas deleted");
             return true;
-        }else{
+        } else {
             logger.info("Notifcation was not found, could not delete");
             return false;
         }

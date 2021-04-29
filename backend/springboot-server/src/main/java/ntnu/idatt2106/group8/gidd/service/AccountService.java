@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 /**
  * @author Endré Hadzalic
  */
+
 @Service
 public class AccountService {
 
@@ -141,15 +142,6 @@ public class AccountService {
         }
     }
 
-    public void setAccountInfo(int accountId, AccountInfo info) {
-        try {
-            Account account = this.accountRepository.findById(accountId).orElseThrow(NoSuchElementException::new);
-            saveAccountWithInfo(account, info);
-        } catch (Exception e) {
-            logger.error("could not find account with id:" + accountId, e);
-        }
-    }
-
     /**
      * Updates an account
      *
@@ -226,12 +218,12 @@ public class AccountService {
         try {
             PasswordReset reset = this.passwordResetRepository.findByResetUrlSuffix(resetSuffix).orElseThrow(TimeoutException::new);
             return this.accountRepository.findById(reset.getAccountId()).orElseThrow(NoSuchElementException::new);
-        }catch (NoSuchElementException nee){
+        } catch (NoSuchElementException nee) {
             logger.error("did find password-reset but not account linked to resetSuffix:" + resetSuffix);
             return new Account(null, "nonExistent");
-        }catch (TimeoutException te){
+        } catch (TimeoutException te) {
             logger.info("someone tried to reset password with outdated/ password-reset suffix: " + resetSuffix + "  ,suffix not found");
-            return new Account(null,"outdated/wrong");
+            return new Account(null, "outdated/wrong");
         }
     }
 
@@ -249,12 +241,12 @@ public class AccountService {
                     this.passwordResetRepository.findByResetUrlSuffix(urlSuffix).orElseThrow(NoSuchElementException::new);
             Account accountToReset =
                     this.accountRepository.findById(passwordReset.getAccountId()).orElseThrow(NoSuchElementException::new);
-            logger.info("updated account with id: " + accountToReset.getId()+" , with a new password");
+            logger.info("updated account with id: " + accountToReset.getId() + " , with a new password");
             updateAccountPassword(accountToReset.getId(), newPassword);
             this.passwordResetRepository.delete(passwordReset);
             return true;
         } catch (NoSuchElementException nee) {
-            logger.info("did not find either account or passwordreset which responds to the given urlsuffix: " +urlSuffix);
+            logger.info("did not find either account or passwordreset which responds to the given urlsuffix: " + urlSuffix);
             return false;
         }
     }
@@ -387,9 +379,9 @@ public class AccountService {
                     .filter(accountActivity -> accountActivity.getQueuePosition() > queuePosition)
                     .collect(Collectors.toCollection(HashSet::new));
             aboveInQueue.forEach(accountActivity -> {
-                if(accountActivity.getQueuePosition() == 1){
+                if (accountActivity.getQueuePosition() == 1) {
                     NotificationSettings notificationSettings = notificationService.getNotificationSettingsByAccountId(accountActivity.getAccountId());
-                    if(notificationSettings.isWantsOutOfQueueNotifications()){
+                    if (notificationSettings.isWantsOutOfQueueNotifications()) {
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                         LocalDateTime now = LocalDateTime.now();
 
@@ -408,7 +400,7 @@ public class AccountService {
             });
             this.accountActivityRepository.saveAll(aboveInQueue);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -506,13 +498,14 @@ public class AccountService {
 
     /**
      * Method for updating the AccountInfo for a specific Account
+     *
      * @param accountInfo the updated AccountInfo
-     * @param id the id of the Account with the AccountInfo
+     * @param id          the id of the Account with the AccountInfo
      * @return true or false
      */
     public boolean saveAccountInfoToAccount(AccountInfo accountInfo, int id) {
         Optional<Account> account = accountRepository.findById(id);
-        if(account.isPresent()) {
+        if (account.isPresent()) {
             AccountInfo info = account.get().getAccountInfo();
             accountInfo.setId(info.getId());
             accountInfoRepository.save(accountInfo);
