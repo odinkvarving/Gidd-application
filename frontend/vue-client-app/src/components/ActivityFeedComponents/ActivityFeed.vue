@@ -3,24 +3,25 @@
     <div id="feed">
       <div class="filter-sort-container">
         <div class="category-container">
-            <b-form-select v-model="category" :options="categories" id="select-category" class="category-picker">
+            <b-form-select v-model="selectedCategory" :options="categories" id="select-category" class="category-picker">
                 <template #first>
-                    <b-form-select-option :value="null">Kategori</b-form-select-option>
+                    <b-form-select-option style="display: none" disabled selected value>Kategori</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="level-container">
-            <b-form-select  v-model="level" :options="levels" id="select-level" class="level-picker">
+            <b-form-select  v-model="selectedLevel" :options="levels" id="select-level" class="level-picker">
                 <template #first>
-                    <b-form-select-option :value="null">Nivå</b-form-select-option>
+                    <b-form-select-option style="display: none" disabled selected value>Nivå</b-form-select-option>
                 </template>
             </b-form-select>
         </div>
         <div class="location-container">
-            <select class="location-picker" id="select-location" data-live-search="true">  
-                <option data-tokens="Sted">Sted</option>
-                <option v-for="item in locations" :key="item.id" data-tokens="" >{{item.value}}</option>                                    
-            </select>
+            <b-form-select v-model="selectedLocation" :options="locations" class="location-picker" id="select-location" data-live-search="true">  
+                <template #first>
+                    <b-form-select-option style="display: none" disabled selected value>Sted</b-form-select-option>
+                </template>                                   
+            </b-form-select>
         </div>
         <div class="button-container">
             <button class="filter-button" type="button" @click="generateFilteredList()" >filtrer</button> 
@@ -68,51 +69,6 @@
   </div>
 </template>
 <script>
-
-document.addEventListener('DOMContentLoaded', function () {
-   var input = document.getElementById('select-category');
-   if (localStorage['select-category']) { // if job is set
-       input.value = localStorage['select-category']; // set the value
-       this.selectedCategory = input.value;
-   }
-   input.onchange = function () {
-        localStorage['select-category'] = this.value; // change localStorage on change
-        this.selectedCategory = this.value;
-        console.log("Selected Category: " + this.selectedCategory)
-        //MAKE EVENT LISTENER CALL METHOD INSTEAD OF JUST UPDATING VARIABLE?
-        //generateFilteredList(this.value)?
-        //NO NEED FOR BUTTON?
-        //NOTE: MIGHT NOT WORK BECAUSE YOU NEED TO CHECK ALL 3 FILTERS(!)
-    }
-});
-
-
-
-document.addEventListener('DOMContentLoaded', function () {
-   var input = document.getElementById('select-level');
-   if (localStorage['select-level']) { // if job is set
-       input.value = localStorage['select-level']; // set the value
-       this.selectedLevel = input.value;
-   }
-   input.onchange = function () {
-        localStorage['select-level'] = this.value; // change localStorage on change
-        this.selectedLevel = this.value;
-        console.log("Selected Level: " + this.selectedLevel)
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-   var input = document.getElementById('select-location');
-   if (localStorage['select-location']) { // if job is set
-       input.value = localStorage['select-location']; // set the value
-       this.selectedLocation = input.value;
-   }
-   input.onchange = function () {
-        localStorage['select-location'] = this.value; // change localStorage on change
-        this.selectedLocation = this.value;
-        console.log("Selected Location: " + this.selectedLocation)
-    }
-});
 
 import Activity from "./Activity.vue";
 import { userService } from "../../services/UserService.js";
@@ -283,9 +239,11 @@ export default {
         }
     },
 
-    async generateFilteredList() {
-        //TRIED PASSING ALL FILTER PARAMETERS IN BUTTON METHOD - DID NOT WORK
+    generateFilteredList() {
         console.log(this.selectedCategory + "SELECTED CATEGORY WHEN BUTTON CLICKED")
+        console.log(this.selectedLevel + "SELECTED LEVEL WHEN BUTTON CLICKED")
+        console.log(this.selectedLocation + "SELECTED LOCATION WHEN BUTTON CLICKED")
+        
         let list = this.activities;
 
         if(this.selectedCategory !== "") {
@@ -294,11 +252,14 @@ export default {
         if(this.selectedLevel !== "") {
             list = this.filterByLevel(list);
         }
-        if(location !== "") {
-            list = this.filterByLocation(list, location);
+        if(this.selectedLocation !== "") {
+            list = this.filterByLocation(list);
         }
 
         this.filteredActivities = list;
+        this.selectedCategory = "";
+        this.selectedLevel = "";
+        this.selectedLocation = "";
     },
 
     sortActivities(filteredList) {
