@@ -52,7 +52,6 @@
         <li class="txt">{{ activity.location }}</li>
         <li class="txt">{{ activity.startTime }}</li>
         <li class="txt">{{ duration }}</li>
-        <!-- Implement duration -->
         <li class="txt" v-if="weather">
           <img
             id="icon"
@@ -193,7 +192,7 @@
     </div>
     <b-button
       disabled
-      v-show="activity.cancelled"
+      v-show="activity.cancelled && !isExpired"
       @click="cancelActivity()"
       class="cancel-button"
       variant="danger"
@@ -287,7 +286,7 @@ export default {
     await this.getCurrentParticipantsNumber();
     if (this.isLoggedIn) {
       await this.isAlreadyParticipating();
-      if (this.currentParticipants == this.maxParticipants) {
+      if ((this.currentParticipants === this.maxParticipants) && (this.queuePosition > 0)) {
         this.isInQueue = true;
       }
     }
@@ -301,13 +300,9 @@ export default {
       const today = Date.now();
       const start = new Date(this.activity.startTime);
       const check = start - today;
-      console.log("TODAY: " + today);
-      console.log("START: " + start);
-      console.log("TODAY - START: " + check);
       if (check < 0) {
         this.isExpired = true;
       } 
-      console.log("EXPIRED: " + this.isExpired);
     },
 
     checkIfLoggedIn() {
@@ -328,7 +323,7 @@ export default {
         );
         if (data) {
           this.showRemoveSpinner = false;
-          if (this.currentParticipants === this.activity.maxParticipants) {
+          if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
             this.participantsInQueue--;
           } else {
             this.currentParticipants--;
