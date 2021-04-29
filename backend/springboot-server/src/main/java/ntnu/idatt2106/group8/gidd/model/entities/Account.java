@@ -1,14 +1,16 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
- * A entity-class representing the user table in the database.
+ * A entity-class representing the account table in the database.
  *
  * @author Endré Hadzalic
  */
@@ -26,11 +28,15 @@ public class Account {
 
     @JsonBackReference
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="accountInfo", referencedColumnName = "id")
+    @JoinColumn(name = "accountInfo", referencedColumnName = "id")
     private AccountInfo accountInfo;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Activity> createdActivities = new HashSet<>();
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications = new ArrayList<>();
 
     public Account() {
     }
@@ -44,6 +50,12 @@ public class Account {
     public Account(String email, String password) {
         this.setEmail(email);
         this.setPassword(password);
+    }
+
+    public Account(String email, String password, AccountInfo accountInfo) {
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setAccountInfo(accountInfo);
     }
 
     public Set<Activity> getCreatedActivities() {
@@ -81,8 +93,16 @@ public class Account {
         return accountInfo;
     }
 
-    public void seAccountInfo(AccountInfo accountInfo) {
+    public void setAccountInfo(AccountInfo accountInfo) {
         this.accountInfo = accountInfo;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
     }
 
     @Override

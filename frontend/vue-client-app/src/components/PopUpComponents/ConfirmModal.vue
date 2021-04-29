@@ -64,6 +64,7 @@ export default {
 
     h2, p {
         margin: 10px;
+        text-align: center;
     }
 
     .button {

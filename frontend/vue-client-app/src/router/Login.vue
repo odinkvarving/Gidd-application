@@ -10,12 +10,18 @@
 <script>
 import LoginBox from "../components/UserComponents/LoginBox.vue"
 import FrontPageNav from "../components/Nav/FrontPageNav.vue"
+import {userService} from "../services/UserService.js"
 
 export default {
     name: "Login",
     components: {
         LoginBox,
         FrontPageNav
+    },
+    mounted(){
+        if(userService.isLoggedIn()){
+            this.$router.push("/dashboard");
+        }
     }
 }
 </script>

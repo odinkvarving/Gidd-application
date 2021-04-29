@@ -1,3 +1,5 @@
+//IKKE I BRUK
+
 <template>
   <div
     class="menu-item"
@@ -8,7 +10,7 @@
     <transition name="fade">
       <div class="sub-menu" v-if="isVisible">
         <div v-for="(item, i) in items" :key="i" class="menu-item">
-          <router-link :to="item.link">{{ item.title }}</router-link>
+          <p @click="item.method()" :to="item.link">{{ item.title }}</p>
         </div>
       </div>
     </transition>
@@ -39,13 +41,22 @@ export default {
 </script>
 
 <style>
-nav .menu-item .sub-menu {
-  background-color: white;
+.menu-item .sub-menu {
+  background-color: rgb(255, 255, 255);
   position: absolute;
   top: calc(100%);
-  transform: translateX(-60%);
-  width: max-content;
-  border: 1px solid rgba(0, 0, 0, 0.245)
+  transform: translateX(-59%) !important;
+  width: 160px !important;
+  border: 1px solid rgba(0, 0, 0, 0.245);
+}
+
+.sub-menu .menu-item {
+  margin: 0 !important;
+}
+
+p {
+  padding: 10px;
+  margin-bottom: 0 !important;
 }
 
 .fade-enter-active, .fade-leave-active {
@@ -54,6 +65,10 @@ nav .menu-item .sub-menu {
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+
+.sub-menu .menu-item:hover {
+  background-color: rgb(239, 239, 239);
 }
 
 .profile-picture {

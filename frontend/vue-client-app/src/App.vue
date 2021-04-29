@@ -1,18 +1,15 @@
 <template>
   <div>
-    <NavBar />
     <router-view />
   </div>
 </template>
 
 <script>
-import NavBar from "./components/Nav/NavBar.vue";
 
 export default {
   name: "App",
   components: {
-    NavBar,
-  },
+  }
 };
 </script>
 
@@ -34,7 +31,6 @@ export default {
 }
 
 header {
-  width: 100wv;
   border: 1px solid black;
   padding: 5px;
 }

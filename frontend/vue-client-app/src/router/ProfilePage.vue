@@ -1,23 +1,18 @@
 <template>
   <div class="profile_container">
+    <NavBar />
     <img src="../assets/Default_cover.jpg" alt="Cover photo"
          id="cover_photo"/>
-    <img :src=userInfo.imageURL alt="Profile photo"
+    <img :src=AccountInfo.imageURL @error="getDefaultImg" alt="Profil bilde"
          width="170" height="170"
          id="profile_photo">
     <div class="profile_info">
-      <h1 id="name">{{userInfo.firstname}} {{userInfo.surname}}</h1>
-      <p id="description">{{userInfo.description}}</p>
+      <h1 id="name">{{ AccountInfo.firstname }} {{ AccountInfo.surname }}</h1>
+      <p id="description">{{ AccountInfo.description }}</p>
 
       <ul id="info_list">
         <li>
-          {{userInfo.telephone}}
-        </li>
-        <li>
-          {{userInfo.address}}
-        </li>
-        <li>
-          {{userInfo.email}}
+          {{ AccountInfo.email }}
         </li>
       </ul>
       <profileToolbar :current-comp="currentComp" @switchComp="sendComp"></profileToolbar>
@@ -36,6 +31,7 @@ import ProfileCalendar from "../components/profileComponents/ProfileCalendar";
 import ProfileActivity from "../components/profileComponents/ProfileActivity";
 import ProfileEdit from "../components/profileComponents/ProfileEdit";
 import { userService } from '../services/UserService';
+import NavBar from "../components/Nav/NavBar.vue"
 
 let path_to_db='http://localhost:8080/';
 /**
@@ -65,21 +61,20 @@ let path_to_db='http://localhost:8080/';
  */
 export default {
   name: "ProfilePage",
-
   methods:{
     sendComp(newComp){
       console.log(newComp)
       this.currentComp=newComp
 
     },
-    getImgUrl(imgName){
-      let image=require.context('../assets/',false,/\.png$/);
-      return image('./'+imgName+'.png');
+    getDefaultImg(){
+      this.AccountInfo.imageURL=require("../assets/Default_profile.png")
     },
+
     getUserInfo(){
       console.log(this.$route.params.userId)
       //Getting the user data
-      fetch(path_to_db+'accounts/'+this.$route.params.userId+'/info',{
+      fetch(path_to_db+`accounts/${this.$route.params.userId}/info`,{
         method:'GET',
         headers:{
           'Content-Type':'application/json',
@@ -93,34 +88,34 @@ export default {
           .then(data=>{
             console.log('Getting account')
             console.log(data);
-
+            this.originalAccount=data
             if(data.firstname!==null&&typeof data.firstname !== 'undefined'){
-              this.userInfo.firstname=data.firstname;
+              this.AccountInfo.firstname=data.firstname;
             }
             if(data.surname!==null&&typeof data.surname !== 'undefined'){
-              this.userInfo.surname=data.surname;
+              this.AccountInfo.surname=data.surname;
             }
             if(data.imageURL!==null&&typeof data.imageURL !== 'undefined'){
-              this.userInfo.imageURL=this.getImgUrl(data.imageURL);
+              this.AccountInfo.imageURL=data.imageURL;
             }
             if(data.telephone!==null&&typeof data.telephone !== 'undefined'){
-              this.userInfo.telephone=data.telephone;
+              this.AccountInfo.telephone=data.telephone;
             }
             if(data.address!==null&&typeof data.address !== 'undefined') {
-              this.userInfo.address = data.address;
+              this.AccountInfo.address = data.address;
             }
-            if(data.email!==null&&typeof data.email !== 'undefined') {
-              this.userInfo.email = data.email;
+            if(data.account.email!==null&&typeof data.account.email !== 'undefined') {
+              this.AccountInfo.email = data.account.email;
             }
-            if(data.description!==null&&typeof data.description !== 'undefined'){
-              this.userInfo.description=data.description;
+            if(data.profileDescription!==null&&typeof data.profileDescription !== 'undefined'){
+              this.AccountInfo.description=data.profileDescription;
             }
 
           })
           .catch(e=>console.log(e))
     },
     getAllActivities(){
-      fetch(path_to_db+'accounts/'+this.$route.params.userId+'/activities',{
+      fetch(path_to_db+`accounts/${this.$route.params.userId}/activities`,{
         method:'GET',
             headers:{
           'Content-Type':'application/json',
@@ -129,6 +124,7 @@ export default {
       }).then(res=>res.json())
       .then(data=>{
         if(data!==null&&typeof data!=='undefined'&&typeof data.error==='undefined'){
+          console.log(data)
           this.activities=data
         }
       })
@@ -139,64 +135,47 @@ export default {
     'ProfileToolbar':ProfileToolbar,
     'profileCalendar':ProfileCalendar,
     'profileActivity':ProfileActivity,
-    'profileEdit':ProfileEdit
+    'profileEdit':ProfileEdit,
+    NavBar
   },
   computed:{
     activityProperties(){
       //Calendar component
       if(this.currentComp==='profileCalendar'){
-        console.log('Assigning the following data to calendar: '+JSON.stringify(this.activities))
-        let events=[]
-        this.activities.forEach(item => {
-          let isAllDay = false;
-          if (item.end_time === null || typeof item.end_time === 'undefined') {
-            isAllDay = true
-            item.end_time = null
-          }
-          if (item.title === null || typeof item.title === 'undefined') {
-            item.title = 'Unnamed activity'
-          }
-          events.push({
-            start: item.start_time,
-            end: item.end_time,
-            title: item.title,
-            allDay: isAllDay,
-            class:"normal-event"
-          })
-        })
-        return {activities:events}
+        console.log(this.activities)
+        return {activities:this.activities}
       }else//profileActivity component
         if(this.currentComp==='profileActivity'){
         let events=[]
         this.activities.forEach(item => {
           if (item.title === null || typeof item.title === 'undefined') {
-            item.title = 'Unnamed activity'
+            item.title = 'Ingen navn'
           }
           events.push({
             id: item.id,
             title: item.title,
-            startTime: item.start_time
+            startTime: item.startTime
           })
         })
         //ProfileActivity.scrollToEnd();
-
+        console.log('To activity list '+events)
         return {activities:events}
       }else{//Errors and Edit component
-        return null
+        console.log(this.AccountInfo)
+        return {AccountInfo:this.AccountInfo}
       }
     }
   },
   data(){
     return{
     currentComp: 'profileCalendar',
-    userInfo:{
-      firstname:"No first name",
-      surname:"No last name",
-      imageURL:this.getImgUrl('Default_profile'),
-      telephone:"No telephone number found",
-      address:"No address found",
-      email:"No email found",
-      description:"No description found"
+    originalAccount:Object,
+    AccountInfo:{
+      firstname:"Ingen fornavn",
+      surname:"Ingen etternavn",
+      imageURL:"../assets/Default_profile.png",
+      email:"Ingen email funnet",
+      description:"Ingen beskrivelse funnet"
     },
     activities:[{
         id:-1,

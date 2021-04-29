@@ -25,10 +25,9 @@ import java.util.ArrayList;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+    Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
     @Autowired
     private AccountService accountService;
-
-    Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     // TODO: add error handling if email doesn't exist
     // TODO: fix this method being called twice, WHYYYY????
@@ -37,7 +36,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Account account = accountService.findByEmail(email);
         logger.info("Account email: " + account.getEmail());
         logger.info("Encrypted password: " + account.getPassword());
-        if(account.getEmail() == null){
+        if (account.getEmail() == null) {
             return null;
         }
         return new User(account.getEmail(), account.getPassword(), new ArrayList<>());

@@ -2,13 +2,13 @@
   <div class="profile_buttons">
     <button id="calendarBtn" class="tabBtn"
           @click="switchComponent('profileCalendar')"
-          :disabled="currentComp==='profileCalendar'">Calendar</button>
+          :disabled="currentComp==='profileCalendar'">Kalender</button>
     <button id="activityBtn" class="tabBtn"
             @click="switchComponent('profileActivity')"
-            :disabled="currentComp==='profileActivity'">Activities</button>
+            :disabled="currentComp==='profileActivity'">Aktiviteter</button>
     <button id="editBtn" class="tabBtn"
             @click="switchComponent('profileEdit')"
-            :disabled="currentComp==='profileEdit'">Edit profile</button>
+            :disabled="currentComp==='profileEdit'">Endre profil innstillinger</button>
   </div>
 </template>
 

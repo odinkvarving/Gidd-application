@@ -4,13 +4,8 @@ import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
-import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
-import ntnu.idatt2106.group8.gidd.repository.AccountInfoRepository;
-import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
-import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
+import ntnu.idatt2106.group8.gidd.model.entities.*;
+import ntnu.idatt2106.group8.gidd.repository.*;
 import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +18,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
  * @author Endré Hadzalic
  */
+
 @Service
 public class AccountService {
 
@@ -50,16 +50,25 @@ public class AccountService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private PasswordResetRepository passwordResetRepository;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
+    private MailService mailService;
+
+    @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private NotificationService notificationService;
 
-    public List<Account> findAll(){
+
+    public List<Account> findAll() {
         Iterable<Account> itAccounts = accountRepository.findAll();
         List<Account> accounts = new ArrayList<>();
 
@@ -68,13 +77,13 @@ public class AccountService {
         return accounts;
     }
 
-    public boolean save(Account account){
+    public boolean save(Account account) {
         //Check if email already exists
         Optional<Account> acc = accountRepository.findByEmail(account.getEmail());
-        if(acc.isPresent()){
+        if (acc.isPresent()) {
             logger.info("Error! Could not create user, email already exists");
             return false;
-        }else{
+        } else {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
             accountRepository.save(account);
             return true;
@@ -99,7 +108,7 @@ public class AccountService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
             );
-        }catch (Exception exception){
+        } catch (Exception exception) {
             logger.info("Bad credentials! Username/password is wrong");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return new JWTResponse(null);
@@ -109,7 +118,7 @@ public class AccountService {
         return new JWTResponse(token);
     }
 
-    public boolean isValidToken(String jwtToken){
+    public boolean isValidToken(String jwtToken) {
         final String email = jwtUtil.extractUsername(jwtToken);
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
         return (email.equals(userDetails.getUsername()) && !jwtUtil.isTokenExpired(jwtToken));
@@ -130,15 +139,6 @@ public class AccountService {
             this.accountRepository.deleteById(accountId);
         } catch (IllegalArgumentException iae) {
             logger.error("null was passed as argument while trying to delete account", iae);
-        }
-    }
-
-    public void setAccountInfo(int accountId, AccountInfo info) {
-        try {
-            Account account = this.accountRepository.findById(accountId).orElseThrow(NoSuchElementException::new);
-            saveAccountWithInfo(account, info);
-        } catch (Exception e) {
-            logger.error("could not find account with id:" + accountId, e);
         }
     }
 
@@ -195,13 +195,115 @@ public class AccountService {
      * @param accountId   the id of the account that should change password.
      * @param newPassword the new password of the account.
      */
-    public void updateAccountPassword(int accountId, String newPassword) {
+    public boolean updateAccountPassword(int accountId, String newPassword) {
         Account accountToUpdate = findAccountById(accountId);
         if (accountToUpdate != null) {
-            accountToUpdate.setPassword(newPassword);
+            accountToUpdate.setPassword(passwordEncoder.encode(newPassword));
             this.accountRepository.save(accountToUpdate);
+            return true;
+        } else {
+            return false;
         }
+    }
 
+
+    /**
+     * finds and returns a account that is linked to a current reset token.
+     *
+     * @param resetSuffix the resetsuffix-key linked to the account.
+     * @return a account with null as email if it was not found. otherwise the account linked to the suffix.
+     */
+    public Account findAccountByResetSuffix(String resetSuffix) {
+        updatePasswordResetRepo();
+        try {
+            PasswordReset reset = this.passwordResetRepository.findByResetUrlSuffix(resetSuffix).orElseThrow(TimeoutException::new);
+            return this.accountRepository.findById(reset.getAccountId()).orElseThrow(NoSuchElementException::new);
+        } catch (NoSuchElementException nee) {
+            logger.error("did find password-reset but not account linked to resetSuffix:" + resetSuffix);
+            return new Account(null, "nonExistent");
+        } catch (TimeoutException te) {
+            logger.info("someone tried to reset password with outdated/ password-reset suffix: " + resetSuffix + "  ,suffix not found");
+            return new Account(null, "outdated/wrong");
+        }
+    }
+
+    /**
+     * Resets the password for a account in the database provided the given suffix is valid.
+     *
+     * @param urlSuffix   a valid suffix to reset a accounts password.
+     * @param newPassword the new password to the account.
+     * @return
+     */
+    public boolean resetAccountPassword(String urlSuffix, String newPassword) {
+        try {
+            updatePasswordResetRepo();
+            PasswordReset passwordReset =
+                    this.passwordResetRepository.findByResetUrlSuffix(urlSuffix).orElseThrow(NoSuchElementException::new);
+            Account accountToReset =
+                    this.accountRepository.findById(passwordReset.getAccountId()).orElseThrow(NoSuchElementException::new);
+            logger.info("updated account with id: " + accountToReset.getId() + " , with a new password");
+            updateAccountPassword(accountToReset.getId(), newPassword);
+            this.passwordResetRepository.delete(passwordReset);
+            return true;
+        } catch (NoSuchElementException nee) {
+            logger.info("did not find either account or passwordreset which responds to the given urlsuffix: " + urlSuffix);
+            return false;
+        }
+    }
+
+    /**
+     * Goes trough the repo and deletes the entities that is past expiration time.
+     */
+    private void updatePasswordResetRepo() {
+        logger.info("refreshing passwordreset repo");
+        final int TIME_LIMIT = 30;
+        Set<PasswordReset> resetsToDelete = new HashSet<>();
+        LocalDateTime now = LocalDateTime.now();
+        this.passwordResetRepository.findAll().forEach(passwordReset -> {
+            if (ChronoUnit.MINUTES.between(passwordReset.getTimeProduced(), now) > TIME_LIMIT) {
+                resetsToDelete.add(passwordReset);
+            }
+        });
+        this.passwordResetRepository.deleteAll(resetsToDelete);
+    }
+
+    /**
+     * Sends a password reset link to the provided mail address if it exists in the database.
+     *
+     * @param mailToReset the mail to reset the password to.
+     */
+    public void generatePasswordReset(String mailToReset) {
+        try {
+            Account foundAccount = accountRepository.findByEmail(mailToReset).orElseThrow(NoSuchElementException::new);
+
+            String randomUrlSuffix = "";
+            boolean newSuffix = false;
+            while (!newSuffix) {
+                randomUrlSuffix = generateRandomAlphanumericString(75);
+                if (!this.passwordResetRepository.findByResetUrlSuffix(randomUrlSuffix).isPresent()) {
+                    newSuffix = true;
+                }
+            }
+
+            PasswordReset passwordReset = new PasswordReset(foundAccount.getId(), randomUrlSuffix, LocalDateTime.now());
+            passwordResetRepository.save(passwordReset);
+            mailService.sendPasswordResetMail(mailToReset, randomUrlSuffix);
+            logger.info("Generated password reset entity/mail for email: " + mailToReset);
+        } catch (NoSuchElementException nee) {
+            logger.info("A password reset was requested for a user that does not exist in the database: " + mailToReset);
+        }
+    }
+
+    private String generateRandomAlphanumericString(int length) {
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        Random random = new Random();
+
+        return random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(length)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
     /**
@@ -231,7 +333,7 @@ public class AccountService {
         try {
             return this.accountRepository.findByEmailAndPassword(email, password)
                     .orElseThrow(NoSuchElementException::new);
-        } catch (NoSuchElementException nsee) {
+        } catch (NoSuchElementException nee) {
             logger.info("Did not find any account with credentials, email: " + email + " password: " + password);
             return null;
         }
@@ -276,10 +378,29 @@ public class AccountService {
             Set<AccountActivity> aboveInQueue = this.accountActivityRepository.findByActivityId(activityId).stream()
                     .filter(accountActivity -> accountActivity.getQueuePosition() > queuePosition)
                     .collect(Collectors.toCollection(HashSet::new));
-            aboveInQueue.forEach(AccountActivity::decrementQueuePosition);
+            aboveInQueue.forEach(accountActivity -> {
+                if (accountActivity.getQueuePosition() == 1) {
+                    NotificationSettings notificationSettings = notificationService.getNotificationSettingsByAccountId(accountActivity.getAccountId());
+                    if (notificationSettings.isWantsOutOfQueueNotifications()) {
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                        LocalDateTime now = LocalDateTime.now();
+
+                        Optional<Account> account = accountRepository.findById(accountActivity.getAccountId());
+                        Activity activity = activityRepository.findById(activityId).orElse(null);
+                        Notification notification = new Notification();
+                        notification.setAccount(account.orElse(null));
+                        notification.setActivityId(activityId);
+                        notification.setMessage("Du har nå fått plass på: " + activity.getTitle() + "!");
+                        notification.setDate(dtf.format(now));
+                        notification.setSeen(false);
+                        notificationService.sendNotification(notification);
+                    }
+                }
+                accountActivity.decrementQueuePosition();
+            });
             this.accountActivityRepository.saveAll(aboveInQueue);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -340,7 +461,7 @@ public class AccountService {
      * @param accountId  the id of the account that is bound to a activity.
      * @return null if no account-activity matching the given parameters was found.
      */
-    public AccountActivity findAccountActivity(int activityId, int accountId) {
+    public AccountActivity findAccountActivity(int accountId, int activityId) {
         return this.accountActivityRepository
                 .findById(new AccountActivityId(accountId, activityId)).orElse(null);
     }
@@ -373,5 +494,23 @@ public class AccountService {
     public Set<Activity> findAccountsCreatedActivities(int accountId) {
         Account creator = this.accountRepository.findById(accountId).orElseThrow(NoSuchElementException::new);
         return this.activityRepository.findActivitiesByCreator(creator);
+    }
+
+    /**
+     * Method for updating the AccountInfo for a specific Account
+     *
+     * @param accountInfo the updated AccountInfo
+     * @param id          the id of the Account with the AccountInfo
+     * @return true or false
+     */
+    public boolean saveAccountInfoToAccount(AccountInfo accountInfo, int id) {
+        Optional<Account> account = accountRepository.findById(id);
+        if (account.isPresent()) {
+            AccountInfo info = account.get().getAccountInfo();
+            accountInfo.setId(info.getId());
+            accountInfoRepository.save(accountInfo);
+            return true;
+        }
+        return false;
     }
 }

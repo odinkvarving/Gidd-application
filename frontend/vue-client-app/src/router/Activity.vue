@@ -1,79 +1,98 @@
 <template>
-    <div id="card">
-        <NavBar/>
-        <ActivityCard id="card" :activity="activity"/>
-    </div>
+  <div id="card">
+    <NavBar id="navbar"/>
+    <ActivityCard
+      id="card"
+      :activity="activity"
+      :weather="weather"
+      v-if="isDataReady"
+    />
+  </div>
 </template>
 <script>
-    import ActivityCard from '../components/ActivityCardComponents/ActivityCard.vue'
-    import NavBar from '../components/Nav/NavBar.vue'
-import { userService } from '../services/UserService'
-    import {weatherService} from '../services/WeatherService.js'
-    
-    export default {
-        name: "Activity",
-        components: {
-            NavBar,
-            ActivityCard
-        },
-        data() {
-            return {
-                test: [1,2,3],
-                activity: {},
-                activities: {}
-                /*weather: {
-                    name: WeatherService.getName,
-                    temp: WeatherService.getTemp,
-                    description: WeatherService.getDescription
-                }*/
-            }
-        },
-        async mounted(){
-            this.activity = await this.findActivity()
-        },
-        methods: {
-            async getActivities() { //async when we receive activities from db
-                const requestOptions = {
-                    method: 'GET',
-                    headers: userService.authorizationHeader()
-                }
-                
-                return await fetch("http://localhost:8080/activities/", requestOptions)
-                    .then(response => response.json())
-                    .then(data => {
-                        this.activities = data;
-                    })
-                    .catch(error => console.log(error));
-                
-            },
+import ActivityCard from "../components/ActivityCardComponents/ActivityCard.vue";
+import { userService } from "../services/UserService.js";
+import { weatherService } from "../services/WeatherService.js";
+import NavBar from "../components/Nav/NavBar.vue"
 
-            async getWeather() {
-                return await weatherService.getWeather(this.latitude, this.longitude, this.time);
-            },
+/**
+ * Activity is a router, which will display an activity.
+ *
+ * @author Scott Rydberg Sonen
+ */
+export default {
+  name: "Activity",
+  components: {
+    ActivityCard,
+    NavBar
+  },
+  data() {
+    return {
+      /**
+       * activity is an object which represents the clicked activity in the activity feed.
+       */
+      activity: {},
+      /**
+       * weather is an object containing weather at the activity's location if startdate is within 7 days
+       */
+      weather: {},
+      /**
+       * isDataReady is a flag which tells us when fetched data is ready for utilization.
+       */
+      isDataReady: false,
+    };
+  },
 
-            async findActivity() { //async when we will use getActivities
-                console.log("test");
-                //await Promise.all(this.getActivities());
-                await this.getActivities();
-                console.log(this.activities);
-                console.log(this.$route.params.id);
-                let act;
-                for(let i = 0; i < this.activities.length; i ++){
-                    console.log(this.activities[i].id);
-                    if(this.activities[i].id === parseInt(this.$route.params.id)){
-                        act = this.activities[i];
-                    }
-                }
-                console.log(act);
-                return act;
-            }
-        }
-    }
+  /**
+   * mounted is a function which runs before Activity renders.
+   * activity and weather are defined in mounted function
+   */
+  async mounted() {
+    await this.getActivity();
+    await this.getWeather();
+    this.isDataReady = true;
+  },
+
+  methods: {
+    /**
+     * getActivity is a function which receives an activity when requesting an activity with a given ID.
+     */
+    async getActivity() {
+      const activityId = parseInt(this.$route.params.id);
+      const requestOptions = {
+        method: "GET",
+        headers: userService.authorizationHeader(),
+      };
+      await fetch(
+        `http://localhost:8080/activities/${activityId}/`,
+        requestOptions
+      )
+        .then((response) => response.json())
+        .then((data) => (this.activity = data))
+        .catch((error) => console.log(error));
+    },
+
+    /**
+     * getWeather is a function which returns weather at the activity location if startTime is within 7 days of current time.
+     * The weather object is fetched in services/WeatherService.
+     * To find the weather, WeatherService requires latitude, longitude and startTime of activity.
+     */
+    async getWeather() {
+      console.log(this.activity);
+      console.log("LATITUDE: " + this.activity.latitude);
+      console.log("LONGITUDE: " + this.activity.longitude);
+      console.log("STARTTIME: " + this.activity.startTime);
+      this.weather = await weatherService.getWeather(
+        this.activity.latitude,
+        this.activity.longitude,
+        this.activity.startTime
+      );
+    },
+  },
+};
 </script>
 <style>
-    #card{
-        background-color: #F6F6F6;
-        padding: 2% 5%;
-        margin-top: 2%;
-    }
+  #card{
+    background-color: #F6F6F6;
+  }
 </style>
