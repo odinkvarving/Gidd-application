@@ -24,6 +24,7 @@ public class ActivityTypeController {
 
     /**
      * GetMapping for getting all registered ActivityTypes
+     *
      * @return a list of all the ActivityTypes
      */
     @GetMapping("activityTypes/")
@@ -33,6 +34,7 @@ public class ActivityTypeController {
 
     /**
      * GetMapping for a specific ActivityType
+     *
      * @param id the PathVariable for the id of the ActivityType
      * @return the ActivityType that was found
      */
@@ -43,6 +45,7 @@ public class ActivityTypeController {
 
     /**
      * PostMapping for adding a new ActivityType to the database
+     *
      * @param activity requesting the body of an ActivityType
      * @return the ActivityType that was added
      */
@@ -53,8 +56,9 @@ public class ActivityTypeController {
 
     /**
      * PutMapping for updating a specific ActivityType
+     *
      * @param newActivityType requesting the body of a new ActivityType (updated version)
-     * @param id the PathVariable for the id of the ActivityType
+     * @param id              the PathVariable for the id of the ActivityType
      * @return the ActivityType that was updated
      */
     @PutMapping("activityTypes/{id}")
@@ -64,6 +68,7 @@ public class ActivityTypeController {
 
     /**
      * GetMapping for finding all Activities of a specific ActivityType
+     *
      * @param id the PathVariable for the if of the ActivityType
      * @return a Set of Activities of this ActivityType
      */
@@ -74,6 +79,7 @@ public class ActivityTypeController {
 
     /**
      * DeleteMapping for deleting a specific ActivityType
+     *
      * @param id the PathVariable for the id of the ActivityType
      */
     @DeleteMapping("activityTypes/{id}")

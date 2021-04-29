@@ -46,6 +46,7 @@ public class ActivityService {
 
     /**
      * Method for finding all registered activities
+     *
      * @return a list of all activities
      */
     public List<Activity> getAllActivities() {
@@ -60,6 +61,7 @@ public class ActivityService {
 
     /**
      * Method for getting an activity with the specified id
+     *
      * @param id the id of the activity
      * @return the activity matching the id
      */
@@ -74,6 +76,7 @@ public class ActivityService {
 
     /**
      * Method for adding a new activity
+     *
      * @param activity the activity to be added
      * @return the activity that was added
      */
@@ -97,7 +100,8 @@ public class ActivityService {
 
     /**
      * Method for updating an activity
-     * @param id the id of the activity to be updated
+     *
+     * @param id       the id of the activity to be updated
      * @param activity the updated version of the activity
      * @return the updated activity
      */
@@ -117,6 +121,7 @@ public class ActivityService {
 
     /**
      * Method for deleting an activity
+     *
      * @param id the id of the activity to be deleted
      */
     public void deleteActivity(int id) {
@@ -129,6 +134,7 @@ public class ActivityService {
 
     /**
      * Method for finding activities with the specified Activity-type
+     *
      * @param type a String with the type you want to find activities by
      * @return a list of Activities with this Activity-type
      */
@@ -151,6 +157,7 @@ public class ActivityService {
 
     /**
      * Method for finding the Activity-type of a specified Activity
+     *
      * @param id the id of the Activity
      * @return a String specifying which Activity-type the Activity is
      */
@@ -169,6 +176,7 @@ public class ActivityService {
 
     /**
      * Method for finding the Equipment for a specified Activity
+     *
      * @param id the id of the Activity
      * @return a Set of Equipment
      */
@@ -188,7 +196,8 @@ public class ActivityService {
 
     /**
      * Method for adding an account as a participant in the specified Activity
-     * @param activityId the id of the Activity
+     *
+     * @param activityId    the id of the Activity
      * @param participantId the id of the Account
      * @return the Account that was added to the Activity
      */
@@ -231,6 +240,7 @@ public class ActivityService {
 
     /**
      * Method for finding all Accounts registered to a specified Activity
+     *
      * @param id the id of the Activity
      * @return a list of Accounts registered to an Activity
      */
@@ -251,34 +261,35 @@ public class ActivityService {
         return null;
     }
 
-    public int countAllAccountsInActivity(int id){
+    public int countAllAccountsInActivity(int id) {
         List<Account> participatingAccounts = new ArrayList<>();
-        try{
+        try {
             List<AccountActivity> list = accountActivityRepository.findByActivityId(id)
                     .stream()
                     .filter(accountActivity -> accountActivity.getQueuePosition() == 0)
                     .collect(Collectors.toList());
             return list.size();
-        }catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             log.info("Could not find any participants in this activity");
         }
         return 0;
     }
 
-    public int countAllAccountsInQueue(int id){
+    public int countAllAccountsInQueue(int id) {
         List<Account> accountsInQueue = getAllAccountsInQueue(id);
         return accountsInQueue.size();
     }
 
     /**
      * Method for checking if a specified Account is registered to a specific Activity
+     *
      * @param activityId the id of the activity
-     * @param accountId the id of the Account
+     * @param accountId  the id of the Account
      * @return true or false
      */
     public boolean checkIfAccountIsInActivity(int activityId, int accountId) {
         try {
-            return accountActivityRepository.findById(new AccountActivityId(accountId,activityId)).isPresent();
+            return accountActivityRepository.findById(new AccountActivityId(accountId, activityId)).isPresent();
         } catch (DataAccessException e) {
             log.info("Could not find this account in this activity");
         }
@@ -287,6 +298,7 @@ public class ActivityService {
 
     /**
      * Method for finding all Accounts in queue for a specific Activity
+     *
      * @param id the id of the Activity
      * @return a list of Accounts in queue for the Activity
      */
@@ -309,6 +321,7 @@ public class ActivityService {
 
     /**
      * Method for cancelling a specific Activity
+     *
      * @param id the id of the Activity to be cancelled
      * @return true or false
      */
@@ -317,26 +330,26 @@ public class ActivityService {
         List<AccountActivity> accountActivities;
         try {
             activity = activityRepository.findById(id);
-            if(activity.isPresent()) {
+            if (activity.isPresent()) {
                 notificationService.sendNotificationToAllParticipants(id, "was cancelled :/");
                 activity.get().setCancelled(true);
                 activityRepository.save(activity.get());
                 accountActivities = new ArrayList<>(accountActivityRepository.findByActivityId(activity.get().getId()));
-                if(accountActivities.size() != 0) {
+                if (accountActivities.size() != 0) {
                     for (AccountActivity a : accountActivities) {
                         accountActivityRepository.delete(a);
                         if (accountActivityRepository.findByActivityId(activity.get().getId()).size() == 0) {
                             return true;
                         }
                     }
-                }else{
+                } else {
                     return true;
                 }
-            }else{
+            } else {
                 log.info("No activity with this ID registered");
                 return false;
             }
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             log.info("Could not find the specified activity");
         }
         return false;
@@ -344,7 +357,8 @@ public class ActivityService {
 
     /**
      * Method for deleting a specific Equipment from a specific Activity
-     * @param id the id of the Activity
+     *
+     * @param id        the id of the Activity
      * @param equipment a String of the description for the Equipment
      * @return true or false
      */
@@ -354,23 +368,35 @@ public class ActivityService {
         List<Equipment> equipmentList;
         try {
             activity = activityRepository.findById(id);
-            if(activity.isPresent()) {
+            if (activity.isPresent()) {
                 equipmentList = activity.get().getEquipment()
                         .stream()
                         .filter(equipment1 -> equipment1.getDescription().equals(equipment))
                         .collect(Collectors.toList());
                 for (Equipment e : equipmentList) {
                     if (activity.get().getEquipment().remove(e))
-                        System.out.println("Removed equipment "+ e.getDescription() + ", from activity");
+                        System.out.println("Removed equipment " + e.getDescription() + ", from activity");
                 }
                 return true;
-            }else {
+            } else {
                 log.info("Could not find activity with the specified ID");
                 return false;
             }
-        }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             e.printStackTrace();
         }
         return false;
     }
+
+    public boolean addEquipmentToActivity(int activityId, String equipment) {
+        Activity activity = activityRepository.findById(activityId).orElse(null);
+        if (activity != null) {
+            activity.getEquipment().add(new Equipment(equipment.substring(1, equipment.length() - 1)));
+            activityRepository.save(activity);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

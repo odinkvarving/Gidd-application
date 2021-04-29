@@ -220,7 +220,7 @@ public class ActivityController {
      * @param id the id of the message to delete.
      */
     @DeleteMapping("messages/{id}")
-    public void deleteMessage(@PathVariable int id){
+    public void deleteMessage(@PathVariable int id) {
         this.chatService.deleteChatMessage(id);
     }
 
@@ -238,9 +238,12 @@ public class ActivityController {
     }
 
     @PostMapping("activities/{id}/notify-edit")
-    public boolean sendNotificationToAllParticipants(@PathVariable int id){
+    public boolean sendNotificationToAllParticipants(@PathVariable int id) {
         return notificationService.sendNotificationToAllParticipants(id, "was edited!   ");
     }
 
-
+    @PostMapping("/activities/{activity_id}/equipment")
+    public boolean addEquipmentToActivity(@PathVariable int activity_id, @RequestBody String equipment) {
+        return activityService.addEquipmentToActivity(activity_id, equipment);
+    }
 }

@@ -1,8 +1,6 @@
 package ntnu.idatt2106.group8.gidd.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
 /**
