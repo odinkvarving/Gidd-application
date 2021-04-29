@@ -1,27 +1,27 @@
 <template>
   <div class="edit">
-    <h1 class="edit-title" >Edit Profile</h1><br>
+    <h1 class="edit-title" >Endre profil</h1><br>
     <form class="edit-form" @submit="checkform">
       <div v-if="errors.length">
-        <b>Unable to edit account information for the following reasons:</b>
+        <b>Kan ikke endre profil av følgende grunner:</b>
         <ul class="error-list">
           <li v-for="error in errors" :key="error">{{error}}</li>
         </ul>
       </div>
       <fieldset class="edit-general">
-        <legend>General account information</legend>
+        <legend>Generell bruker informasjon</legend>
         <div class="edit-name">
-          <label for="first-name-form">First name:</label>
+          <label for="first-name-form">Fornavn:</label>
           <input type="text" id="first-name-form"  v-model="firstName" :placeholder="AccountInfo.firstname">
-          <label for="last-name-form">Last name:</label>
+          <label for="last-name-form">Etternavn:</label>
           <input type="text" id="last-name-form" v-model="lastName" :placeholder="AccountInfo.surname">
         </div>
         <div class="edit-image">
-          <label for="image-form">New profile image:</label>
-          <input type="file" accept="image/x-png,image/gif,image/jpeg" id="image-form" @change="handleFiles($event)">
+          <label for="image-form">Nytt profil bilde:</label>
+          <input type="file" accept="image/png,image/gif,image/jpeg" id="image-form" value="Velg fil" @change="handleFiles($event)">
         </div>
         <div class="edit-notification-settings">
-          <label style="font-size: 20px; margin: 20px 10px 10px 10px">Edit notification settings</label>
+          <label style="font-size: 20px; margin: 20px 10px 10px 10px">Endre notifikasjons instilinger</label>
           <div class="on-cancelled-activity notification-settings-item">
             <label for="">Når aktivitet blir avlyst: </label>
             <b-form-select v-model="cancelledActivityOption" :options="notificationOptions">
@@ -42,14 +42,14 @@
           </div>
         </div>
         <div class="edit-description">
-          <label for="description-form">Description</label>
-          <textarea type="text" id="description-form" rows=5 cols=80 placeholder="Please tell us something about you|" v-model="description"></textarea>
+          <label for="description-form">Beskrivelse</label>
+          <textarea type="text" id="description-form" rows=5 cols=80 placeholder="Vennligst fortell oss noe om deg selv" v-model="description"></textarea>
         </div>
 
       </fieldset>
-      <input type="button" @click="sendChangePasswordForm" id="change-password" value="Send change password form">
-      <input type="password" v-model="old_password" id="old-password-form" placeholder="Old password to save">
-      <input type="submit" value="Save changes" id="edit-submit">
+      <input type="button" @click="sendChangePasswordForm" id="change-password" value="Klikk her for å sende mail for å bytte passord">
+      <input type="password" v-model="old_password" id="old-password-form" placeholder="Vennligst skriv inn gammelt passord">
+      <input type="submit" value="Lagre endringer" id="edit-submit">
 
     </form>
   </div>
@@ -67,7 +67,6 @@ export default {
       firstName:"",
       lastName:"",
       description:"",
-      imageURL:"",
       old_password:"",
       newImageFile:{},
       notificationOptions: ["Notifikasjon og mail", "Kun notifikasjon", "Kun mail", "Ingen av delene"],
@@ -120,7 +119,7 @@ export default {
       if(this.exists(this.newImageFile)){
         console.log('Changing image to '+this.newImageFile.name)
         if(!this.validFile(this.newImageFile)){
-          this.errors.push('Invalid image file extension. Supported extensions are: .png .jpg .gif')
+          this.errors.push('Ugyldig fil type. Støttede filtyper er som følger: .png .jpg .gif')
         }
       }
       if(this.cancelledActivityOption !== null){
@@ -139,11 +138,11 @@ export default {
           console.log('getting jwtToken')
           if (!res.jwtToken) {
             console.log('Authentication failed')
-            this.errors.push('Old password does not match the account')
+            this.errors.push('Gammelt passord stemmer ikke med brukeren')
           }else console.log('Login successful')
         })
       }else{
-        this.errors.push('Your account does not have the rights to change the account for ' + this.AccountInfo.email)
+        this.errors.push('Denne brukeren kan ikke gjøre endringer på ' + this.AccountInfo.email+' sin bruker.')
       }
       if(this.errors.length){
         console.log('preventing post call '+this.errors.length+ ' errors')
