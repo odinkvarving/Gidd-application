@@ -52,6 +52,12 @@ public class Account {
         this.setPassword(password);
     }
 
+    public Account(String email, String password, AccountInfo accountInfo) {
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setAccountInfo(accountInfo);
+    }
+
     public Set<Activity> getCreatedActivities() {
         return createdActivities;
     }

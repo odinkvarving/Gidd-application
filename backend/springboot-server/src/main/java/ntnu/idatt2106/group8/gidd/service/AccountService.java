@@ -85,7 +85,6 @@ public class AccountService {
             return false;
         } else {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
-            account.getAccountInfo().setNotificationSettings(new NotificationSettings(true, true, true, true, true, true));
             accountRepository.save(account);
             return true;
         }

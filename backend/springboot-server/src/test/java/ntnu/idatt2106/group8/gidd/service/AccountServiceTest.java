@@ -1,11 +1,9 @@
 package ntnu.idatt2106.group8.gidd.service;
 
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
-import ntnu.idatt2106.group8.gidd.model.entities.Account;
-import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
-import ntnu.idatt2106.group8.gidd.model.entities.Activity;
-import ntnu.idatt2106.group8.gidd.model.entities.PasswordReset;
+import ntnu.idatt2106.group8.gidd.model.entities.*;
 import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
+import ntnu.idatt2106.group8.gidd.repository.NotificationSettingsRepository;
 import ntnu.idatt2106.group8.gidd.repository.PasswordResetRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +34,9 @@ class AccountServiceTest {
 
     @Autowired
     private PasswordResetRepository passwordResetRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     private Account testAccount1;
     private Account testAccount2;
@@ -121,18 +122,18 @@ class AccountServiceTest {
             //there should only be one passwordreset in the repo
             PasswordReset pr = this.passwordResetRepository.findAll().iterator().next();
 
-            assertEquals(testMailAccount.getId(), pr.getAccountId(), "the ids of the reset element and the " +
+            assertEquals(testMailAccount.getId(), pr.getAccountId(), "The ids of the reset element and the " +
                     "account did not match.");
 
             String suffix = pr.getResetUrlSuffix();
             String newPassword = "password321";
 
             assertTrue(this.accountService.resetAccountPassword(suffix, newPassword)
-                    , "the resetpassword method returned false/failed");
+                    , "The resetpassword method returned false/failed");
 
-            assertTrue(this.accountService.findAccountById(testMailAccount.getId())
+            assertFalse(this.accountService.findAccountById(testMailAccount.getId())
                             .getPassword().equals(newPassword)
-                    , "the actual password did not match the new password");
+                    , "The password was not hashed when sent to database");
 
             assertFalse(this.accountService.resetAccountPassword(suffix,newPassword));
         } catch (Exception e) {
@@ -143,13 +144,14 @@ class AccountServiceTest {
 
     @Test
     void updateAccount() {
+        this.accountService.updateAccountPassword(testAccount1.getId(), "newPassword");
         this.accountService.save(this.testAccount1);
         this.accountService.updateAccountEmail(this.testAccount1.getId(), "newEmail@email.no");
 
         assertEquals("newEmail@email.no", this.accountService.findAccountById(this.testAccount1.getId()).getEmail()
-                , "the new email for account1 is wrong");
-        assertEquals("newPassword", this.accountService.findAccountById(this.testAccount1.getId()).getPassword()
-                , "the new password of account1 is wrong");
+                , "The new email for account1 is wrong");
+        assertFalse(this.accountService.findAccountById(this.testAccount1.getId()).getPassword().equals("newPassword")
+                , "The password was not hashed when sent to database");
         
     }
 
@@ -201,8 +203,10 @@ class AccountServiceTest {
             assertEquals(1, this.accountService.findAccountsActivities(this.testAccount1.getId()).size()
                     , "The getter for all activities by account returns wrong the amount of elements");
             AccountActivity aaNotInQueue =
-                    this.accountService.findAccountActivity(this.testActivity1.getId(), this.testAccount1.getId());
+                    this.accountService.findAccountActivity(this.testAccount1.getId(), this.testActivity1.getId());
 
+            System.out.println(aaNotInQueue.getAccountId() + "ACCOUNT ID");
+            System.out.println(aaNotInQueue.getQueuePosition() + "QUEUE POSITION");
             if (aaNotInQueue != null) {
                 assertEquals(0, aaNotInQueue.getQueuePosition()
                         , "The queue position of the account-activity was not = 0");
@@ -218,10 +222,10 @@ class AccountServiceTest {
                     , "The getter for all activities by account returns wrong the amount of elements");
 
             AccountActivity aaInQueue =
-                    this.accountService.findAccountActivity(this.testActivity2.getId(), this.testAccount2.getId());
+                    this.accountService.findAccountActivity(this.testAccount2.getId(), this.testActivity2.getId());
 
             AccountActivity aa2InQueue =
-                    this.accountService.findAccountActivity(this.testActivity2.getId(), this.testAccount3.getId());
+                    this.accountService.findAccountActivity(this.testAccount3.getId(), this.testActivity2.getId());
 
             if (aaInQueue != null) {
                 assertEquals(1, aaInQueue.getQueuePosition());
