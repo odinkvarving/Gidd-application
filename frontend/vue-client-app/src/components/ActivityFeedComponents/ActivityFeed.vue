@@ -334,7 +334,7 @@ export default {
 
     sortByNameAsc() {
       console.log(">> sortByNameAsc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         if (x.title < y.title) return -1;
         else if (x.title > y.title) return 1;
         return 0;
@@ -343,7 +343,7 @@ export default {
 
     sortByNameDesc() {
       console.log(">> sortByNameDesc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         if (x.title < y.title) return 1;
         else if (x.title > y.title) return -1;
         return 0;
@@ -352,21 +352,21 @@ export default {
 
     sortByTimeEarliest() {
       console.log(">> sortByTimeEarliest() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         return new Date(x.startTime) - new Date(y.startTime);
       });
     },
 
     sortByTimeLatest() {
       console.log(">> sortByTimeLatest() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         return new Date(y.startTime) - new Date(x.startTime);
       });
     },
 
     sortByDurationDesc() {
       console.log(">> sortByDurationDesc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         let d1 = new Date(y.endTime) - new Date(y.startTime);
         let d2 = new Date(x.endTime) - new Date(x.startTime);
         return d1 - d2;
@@ -375,7 +375,7 @@ export default {
 
     sortByDurationAsc() {
       console.log(">> sortByDurationAsc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         let d1 = new Date(x.endTime) - new Date(x.startTime);
         let d2 = new Date(y.endTime) - new Date(y.startTime);
         return d1 - d2;
@@ -384,7 +384,7 @@ export default {
 
     sortByFreeSpotsDesc() {
       console.log(">> sortByFreeSpotsDesc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
         let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
         let free1 = y.maxParticipants - current1;
@@ -395,7 +395,7 @@ export default {
 
     sortByFreeSpotsAsc() {
       console.log(">> sortByFreeSpotsAsc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
         let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
         let free1 = x.maxParticipants - current1;
@@ -406,7 +406,7 @@ export default {
 
     sortByCurrentParticipantsDesc() {
       console.log(">> sortByCurrentParticipantsDesc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
         let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
         return current1 - current2;
@@ -415,7 +415,7 @@ export default {
 
     sortByCurrentParticipantsAsc() {
       console.log(">> sortByCurrentParticipantsAsc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
         let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
         return current1 - current2;
@@ -424,14 +424,14 @@ export default {
 
     sortByLevelDesc() {
       console.log(">> sortByLevelDesc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         return y.level.id - x.level.id;
       });
     },
 
     sortByLevelAsc() {
       console.log(">> sortByLevelAsc() called");
-      return this.activities.sort((x,y) => {
+      return this.filteredActivities.sort((x,y) => {
         return x.level.id - y.level.id;
       });
     },
