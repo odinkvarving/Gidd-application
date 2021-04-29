@@ -78,34 +78,81 @@
     </div>
 </template>
 <script>
+/**
+ * Activity is a component which represent a single activity in the activity feed.
+ * 
+ * @author Scott Rydberg Sonen
+ * @author Magnus Bredeli
+ */
+
+/**
+ * userService and activityButtonService is imported for efficient use of common and relevant functions.
+ */
 import { userService } from '../../services/UserService';
 import { activityButtonService } from '../../services/ActivityButtonService';
     export default {
         name: "Activity",
 
         props: {
+            /**
+             * activity is a prop which is passed from ActivityFeed containing an activity
+             */
             activity: {
                 type: Object,
                 required: true
             },
+            /**
+             * isLoggedIn is a prop which is passed from ActivityFeed which tells us if the account is logged in or not.
+             */
             isLoggedIn: Boolean
         },
 
         data() {
             return {
+                /**
+                 * isFull tells us if the activity is full or not.
+                 */
                 isFull: false,
+                /**
+                 * alreadyParticipating represents the state of an account's participation in an activity.
+                 */
                 alreadyParticipating: false,
+                /**
+                 * currentParticipants contains number of participants in the activity.
+                 */
                 currentParticipants: 0,
+                /**
+                 * showJoinSpinner represents the visibility of join spinner.
+                 */
                 showJoinSpinner: false,
+                /**
+                 * showRemoveSpinner represents the visibility of remove spinner.
+                 */
                 showRemoveSpinner: false,
+                /**
+                 * participantsInQueue represents number of participants in an activity's queue.
+                 */
                 participantsInQueue: 0,
+                /**
+                 * queuePosition represents the queue position of the account.
+                 */
                 queuePosition: 0,
+                /**
+                 * isInQueue represents the state of an account's existence in the queue.
+                 */
                 isInQueue: false,
+                /**
+                 * isDataReady is a flag which tells us when fetched data is ready for utilization.
+                 */
                 isDataReady: false,
                 accountInfo: {}
             }
         },
 
+        /**
+         * mounted is a function which runs when the component renders.
+         * mounted runs functions and defines values which are important for the app's functionality.
+         */
         async mounted(){
             await this.getCurrentParticipantsNumber();
             if(this.isLoggedIn){
@@ -120,10 +167,10 @@ import { activityButtonService } from '../../services/ActivityButtonService';
         },
         
         methods: {
-            checkIfLoggedIn() {
-                return userService.isLoggedIn();
-            },
-
+            /**
+             * joinButtonClicked is a function which runs on join button click
+             *  and adds account as a participant of the activity.
+             */
             joinButtonClicked(){
                 this.showJoinSpinner = true;
                 if (activityButtonService.joinButtonClicked()) {
@@ -131,6 +178,11 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 }
             },
             
+            /**
+             * removeParticipantClicked is a function which runs removeParticipantFromActivity function in activityButtonService
+             *  if 'OK' is clicked in a confirmation box.
+             * The function also changes number of current participants and queue participants for display purpose.
+             */
             async removeParticipantClicked(){
                 if (activityButtonService.showRemoveAlert()) {
                     this.showRemoveSpinner = true;
@@ -149,6 +201,10 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 }
             },
             
+            /**
+             * getButtonStatus is a function which runs getButtonStatus function in activityButtonService
+             *  and receives button status.
+             */
             getButtonStatus() {
                 let status = activityButtonService.getButtonStatus(this.alreadyParticipating, this.currentParticipants, this.activity);
                 if (status === "Fullt") {
@@ -157,6 +213,12 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 return status;
             },
             
+            /**
+             * isAlreadyParticipating is a function which runs isAlreadyParticipating function in activityButtonService.
+             * If account is present in activity_account table in the database, 
+             *  the function also checks the queue position of account.
+             * Queue position remains 0 if user is not present in the queue.
+             */
             async isAlreadyParticipating() {
                 this.alreadyParticipating = await activityButtonService.isAlreadyParticipating(this.activity);
                 if (this.alreadyParticipating) {
@@ -164,15 +226,27 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 }
             },
 
+            /**
+             * getCurrentParticipantsNumber runs getCurrentParticipantsNumber function in activityButtonService.
+             * If current participants equals max limit, 
+             *  the function also checks how many accounts the queue contains.
+             * Lastly, the function emits currentparticipants back to ActivityFeed,
+             *  along with activity ID as a key.
+             */
             async getCurrentParticipantsNumber(){
-                // Get number of participators on this activity
                 this.currentParticipants = await activityButtonService.getCurrentParticipantsNumber(this.activity);
-                if(this.currentParticipants == this.activity.maxParticipants){
+                if(this.currentParticipants === this.activity.maxParticipants){
                     this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
                 }
                 this.$emit('currentParticipantsFound', this.activity.id, this.currentParticipants);
             },
             
+            /**
+             * addParticipantToActivity runs addParticipantToActivity function in activityButtonService.
+             * If the called function returns correct values,
+             *  the connection was correctly added to the database.
+             * Different variables are modified when the function confirms that the account is successfully participating.
+             */
             async addParticipantToActivity(){
                 let data = await activityButtonService.addParticipantToActivity(this.activity);
                 let accountId = await userService.getAccountByEmail().then(data => accountId = data.id);
@@ -190,10 +264,19 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                     }
             },
             
+            /**
+             * countAccountsInQueue runs countAccountsInQueue function in activityButtonService.
+             * Return value equals the number of participants in the queue.
+             */
             async countAccountsInQueue(){
                 this.participantsInQueue = await activityButtonService.countAccountsInQueue(this.activity);
             },
 
+            /**
+             * getQueuePosition runs getQueuePosition function in activityButtonService.
+             * Return value equals queue position of account.
+             * If the queue position is larger than 0, it means that the account is in the queue.
+             */
             async getQueuePosition(){
                 this.queuePosition = await activityButtonService.getQueuePosition(this.activity);
 
