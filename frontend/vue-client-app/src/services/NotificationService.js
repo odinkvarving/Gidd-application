@@ -10,7 +10,11 @@ export const notificationService = {
     removeNotification
 }
 
-
+/**
+ * Fetches all notifications to a user.
+ * @param {Number} accountId 
+ * @returns notifications
+ */
 function getAccountsNotifications(accountId){
 
     let url = `http://localhost:8080/accounts/${accountId}/notifications`;
@@ -28,6 +32,11 @@ function getAccountsNotifications(accountId){
         .catch(error => console.log(error));
 }
 
+/**
+ * Fetches notification settings to a user.
+ * @param {Number} accountId 
+ * @returns notification settings
+ */
 function getAccountsNotificationSettings(accountId){
     let url = `http://localhost:8080/accounts/${accountId}/accountInfo/notificationSettings`;
 
@@ -44,15 +53,11 @@ function getAccountsNotificationSettings(accountId){
         .catch(error => console.log(error));
 }
 
-/** NotificationSettings object structure
-{
-    wantsActivityChangedNotifications:false,
-    wantsActivityChangedMails: true,
-    wantsOutOfQueueNotifications: false,
-    wantsOutOfQueueMails: true,
-    wantsActivityCancelledNotifications: false,
-    wantsActivityCancelledMails: true
-}
+/**
+ * 
+ * @param {Number} accountId 
+ * @param {NotificationSetting} notificationSettings 
+ * @returns notification settings
  */
 async function updateAccountsNotificationSettings(accountId, notificationSettings){
     let url = `http://localhost:8080/accounts/${accountId}/accountInfo/notificationSettings`;
@@ -74,17 +79,10 @@ async function updateAccountsNotificationSettings(accountId, notificationSetting
         .catch(error => console.log(error));
 }
 
-
-/** Format of notification object:
- * {
-    account:{
-        id: 1
-    },
-    message: "HEllo boyyy",
-    date: "2000-01-01 16:00",
-    isSeen: false,
-    activityId: 108
-    }
+/**
+ * Sends notification to user.
+ * @param {boolean} notification 
+ * @returns boolean
  */
 function sendNotification(notification){
     let url = `http://localhost:8080/accounts/notifications`
@@ -106,7 +104,11 @@ function sendNotification(notification){
         .catch(error => console.log(error))
 }
     
-
+/**
+ * Updates notifications.
+ * @param {boolean} notification 
+ * @returns boolean
+ */
 function updateNotification(notification){
     let url = `http://localhost:8080/accounts/notifications`;
 
@@ -127,7 +129,11 @@ function updateNotification(notification){
         .catch(error => console.log(error))
 }
 
-
+/**
+ * Sends notification on all participants on given activity.
+ * @param {Number} activityId 
+ * @returns Notification
+ */
 async function sendNotificationToAllParticipants(activityId){
     let url = `http://localhost:8080/activities/${activityId}/notify-edit`;
 
@@ -143,6 +149,11 @@ async function sendNotificationToAllParticipants(activityId){
         .catch(error => console.log(error));
 }
 
+/**
+ * Removes notification with given ID.
+ * @param {Number} notificationId 
+ * @returns Notification
+ */
 async function removeNotification(notificationId){
     console.log(notificationId);
     let url = `http://localhost:8080/accounts/notifications/${notificationId}`;
