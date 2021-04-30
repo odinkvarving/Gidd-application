@@ -511,9 +511,6 @@ export default {
       }
       this.sortList();
     },
-    sortList() {
-      // TODO: Sort list when adding new activity
-    },
   },
 };
 </script>
@@ -526,6 +523,7 @@ export default {
 }
 #feed {
   width: 70vw;
+  min-height: 100vh;
   display: flex;
   flex-flow: row wrap;
   align-items: center;
@@ -746,6 +744,10 @@ export default {
   #filter-button {
     width: 60px;
     margin-left: -115px;
+  }
+
+  @media (max-width: 935px) {
+    
   }
 }
 

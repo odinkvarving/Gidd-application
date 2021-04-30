@@ -62,7 +62,7 @@
 
         <b-nav-item-dropdown right>
           <template slot="button-content">
-            <img v-if="accountInfo.imageURL !== ''" class="profile-pic" alt="Profile picture" :src="this.accountInfo.imageURL" height="40px" width="40px">
+            <img v-if="accountInfo.imageURL !== '' || accountInfo.imageURL !== null" class="profile-pic" alt="Profile picture" :src="this.accountInfo.imageURL" height="40px" width="40px">
             <img v-else src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="default pic" class="profile-pic" height="40px" width="40px">
 
           </template>
@@ -72,7 +72,7 @@
           <b-dropdown-item to="/feedback">
             Gi tilbakemelding
           </b-dropdown-item>
-          <b-dropdown-item @click="logoutClicked()" to="/">
+          <b-dropdown-item @click="logoutClicked()">
             Logg ut
           </b-dropdown-item>
         </b-nav-item-dropdown>
@@ -286,12 +286,13 @@ export default {
     },
     logoutClicked() {
       userService.logout();
+      this.$router.push("/");
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 .menu-item {
   margin: 0 10px;
 }
