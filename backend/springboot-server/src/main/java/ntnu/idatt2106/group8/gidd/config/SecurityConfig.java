@@ -55,7 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/accounts/{id}/info",
             "/messages/{id}",
             "/accounts/{id}/profilepicture",
-            "/profilepictures/{filename}"};
+            "/profilepictures/{filename}",
+            "/profilepictures/"};
     @Autowired
     CustomUserDetailsService customUserDetailsService;
     @Autowired

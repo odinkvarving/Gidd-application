@@ -1,5 +1,5 @@
 <template>
-  <b-navbar class="bg-white" toggleable="md" fixed="top" v-show="onHomePage">
+  <b-navbar class="bg-white" toggleable="md" fixed="top">
     <router-link to="/dashboard">
       <img
         src="../../assets/Logo.jpg"
@@ -34,9 +34,8 @@
                   v-for="(result, i) in results"
                   :key="i"
                   class="autocomplete-result"
-                  :class="{ 'is-active': i === arrowCounter }"
-                >
-                  <p @click="resultClicked(result.id)">
+                  :class="{ 'is-active': i === arrowCounter }">
+                  <p @click="resultButtonClicked(result.id)">
                     <span class="title">{{ result.title }}</span>
                     <span class="email">{{ result.creator.email }}</span>
                   </p>
@@ -87,7 +86,7 @@ import { userService } from "../../services/UserService.js";
 
 export default {
   name: "navbar",
-  props: {
+  /* props: {
     items: {
       type: Array,
       required: false,
@@ -110,7 +109,7 @@ export default {
       }
     },
   },
-
+ */
   components: {
     NotificationsDropdown,
   },
@@ -124,6 +123,7 @@ export default {
       this.accountInfo = await userService.getAccountInfo(account.id);
     }
   },
+
   destroyed() {
     document.removeEventListener("click", this.handleClickOutside);
   },
@@ -131,10 +131,16 @@ export default {
   data() {
     return {
       isCreateActivityVisible: false,
+      /**
+       * User: Contains information about the different items in the navbar dropdown menu, with corresponding links and functions.
+       */
       user: [
         {
           title: "Min Profil",
           link: String,
+          /**
+           * Checks if user is logged in, and adds the correct routing link to user page.
+           */
           method: () => {
             console.log(this.user[0].link);
             if (this.user[0].link) {
@@ -162,38 +168,58 @@ export default {
           },
         },
       ],
+      /**
+       * Boolean operator that flags if a user is logged in.
+       */
       isLoggedIn: false,
+      /**
+       * Array of notifications.
+       */
       notifications: [{}],
+      /**
+       * List of activities.
+       */
       activities: {},
+      /**
+       * Input text in search field
+       */
       search: "",
+      /**
+       * Boolean operator that flags if something is loading.
+       */
       isLoading: false,
+      /**
+       * List of search results.
+       */
       results: [],
+      /**
+       * oolean operator that flags if search field is open.
+       */
       isOpen: false,
+      /**
+       * Used to check which item in search field is selected with arrows.
+       */
       arrowCounter: -1,
+      /**
+       * Account info
+       */
       accountInfo: {}
     };
   },
-  computed: {
-    onHomePage() {
-      if (
-        this.$route.path === "/" ||
-        this.$route.path === "/register" ||
-        this.$route.path === "/login" ||
-        this.$route.path === "/forgotPassword" ||
-        this.$route.path.includes("/resetpassword")
-      ) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-  },
+
+  /**
+   * Gets the logged in users user id on creation.
+   */
   created() {
     if (userService.getTokenString()) {
       this.getUserId();
     }
   },
+
   methods: {
+    /**
+     * Gets the logged in users user id, and sets the navbar dropdown user page link to the given user page.
+     */
     async getUserId() {
       let res = await userService.getAccountByEmail(
         userService.getAccountDetails().sub
@@ -201,22 +227,22 @@ export default {
       this.user[0].link = "/accounts/" + res.id;
     },
 
-    async resultClicked(resultId) {
+    /**
+     * Routes to correct activity page when a search result is clicked.
+     */
+    resultClicked(resultId) {
       console.log(resultId);
       if (this.$router.path !== `/dashboard/activity/${resultId}`) {
         console.log("test");
-        await this.$router.push(`/dashboard/activity/${resultId}`);
+        this.$router.push(`/dashboard/activity/${resultId}`);
       }
       this.isOpen = false;
       this.search = "";
     },
-    toggleCreateActivity() {
-      if (this.isCreateActivityVisible === false) {
-        this.isCreateActivityVisible = true;
-      } else {
-        this.isCreateActivityVisible = false;
-      }
-    },
+
+    /**
+     * Fetches activities from backend.
+     */
     getActivities() {
       const requestOptions = {
         method: "GET",
@@ -231,6 +257,10 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+
+    /**
+     * Filter results from selected keywords.
+     */
     filterResults() {
       console.log(this.search);
       this.results = [];
@@ -250,15 +280,20 @@ export default {
         }
       }
     },
+
+
     onChange() {
       this.$emit("input", this.search);
       if (this.isAsync) {
         this.isLoading = true;
-      } else {
+      }else if (this.search === "") {
+        this.isOpen = false;
+      }else {
         this.filterResults();
         this.isOpen = true;
       }
     },
+    
     setResult(result) {
       this.search = result;
       this.isOpen = false;
@@ -279,10 +314,16 @@ export default {
         this.arrowCounter = this.arrowCounter - 1;
       }
     },
+
+    resultButtonClicked(resultId) {
+      this.resultClicked(resultId);
+    },
+
     onEnter() {
       //fiks onEnter gjør samme som click
       this.search = this.results[this.arrowCounter];
       this.arrowCounter = -1;
+      this.resultClicked(this.search.id);
     },
     logoutClicked() {
       userService.logout();
@@ -378,6 +419,7 @@ input {
 
 .bg-white {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  min-height: 72px;
 }
 
 a.nav-link {
@@ -394,5 +436,16 @@ a.nav-link {
   margin-left: 10px;
   margin-right: 10px;
   border-radius: 100%;
+}
+
+.title {
+  float: left;
+  clear: left;
+  margin: 0 !important;
+}
+
+.email {
+  float: left;
+  clear: left;
 }
 </style>

@@ -1,9 +1,7 @@
 <template>
   <div class="profile_container">
     <NavBar />
-    <img src="../assets/Default_cover.jpg" alt="Cover photo"
-         id="cover_photo"/>
-    <img :src=AccountInfo.imageURL @error="getDefaultImg" alt="Profil bilde"
+    <img :src=AccountInfo.imageURL @error="AccountInfo.imageURL" alt="Profil bilde"
          width="170" height="170"
          id="profile_photo">
     <div class="profile_info">
