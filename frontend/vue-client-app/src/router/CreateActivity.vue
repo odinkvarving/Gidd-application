@@ -185,9 +185,10 @@ data() {
     this.getLevels();
   },
   methods: {
+    /**
+     * createButtonClicked is a function which runs when create button is clicked and creates activity
+     */
     createButtonClicked(){
-      //DOUBLE CHECK IF USER IS LOGGED IN HERE WITH isLoggedIn()
-
         this.showSpinner = true;
         this.equipmentState = true;
 
@@ -205,9 +206,11 @@ data() {
         }else{
           this.showSpinner = false;
         }
-        
-
     },
+
+    /**
+     * setLocation is a function which sets location to activity
+     */
     setLocation(location){
       if(location.geometry){
         this.currentLocation = location;
@@ -218,6 +221,10 @@ data() {
         this.currentLocation = location;
       }
     },
+
+    /**
+     * createActivity is a function which creates activity by sending POST request
+     */
     async createActivity(){
 
       let accountDetails = await userService.getAccountByEmail();
@@ -271,9 +278,11 @@ data() {
         })
         .finally(this.showSpinner = false)
         .catch(error => console.log(error));
-
-      
     },
+
+    /**
+     * getCategories is a function which returns all categories
+     */
     async getCategories(){      
       
       let categoriesList;
@@ -294,6 +303,10 @@ data() {
         this.categories.push(categoriesList[i].type);
       }
     },
+
+    /**
+     * getLevels is a function which returns all levels
+     */
     async getLevels(){
       let levelsList;
 
@@ -313,6 +326,10 @@ data() {
         this.levels.push(levelsList[i].description);
       }
     },
+
+    /**
+     * validateStartAndEndDate is a function which validates start time and end time of activity
+     */
     validStartAndEndDate(){
       this.startDate === '' || this.startTime === '' ? this.startDateState = false : this.startDateState = true;
       this.endDate === '' || this.endTime === '' ? this.endDateState = false : this.endDateState = true;

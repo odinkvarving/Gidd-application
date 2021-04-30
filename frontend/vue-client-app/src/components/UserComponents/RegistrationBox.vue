@@ -80,12 +80,17 @@
     />
   </div>
 </template>
-
 <script>
+/**
+ * Services and modals are imported
+ */
 import { userService } from "../../services/UserService";
 import ConfirmModal from "../PopUpComponents/ConfirmModal.vue";
 import ErrorModal from "../PopUpComponents/ErrorModal.vue";
 
+/**
+ * RegistrationBox is a component which displays registration box
+ */
 export default {
   name: "RegistrationBox",
   components: {
@@ -107,6 +112,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * registerUser is a function which registers user
+     */
     async registerUser() {
       console.log("Register button clicked");
       if (this.validInputs()) {
@@ -120,6 +128,10 @@ export default {
         setTimeout(() => this.$router.push({ path: "/dashboard" }), 3000);
       }
     },
+
+    /**
+     * validInputs is a function which checks valid inputs and validates it
+     */
     validInputs() {
       this.validateName();
       this.validatePhone();
@@ -130,22 +142,42 @@ export default {
         this.nameValid && this.phoneValid && this.emailValid && this.phoneValid
       );
     },
+
+    /**
+     * validateName is a function which validates name
+     */
     validateName() {
       this.nameValid = true;
     },
+
+    /**
+     * validatePhone is a function which validates phone number
+     */
     validatePhone() {
       let regPhone = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
       this.phoneValid = regPhone.test(this.phoneValue);
     },
+
+    /**
+     * validateEmail is a function which validates email
+     */
     validateEmail() {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
       this.emailValid = re.test(String(this.emailValue).toLowerCase());
     },
+
+    /**
+     * validatePassword is function which validates password
+     */
     validatePassword() {
       this.passwordValid =
         this.passwordValue.length >= 6 && this.passwordValue.length <= 16;
     },
+
+    /**
+     * sendNewUserToServer is a function which sends account information to backend
+     */
     async sendNewUserToServer() {
       let name = this.nameValue.split(" ");
 
@@ -193,15 +225,6 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-
-      //TODO: make it possible to redirect to login page AND show modal
-      // await this.$router.push("/login");
-    },
-    handleRegisterWithFacebook() {
-      //Implement facebook compability
-    },
-    handleRegisterWithGoogle() {
-      //Implement google compability
     },
   },
 };
