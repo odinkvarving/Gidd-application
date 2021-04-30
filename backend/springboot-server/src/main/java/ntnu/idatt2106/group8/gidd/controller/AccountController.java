@@ -342,8 +342,8 @@ public class AccountController {
             MediaType.IMAGE_PNG_VALUE})
     public @ResponseBody
     byte[] getDefaultImage() throws IOException {
-        return this.imageService.getDefaultImageWithMediaType();
-    }
 
+        return this.imageService.getImageWithMediaType("default-avatar.png");
+    }
 
 }
