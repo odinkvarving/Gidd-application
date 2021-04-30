@@ -3,14 +3,16 @@
         <router-link to="/login"><button class="button login"><span>Logg inn</span></button></router-link>
     </div>
 </template>
-
 <script>
+/**
+ * FrontPageNav is a component which displays a navigation bar on the front page.
+ * 
+ * @author Mattias Agentoft Eggen
+ */
 export default {
     name: "FrontPageNav",
-    
 }
 </script>
-
 <style>
     .navigation-bar {
         display: flex;

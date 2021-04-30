@@ -34,6 +34,12 @@ import ChatElement from "./ChatElement.vue";
  * @author Endré Hadzalic
  */
 export default {
+  name: "Chat",
+
+  components: {
+    ChatElement,
+  },
+
   props: {
     /**
      * activity is an object passed from ActivityCard which contains the current activity.
@@ -43,10 +49,7 @@ export default {
       required: true,
     },
   },
-  name: "Chat",
-  components: {
-    ChatElement,
-  },
+
   data() {
     return {
       /**
@@ -71,11 +74,13 @@ export default {
       userId: null,
     };
   },
+
   created() {
     this.pageRoute = this.$route.name;
     this.loadUserId();
     this.startTimer();
   },
+  
   methods: {
     /**
      * startTimer is a function which defines timer ID as a pointer to the update interval.

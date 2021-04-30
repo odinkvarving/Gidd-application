@@ -34,18 +34,36 @@
     <div class="spacing"></div>
   </div>
 </template>
-
 <script>
+/**
+ * ForgotPasswordBox is a component which is displayed when the account is redirected to 'forgot password' site.
+ * 
+ * @author Endré Hadzalic
+ */
 export default {
   name: "ForgotPasswordBox",
+
   data() {
     return {
+      /**
+       * isEmailValid tells us if the account email is valid.
+       */
       isEmailValid: true,
+      /**
+       * emailValue represents the email as as a string.
+       */
       emailValue: "",
+      /**
+       * sent represents the send state.
+       */
       sent: false,
     };
   },
+
   methods: {
+    /**
+     * postAddress is a function which calls send method if the email input is valid.
+     */
     postAddress() {
       this.isEmailValid = true;
       if (!this.validateEmail()) {
@@ -56,6 +74,10 @@ export default {
         this.sent = true;
       }
     },
+
+    /**
+     * redirectPage is a function which will redirect the user to login site.
+     */
     redirectPage() {
       setTimeout(() => {
         if (this.redirect > 0) {
@@ -66,20 +88,26 @@ export default {
         }
       }, 1000);
     },
+
+    /**
+     * validateEmail is a function which validates an account email.
+     */
     validateEmail() {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(String(this.emailValue).toLowerCase());
     },
+
+    /**
+     * send is a function which sends a POST request to backend for resetting the password.
+     */
     async send() {
       fetch("http://localhost:8080/reset/" + this.emailValue, {
         method: "POST",
       });
-      console.log("Sent password reset request for " + this.emailValue);
     },
   },
 };
 </script>
-
 <style scoped>
 .header {
   margin-top: 50px;
