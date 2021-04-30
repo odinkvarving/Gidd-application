@@ -43,29 +43,48 @@ public class ChatService {
         return this.chatMessageRepository.findChatMessagesByActivityIdOrderByTimeStamp(activityId);
     }
 
-    public void updateChatMessage(int messageId, String newMessage) {
+    /**
+     * Updates the message with the given id.
+     *
+     * @param id        the id of the chat message to update
+     * @param message   the new state to set to the chat message
+     */
+    public void updateChatMessage(int id, String message) {
         try {
-            ChatMessage foundMessage = this.chatMessageRepository.findById(messageId).orElseThrow(NoSuchElementException::new);
-            foundMessage.setMessage(newMessage);
+            ChatMessage foundMessage = this.chatMessageRepository.findById(id).orElseThrow(NoSuchElementException::new);
+            foundMessage.setMessage(message);
             this.chatMessageRepository.save(foundMessage);
         } catch (NoSuchElementException nee) {
-            logger.error("error did not find the chatmessage that is to be updated", nee);
+            logger.error("error did not find the chat-message that is to be updated", nee);
         }
     }
 
-    public void deleteChatMessage(int messageId) {
-        this.chatMessageRepository.deleteById(messageId);
+    /**
+     * Deletes the chat message with the given id.
+     *
+     * @param id the chat message to delete
+     */
+    public void deleteChatMessage(int id) {
+        this.chatMessageRepository.deleteById(id);
     }
 
+    /**
+     * Deletes all chat messages on the activity with the given id
+     *
+     * @param activityId the id of the activity
+     */
     public void deleteAllMessagesByActivity(int activityId) {
         List<ChatMessage> messages = this.chatMessageRepository.findChatMessagesByActivityId(activityId);
         this.chatMessageRepository.deleteAll(messages);
     }
 
+    /**
+     * Deletes all chat messages written by the account with the given id
+     *
+     * @param accountId the id of the account
+     */
     public void deleteAllMessagesByAccount(int accountId) {
         List<ChatMessage> messages = this.chatMessageRepository.findChatMessagesByAccountId(accountId);
         this.chatMessageRepository.deleteAll(messages);
     }
-
-
 }
