@@ -116,7 +116,7 @@
       <div class="horizontal-line" />
       <div id="coming-activities">
         <!-- TODO: refresh joined activity list when activity is joined or removed -->
-        <div v-for="a in joinedActivities" :key="a.id" style="width: 100%;">
+        <div v-for="a in joinedActivities" :key="a.id" style="width: 100%">
           <div
             @click="joinedActivityClicked(a.id)"
             class="joined-activity-container"
@@ -268,12 +268,12 @@ export default {
           });
         })
         .catch((error) => console.log(error));
-      for(let i = 0; i < this.activities.length; i++) {
-          this.locations.push({
-              value: this.activities[i].location,
-              text: this.activities[i].location,
-              id: (i+1),
-          })
+      for (let i = 0; i < this.activities.length; i++) {
+        this.locations.push({
+          value: this.activities[i].location,
+          text: this.activities[i].location,
+          id: i + 1,
+        });
       }
     },
 
@@ -304,21 +304,21 @@ export default {
      * A GET request is sent to backend.
      */
     async getLevels() {
-        const requestOptions = {
-            method: "GET"
-        };
+      const requestOptions = {
+        method: "GET",
+      };
 
-        await fetch("http://localhost:8080/levels/", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                for(let i = 0; i < data.length; i++) {
-                    this.levels.push({
-                        value: data[i].description,
-                        text: data[i].description
-                    })
-                }
-            })
-            .catch((error) => console.log(error));
+      await fetch("http://localhost:8080/levels/", requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          for (let i = 0; i < data.length; i++) {
+            this.levels.push({
+              value: data[i].description,
+              text: data[i].description,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
     },
 
     /**
@@ -390,14 +390,14 @@ export default {
     generateFilteredList() {
       let list = this.activities;
 
-      if(this.selectedCategory !== "") {
-          list = this.filterByCategory(list);
+      if (this.selectedCategory !== "") {
+        list = this.filterByCategory(list);
       }
-      if(this.selectedLevel !== "") {
-          list = this.filterByLevel(list);
+      if (this.selectedLevel !== "") {
+        list = this.filterByLevel(list);
       }
-      if(this.selectedLocation !== "") {
-          list = this.filterByLocation(list);
+      if (this.selectedLocation !== "") {
+        list = this.filterByLocation(list);
       }
 
       if (this.selectedCategory !== "") {
@@ -487,7 +487,7 @@ export default {
      * sortByNameAsc is a function which sorts filtered list by name from A to Å.
      */
     sortByNameAsc() {
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         if (x.title < y.title) return -1;
         else if (x.title > y.title) return 1;
         return 0;
@@ -498,7 +498,7 @@ export default {
      * sortByNameDesc is a function which sorts filtered list by name from Å to A.
      */
     sortByNameDesc() {
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         if (x.title < y.title) return 1;
         else if (x.title > y.title) return -1;
         return 0;
@@ -509,7 +509,7 @@ export default {
      * sortByTimeEarliest is a function which sorts filtered list by startTime from earliest to latest.
      */
     sortByTimeEarliest() {
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         return new Date(x.startTime) - new Date(y.startTime);
       });
     },
@@ -518,7 +518,7 @@ export default {
      * sortByTimeLatest is a function which sorts filtered list by startTime from latest to earliest.
      */
     sortByTimeLatest() {
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         return new Date(y.startTime) - new Date(x.startTime);
       });
     },
@@ -527,7 +527,7 @@ export default {
      * sortByDurationDesc is a function which sorts filtered list by duration from highest to lowest.
      */
     sortByDurationDesc() {
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         let d1 = new Date(y.endTime) - new Date(y.startTime);
         let d2 = new Date(x.endTime) - new Date(x.startTime);
         return d1 - d2;
@@ -538,7 +538,7 @@ export default {
      * sortByDurationAsc is a function which sorts filtered list by duration from lowest to highest.
      */
     sortByDurationAsc() {
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         let d1 = new Date(x.endTime) - new Date(x.startTime);
         let d2 = new Date(y.endTime) - new Date(y.startTime);
         return d1 - d2;
@@ -549,9 +549,11 @@ export default {
      * sortByFreeSpotsDesc is a function which sorts filtered list by free spots from highest to lowest.
      */
     sortByFreeSpotsDesc() {
-      return this.filteredActivities.sort((x,y) => {
-        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
-        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+      return this.filteredActivities.sort((x, y) => {
+        let current1 = this.currentParticipantsAll.find((a) => a.id === y.id)
+          .currentParticipants;
+        let current2 = this.currentParticipantsAll.find((a) => a.id === x.id)
+          .currentParticipants;
         let free1 = y.maxParticipants - current1;
         let free2 = x.maxParticipants - current2;
         return free1 - free2;
@@ -562,9 +564,11 @@ export default {
      * sortByFreeSpotsAsc is a function which sorts filtered list by free spots from lowest to highest.
      */
     sortByFreeSpotsAsc() {
-      return this.filteredActivities.sort((x,y) => {
-        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
-        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+      return this.filteredActivities.sort((x, y) => {
+        let current1 = this.currentParticipantsAll.find((a) => a.id === x.id)
+          .currentParticipants;
+        let current2 = this.currentParticipantsAll.find((a) => a.id === y.id)
+          .currentParticipants;
         let free1 = x.maxParticipants - current1;
         let free2 = y.maxParticipants - current2;
         return free1 - free2;
@@ -575,9 +579,11 @@ export default {
      * sortByCurrentParticipantsDesc is a function which sorts filtered list by current participants from highest to lowest.
      */
     sortByCurrentParticipantsDesc() {
-      return this.filteredActivities.sort((x,y) => {
-        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
-        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+      return this.filteredActivities.sort((x, y) => {
+        let current1 = this.currentParticipantsAll.find((a) => a.id === y.id)
+          .currentParticipants;
+        let current2 = this.currentParticipantsAll.find((a) => a.id === x.id)
+          .currentParticipants;
         return current1 - current2;
       });
     },
@@ -586,9 +592,11 @@ export default {
      * sortByCurrentParticipantsAsc is a function which sorts filtered list by current participants from lowest to highest.
      */
     sortByCurrentParticipantsAsc() {
-      return this.filteredActivities.sort((x,y) => {
-        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
-        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+      return this.filteredActivities.sort((x, y) => {
+        let current1 = this.currentParticipantsAll.find((a) => a.id === x.id)
+          .currentParticipants;
+        let current2 = this.currentParticipantsAll.find((a) => a.id === y.id)
+          .currentParticipants;
         return current1 - current2;
       });
     },
@@ -597,7 +605,7 @@ export default {
      * sortByLevelDesc is a function which sorts filtered list by level from highest to lowest.
      */
     sortByLevelDesc() {
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         return y.level.id - x.level.id;
       });
     },
@@ -606,7 +614,7 @@ export default {
      * sortByLevelAsc is a function which sorts filtered list by level from lowest to highest.
      */
     sortByLevelAsc() {
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         return x.level.id - y.level.id;
       });
     },
@@ -632,7 +640,9 @@ export default {
       fetch(url, requestOptions)
         .then((response) => response.json())
         .then((data) => {
-          let sorted = data.sort((x,y) => new Date(x.startTime) - new Date(y.startTime));
+          let sorted = data.sort(
+            (x, y) => new Date(x.startTime) - new Date(y.startTime)
+          );
           this.joinedActivities = sorted;
         })
         .catch((error) => console.log(error));
@@ -693,7 +703,6 @@ export default {
           }
         }
       }
-      this.sortList();
     },
   },
 };
@@ -927,7 +936,6 @@ export default {
   }
 
   @media (max-width: 935px) {
-    
   }
 }
 </style>
