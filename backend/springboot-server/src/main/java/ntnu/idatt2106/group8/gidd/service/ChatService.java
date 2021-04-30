@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
+ * Class to manage chat messages written by users on activities
  * @author Endré Hadzalic
  */
 @Service
