@@ -186,11 +186,9 @@ data() {
   },
   methods: {
     /**
-     * Validates input field and creates activity if correct.
+     * createButtonClicked is a function which runs when create button is clicked and creates activity
      */
     createButtonClicked(){
-      //DOUBLE CHECK IF USER IS LOGGED IN HERE WITH isLoggedIn()
-
         this.showSpinner = true;
         this.equipmentState = true;
 
@@ -208,12 +206,10 @@ data() {
         }else{
           this.showSpinner = false;
         }
-        
-
     },
 
     /**
-     * Sets location to the activity from given input.
+     * setLocation is a function which sets location to activity
      */
     setLocation(location){
       if(location.geometry){
@@ -227,7 +223,7 @@ data() {
     },
 
     /**
-     * Creates activity.
+     * createActivity is a function which creates activity by sending POST request
      */
     async createActivity(){
 
@@ -282,12 +278,10 @@ data() {
         })
         .finally(this.showSpinner = false)
         .catch(error => console.log(error));
-
-      
     },
 
     /**
-     * Gets all activities from database.
+     * getCategories is a function which returns all categories
      */
     async getCategories(){      
       
@@ -311,7 +305,7 @@ data() {
     },
 
     /**
-     * Gets all levels from database.
+     * getLevels is a function which returns all levels
      */
     async getLevels(){
       let levelsList;
@@ -320,7 +314,7 @@ data() {
       this.participantValue = "Alle";
 
       let url = `http://localhost:8080/levels/`;
-
+      
       await fetch(url,{
         method: 'GET',
         headers: userService.authorizationHeader()
@@ -334,7 +328,7 @@ data() {
     },
 
     /**
-     * Controls that the start date is before the end date, and is valid.
+     * validateStartAndEndDate is a function which validates start time and end time of activity
      */
     validStartAndEndDate(){
       this.startDate === '' || this.startTime === '' ? this.startDateState = false : this.startDateState = true;

@@ -49,38 +49,68 @@
     <div class="spacing" v-if="!showLoginError"></div>
   </div>
 </template>
-
 <script>
+/**
+ * userService is imported for efficient use of functions
+ */
 import { userService } from "../../services/UserService.js";
 
+/**
+ * LoginBox is a component which displays login.
+ *
+ * @author Mattias Agentoft Eggen
+ */
 export default {
   name: "LoginBox",
   data() {
     return {
+      /**
+       * isEmailValid tells us if the email is valid
+       */
       isEmailValid: true,
+      /**
+       * isPasswordValid tells us if password is valid
+       */
       isPasswordValid: true,
+      /**
+       * emailValue contains account email
+       */
       emailValue: "",
+      /**
+       * passwordValue contains account password value
+       */
       passwordValue: "",
+      /**
+       * showLoginError tells us if there is a login error
+       */
       showLoginError: false,
     };
   },
   methods: {
+    /**
+     * loginUser is a function which runs account login
+     */
     loginUser() {
-      console.log("Login button clicked");
-
       this.isEmailValid = true;
       if (!this.validateEmail()) {
         this.isEmailValid = false;
       }
       if (this.isEmailValid) {
-        console.log("All inputs are valid. Trying to sign in...");
         this.login();
       }
     },
+
+    /**
+     * validateEmail is a function which validates account email
+     */
     validateEmail() {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(String(this.emailValue).toLowerCase());
     },
+
+    /**
+     * login is a function which also runs a part of account login
+     */
     async login() {
       let response = await userService.login(
         this.emailValue,
@@ -88,14 +118,15 @@ export default {
       );
 
       if (response.jwtToken) {
-        console.log("Login successfull! Token: ");
-        console.log(response.jwtToken);
         this.$router.push("/dashboard");
       } else {
-        console.log("Invalid login credentials.");
         this.showLoginError = true;
       }
     },
+
+    /**
+     * closeInvalidLoginError is a function which closes login error box
+     */
     closeInvalidLoginError() {
       this.showLoginError = false;
     },
