@@ -41,7 +41,7 @@ public class ImageService {
      *
      * @param file      the image to store to a account.
      * @param accountId the id of the account to store the image to
-     * @return
+     * @return          false if something went wrong. True if the image was added
      */
     public boolean uploadPictureToAccount(MultipartFile file, int accountId) {
 
@@ -123,6 +123,12 @@ public class ImageService {
             return getDefaultImage();
         }
     }
+
+    /**
+     * Returns the data of a default image or an empty array, if something went wrong
+     *
+     * @return Returns the data of a default image or an empty array, if something went wrong
+     */
     public byte[] getDefaultImage() {
         try {
             Path p = Paths.get(STORAGE_DIR+dir+"default.png");
@@ -134,12 +140,4 @@ public class ImageService {
         }
 
     }
-
-    public static void main(String[] args) {
-        System.out.println(File.separator);
-    }
-
-
-
-
 }

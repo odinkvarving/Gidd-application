@@ -56,6 +56,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * Calls click() function when button is clicked
+     */
     onClickSendButton() {
       if (this.rating === 0) {
         this.isRated = false;
@@ -66,6 +69,9 @@ export default {
       this.send();
     },
 
+    /**
+     * Sends email with entered input and rating.
+     */
     send() {
       let feedbackData = {
         sender: userService.getAccountDetails().sub,

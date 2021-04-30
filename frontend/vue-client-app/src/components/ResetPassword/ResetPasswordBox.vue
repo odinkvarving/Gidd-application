@@ -72,6 +72,8 @@ import ErrorModal from "../PopUpComponents/ErrorModal.vue";
 
 /**
  * ResetPasswordBox is a component which displays a component for password reset
+ * 
+ * @author Endré Hadzalic
  */
 export default {
   name: "ResetPasswordBox",
@@ -82,15 +84,36 @@ export default {
   data() {
     return {
       /**
-       * submitted 
+       * submitted tells us if password is submitted
        */
       submitted: false,
+      /**
+       * isPasswordValid tells us if password is valid
+       */
       isPasswordValid: true,
+      /**
+       * isPasswordsEqual tells us if the password inputs are equal
+       */
       isPasswordsEqual: true,
+      /**
+       * didCheck is a flag for password testing
+       */
       didCheck: false,
+      /**
+       * passwordValue contains value of password input
+       */
       passwordValue: "",
+      /**
+       * confirmPasswordValue contains the confirm password input
+       */
       confirmPasswordValue: "",
+      /**
+       * email represents the account email
+       */
       email: null,
+      /**
+       * resetSuffix contains the password suffix from path
+       */
       resetSuffix: this.$route.params.passwordSuffix,
     };
   },
@@ -111,12 +134,19 @@ export default {
       .catch((error) => console.error("Error:", error));
   },
   methods: {
+    /**
+     * testPasswords is a function which checks if passwords are valid.
+     */
     testPasswords() {
       this.didCheck = true;
       this.isPasswordsEqual = this.passwordValue === this.confirmPasswordValue;
       let pLength = this.passwordValue.length;
       this.isPasswordValid = pLength >= 5 && pLength <= 16;
     },
+
+    /**
+     * submitPassword is a function which sends a PUT request to submit new password.
+     */
     async submitPassword() {
       this.submitted = true;
       if (this.isPasswordValid && this.isPasswordsEqual && this.didCheck) {

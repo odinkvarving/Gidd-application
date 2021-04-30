@@ -114,10 +114,17 @@ export default {
       this.currentComp=newComp
 
     },
+
+    /**
+     * Requires default image.
+     */
     getDefaultImg(){
       this.AccountInfo.imageURL=require("../assets/Default_profile.png")
     },
 
+    /**
+     * Method to require all info about a user.
+     */
     getUserInfo(){
       console.log(this.$route.params.userId)
       //Getting the user data
@@ -164,6 +171,10 @@ export default {
           })
           .catch(e=>console.log(e))
     },
+
+    /**
+     * Method to require all acitivties in database.
+     */
     getAllActivities(){
       fetch(path_to_db+`accounts/${this.$route.params.userId}/activities`,{
         method:'GET',
@@ -189,6 +200,9 @@ export default {
     NavBar
   },
   computed:{
+    /**
+     * Makes activity ready as a prop.
+     */
     activityProperties(){
       //Calendar component
       if(this.currentComp==='profileCalendar'){
