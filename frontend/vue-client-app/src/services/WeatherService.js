@@ -21,9 +21,9 @@ let weather = null;
 /**
  * getWeather is a function which finds the weather at a given location,
  *  if startTime is within 7 days of current time.
- * @param latitude: latitude of activity location
- * @param longitude: longitude of activity location
- * @param time: startTime of activity
+ * @param {float} latitude: latitude of activity location
+ * @param {float} longitude: longitude of activity location
+ * @param {string} time: startTime of activity
  * @returns weather at activity location
  */
 async function getWeather(latitude, longitude, time) {
