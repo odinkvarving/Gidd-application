@@ -113,11 +113,11 @@ public class ImageService {
                 logger.info("serving : " + destination);
                 return IOUtils.toByteArray(destination.toUri());
             } else if(imageName.length()==0){
-                Path destination = Paths.get(STORAGE_DIR + "\\" + "default-avatar.png");
+                Path destination = Paths.get(STORAGE_DIR + "\\" + "defaultavatar.png");
                 logger.info(imageName + " was not found, returning default avatar.");
                 return IOUtils.toByteArray(destination.toUri());
             }else {
-                Path destination = Paths.get(STORAGE_DIR + "\\" + "default-avatar.png");
+                Path destination = Paths.get(STORAGE_DIR + "\\" + "defaultavatar.png");
                 logger.info(imageName + " was not found, returning default avatar.");
                 return IOUtils.toByteArray(destination.toUri());
             }
@@ -127,14 +127,5 @@ public class ImageService {
         }
     }
 
-    public byte[] getDefaultImageWithMediaType(){
-        try {
-            Path destination = Paths.get(STORAGE_DIR + "\\" + "default-avatar.png");
-            logger.info("Returning default avatar.");
-            return IOUtils.toByteArray(destination.toUri());
-        } catch (Exception e){
-            logger.error("error during fetching of default image", e);
-            return null;
-        }
-    }
+
 }

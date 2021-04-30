@@ -145,9 +145,6 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                  * isDataReady is a flag which tells us when fetched data is ready for utilization.
                  */
                 isDataReady: false,
-                /**
-                 * accountInfo is an object which contains general info about the account
-                 */
                 accountInfo: {}
             }
         },
@@ -323,6 +320,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
     #ownerInfo{
         display: flex;
         align-items: center;
+        justify-content: space-between;
         margin: auto;
         width: 100%;
         margin: 20px 0 0 65px;
