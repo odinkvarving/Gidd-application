@@ -34,8 +34,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Account account = accountService.findByEmail(email);
-        logger.info("Account email: " + account.getEmail());
-        logger.info("Encrypted password: " + account.getPassword());
         if (account.getEmail() == null) {
             return null;
         }

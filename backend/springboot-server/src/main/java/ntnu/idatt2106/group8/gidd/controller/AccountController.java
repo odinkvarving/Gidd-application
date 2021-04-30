@@ -55,8 +55,6 @@ public class AccountController {
     @GetMapping("accounts/{email}")
     public Account getAccountByEmail(@PathVariable String email) {
         Account account = accountService.findByEmail(email);
-        logger.info("Retrieving account with email: " + email);
-        logger.info(account.toString());
         return account;
     }
 
@@ -323,7 +321,6 @@ public class AccountController {
 
     @PostMapping("/accounts/{id}/profilepicture")
     public boolean uploadImageToUser(@PathVariable int id, @RequestBody MultipartFile file) {
-        System.out.println(file);
         return this.imageService.uploadPictureToAccount(file, id);
     }
 
@@ -333,7 +330,7 @@ public class AccountController {
             MediaType.IMAGE_PNG_VALUE})
     public @ResponseBody
     byte[] getImage(@PathVariable String filename) throws IOException {
-        return this.imageService.getImageWithMediaType(filename);
+        return this.imageService.getProfilePicture(filename);
     }
 
     @GetMapping(value = "/profilepictures/", produces = {
@@ -342,7 +339,16 @@ public class AccountController {
             MediaType.IMAGE_PNG_VALUE})
     public @ResponseBody
     byte[] getDefaultImage() throws IOException {
-        return this.imageService.getImageWithMediaType("default-avatar.png");
+        return this.imageService.getProfilePicture("default.png");
+    }
+
+    @GetMapping(value = "/profilepictures", produces = {
+            MediaType.IMAGE_JPEG_VALUE,
+            MediaType.IMAGE_GIF_VALUE,
+            MediaType.IMAGE_PNG_VALUE})
+    public @ResponseBody
+    byte[] alsoGetDefaultImage() throws IOException {
+        return this.imageService.getProfilePicture("default.png");
     }
 
 }
