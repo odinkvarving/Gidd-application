@@ -1,5 +1,5 @@
 <template>
-  <b-navbar class="bg-white" toggleable="md" fixed="top" v-show="onHomePage">
+  <b-navbar class="bg-white" toggleable="md" fixed="top">
     <router-link to="/dashboard">
       <img
         src="../../assets/Logo.jpg"
@@ -62,7 +62,7 @@
 
         <b-nav-item-dropdown right>
           <template slot="button-content">
-            <img v-if="accountInfo.imageURL !== '' || accountInfo.imageURL !== null" class="profile-pic" alt="Profile picture" :src="this.accountInfo.imageURL" height="40px" width="40px">
+            <img v-if="accountInfo.imageURL !== ''" class="profile-pic" alt="Profile picture" :src="this.accountInfo.imageURL" height="40px" width="40px">
             <img v-else src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="default pic" class="profile-pic" height="40px" width="40px">
 
           </template>
@@ -72,7 +72,7 @@
           <b-dropdown-item to="/feedback">
             Gi tilbakemelding
           </b-dropdown-item>
-          <b-dropdown-item @click="logoutClicked()">
+          <b-dropdown-item @click="logoutClicked()" to="/">
             Logg ut
           </b-dropdown-item>
         </b-nav-item-dropdown>
@@ -202,14 +202,14 @@ export default {
        */
       arrowCounter: -1,
       /**
-       * Account info.
+       * Account info
        */
       accountInfo: {}
     };
   },
 
   /**
-   * Get user id on creation.
+   * Gets the logged in users user id on creation.
    */
   created() {
     if (userService.getTokenString()) {
@@ -219,7 +219,7 @@ export default {
 
   methods: {
     /**
-     * Get user id of the logged in user.
+     * Gets the logged in users user id, and sets the navbar dropdown user page link to the given user page.
      */
     async getUserId() {
       let res = await userService.getAccountByEmail(
@@ -228,7 +228,9 @@ export default {
       this.user[0].link = "/accounts/" + res.id;
     },
 
-    
+    /**
+     * Routes to correct activity page when a search result is clicked.
+     */
     async resultClicked(resultId) {
       console.log(resultId);
       if (this.$router.path !== `/dashboard/activity/${resultId}`) {
@@ -238,13 +240,10 @@ export default {
       this.isOpen = false;
       this.search = "";
     },
-    toggleCreateActivity() {
-      if (this.isCreateActivityVisible === false) {
-        this.isCreateActivityVisible = true;
-      } else {
-        this.isCreateActivityVisible = false;
-      }
-    },
+
+    /**
+     * Fetches activities from backend.
+     */
     getActivities() {
       const requestOptions = {
         method: "GET",
@@ -259,6 +258,10 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+
+    /**
+     * Filter results from selected keywords.
+     */
     filterResults() {
       console.log(this.search);
       this.results = [];
@@ -278,6 +281,8 @@ export default {
         }
       }
     },
+
+
     onChange() {
       this.$emit("input", this.search);
       if (this.isAsync) {
@@ -287,6 +292,7 @@ export default {
         this.isOpen = true;
       }
     },
+    
     setResult(result) {
       this.search = result;
       this.isOpen = false;
@@ -314,13 +320,12 @@ export default {
     },
     logoutClicked() {
       userService.logout();
-      this.$router.push("/");
     },
   },
 };
 </script>
 
-<style scoped>
+<style>
 .menu-item {
   margin: 0 10px;
 }
