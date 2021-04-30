@@ -520,7 +520,6 @@ export default {
       let data = await activityButtonService.addParticipantToActivity(this.activity);
       let accountId = await userService.getAccountByEmail().then((data) => (accountId = data.id));
       if (data.activityId === this.activity.id && data.accountId === accountId) {
-        console.log("Joining activity was successful! Changing button style");
         if (this.currentParticipants === this.activity.maxParticipants) {
           this.participantsInQueue++;
           this.isInQueue = true;
@@ -556,6 +555,12 @@ export default {
       }
     },
 
+    /**
+     * getDuration is a function which calculates the duration of an activity.
+     * Return value is the duration in days, hours, minutes and seconds,
+     *  (if each variable is not 0).
+     * It is represented as a string.
+     */
     getDuration() {
       const start = new Date(this.activity.endTime);
       const end = new Date(this.activity.startTime);
@@ -577,11 +582,17 @@ export default {
       if (seconds > 0) this.duration += seconds + "s, ";
     },
 
+    /**
+     * toggleEditMode is a function which changes the state of edit mode.
+     */
     toggleEditMode() {
       this.inEditMode = !this.inEditMode;
-      console.log("Edit Mode: " + this.inEditMode);
     },
 
+    /**
+     * onClickSaveButton is a function which saves all changes made,
+     *  and calls editActivity function to update the activity.
+     */
     onClickSaveButton() {
       this.showSpinner = true;
       this.equipmentState = true;
@@ -592,11 +603,13 @@ export default {
       this.validStartAndEndDate();
       if (this.nameState === true && this.descriptionState === true) {
         this.editActivity();
-        console.log("Activity updated!");
       }
       this.inEditMode = false;
     },
 
+    /**
+     * setLocation is a function which defines new current location.
+     */
     setLocation(location) {
       if (location.geometry) {
         this.currentLocation = location;
@@ -613,6 +626,12 @@ export default {
       }
     },
 
+    /**
+     * editActivity is a function which updates activity with new changes.
+     * The account do not a actually need to update all variables.
+     * All unedited variables will stay the same as the previous version.
+     * A PUT request is sent to backend with the updated activity.
+     */
     async editActivity() {
       let accountDetails = await userService.getAccountByEmail();
 
@@ -622,8 +641,8 @@ export default {
         description: this.description,
         equipment: this.activity.equipment,
         location: this.location,
-        latitude: null, //temporary until map is implemented
-        longitude: null, //temporary until map is implemented
+        latitude: null, 
+        longitude: null, 
         maxParticipants: this.maxParticipants,
         startTime: `${this.startDate} ${this.startTimeStamp}`,
         endTime: `${this.endDate} ${this.endTimeStamp}`,
@@ -645,17 +664,14 @@ export default {
       }
 
       if (activity.activityType.type === null) {
-        console.log("No category selected, using previous");
         activity.activityType = this.activity.activityType;
       }
 
       if (activity.level.description === null) {
-        console.log("No level selected, using previous");
         activity.level = this.activity.level;
       }
 
       if (!this.newLocation) {
-        console.log("No location entered, using previous");
         activity.latitude = this.activity.latitude;
         activity.longitude = this.activity.longitude;
         activity.location = this.location;
@@ -665,8 +681,6 @@ export default {
         activity.latitude = this.currentLocation.geometry.location.lat();
         activity.longitude = this.currentLocation.geometry.location.lng();
         activity.location = this.currentLocation.name;
-        console.log("this.location: " + this.location);
-        console.log("this.currentLocation.name: " + this.currentLocation.name);
       }
 
       const requestOptions = {
@@ -686,24 +700,18 @@ export default {
         .then((data) => {
           // If update activity was successfull
           if (data !== null) {
-            let result = notificationService.sendNotificationToAllParticipants(
+            notificationService.sendNotificationToAllParticipants(
               this.activity.id
             );
-            if (result === true) {
-              console.log(
-                "Sucessfully notified all participants about the edit!"
-              );
-            } else {
-              console.log(
-                "Error! Something went wrong when notifying participants!"
-              );
-            }
           }
         })
         .catch((error) => console.log(error));
         location.reload();
     },
 
+    /**
+     * getCategories is a function which returns all categories from database by a GET request.
+     */
     async getCategories() {
       let categoriesList;
       this.category = null;
@@ -722,6 +730,9 @@ export default {
       }
     },
 
+    /**
+     * getLevels is a function which returns all levels from database by a GET request.
+     */
     async getLevels() {
       let levelsList;
       this.level = null;
@@ -742,6 +753,10 @@ export default {
       }
     },
 
+    /**
+     * validStartAndEndDate is a function which checks if start time and end time is valid.
+     * The function also checks if end time is before start time.
+     */
     validStartAndEndDate() {
       this.startDate === "" || this.startTime === ""
         ? (this.startDateState = false)
@@ -767,15 +782,6 @@ export default {
           this.startDateState = false;
           this.endDateState = false;
         }
-      }
-    },
-
-    checkIfFull() {
-      if (this.activity.currentParticipants < this.activity.totalParticipants) {
-        return "Bli med";
-      } else {
-        this.isFull = true;
-        return "Fullt";
       }
     },
   },
