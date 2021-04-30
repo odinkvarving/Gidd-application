@@ -1,6 +1,14 @@
 <template>
   <div id="activity" v-if="activity != null">
-    <div style="margin-top: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center">
+    <div
+      style="
+        margin-top: 70px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      "
+    >
       <div v-show="isActivityHost" class="cancel-button-container">
         <b-button
           :disabled="this.activity.cancelled"
@@ -17,6 +25,7 @@
           :weather="weather"
           :isLoggedIn="isLoggedIn"
           :isActivityHost="isActivityHost"
+          :creatorImageURL="creatorAccountInfo.imageURL"
         />
         <div class="map-equipment-container">
           <Map
@@ -33,15 +42,20 @@
           />
         </div>
       </div>
-        <button
-          class="btn btn-lg"
-          :disabled="this.activity.cancelled"
-          id="btnVisible"
-          @click="changeChatVisibility"
-        >
-          Skjul kommentarfelt
-        </button>
-        <Chat class="chat" id="chat" :activity="activity" v-show="isChatVisible" />
+      <button
+        class="btn btn-lg"
+        :disabled="this.activity.cancelled"
+        id="btnVisible"
+        @click="changeChatVisibility"
+      >
+        Skjul kommentarfelt
+      </button>
+      <Chat
+        class="chat"
+        id="chat"
+        :activity="activity"
+        v-show="isChatVisible"
+      />
     </div>
     <ConfirmModal
       name="cancelling-success"
@@ -63,8 +77,8 @@ import Map from "./Map.vue";
 import Equipment from "./Equipment.vue";
 import Chat from "./Chat.vue";
 import { userService } from "../../services/UserService.js";
-import ErrorModal from "../PopUpComponents/ErrorModal.vue"
-import ConfirmModal from "../PopUpComponents/ConfirmModal.vue"
+import ErrorModal from "../PopUpComponents/ErrorModal.vue";
+import ConfirmModal from "../PopUpComponents/ConfirmModal.vue";
 //import {weatherService} from '../../services/WeatherService.js'
 
 /**
@@ -72,7 +86,7 @@ import ConfirmModal from "../PopUpComponents/ConfirmModal.vue"
  * The component is found in router/Activity.
  * The component itself contains four other components: Info, Map, Equipment and Chat.
  * Each of these components represents their own part of an activity.
- * 
+ *
  * @author Scott Rydberg Sonen
  * @author Magnus Bredeli
  */
@@ -84,7 +98,7 @@ export default {
     Equipment,
     Chat,
     ErrorModal,
-    ConfirmModal
+    ConfirmModal,
   },
 
   props: {
@@ -121,6 +135,8 @@ export default {
        * isActivityHost is a boolean which tells us if the account is the creator of the activity.
        */
       isActivityHost: false,
+
+      creatorAccountInfo: {},
     };
   },
 
@@ -130,6 +146,18 @@ export default {
   async mounted() {
     this.isLoggedIn = await userService.isLoggedIn();
     this.isActivityHost = await this.checkIfActivityHost();
+    this.creatorAccountInfo = await this.getCreatorAccountInfo(
+      this.activity.creator.id
+    );
+    if (
+      this.creatorAccountInfo.imageURL === null ||
+      !this.creatorAccountInfo.imageURL.includes(
+        "http://localhost:8080/profilepictures/"
+      )
+    ) {
+      this.creatorAccountInfo.imageURL =
+        "http://localhost:8080/profilepictures/";
+    }
   },
   methods: {
     /**
@@ -166,7 +194,6 @@ export default {
      * Activity's cancelled-variable is then changed to true.
      */
     cancelActivity() {
-
       let url = `http://localhost:8080/activities/${this.activity.id}/cancel`;
 
       const requestOptions = {
@@ -184,6 +211,20 @@ export default {
           } else {
             this.$bvModal.show("cancelling-error");
           }
+        })
+        .catch((error) => console.log(error));
+    },
+    async getCreatorAccountInfo(creatorId) {
+      let url = `http://localhost:8080/accounts/${creatorId}/info`;
+
+      const requestOptions = {
+        method: "GET",
+      };
+
+      return await fetch(url, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          return data;
         })
         .catch((error) => console.log(error));
     },
@@ -209,7 +250,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background-color: #F6F6F6;
+  background-color: #f6f6f6;
 }
 
 .upper-row {

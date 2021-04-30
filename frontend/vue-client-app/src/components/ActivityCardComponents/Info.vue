@@ -13,7 +13,7 @@
         <input class="title" type="text" :placeholder="title" v-model="title" />
       </h1>
       <div id="ownerInfo">
-        <img :src="require('@/assets/kari.jpg')" />
+        <img :src="creatorImageURL" />
         <h3 class="txt">{{ activity.creator.email }}</h3>
       </div>
       <div class="description-container">
@@ -56,7 +56,9 @@
           {{ weather.temp }} C°
         </li>
         <li class="txt" v-else>Ingen værmelding</li>
-        <li class="txt" v-show="!inEditMode">{{ activity.level.description }}</li>
+        <li class="txt" v-show="!inEditMode">
+          {{ activity.level.description }}
+        </li>
         <li class="txt">
           {{ currentParticipants }} / {{ activity.maxParticipants }}
         </li>
@@ -75,7 +77,7 @@
             :state="categoryState"
             v-model="category"
             :options="categories"
-            style="width: 80%;"
+            style="width: 80%"
           >
             <template #first>
               <b-form-select-option :value="null" disabled
@@ -120,7 +122,7 @@
           :state="levelState"
           v-model="level"
           :options="levels"
-          style="width:80%"
+          style="width: 80%"
         >
           <template #first>
             <b-form-select-option :value="null" disabled
@@ -211,7 +213,7 @@ import { notificationService } from "../../services/NotificationService";
 
 /**
  * Info is a component which displays all relevant information about an activity.
- * 
+ *
  * @author Scott Rydberg Sonen
  * @author Mattias Agentoft Eggen
  * @author Magnus Bredeli
@@ -249,6 +251,10 @@ export default {
      */
     isActivityHost: {
       type: Boolean,
+      required: true,
+    },
+    creatorImageURL: {
+      type: undefined,
       required: true,
     },
   },
@@ -408,7 +414,10 @@ export default {
     await this.getCurrentParticipantsNumber();
     if (this.isLoggedIn) {
       await this.isAlreadyParticipating();
-      if ((this.currentParticipants === this.maxParticipants) && (this.queuePosition > 0)) {
+      if (
+        this.currentParticipants === this.maxParticipants &&
+        this.queuePosition > 0
+      ) {
         this.isInQueue = true;
       }
     }
@@ -428,7 +437,7 @@ export default {
       const check = start - today;
       if (check < 0) {
         this.isExpired = true;
-      } 
+      }
     },
 
     /**
@@ -450,10 +459,15 @@ export default {
     async removeParticipantClicked() {
       if (activityButtonService.showRemoveAlert()) {
         this.showRemoveSpinner = true;
-        const data = await activityButtonService.removeParticipantFromActivity(this.activity);
+        const data = await activityButtonService.removeParticipantFromActivity(
+          this.activity
+        );
         if (data) {
           this.showRemoveSpinner = false;
-          if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
+          if (
+            this.currentParticipants === this.activity.maxParticipants &&
+            this.queuePosition > 0
+          ) {
             this.participantsInQueue--;
           } else {
             this.currentParticipants--;
@@ -483,12 +497,14 @@ export default {
 
     /**
      * isAlreadyParticipating is a function which runs isAlreadyParticipating function in activityButtonService.
-     * If account is present in activity_account table in the database, 
+     * If account is present in activity_account table in the database,
      *  the function also checks the queue position of account.
      * Queue position remains 0 if user is not present in the queue.
      */
     async isAlreadyParticipating() {
-      this.alreadyParticipating = await activityButtonService.isAlreadyParticipating(this.activity);
+      this.alreadyParticipating = await activityButtonService.isAlreadyParticipating(
+        this.activity
+      );
       if (this.alreadyParticipating) {
         this.getQueuePosition();
       }
@@ -496,13 +512,15 @@ export default {
 
     /**
      * getCurrentParticipantsNumber runs getCurrentParticipantsNumber function in activityButtonService.
-     * If current participants equals max limit, 
+     * If current participants equals max limit,
      *  the function also checks how many accounts the queue contains.
      * Lastly, the function emits currentparticipants back to ActivityFeed,
      *  along with activity ID as a key.
      */
     async getCurrentParticipantsNumber() {
-      this.currentParticipants = await activityButtonService.getCurrentParticipantsNumber(this.activity);
+      this.currentParticipants = await activityButtonService.getCurrentParticipantsNumber(
+        this.activity
+      );
       if (this.currentParticipants == this.activity.maxParticipants) {
         this.participantsInQueue = await activityButtonService.countAccountsInQueue(
           this.activity
@@ -517,9 +535,16 @@ export default {
      * Different variables are modified when the function confirms that the account is successfully participating.
      */
     async addParticipantToActivity() {
-      let data = await activityButtonService.addParticipantToActivity(this.activity);
-      let accountId = await userService.getAccountByEmail().then((data) => (accountId = data.id));
-      if (data.activityId === this.activity.id && data.accountId === accountId) {
+      let data = await activityButtonService.addParticipantToActivity(
+        this.activity
+      );
+      let accountId = await userService
+        .getAccountByEmail()
+        .then((data) => (accountId = data.id));
+      if (
+        data.activityId === this.activity.id &&
+        data.accountId === accountId
+      ) {
         if (this.currentParticipants === this.activity.maxParticipants) {
           this.participantsInQueue++;
           this.isInQueue = true;
@@ -548,7 +573,9 @@ export default {
      * If the queue position is larger than 0, it means that the account is in the queue.
      */
     async getQueuePosition() {
-      this.queuePosition = await activityButtonService.getQueuePosition(this.activity);
+      this.queuePosition = await activityButtonService.getQueuePosition(
+        this.activity
+      );
 
       if (this.queuePosition > 0) {
         this.isInQueue = true;
@@ -641,8 +668,8 @@ export default {
         description: this.description,
         equipment: this.activity.equipment,
         location: this.location,
-        latitude: null, 
-        longitude: null, 
+        latitude: null,
+        longitude: null,
         maxParticipants: this.maxParticipants,
         startTime: `${this.startDate} ${this.startTimeStamp}`,
         endTime: `${this.endDate} ${this.endTimeStamp}`,
@@ -706,7 +733,7 @@ export default {
           }
         })
         .catch((error) => console.log(error));
-        location.reload();
+      location.reload();
     },
 
     /**
@@ -796,18 +823,18 @@ export default {
   align-items: center;
   justify-content: space-between;
 }
-.box{
+.box {
   text-align: center;
   align-items: center;
 }
 
-.header-description-section{
+.header-description-section {
   margin-top: 20px;
   height: 50%;
   text-align: center;
 }
 
-h1{
+h1 {
   margin: 10px;
 }
 
@@ -850,13 +877,13 @@ h1{
   margin: auto;
 }
 
-#icon{
+#icon {
   width: 30px;
   height: 30px;
   margin-right: 10px;
 }
 
-#btn{
+#btn {
   height: 50px;
   width: 160px;
   border-radius: 6px;
@@ -963,12 +990,11 @@ h1{
 }
 
 @media (max-width: 1200px) {
-  
-  h1{
+  h1 {
     font-size: 24px;
   }
 
-  h3{
+  h3 {
     font-size: 20px;
   }
 
@@ -976,11 +1002,11 @@ h1{
     height: 50%;
   }
 
-  #infobox{
+  #infobox {
     width: 80vw;
   }
 
-  #list1{
+  #list1 {
     margin-left: 10vw;
   }
 
