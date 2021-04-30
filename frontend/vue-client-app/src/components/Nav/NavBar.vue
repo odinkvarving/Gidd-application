@@ -36,7 +36,7 @@
                   class="autocomplete-result"
                   :class="{ 'is-active': i === arrowCounter }"
                 >
-                  <p @click="resultClicked(result.id)">
+                  <p @click="resultButtonClicked(result.id)">
                     <span class="title">{{ result.title }}</span>
                     <span class="email">{{ result.creator.email }}</span>
                   </p>
@@ -201,11 +201,11 @@ export default {
       this.user[0].link = "/accounts/" + res.id;
     },
 
-    async resultClicked(resultId) {
+    resultClicked(resultId) {
       console.log(resultId);
       if (this.$router.path !== `/dashboard/activity/${resultId}`) {
         console.log("test");
-        await this.$router.push(`/dashboard/activity/${resultId}`);
+        this.$router.push(`/dashboard/activity/${resultId}`);
       }
       this.isOpen = false;
       this.search = "";
@@ -254,7 +254,9 @@ export default {
       this.$emit("input", this.search);
       if (this.isAsync) {
         this.isLoading = true;
-      } else {
+      }else if (this.search === "") {
+        this.isOpen = false;
+      }else {
         this.filterResults();
         this.isOpen = true;
       }
@@ -279,10 +281,16 @@ export default {
         this.arrowCounter = this.arrowCounter - 1;
       }
     },
+
+    resultButtonClicked(resultId) {
+      this.resultClicked(resultId);
+    },
+
     onEnter() {
       //fiks onEnter gjør samme som click
       this.search = this.results[this.arrowCounter];
       this.arrowCounter = -1;
+      this.resultClicked(this.search.id);
     },
     logoutClicked() {
       userService.logout();
@@ -394,5 +402,16 @@ a.nav-link {
   margin-left: 10px;
   margin-right: 10px;
   border-radius: 100%;
+}
+
+.title {
+  float: left;
+  clear: left;
+  margin: 0 !important;
+}
+
+.email {
+  float: left;
+  clear: left;
 }
 </style>
