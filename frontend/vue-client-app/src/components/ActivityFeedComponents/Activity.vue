@@ -71,7 +71,6 @@
         <button
             disabled
             v-show="activity.cancelled"
-            @click="() => console.log(activity.cancelled)"
             class="cancel-button"
             >Aktivitet avlyst!</button
         >
@@ -161,7 +160,6 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                     this.isInQueue = true;
                 }
                 this.accountInfo = await userService.getAccountInfo(this.activity.creator.id);
-                console.log(this.accountInfo);
             }
             this.isDataReady = true;
         },
@@ -251,7 +249,6 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 let data = await activityButtonService.addParticipantToActivity(this.activity);
                 let accountId = await userService.getAccountByEmail().then(data => accountId = data.id);
                     if(data.activityId === this.activity.id && data.accountId === accountId){
-                        console.log("Joining activity was successful! Changing button style");
                         if(this.currentParticipants === this.activity.maxParticipants){
                             this.participantsInQueue ++;
                             this.isInQueue = true;

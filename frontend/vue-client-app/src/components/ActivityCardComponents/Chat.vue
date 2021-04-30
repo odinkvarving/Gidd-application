@@ -22,49 +22,93 @@
   </div>
 </template>
 <script>
+/**
+ * userService and ChatElement is imported.
+ */
 import { userService } from "../../services/UserService";
 import ChatElement from "./ChatElement.vue";
 
+/**
+ * Chat is a component which represents the chat box in ActivityCard.
+ * 
+ * @author Endré Hadzalic
+ */
 export default {
+  name: "Chat",
+
+  components: {
+    ChatElement,
+  },
+
   props: {
+    /**
+     * activity is an object passed from ActivityCard which contains the current activity.
+     */
     activity: {
       type: Object,
       required: true,
     },
   },
-  name: "Chat",
-  components: {
-    ChatElement,
-  },
+
   data() {
     return {
+      /**
+       * messages is a list containing all messages from the database.
+       */
       messages: {},
+      /**
+       * message represents a new message which will be added to the database and message list.
+       */
       message: "",
+      /**
+       * timerId stores a pointer to the timer.
+       */
       timerId: null,
+      /**
+       * pageRoute represents the current route path.
+       */
       pageRoute: "",
+      /**
+       * userId represents the ID of a user.
+       */
       userId: null,
     };
   },
+
   created() {
     this.pageRoute = this.$route.name;
     this.loadUserId();
     this.startTimer();
   },
+  
   methods: {
+    /**
+     * startTimer is a function which defines timer ID as a pointer to the update interval.
+     */
     startTimer() {
       this.timerId = setInterval(() => this.loadMessages(), 1000);
     },
+
+    /**
+     * loadUserId is a function which defines userId 
+     */
     async loadUserId() {
       await userService.getAccountByEmail().then((data) => {
         this.userId = data.id;
       });
-      console.log("loaded user: " + this.userId);
     },
+
+    /**
+     * stillOnPage is a function which checks if pageRoute equals the current route path.
+     */
     stillOnPage() {
       return this.pageRoute === this.$route.name;
     },
+
+    /**
+     * loadMessages is a function which loads all messages with relations to the current activity.
+     */
     async loadMessages() {
-      console.log("Refreshing chat-box");
       if (this.stillOnPage()) {
         await fetch(
           "http://localhost:8080/activities/" + this.activity.id + "/messages"
@@ -75,15 +119,18 @@ export default {
             console.error("error while trying to fetch chat messages: ", error)
           );
       } else {
-        console.log("Stopped refreshing chat box");
         clearInterval(this.timerId);
       }
     },
+
+    /**
+     * sendMessage is a function which runs when send button is clicked.
+     * If message is larger than 0 chars and the account is logged in,
+     *  the message input is read and sent to backend by POST request.
+     */
     async sendMessage() {
       if (this.message.length > 0) {
         if (userService.isLoggedIn()) {
-          console.log("sending message: " + this.message);
-          console.log("account id: " + this.userId);
           const data = {
             accountId: this.userId,
             message: this.message,

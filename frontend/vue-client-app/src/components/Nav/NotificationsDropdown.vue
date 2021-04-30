@@ -31,22 +31,45 @@
     </transition>
   </div>
 </template>
-
 <script>
+/**
+ * Services is imported with useful functions.
+ */
 import { mixin as clickaway } from "vue-clickaway";
 import { notificationService } from "../../services/NotificationService.js";
 import { userService } from "../../services/UserService.js";
 
+/**
+ * NotificationsDropdown is a component which displays a dropdown list containing notifications related to the account.
+ * 
+ * @author Magnus Bredeli
+ */
 export default {
   name: "NotificationsDropdown",
   props: ["icon", "width", "height"],
   mixins: [clickaway],
   data() {
     return {
+      /**
+       * isVisible tells us if the dropdown component is visible or not.
+       * The bell icon is always visible, but the dropdown is only visible if isVisible is true.
+       */
       isVisible: false,
+      /**
+       * items is an array containing all relevant notifications.
+       */
       items: [],
+      /**
+       * unreadNotifications represents number of unread notifications.
+       */
       unreadNotifications: 0,
+      /**
+       * showUnreadSymbol represents the state of unreadSymbol's visibility.
+       */
       showUnreadSymbol: false,
+      /**
+       * isLogged in tells us if the account is logged in or not.
+       */
       isLoggedIn: false,
     };
   },
@@ -71,12 +94,24 @@ export default {
     }
   },
   methods: {
+    /**
+     * toggleDropdown is a function which changes the state of dropdown visibility.
+     */
     toggleDropdown() {
       this.isVisible = !this.isVisible;
     },
+
+    /**
+     * hideDropdown is a function which hides the dropdown.
+     */
     hideDropdown() {
       this.isVisible = false;
     },
+
+    /**
+     * handleClick is a function which runs when a notification item is clicked.
+     * It removes the notification item and redirects the account to the related activity in ActivityCard.
+     */
     handleClick(item) {
       let path = `/dashboard/activity/${item.activityId}`;
       notificationService.removeNotification(item.id).then((result) => {
@@ -90,6 +125,10 @@ export default {
         this.$router.push(path);
       }
     },
+
+    /**
+     * showNotifications is a function which displays the notifications in the dropdown if account is logged in.
+     */
     async showNotifications() {
       if (this.isLoggedIn) {
         let unread = 0;
@@ -110,14 +149,15 @@ export default {
           this.unreadNotifications = unread;
           this.showUnreadSymbol = true;
         }
-        console.log(this.items);
-        console.log(this.unreadNotifications);
       } else {
         this.$router.push("/login");
       }
     },
+
+    /**
+     * removeNotifications is a function which removes a notification from the dropdown.
+     */
     async removeNotification(notificationId) {
-      console.log("clicked");
       let result = await notificationService.removeNotification(notificationId);
       if (result === true) {
         console.log("Successfully removed notification");

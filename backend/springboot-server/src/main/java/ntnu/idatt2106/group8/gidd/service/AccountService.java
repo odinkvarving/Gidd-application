@@ -4,8 +4,17 @@ import ntnu.idatt2106.group8.gidd.model.JWT.AuthRequest;
 import ntnu.idatt2106.group8.gidd.model.JWT.JWTResponse;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.AccountActivity;
 import ntnu.idatt2106.group8.gidd.model.compositeentities.ids.AccountActivityId;
-import ntnu.idatt2106.group8.gidd.model.entities.*;
-import ntnu.idatt2106.group8.gidd.repository.*;
+import ntnu.idatt2106.group8.gidd.model.entities.Account;
+import ntnu.idatt2106.group8.gidd.model.entities.AccountInfo;
+import ntnu.idatt2106.group8.gidd.model.entities.Activity;
+import ntnu.idatt2106.group8.gidd.model.entities.Notification;
+import ntnu.idatt2106.group8.gidd.model.entities.NotificationSettings;
+import ntnu.idatt2106.group8.gidd.model.entities.PasswordReset;
+import ntnu.idatt2106.group8.gidd.repository.AccountActivityRepository;
+import ntnu.idatt2106.group8.gidd.repository.AccountInfoRepository;
+import ntnu.idatt2106.group8.gidd.repository.AccountRepository;
+import ntnu.idatt2106.group8.gidd.repository.ActivityRepository;
+import ntnu.idatt2106.group8.gidd.repository.PasswordResetRepository;
 import ntnu.idatt2106.group8.gidd.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +30,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
+ * Service class which contains Account-related business logic.
  * @author Endré Hadzalic
  */
 
@@ -67,7 +84,11 @@ public class AccountService {
     @Autowired
     private NotificationService notificationService;
 
-
+    /**
+     * Returns a collection of all accounts registered with Gidd
+     *
+     * @return a collection of all accounts registered with Gidd
+     */
     public List<Account> findAll() {
         Iterable<Account> itAccounts = accountRepository.findAll();
         List<Account> accounts = new ArrayList<>();
@@ -77,6 +98,14 @@ public class AccountService {
         return accounts;
     }
 
+    /**
+     * Registers a new account with Gidd. The account must have a unique email
+     * address, i.e. one which is not associated with an already registered account
+     *
+     * @param account the new account to register with Gidd.
+     * @return        true if the account was registered, false if an account with
+     *                the given email already exists.
+     */
     public boolean save(Account account) {
         //Check if email already exists
         Optional<Account> acc = accountRepository.findByEmail(account.getEmail());
@@ -90,6 +119,7 @@ public class AccountService {
         }
     }
 
+    // TODO: Finish javadoc
     /**
      * Saves a new account to the database along with its account information.
      *
@@ -103,6 +133,7 @@ public class AccountService {
         return (result1.equals(account) && result2.equals(accountInfo));
     }
 
+    // TODO: Javadoc
     public JWTResponse login(AuthRequest authRequest, HttpServletResponse response) throws Exception {
         try {
             authenticationManager.authenticate(
@@ -118,38 +149,48 @@ public class AccountService {
         return new JWTResponse(token);
     }
 
+    // TODO: Javadoc
     public boolean isValidToken(String jwtToken) {
         final String email = jwtUtil.extractUsername(jwtToken);
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
         return (email.equals(userDetails.getUsername()) && !jwtUtil.isTokenExpired(jwtToken));
     }
 
+    /**
+     * Returns the account which is registered at Gidd with the given
+     * email address, or null if no account with the given email exists.
+     *
+     * @param email the email address of the account to search for
+     * @return      the account registered with the given email address,
+     *              or null if no match was found.
+     */
     public Account findByEmail(String email) {
         Optional<Account> user = accountRepository.findByEmail(email);
         return user.orElse(new Account());
     }
 
     /**
-     * Deletes a account from the database
+     * Deletes the account with the given id from the database.
+     * If no account with the given id exits, then nothing happens.
      *
-     * @param accountId the id of the account to delete.
+     * @param id the id of the account to delete.
      */
-    public void deleteAccount(int accountId) {
+    public void deleteAccount(int id) {
         try {
-            this.accountRepository.deleteById(accountId);
+            this.accountRepository.deleteById(id);
         } catch (IllegalArgumentException iae) {
             logger.error("null was passed as argument while trying to delete account", iae);
         }
     }
 
+    // TODO: Remove id parameter
     /**
-     * Updates an account
+     * Updates the given account
      *
      * @param id      the id of the account (not used)
-     * @param account the account-object to save
-     * @return the account that was updated
+     * @param account the account data to save
+     * @return        the account that was updated
      */
-
     public Account updateAccount(int id, Account account) {
         try {
             return accountRepository.save(account);
@@ -160,13 +201,15 @@ public class AccountService {
     }
 
     /**
-     * Finds the info of a account in the database.
+     * Returns the account information of the account with the given id, or null if no
+     * account registered with Gidd has the given id.
      *
-     * @param accountId the id of the account to find the info of.
-     * @return the AccountInfo-object of the given account if any. null in none.
+     * @param id the id of the account to find the info of.
+     * @return   the AccountInfo of the account with the given id,
+     *           or null if the id does not identify a registered account.
      */
-    public AccountInfo findAccountInfo(int accountId) {
-        Account foundAccount = findAccountById(accountId);
+    public AccountInfo findAccountInfo(int id) {
+        Account foundAccount = findAccountById(id);
         if (foundAccount != null) {
             return foundAccount.getAccountInfo();
         } else {
@@ -175,30 +218,34 @@ public class AccountService {
     }
 
     /**
-     * Changes the current email of a given account in the database to a new given email.
+     * Changes the email address of the account with the given id to the given email.
+     * If the given Id does not identify a registerd account, then nothing happens.
      *
-     * @param accountId the id of the account that should change email.
-     * @param newEmail  the new email of the account.
+     * @param id the id of the account that should change email.
+     * @param email  the new email of the account.
      */
-    public void updateAccountEmail(int accountId, String newEmail) {
-        Account accountToUpdate = findAccountById(accountId);
+    public void updateAccountEmail(int id, String email) {
+        Account accountToUpdate = findAccountById(id);
         if (accountToUpdate != null) {
-            accountToUpdate.setEmail(newEmail);
+            accountToUpdate.setEmail(email);
             this.accountRepository.save(accountToUpdate);
         }
 
     }
 
     /**
-     * Changes the current password of a given account in the database to a new given password.
+     * Changes the current password of the account with the given id to the given password.
+     * Returns true if an account with the given id exists (and the password was changed).
+     * Returns false if no account with the given id exists (and the password was not changed).
      *
-     * @param accountId   the id of the account that should change password.
-     * @param newPassword the new password of the account.
+     * @param id        the id of the account that should change password.
+     * @param password  the new password of the account.
+     * @return          true if the id corresponds to an existing account, false if otherwise
      */
-    public boolean updateAccountPassword(int accountId, String newPassword) {
-        Account accountToUpdate = findAccountById(accountId);
+    public boolean updateAccountPassword(int id, String password) {
+        Account accountToUpdate = findAccountById(id);
         if (accountToUpdate != null) {
-            accountToUpdate.setPassword(passwordEncoder.encode(newPassword));
+            accountToUpdate.setPassword(passwordEncoder.encode(password));
             this.accountRepository.save(accountToUpdate);
             return true;
         } else {
@@ -208,10 +255,11 @@ public class AccountService {
 
 
     /**
-     * finds and returns a account that is linked to a current reset token.
+     * Finds and returns a account that is linked to a current reset token.
      *
-     * @param resetSuffix the resetsuffix-key linked to the account.
-     * @return a account with null as email if it was not found. otherwise the account linked to the suffix.
+     * @param resetSuffix the reset suffix key linked to the account.
+     * @return            a account with null as email if it was not found.
+     *                    otherwise the account linked to the suffix.
      */
     public Account findAccountByResetSuffix(String resetSuffix) {
         updatePasswordResetRepo();
@@ -219,14 +267,15 @@ public class AccountService {
             PasswordReset reset = this.passwordResetRepository.findByResetUrlSuffix(resetSuffix).orElseThrow(TimeoutException::new);
             return this.accountRepository.findById(reset.getAccountId()).orElseThrow(NoSuchElementException::new);
         } catch (NoSuchElementException nee) {
-            logger.error("did find password-reset but not account linked to resetSuffix:" + resetSuffix);
+            logger.error("Did find password-reset but not account linked to resetSuffix:" + resetSuffix);
             return new Account(null, "nonExistent");
         } catch (TimeoutException te) {
-            logger.info("someone tried to reset password with outdated/ password-reset suffix: " + resetSuffix + "  ,suffix not found");
+            logger.info("Someone tried to reset password with outdated/ password-reset suffix: " + resetSuffix + "  ,suffix not found");
             return new Account(null, "outdated/wrong");
         }
     }
 
+    // TODO: Finish javadoc
     /**
      * Resets the password for a account in the database provided the given suffix is valid.
      *
@@ -310,7 +359,7 @@ public class AccountService {
      * Finds a account in the database and returns it.
      *
      * @param accountId the id of the account to look up.
-     * @return a Account with the given id, null if none were found.
+     * @return          a Account with the given id, null if none were found.
      */
     public Account findAccountById(int accountId) {
         try {
@@ -327,7 +376,8 @@ public class AccountService {
      *
      * @param email    the email of the account to search for.
      * @param password the password of the account to search for.
-     * @return a Account-object that matches the given credentials. Null if no account were found.
+     * @return         a Account-object that matches the given credentials.
+     *                 Null if no account were found.
      */
     public Account findAccountByCredentials(String email, String password) {
         try {
@@ -343,7 +393,7 @@ public class AccountService {
      * Checks if the database contains a account with a given id.
      *
      * @param accountID the id of the account.
-     * @return true if the account exists in the database, false if not.
+     * @return          true if the account exists in the database, false if not.
      */
     public boolean accountExistsById(int accountID) {
         return this.accountRepository.existsById(accountID);
@@ -354,7 +404,7 @@ public class AccountService {
      *
      * @param email    the email of the account.
      * @param password the password of the account.
-     * @return true if the account exists in the database, false if not.
+     * @return         true if the account exists in the database, false if not.
      */
     public boolean accountExistByCredentials(String email, String password) {
         return findAccountByCredentials(email, password) != null;
@@ -411,7 +461,7 @@ public class AccountService {
      *
      * @param activityId the id of the activity to add the account to.
      * @param accountId  the id of the account to add to the activity.
-     * @return true if the account was queued, false if not.
+     * @return           true if the account was queued, false if not.
      */
     public boolean addAccountToActivity(int activityId, int accountId) {
 
@@ -459,7 +509,7 @@ public class AccountService {
      *
      * @param activityId the id of the activity that is bound to a account.
      * @param accountId  the id of the account that is bound to a activity.
-     * @return null if no account-activity matching the given parameters was found.
+     * @return           null if no account-activity matching the given parameters was found.
      */
     public AccountActivity findAccountActivity(int accountId, int activityId) {
         return this.accountActivityRepository
@@ -470,7 +520,8 @@ public class AccountService {
      * Getter for all activities a account is related to.
      *
      * @param accountID the id of the account to find the activities for.
-     * @return a empty set if no activities was found for the given user, otherwise a set with the activities.
+     * @return          a empty set if no activities was found for the
+     *                  given user, otherwise a set with the activities.
      */
     public Set<Activity> findAccountsActivities(int accountID) {
         Set<Activity> result = new HashSet<>();
@@ -489,7 +540,7 @@ public class AccountService {
      * Getter for all the activities created by a user in the database.
      *
      * @param accountId the id of the account to find the created activities of.
-     * @return a set containing the activities that has the given account as creator.
+     * @return          a set containing the activities that has the given account as creator.
      */
     public Set<Activity> findAccountsCreatedActivities(int accountId) {
         Account creator = this.accountRepository.findById(accountId).orElseThrow(NoSuchElementException::new);
@@ -501,7 +552,7 @@ public class AccountService {
      *
      * @param accountInfo the updated AccountInfo
      * @param id          the id of the Account with the AccountInfo
-     * @return true or false
+     * @return            true or false
      */
     public boolean saveAccountInfoToAccount(AccountInfo accountInfo, int id) {
         Optional<Account> account = accountRepository.findById(id);
