@@ -5,28 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-/*
-    x description: ''
-    x Latitude & Longitude:
-    x start and end time-date
-    x max participants
-
-    title
-    creator
-    activity-type
-    level
-    equipment
-
-    should activity-type and level be changeable?
-
-    TODO:
-     - konstruktør / bygger
-     - sjekke at visse felt alltid har en verdi evt. en default verdi (ikke null)
- */
 
 /**
  * @author Torstein Øvstedal
@@ -59,41 +38,7 @@ class ActivityTest {
     @AfterEach
     void tearDown() {
     }
-/*
-    @Test
-    void setInvalidEndTime() {
-        String invalidEndTime = validActivity.getStartTime();
-        assertAll(
-                () -> assertThrows(
-                        IllegalArgumentException.class,
-                        () -> validActivity.setEndTime(invalidEndTime),
-                        "Set activity end at the same time as start"
-                ),
-                () -> assertThrows(
-                        IllegalArgumentException.class,
-                        () -> validActivity.setEndTime(invalidEndTime.minusSeconds(1)),
-                        "Set activity end before start"
-                )
-        );
-    }
 
-    @Test
-    void setInvalidStartTime() {
-        String invalidStartTime = validActivity.getEndTime();
-        assertAll(
-                () -> assertThrows(
-                        IllegalArgumentException.class,
-                        () -> validActivity.setStartTime(invalidStartTime),
-                        "Set activity start at the same time as end"
-                ),
-                () -> assertThrows(
-                        IllegalArgumentException.class,
-                        () -> validActivity.setStartTime(invalidStartTime.plusSeconds(1)),
-                        "Set activity start after end"
-                )
-        );
-    }
-*/
     @Test
     void setNullDescription() {
         validActivity.setDescription(null);
@@ -119,7 +64,6 @@ class ActivityTest {
 
     @Test
     void setInvalidLocation() {
-        // FIXME: Does not check for decimal error
         assertAll(
                 () -> assertThrows(IllegalArgumentException.class, () -> validActivity.setLatitude(-91), "Set invalid Latitude"),
                 () -> assertThrows(IllegalArgumentException.class, () -> validActivity.setLatitude(91), "Set invalid Latitude"),
