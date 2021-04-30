@@ -63,11 +63,16 @@
     />
   </div>
 </template>
-
 <script>
+/**
+ * Modals are imported.
+ */
 import ConfirmModal from "../PopUpComponents/ConfirmModal.vue";
 import ErrorModal from "../PopUpComponents/ErrorModal.vue";
 
+/**
+ * ResetPasswordBox is a component which displays a component for password reset
+ */
 export default {
   name: "ResetPasswordBox",
   components: {
@@ -76,6 +81,9 @@ export default {
   },
   data() {
     return {
+      /**
+       * submitted 
+       */
       submitted: false,
       isPasswordValid: true,
       isPasswordsEqual: true,
