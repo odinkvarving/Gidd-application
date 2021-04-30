@@ -178,12 +178,10 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           if (data === true) {
-            console.log("Cancelling activity was successful and all participants is notified");
             this.$bvModal.show("cancelling-success");
             this.activity.cancelled = true;
             this.isChatVisible = false;
           } else {
-            console.log("Error cancelling activity! Something went wrong!");
             this.$bvModal.show("cancelling-error");
           }
         })

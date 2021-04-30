@@ -27,18 +27,32 @@
   </div>
 </template>
 <script>
+/**
+ * Chat is a component which represents a single chat element containing account and message.
+ * 
+ * @author Endré Hadzalic
+ */
 export default {
   name: "ChatElement",
 
   props: {
+    /**
+     * chatMessage is an object passed from Chat which represents the message itself.
+     */
     chatMessage: {
       type: Object,
       required: true,
     },
+    /**
+     * loggedInAccountId is an int passed from Chat which represents ID of current logged in account.
+     */
     loggedInAccountId: {
       type: Number,
       required: true,
     },
+    /**
+     * creatorId is an int passed from Chat which represents ID of message creator.
+     */
     creatorId: {
       type: Number,
       required: true,
@@ -47,14 +61,25 @@ export default {
 
   data() {
     return {
+      /**
+       * profilePicUrl represents the URL of account profile picture.
+       */
       profilePicUrl: null,
-
+      /**
+       * name represents the name of the creator of the message.
+       */
       name: "",
-
+      /**
+       * time represents the timestamp for a created message.
+       */
       time: null,
-
+      /**
+       * message represents the message itself.
+       */
       message: "",
-
+      /**
+       * profileLink represents the link to a creators profile.
+       */
       profileLink: "",
     };
   },
@@ -65,6 +90,9 @@ export default {
     this.profileLink = "/accounts/" + this.chatMessage.accountId;
   },
   methods: {
+    /**
+     * getUserInfo is a function which returns info about an account with given ID.
+     */
     async getUserInfo() {
       await fetch(
         "http://localhost:8080/accounts/" +
@@ -81,6 +109,10 @@ export default {
         })
         .catch((error) => console.error("error deleting message: " + error));
     },
+
+    /**
+     * deleteMessage is a function which deletes a message related to a delete button.
+     */
     async deleteMessage() {
       if (confirm("Vil du virkelig slette denne kommentaren?")) {
         await fetch("http://localhost:8080/messages/" + this.chatMessage.id, {
