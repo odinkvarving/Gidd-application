@@ -159,6 +159,17 @@ export default {
         console.log('preventing post call '+this.errors.length+ ' errors')
         e.preventDefault()
       }else{
+
+        console.log('Current image status')
+        console.log(this.newImageFile)
+
+        if(this.exists(this.newImageFile)){
+          let formData=new FormData()
+          formData.append('file',this.newImageFile)
+          let res= await userService.sendImage(formData, this.$route.params.userId)
+          console.log('sendImage res'+res)
+        }
+
         console.log('sending following json')
         console.log(newAccount)
         if(this.exists(this.firstName)||this.exists(this.lastName)||
@@ -166,15 +177,6 @@ export default {
               newAccount.notificationSettings = this.notificationSettings;
           let res= await userService.setAccount(newAccount,this.$route.params.userId);
           console.log('setAccount res:'+res)
-        }
-        console.log('Current image status')
-        console.log(this.newImageFile)
-
-        if(this.exists(this.newImageFile)){
-          let formData=new FormData()
-          formData.append('file',this.newImageFile)
-          let res= await userService.sendImage(formData,this.$route.params.userId)
-          console.log('sendImage res'+res)
         }
 
       }

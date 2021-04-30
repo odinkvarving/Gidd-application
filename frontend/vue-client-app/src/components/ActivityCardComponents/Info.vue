@@ -568,18 +568,18 @@ export default {
 
       let days = Math.floor(diff / 86400000); //Calculate whole days
       diff -= days * 86400000; //Subtract whole days from diff
-      if (days > 0) this.duration += days + "d, ";
+      if (days > 0) this.duration += days + "d ";
 
       let hours = Math.floor(diff / 3600000) % 24; //Calculate whole hours
       diff -= hours * 3600000; //Subtract whole hours from diff
-      if (hours > 0) this.duration += hours + "t, ";
+      if (hours > 0) this.duration += hours + "t ";
 
       let minutes = Math.floor(diff / 60000) % 60; //Calculate whole minutes
       diff -= minutes * 60000; //Subtract whole minutes from diff
-      if (minutes > 0) this.duration += minutes + "m, ";
+      if (minutes > 0) this.duration += minutes + "m ";
 
       let seconds = Math.floor(diff % 60); //Calculating whole seconds
-      if (seconds > 0) this.duration += seconds + "s, ";
+      if (seconds > 0) this.duration += seconds + "s ";
     },
 
     /**

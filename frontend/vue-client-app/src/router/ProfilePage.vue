@@ -2,7 +2,7 @@
   <div class="profile_container">
     <NavBar />
     <div class="profile_info">
-      <img :src="AccountInfo.imageURL" @error="AccountInfo.imageURL" alt="Profil bilde"
+      <img :src="AccountInfo.imageURL" alt="Profil bilde"
          width="170" height="170"
          id="profile_photo">
       <div id="info-list">
@@ -22,7 +22,7 @@
         <p id="description">{{ AccountInfo.description }}</p>
       </div>
         <div class="profile-info-small">
-          <img :src=AccountInfo.imageURL @error="AccountInfo.imageURL" alt="Profil bilde"
+          <img :src="AccountInfo.imageURL" alt="Profil bilde"
             width="170" height="170"
             id="profile_photo">
           <div id="info-list">

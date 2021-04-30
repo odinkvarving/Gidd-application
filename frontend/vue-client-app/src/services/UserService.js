@@ -37,10 +37,10 @@ function login(email, password) {
         });
 }
 
-function sendImage(image,id){
+async function sendImage(image,id){
     console.log(image.get('file'))
     let user = JSON.parse(localStorage.getItem('user'));
-        return fetch(`http://localhost:8080/accounts/${id}/profilepicture`,{
+        return await fetch(`http://localhost:8080/accounts/${id}/profilepicture`,{
             method:'POST',
             headers:{
                 'Accept':image.get('file').type,

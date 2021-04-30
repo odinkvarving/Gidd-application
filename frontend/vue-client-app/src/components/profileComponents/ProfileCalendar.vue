@@ -9,7 +9,7 @@
         :on-event-click="onEventClick"
         locale="no"
         cell-contextmenu/>
-    <b-modal id="activity_modal" hide-footer="true" title="Activity pop-up">
+    <b-modal id="activity_modal" :hide-footer="true" title="Activity pop-up">
       <Activity
           :activity="selectedEvent"
           :isLoggedIn="loggedIn"

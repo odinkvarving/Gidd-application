@@ -226,8 +226,8 @@ export default {
     resultClicked(resultId) {
       console.log(resultId);
       if (this.$router.path !== `/dashboard/activity/${resultId}`) {
-        console.log("test");
         this.$router.push(`/dashboard/activity/${resultId}`);
+        location.reload();
       }
       this.isOpen = false;
       this.search = "";
