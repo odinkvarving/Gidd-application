@@ -3,41 +3,102 @@
     <div class="filter-sort-container">
       <div class="dropdownlists">
         <div id="category-container">
-            <b-form-select v-model="selectedCategory" :options="categories" id="select-category" class="picker">
-                <template #first>
-                    <b-form-select-option style="display: none" disabled selected value>Kategori</b-form-select-option>
-                </template>
-            </b-form-select>
+          <b-form-select
+            v-model="selectedCategory"
+            :options="categories"
+            id="select-category"
+            class="picker"
+          >
+            <template #first>
+              <b-form-select-option
+                style="display: none"
+                disabled
+                selected
+                value
+                >Kategori</b-form-select-option
+              >
+            </template>
+          </b-form-select>
         </div>
         <div id="level-container">
-            <b-form-select  v-model="selectedLevel" :options="levels" id="select-level" class="picker">
-                <template #first>
-                    <b-form-select-option style="display: none" disabled selected value>Nivå</b-form-select-option>
-                </template>
-            </b-form-select>
+          <b-form-select
+            v-model="selectedLevel"
+            :options="levels"
+            id="select-level"
+            class="picker"
+          >
+            <template #first>
+              <b-form-select-option
+                style="display: none"
+                disabled
+                selected
+                value
+                >Nivå</b-form-select-option
+              >
+            </template>
+          </b-form-select>
         </div>
         <div id="location-container">
-            <b-form-select v-model="selectedLocation" :options="locations" id="select-location" class="picker" data-live-search="true">  
-                <template #first>
-                    <b-form-select-option style="display: none" disabled selected value>Sted</b-form-select-option>
-                </template>                                   
-            </b-form-select>
+          <b-form-select
+            v-model="selectedLocation"
+            :options="locations"
+            id="select-location"
+            class="picker"
+            data-live-search="true"
+          >
+            <template #first>
+              <b-form-select-option
+                style="display: none"
+                disabled
+                selected
+                value
+                >Sted</b-form-select-option
+              >
+            </template>
+          </b-form-select>
         </div>
         <div id="button-container">
-            <button v-show="!isFiltered" id="filter-button" type="button" @click="generateFilteredList()" >Filtrer</button> 
-            <button v-show="isFiltered" id="filter-button" type="button" @click="generateFilteredList()" >Reset</button> 
-        </div>       
-        <div id="sorting-container">
-            <b-form-select v-model="sort" :options="sorts" @change="sortActivities()" id="select-sort" class="picker">
-                <template #first>
-                    <b-form-select-option style="display: none" disabled selected :value="null">Sorter</b-form-select-option>
-                </template>
-            </b-form-select>
+          <button
+            v-show="!isFiltered"
+            id="filter-button"
+            type="button"
+            @click="generateFilteredList()"
+          >
+            Filtrer
+          </button>
+          <button
+            v-show="isFiltered"
+            id="filter-button"
+            type="button"
+            @click="generateFilteredList()"
+          >
+            Reset
+          </button>
         </div>
-    </div>
+        <div id="sorting-container">
+          <b-form-select
+            v-model="sort"
+            :options="sorts"
+            @change="sortActivities()"
+            id="select-sort"
+            class="picker"
+          >
+            <template #first>
+              <b-form-select-option
+                style="display: none"
+                disabled
+                selected
+                :value="null"
+                >Sorter</b-form-select-option
+              >
+            </template>
+          </b-form-select>
+        </div>
+      </div>
     </div>
     <div id="feed">
-      <div id="feedloop"
+      <div
+        id="feedloop"
         v-for="a in filteredActivities"
         :key="a.id"
         @click="handleActivityClicked(a)"
@@ -73,7 +134,6 @@
   </div>
 </template>
 <script>
-
 import Activity from "./Activity.vue";
 import { userService } from "../../services/UserService.js";
 import { weatherService } from "../../services/WeatherService.js";
@@ -111,18 +171,18 @@ export default {
       isFiltered: false,
 
       sorts: [
-        { value: 1, text: "Navn A-Å"},
-        { value: 2, text: "Navn Å-A"},
-        { value: 3, text: "Tidspunkt tidlig-senest"},
-        { value: 4, text: "Tidspunkt senest-tidlig"},
-        { value: 5, text: "Varighet høy-lav"},
-        { value: 6, text: "Varighet lav-høy"},
-        { value: 7, text: "Ledige plasser høy-lav"},
-        { value: 8, text: "Ledige plasser lav-høy"},
-        { value: 9, text: "Antall påmeldte høy-lay"},
-        { value: 10, text: "Antall påmeldte lav-høy"},
-        { value: 11, text: "Nivå høy-lav"},
-        { value: 12, text: "Nivå lav-høy"}
+        { value: 1, text: "Navn A-Å" },
+        { value: 2, text: "Navn Å-A" },
+        { value: 3, text: "Tidspunkt tidlig-senest" },
+        { value: 4, text: "Tidspunkt senest-tidlig" },
+        { value: 5, text: "Varighet høy-lav" },
+        { value: 6, text: "Varighet lav-høy" },
+        { value: 7, text: "Ledige plasser høy-lav" },
+        { value: 8, text: "Ledige plasser lav-høy" },
+        { value: 9, text: "Antall påmeldte høy-lay" },
+        { value: 10, text: "Antall påmeldte lav-høy" },
+        { value: 11, text: "Nivå høy-lav" },
+        { value: 12, text: "Nivå lav-høy" },
       ],
       filterKey: "",
     };
@@ -138,7 +198,6 @@ export default {
     this.filteredActivities = this.activities;
   },
   methods: {
-
     async getActivities() {
       const requestOptions = {
         method: "GET",
@@ -148,142 +207,152 @@ export default {
       await fetch("http://localhost:8080/activities/", requestOptions)
         .then((response) => response.json())
         .then((data) => {
-          let list = data.filter(a => new Date(a.startTime) >= Date.now());
-          this.activities = list.sort((x,y) => {
+          let list = data.filter((a) => new Date(a.startTime) >= Date.now());
+          this.activities = list.sort((x, y) => {
             return new Date(x.startTime) - new Date(y.startTime);
-          })
+          });
         })
         .catch((error) => console.log(error));
-        for(let i = 0; i < this.activities.length; i++) {
-            this.locations.push({
-                value: this.activities[i].location,
-                text: this.activities[i].location,
-                id: (i+1),
-            })
-        }
-        for(let j = 0; j < this.locations.length; j++) {
-            console.log(this.locations[j].value)
-        }
-      },
+      for (let i = 0; i < this.activities.length; i++) {
+        this.locations.push({
+          value: this.activities[i].location,
+          text: this.activities[i].location,
+          id: i + 1,
+        });
+      }
+      for (let j = 0; j < this.locations.length; j++) {
+        console.log(this.locations[j].value);
+      }
+    },
 
     async getCategories() {
-        const requestOptions = {
-            method: "GET"
-        };
+      const requestOptions = {
+        method: "GET",
+      };
 
-        await fetch("http://localhost:8080/activityTypes/", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                for(let i = 0; i < data.length; i++) {
-                    this.categories.push({
-                        value: data[i].type,
-                        text: data[i].type
-                    })
-                }
-            })
-            .catch((error) => console.log(error)); 
+      await fetch("http://localhost:8080/activityTypes/", requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          for (let i = 0; i < data.length; i++) {
+            this.categories.push({
+              value: data[i].type,
+              text: data[i].type,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
     },
 
     async getLevels() {
-        const requestOptions = {
-            method: "GET"
-        };
+      const requestOptions = {
+        method: "GET",
+      };
 
-        await fetch("http://localhost:8080/levels/", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                for(let i = 0; i < data.length; i++) {
-                    console.log(data[i].description);
-                    this.levels.push({
-                        value: data[i].description,
-                        text: data[i].description
-                    })
-                }
-            })
-            .catch((error) => console.log(error));
+      await fetch("http://localhost:8080/levels/", requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          for (let i = 0; i < data.length; i++) {
+            console.log(data[i].description);
+            this.levels.push({
+              value: data[i].description,
+              text: data[i].description,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
     },
 
     filterByCategory(list) {
-        
-        const filteredList = [];
+      const filteredList = [];
 
-        if(this.selectedCategory !== "Kategori") {
-            for(let i = 0; i < list.length; i++) {
-                if(list[i].activityType.type.toLowerCase() === this.selectedCategory.toLowerCase()) {
-                    filteredList.push(list[i]);
-                }
-            }
-            return filteredList;
-        }else {
-            return list;
+      if (this.selectedCategory !== "Kategori") {
+        for (let i = 0; i < list.length; i++) {
+          if (
+            list[i].activityType.type.toLowerCase() ===
+            this.selectedCategory.toLowerCase()
+          ) {
+            filteredList.push(list[i]);
+          }
         }
+        return filteredList;
+      } else {
+        return list;
+      }
     },
 
     filterByLevel(list) {
+      const filteredList = [];
 
-        const filteredList = [];
-
-        if(this.selectedLevel !== "Nivå") {
-            for(let i = 0; i < list.length; i++) {
-                if(list[i].level.description.toLowerCase() === this.selectedLevel.toLowerCase()) {
-                    filteredList.push(list[i]);
-                }
-            }
-            return filteredList;
-        }else {
-            return list;
+      if (this.selectedLevel !== "Nivå") {
+        for (let i = 0; i < list.length; i++) {
+          if (
+            list[i].level.description.toLowerCase() ===
+            this.selectedLevel.toLowerCase()
+          ) {
+            filteredList.push(list[i]);
+          }
         }
+        return filteredList;
+      } else {
+        return list;
+      }
     },
 
     filterByLocation(list) {
+      const filteredList = [];
 
-        const filteredList = [];
-
-        if(this.selectedLocation !== "Sted") {
-            for(let i = 0; i < list.length; i++) {
-                if(list[i].location.toLowerCase() === this.selectedLocation.toLowerCase()) {
-                    filteredList.push(list[i]);
-                }
-            }
-            return filteredList;
-        }else {
-            return list;
+      if (this.selectedLocation !== "Sted") {
+        for (let i = 0; i < list.length; i++) {
+          if (
+            list[i].location.toLowerCase() ===
+            this.selectedLocation.toLowerCase()
+          ) {
+            filteredList.push(list[i]);
+          }
         }
+        return filteredList;
+      } else {
+        return list;
+      }
     },
 
     generateFilteredList() {
-        console.log(this.selectedCategory + "SELECTED CATEGORY WHEN BUTTON CLICKED")
-        console.log(this.selectedLevel + "SELECTED LEVEL WHEN BUTTON CLICKED")
-        console.log(this.selectedLocation + "SELECTED LOCATION WHEN BUTTON CLICKED")
-        
-        let list = this.activities;
+      console.log(
+        this.selectedCategory + "SELECTED CATEGORY WHEN BUTTON CLICKED"
+      );
+      console.log(this.selectedLevel + "SELECTED LEVEL WHEN BUTTON CLICKED");
+      console.log(
+        this.selectedLocation + "SELECTED LOCATION WHEN BUTTON CLICKED"
+      );
 
-        if(this.selectedCategory !== "") {
-            list = this.filterByCategory(list);
-        }
-        if(this.selectedLevel !== "") {
-            list = this.filterByLevel(list);
-        }
-        if(this.selectedLocation !== "") {
-            list = this.filterByLocation(list);
-        }
+      let list = this.activities;
 
-        this.filteredActivities = list;
-        this.selectedCategory = "";
-        this.selectedLevel = "";
-        this.selectedLocation = "";
-        this.isFiltered = !this.isFiltered;
+      if (this.selectedCategory !== "") {
+        list = this.filterByCategory(list);
+      }
+      if (this.selectedLevel !== "") {
+        list = this.filterByLevel(list);
+      }
+      if (this.selectedLocation !== "") {
+        list = this.filterByLocation(list);
+      }
+
+      this.filteredActivities = list;
+      this.selectedCategory = "";
+      this.selectedLevel = "";
+      this.selectedLocation = "";
+      this.isFiltered = !this.isFiltered;
     },
 
     findCurrentParticipants(activityId, currentParticipants) {
       this.currentParticipantsAll.push({
         id: activityId,
-        currentParticipants: currentParticipants
+        currentParticipants: currentParticipants,
       });
     },
 
     sortActivities() {
-      switch(this.sort) {
+      switch (this.sort) {
         case 1: {
           this.sortedActivities = this.sortByNameAsc();
           break;
@@ -315,7 +384,7 @@ export default {
         case 8: {
           this.sortedActivities = this.sortByFreeSpotsAsc();
           break;
-        }       
+        }
         case 9: {
           this.sortedActivities = this.sortByCurrentParticipantsDesc();
           break;
@@ -337,7 +406,7 @@ export default {
 
     sortByNameAsc() {
       console.log(">> sortByNameAsc() called");
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         if (x.title < y.title) return -1;
         else if (x.title > y.title) return 1;
         return 0;
@@ -346,7 +415,7 @@ export default {
 
     sortByNameDesc() {
       console.log(">> sortByNameDesc() called");
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         if (x.title < y.title) return 1;
         else if (x.title > y.title) return -1;
         return 0;
@@ -355,21 +424,21 @@ export default {
 
     sortByTimeEarliest() {
       console.log(">> sortByTimeEarliest() called");
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         return new Date(x.startTime) - new Date(y.startTime);
       });
     },
 
     sortByTimeLatest() {
       console.log(">> sortByTimeLatest() called");
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         return new Date(y.startTime) - new Date(x.startTime);
       });
     },
 
     sortByDurationDesc() {
       console.log(">> sortByDurationDesc() called");
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         let d1 = new Date(y.endTime) - new Date(y.startTime);
         let d2 = new Date(x.endTime) - new Date(x.startTime);
         return d1 - d2;
@@ -378,18 +447,20 @@ export default {
 
     sortByDurationAsc() {
       console.log(">> sortByDurationAsc() called");
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         let d1 = new Date(x.endTime) - new Date(x.startTime);
         let d2 = new Date(y.endTime) - new Date(y.startTime);
         return d1 - d2;
-      })
+      });
     },
 
     sortByFreeSpotsDesc() {
       console.log(">> sortByFreeSpotsDesc() called");
-      return this.filteredActivities.sort((x,y) => {
-        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
-        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+      return this.filteredActivities.sort((x, y) => {
+        let current1 = this.currentParticipantsAll.find((a) => a.id === y.id)
+          .currentParticipants;
+        let current2 = this.currentParticipantsAll.find((a) => a.id === x.id)
+          .currentParticipants;
         let free1 = y.maxParticipants - current1;
         let free2 = x.maxParticipants - current2;
         return free1 - free2;
@@ -398,9 +469,11 @@ export default {
 
     sortByFreeSpotsAsc() {
       console.log(">> sortByFreeSpotsAsc() called");
-      return this.filteredActivities.sort((x,y) => {
-        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
-        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+      return this.filteredActivities.sort((x, y) => {
+        let current1 = this.currentParticipantsAll.find((a) => a.id === x.id)
+          .currentParticipants;
+        let current2 = this.currentParticipantsAll.find((a) => a.id === y.id)
+          .currentParticipants;
         let free1 = x.maxParticipants - current1;
         let free2 = y.maxParticipants - current2;
         return free1 - free2;
@@ -409,32 +482,36 @@ export default {
 
     sortByCurrentParticipantsDesc() {
       console.log(">> sortByCurrentParticipantsDesc() called");
-      return this.filteredActivities.sort((x,y) => {
-        let current1 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
-        let current2 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
+      return this.filteredActivities.sort((x, y) => {
+        let current1 = this.currentParticipantsAll.find((a) => a.id === y.id)
+          .currentParticipants;
+        let current2 = this.currentParticipantsAll.find((a) => a.id === x.id)
+          .currentParticipants;
         return current1 - current2;
       });
     },
 
     sortByCurrentParticipantsAsc() {
       console.log(">> sortByCurrentParticipantsAsc() called");
-      return this.filteredActivities.sort((x,y) => {
-        let current1 = this.currentParticipantsAll.find(a => a.id === x.id).currentParticipants;
-        let current2 = this.currentParticipantsAll.find(a => a.id === y.id).currentParticipants;
+      return this.filteredActivities.sort((x, y) => {
+        let current1 = this.currentParticipantsAll.find((a) => a.id === x.id)
+          .currentParticipants;
+        let current2 = this.currentParticipantsAll.find((a) => a.id === y.id)
+          .currentParticipants;
         return current1 - current2;
       });
     },
 
     sortByLevelDesc() {
       console.log(">> sortByLevelDesc() called");
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         return y.level.id - x.level.id;
       });
     },
 
     sortByLevelAsc() {
       console.log(">> sortByLevelAsc() called");
-      return this.filteredActivities.sort((x,y) => {
+      return this.filteredActivities.sort((x, y) => {
         return x.level.id - y.level.id;
       });
     },
@@ -458,7 +535,9 @@ export default {
         .then((data) => {
           console.log(`Joined activities:`);
           console.log(data);
-          let sorted = data.sort((x,y) => new Date(x.startTime) - new Date(y.startTime));
+          let sorted = data.sort(
+            (x, y) => new Date(x.startTime) - new Date(y.startTime)
+          );
           this.joinedActivities = sorted;
         })
         .catch((error) => console.log(error));
@@ -511,9 +590,6 @@ export default {
       }
       this.sortList();
     },
-    sortList() {
-      // TODO: Sort list when adding new activity
-    },
   },
 };
 </script>
@@ -526,6 +602,7 @@ export default {
 }
 #feed {
   width: 70vw;
+  min-height: 100vh;
   display: flex;
   flex-flow: row wrap;
   align-items: center;
@@ -538,7 +615,7 @@ export default {
         justify-content: center;
         align-items: center;*/
 }
-#feedloop{
+#feedloop {
   margin-top: 50px;
 }
 #calendar-mini {
@@ -617,21 +694,20 @@ export default {
 }
 
 .filter-sort-container {
-    width: 100%;
-    height: 80px;
-    display: flex;
-    margin-top: 70px;
-    z-index: 100;
-    padding-bottom: 0 25px;
-    position: fixed;
-    background-color: #F6F6F6;
+  width: 100vw;
+  height: 60px;
+  display: flex;
+  margin-top: 72px;
+  z-index: 100;
+  position: fixed;
+  background-color: #f6f6f6;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
 .dropdownlists {
-    margin-top: 8px;
-    display: flex;
-    padding-left: 53px;
-    padding-top: 15px;
+  display: flex;
+  padding-left: 60px;
+  align-items: center;
 }
 
 .picker {
@@ -647,51 +723,48 @@ export default {
 }
 
 #level-container {
-    display: inline-block;
-    padding-right: 10px;
-    padding-left: 10px;
-    width: 130px;
-    height: 35px;
-    cursor: pointer;
+  display: inline-block;
+  padding-right: 10px;
+  padding-left: 10px;
+  max-width: 150px;
+  min-width: 129px;
+  height: 35px;
+  cursor: pointer;
 }
 
 #location-container {
-    width: 150px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 3px;
-    padding-top: 1px;
-    width: 130px;
-    height: 35px;
-    cursor: pointer;
+  max-width: 140px;
+  min-width: 126px;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 35px;
+  cursor: pointer;
 }
 
 #location-picker {
-    width: 100%;
-    height: 100%;
-    padding-left: 10px;
-    padding-bottom: 2px;
-    border-radius: 4px;
-    width: 130px;
-    height: 35px;
-    cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding-left: 10px;
+  border-radius: 4px;
+  width: 130px;
+  height: 35px;
+  cursor: pointer;
 }
 
 #button-container {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
 }
 
 #filter-button {
-    background-color: #ffbd3e;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    width: 60px;
-    height: 35px;
-    text-align: center;
-    margin-left: 12px;
-    margin-bottom: 20px;
+  background-color: #ffbd3e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 60px;
+  height: 35px;
+  text-align: center;
 }
 
 #filter-button:hover {
@@ -708,7 +781,7 @@ export default {
 }
 
 @media (max-width: 1200px) {
-  #calendar-mini{
+  #calendar-mini {
     display: none;
   }
 
@@ -747,6 +820,9 @@ export default {
     width: 60px;
     margin-left: -115px;
   }
-}
 
+  @media (max-width: 935px) {
+    
+  }
+}
 </style>
