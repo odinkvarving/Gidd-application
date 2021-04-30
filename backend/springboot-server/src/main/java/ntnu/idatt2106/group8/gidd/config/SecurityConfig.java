@@ -57,6 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/accounts/{id}/profilepicture",
             "/profilepictures/{filename}",
             "/profilepictures/",
+            "/profilepictures",
 
             // Documentation
             "/gidd-docs/**",

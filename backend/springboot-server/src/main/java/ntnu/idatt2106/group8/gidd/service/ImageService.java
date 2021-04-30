@@ -26,7 +26,11 @@ import java.util.Random;
 
 @Service
 public class ImageService {
-    public static final String STORAGE_DIR = System.getProperty("user.dir") + "\\src\\main\\resources\\profilepictures";
+    public static final String dir = File.separator;
+
+    public static final String STORAGE_DIR =
+            System.getProperty("user.dir") +dir+"src"+dir+"main"+dir+ "resources"+dir+"profilepictures";
+
     private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
 
     @Autowired
@@ -46,7 +50,6 @@ public class ImageService {
             return false;
         }
         String fileExtension = "." + FilenameUtils.getExtension(file.getOriginalFilename());
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         Path storageDirectory = Paths.get(STORAGE_DIR);
 
         if (!Files.exists(storageDirectory)) { // if the folder does not exist
@@ -58,12 +61,12 @@ public class ImageService {
             }
         }
         String newFileName = generateRandomAlphanumericString(50) + fileExtension;
-        while (new File(STORAGE_DIR + "\\" + newFileName).exists()) {
+        while (new File(STORAGE_DIR + dir + newFileName).exists()) {
             newFileName = generateRandomAlphanumericString(50) + fileExtension;
         }
 
 
-        Path destination = Paths.get(STORAGE_DIR + "\\" + newFileName);
+        Path destination = Paths.get(STORAGE_DIR + dir + newFileName);
 
         try {
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);// we are Copying all bytes from an input stream to a file
@@ -83,7 +86,7 @@ public class ImageService {
         }
 
 
-        logger.info("sucsessfuly saved: " + storageDirectory + "\\" + newFileName + " to account: " + accountId);
+        logger.info("sucsessfuly saved: " + storageDirectory + dir + newFileName + " to account: " + accountId);
         return true;
     }
 
@@ -106,26 +109,37 @@ public class ImageService {
      * @return the image as a bytearray, returns the default avatar if the image was not found.
      * @throws IOException
      */
-    public byte[] getImageWithMediaType(String imageName) {
-        try {
-            if (new File(STORAGE_DIR + "\\" + imageName).exists()) {
-                Path destination = Paths.get(STORAGE_DIR + "\\" + imageName);// retrieve the image by its name
-                logger.info("serving : " + destination);
-                return IOUtils.toByteArray(destination.toUri());
-            } else if(imageName.length()==0){
-                Path destination = Paths.get(STORAGE_DIR + "\\" + "defaultavatar.png");
-                logger.info(imageName + " was not found, returning default avatar.");
-                return IOUtils.toByteArray(destination.toUri());
-            }else {
-                Path destination = Paths.get(STORAGE_DIR + "\\" + "defaultavatar.png");
-                logger.info(imageName + " was not found, returning default avatar.");
-                return IOUtils.toByteArray(destination.toUri());
+    public byte[] getProfilePicture(String imageName){
+
+            if (imageName == null || imageName.trim().length() == 0){
+                return getDefaultImage();
             }
-        } catch (IOException ioe) {
-            logger.error("Error during fetching of image.", ioe);
-            return null;
+            try {
+            Path path = Paths.get(STORAGE_DIR+dir+imageName);
+            logger.info("serving image: " + path.toString());
+            return IOUtils.toByteArray(path.toUri());
+        }catch (IOException ioe){
+            logger.error("ERROR while trying to serve image: " + imageName + "\n returning default image.",ioe);
+            return getDefaultImage();
         }
     }
+    public byte[] getDefaultImage() {
+        try {
+            Path p = Paths.get(STORAGE_DIR+dir+"default.png");
+            logger.info("serving default.png");
+            return IOUtils.toByteArray(p.toUri());
+        }catch (IOException e){
+            logger.error("ERROR while trying to default image: ", e);
+            return new byte[0];
+        }
+
+    }
+
+    public static void main(String[] args) {
+        System.out.println(File.separator);
+    }
+
+
 
 
 }
