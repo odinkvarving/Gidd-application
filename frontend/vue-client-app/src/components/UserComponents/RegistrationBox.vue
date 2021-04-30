@@ -131,8 +131,7 @@ export default {
       );
     },
     validateName() {
-      let regName = /^[a-zA-Z]+ [a-zA-Z]+$/;
-      this.nameValid = regName.test(this.nameValue);
+      this.nameValid = true;
     },
     validatePhone() {
       let regPhone = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
@@ -156,6 +155,15 @@ export default {
         accountInfo: {
           firstname: name[0],
           surname: name[1],
+          phone: this.phoneValue,
+          notificationSettings: {
+            wantsActivityChangedNotifications: true,
+            wantsActivityChangedMails: true,
+            wantsOutOfQueueNotifications: true,
+            wantsOutOfQueueMails: true,
+            wantsActivityCancelledNotifications: true,
+            wantsActivityCancelledMails: true
+          }
         },
       };
 

@@ -1,5 +1,5 @@
 <template>
-  <b-navbar class="bg-white" toggleable="md" fixed="top" v-show="onHomePage">
+  <b-navbar class="bg-white" toggleable="md" fixed="top">
     <router-link to="/dashboard">
       <img
         src="../../assets/Logo.jpg"
@@ -34,9 +34,8 @@
                   v-for="(result, i) in results"
                   :key="i"
                   class="autocomplete-result"
-                  :class="{ 'is-active': i === arrowCounter }"
-                >
-                  <p @click="resultClicked(result.id)">
+                  :class="{ 'is-active': i === arrowCounter }">
+                  <p @click="resultButtonClicked(result.id)">
                     <span class="title">{{ result.title }}</span>
                     <span class="email">{{ result.creator.email }}</span>
                   </p>
@@ -56,14 +55,13 @@
           </router-link>
         </b-nav-item>
 
-        <b-nav-form>
+        <b-nav-form v-if="isLoggedIn">
           <NotificationsDropdown class="notification-icon" icon="bell.png" />
         </b-nav-form>
 
-        <b-nav-item-dropdown right>
+        <b-nav-item-dropdown right v-if="isLoggedIn">
           <template slot="button-content">
-            <img v-if="accountInfo.imageURL !== ''" class="profile-pic" alt="Profile picture" :src="this.accountInfo.imageURL" height="40px" width="40px">
-            <img v-else src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="default pic" class="profile-pic" height="40px" width="40px">
+            <img class="profile-pic" alt="Profile picture" :src="this.accountInfo.imageURL" height="40px" width="40px">
 
           </template>
           <b-dropdown-item :to="`${user[0].link}`">
@@ -72,7 +70,7 @@
           <b-dropdown-item to="/feedback">
             Gi tilbakemelding
           </b-dropdown-item>
-          <b-dropdown-item @click="logoutClicked()" to="/">
+          <b-dropdown-item @click="logoutClicked()">
             Logg ut
           </b-dropdown-item>
         </b-nav-item-dropdown>
@@ -80,61 +78,40 @@
     </b-collapse>
   </b-navbar>
 </template>
-
 <script>
+/**
+ * NotificationsDropdown and userService are imported.
+ */
 import NotificationsDropdown from "./NotificationsDropdown.vue";
 import { userService } from "../../services/UserService.js";
 
+/**
+ * NavBar is a component which displays a navigation bar in all other components than the front page.
+ * It is a default navigation bar.
+ */
 export default {
   name: "navbar",
-  props: {
-    items: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
-    isAsync: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  },
-
-  watch: {
-    items: function(value, oldValue) {
-      console.log(oldValue);
-      if (this.isAsync) {
-        this.results = value;
-        this.isOpen = true;
-        this.isLoading = false;
-      }
-    },
-  },
 
   components: {
     NotificationsDropdown,
   },
 
-  async mounted() {
-    document.addEventListener("click", this.handleClickOutside);
-    this.getActivities();
-    this.isLoggedIn = await userService.isLoggedIn();
-    if(this.isLoggedIn){
-      let account = await userService.getAccountByEmail();
-      this.accountInfo = await userService.getAccountInfo(account.id);
-    }
-  },
-  destroyed() {
-    document.removeEventListener("click", this.handleClickOutside);
-  },
-
   data() {
     return {
+      /**
+       * isCreateActivityVisible tells us if create activity button is visible or not
+       */
       isCreateActivityVisible: false,
+      /**
+       * user contains information about the different items in the navbar dropdown menu, with corresponding links and functions.
+       */
       user: [
         {
           title: "Min Profil",
           link: String,
+          /**
+           * Checks if user is logged in, and adds the correct routing link to user page.
+           */
           method: () => {
             console.log(this.user[0].link);
             if (this.user[0].link) {
@@ -149,6 +126,9 @@ export default {
         {
           title: "Gi tilbakemelding",
           link: "/feedback",
+          /**
+           * Redirects the user to feedback page.
+           */
           method: () => {
             this.$router.push("/feedback");
           },
@@ -156,44 +136,85 @@ export default {
         {
           title: "Logg Ut",
           link: "/",
+          /**
+           * User is logging out and redirected to front page.
+           */
           method: () => {
             userService.logout();
             this.$router.push("/");
           },
         },
       ],
+      /**
+       * isLoggedIn is a boolean which flags if a user is logged in.
+       */
       isLoggedIn: false,
+      /**
+       * notifications is an array of notifications.
+       */
       notifications: [{}],
+      /**
+       * activities is an array with all activities.
+       */
       activities: {},
+      /**
+       * search represents input text in search field
+       */
       search: "",
+      /**
+       * isLoading is a flag which tells us if something is loading.
+       */
       isLoading: false,
+      /**
+       * results is an array containing search results.
+       */
       results: [],
+      /**
+       * isOpen is a flag which tells us if search field is open.
+       */
       isOpen: false,
+      /**
+       * arrowCounter is used to check which item in search field is selected with arrows.
+       */
       arrowCounter: -1,
+      /**
+       * accountInfo contains account info
+       */
       accountInfo: {}
     };
   },
-  computed: {
-    onHomePage() {
-      if (
-        this.$route.path === "/" ||
-        this.$route.path === "/register" ||
-        this.$route.path === "/login" ||
-        this.$route.path === "/forgotPassword" ||
-        this.$route.path.includes("/resetpassword")
-      ) {
-        return false;
-      } else {
-        return true;
+
+  async mounted() {
+    document.addEventListener("click", this.handleClickOutside);
+    this.getActivities();
+    this.isLoggedIn = await userService.isLoggedIn();
+    if(this.isLoggedIn){
+      let account = await userService.getAccountByEmail();
+      this.accountInfo = await userService.getAccountInfo(account.id);
+      if(this.accountInfo.imageURL === null || !this.accountInfo.imageURL.includes("http://localhost:8080/profilepictures/")){
+          this.accountInfo.imageURL = "http://localhost:8080/profilepictures/";
       }
-    },
+    }
   },
+
+  destroyed() {
+    document.removeEventListener("click", this.handleClickOutside);
+  },
+
+  /**
+   * created gets the logged in user's user id on creation.
+   */
   created() {
     if (userService.getTokenString()) {
       this.getUserId();
     }
   },
+
   methods: {
+    /**
+     * getUserId is a function which returns the logged in user's user id,
+     *  and sets the navbar dropdown user page link to the given user page.
+     */
     async getUserId() {
       let res = await userService.getAccountByEmail(
         userService.getAccountDetails().sub
@@ -201,22 +222,22 @@ export default {
       this.user[0].link = "/accounts/" + res.id;
     },
 
-    async resultClicked(resultId) {
+    /**
+     * resultClicked is a function which routes to correct activity page when a search result is clicked.
+     */
+    resultClicked(resultId) {
       console.log(resultId);
       if (this.$router.path !== `/dashboard/activity/${resultId}`) {
-        console.log("test");
-        await this.$router.push(`/dashboard/activity/${resultId}`);
+        this.$router.push(`/dashboard/activity/${resultId}`);
+        location.reload();
       }
       this.isOpen = false;
       this.search = "";
     },
-    toggleCreateActivity() {
-      if (this.isCreateActivityVisible === false) {
-        this.isCreateActivityVisible = true;
-      } else {
-        this.isCreateActivityVisible = false;
-      }
-    },
+
+    /**
+     * getActivities is a function which fetches activities from backend.
+     */
     getActivities() {
       const requestOptions = {
         method: "GET",
@@ -231,6 +252,12 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+
+    /**
+     * filterResults is a function which filter results based on the input in search bar.
+     * It works as an auto complete function,
+     *  because it also checks which activity titles that include the input.
+     */
     filterResults() {
       console.log(this.search);
       this.results = [];
@@ -250,48 +277,81 @@ export default {
         }
       }
     },
+
+    /**
+     * onChange is a function which emits new input from search bar.
+     * The function also runs the filterResults function above.
+     */
     onChange() {
       this.$emit("input", this.search);
       if (this.isAsync) {
         this.isLoading = true;
-      } else {
+      }else if (this.search === "") {
+        this.isOpen = false;
+      }else {
         this.filterResults();
         this.isOpen = true;
       }
     },
-    setResult(result) {
-      this.search = result;
-      this.isOpen = false;
-    },
+    
+    /**
+     * handleClickOutside is a function which controls clicks outside of the component.
+     */
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {
         this.arrowCounter = -1;
         this.isOpen = false;
       }
     },
+
+    /**
+     * onArrowDown is a function which runs when arrowDown button is clicked and increments arrowCounter by 1
+     */
     onArrowDown() {
       if (this.arrowCounter < this.results.length) {
         this.arrowCounter = this.arrowCounter + 1;
       }
     },
+
+    /**
+     * onArrowUp is a function which runs when arrowUp button is clicked and decrements arrowCounter by 1
+     */
     onArrowUp() {
       if (this.arrowCounter > 0) {
         this.arrowCounter = this.arrowCounter - 1;
       }
     },
+
+    /**
+     * resultButtonClicked is a function which calls resultClicked function.
+     */
+    resultButtonClicked(resultId) {
+      this.resultClicked(resultId);
+    },
+
+    /**
+     * onEnter is a function which runs when enter button is clicked and runs resultClicked function.
+     */
     onEnter() {
       //fiks onEnter gjør samme som click
       this.search = this.results[this.arrowCounter];
       this.arrowCounter = -1;
+      this.resultClicked(this.search.id);
     },
+    
+    /**
+     * logoutClicked is a function which calls logout function in userService.
+     * This results in account logout.
+     */
     logoutClicked() {
       userService.logout();
+      this.$router.push("/");
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 .menu-item {
   margin: 0 10px;
 }
@@ -378,6 +438,7 @@ input {
 
 .bg-white {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  min-height: 72px;
 }
 
 a.nav-link {
@@ -394,5 +455,16 @@ a.nav-link {
   margin-left: 10px;
   margin-right: 10px;
   border-radius: 100%;
+}
+
+.title {
+  float: left;
+  clear: left;
+  margin: 0 !important;
+}
+
+.email {
+  float: left;
+  clear: left;
 }
 </style>

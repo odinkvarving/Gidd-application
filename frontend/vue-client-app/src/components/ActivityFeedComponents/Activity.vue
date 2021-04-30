@@ -4,8 +4,7 @@
         <div id="ownerInfo">
             
             
-            <img v-if="accountInfo.imageURL !== '' " alt="Activity host profile picture" :src="accountInfo.imageURL">
-            <img v-else src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="default pic">
+            <img alt="Activity host profile picture" :src="accountInfo.imageURL">
 
             <!-- Add profile pic! -->
             <div class="owner-time">
@@ -49,7 +48,7 @@
             </GmapMap>
         </div>
         <p style="margin: 0">Deltakere: {{ currentParticipants }} / {{ activity.maxParticipants }}</p>
-        <p style="font-size: 13px; opacity: 70%" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</p>
+        <p style="font-size: 13px; opacity: 70%; margin: 0; position: absolute; bottom: 90px;" v-if="participantsInQueue > 0">+ {{ participantsInQueue }} på venteliste</p>
         <!--<div>
             <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
         </div>-->
@@ -71,7 +70,6 @@
         <button
             disabled
             v-show="activity.cancelled"
-            @click="() => console.log(activity.cancelled)"
             class="cancel-button"
             >Aktivitet avlyst!</button
         >
@@ -155,12 +153,15 @@ import { activityButtonService } from '../../services/ActivityButtonService';
          */
         async mounted(){
             await this.getCurrentParticipantsNumber();
+            this.accountInfo = await userService.getAccountInfo(this.activity.creator.id);
+            if(this.accountInfo.imageURL === null || !this.accountInfo.imageURL.includes("http://localhost:8080/profilepictures/")){
+                this.accountInfo.imageURL = "http://localhost:8080/profilepictures/";
+            }
             if(this.isLoggedIn){
                 await this.isAlreadyParticipating();
                 if ((this.currentParticipants === this.activity.maxParticipants) && (this.queuePosition > 0)) {
                     this.isInQueue = true;
                 }
-                this.accountInfo = await userService.getAccountInfo(this.activity.creator.id);
                 console.log(this.accountInfo);
             }
             this.isDataReady = true;
@@ -251,7 +252,6 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 let data = await activityButtonService.addParticipantToActivity(this.activity);
                 let accountId = await userService.getAccountByEmail().then(data => accountId = data.id);
                     if(data.activityId === this.activity.id && data.accountId === accountId){
-                        console.log("Joining activity was successful! Changing button style");
                         if(this.currentParticipants === this.activity.maxParticipants){
                             this.participantsInQueue ++;
                             this.isInQueue = true;
@@ -283,7 +283,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
                 if(this.queuePosition > 0){
                     this.isInQueue = true;
                 }
-            },
+            }
         }
     }
 </script>
@@ -320,6 +320,7 @@ import { activityButtonService } from '../../services/ActivityButtonService';
     #ownerInfo{
         display: flex;
         align-items: center;
+        justify-content: space-between;
         margin: auto;
         width: 100%;
         margin: 20px 0 0 65px;

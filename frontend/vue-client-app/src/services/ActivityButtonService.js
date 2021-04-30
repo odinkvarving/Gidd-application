@@ -43,9 +43,9 @@ function joinButtonClicked(){
 /**
  * getButtonStatus is a function which returns button status
  *  depending on if the account is already participating or not.
- * @param alreadyParticipating: boolean representing if the account is participating in given activity or not
- * @param currentParticipants: current participants of the activity
- * @param activity: the activity itself
+ * @param {boolean} alreadyParticipating: representing if the account is participating in given activity or not
+ * @param {Number} currentParticipants: current participants of the activity
+ * @param {Object} activity: the activity itself
  * @returns button status as a string
  */
 function getButtonStatus(alreadyParticipating, currentParticipants, activity) {
@@ -59,8 +59,8 @@ function getButtonStatus(alreadyParticipating, currentParticipants, activity) {
 /**
  * checkIfFull is a function which checks if the activity is full or not
  *  by comparing current participants to a max limit
- * @param currentParticipants: current participants of the activity
- * @param activity: the activity itself
+ * @param {Number} currentParticipants: current participants of the activity
+ * @param {Object} activity: the activity itself
  * @returns button status represented as a string
  */
 function checkIfFull(currentParticipants, activity) {
@@ -74,7 +74,7 @@ function checkIfFull(currentParticipants, activity) {
 /**
  * isAlreadyParticipating is a function which checks if the account is already participating in a given activity.
  * This is done by fetching a boolean from backend, where we check if the account token has a registered connection to it.
- * @param activity: the activity itself
+ * @param {Object} activity: the activity itself
  * @returns state of participation represented as a boolean
  */
 async function isAlreadyParticipating(activity) {
@@ -108,7 +108,7 @@ async function isAlreadyParticipating(activity) {
 
 /**
  * getCurrentParticipantsNumber is a function which gets number of current participants using fetching from backend function.
- * @param activity: the activity itself
+ * @param {Object} activity: the activity itself
  * @returns number of participants
  */
 async function getCurrentParticipantsNumber(activity){
@@ -134,7 +134,7 @@ async function getCurrentParticipantsNumber(activity){
 
 /**
  * addParticipantToActivity is a function which adds a participant by post request to backend.
- * @param activity: the activity itself
+ * @param {Object} activity: the activity itself
  * @returns boolean representing if the activity was added or not
  */
 async function addParticipantToActivity(activity){
@@ -156,7 +156,7 @@ async function addParticipantToActivity(activity){
 /**
  * removeParticipantFromActivity is a function which removes current participant from activity.
  * Delete request is sent to backend, containing account's ID and the activity's ID.
- * @param activity: the activity itself
+ * @param {Object} activity: the activity itself
  * @returns boolean representing if the participant was removed from activity or not
  */
 async function removeParticipantFromActivity(activity){
@@ -177,7 +177,7 @@ async function removeParticipantFromActivity(activity){
 
 /**
  * countAccountsInQueue is a function which receives number of accounts which is in the queue of the activity.
- * @param activity: the activity itself
+ * @param {Object} activity: the activity itself
  * @returns number of accounts in queue
  */
 async function countAccountsInQueue(activity){
@@ -195,7 +195,7 @@ async function countAccountsInQueue(activity){
 
 /**
  * getQueuePosition is a function which receives queue position of current account in given activity.
- * @param activity: the activity itself
+ * @param {Object} activity: the activity itself
  * @returns queue position of account in activity
  */
 async function getQueuePosition(activity){

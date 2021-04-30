@@ -12,7 +12,7 @@
         >
         <br/>
         <router-link to="/dashboard">
-          <button class="button register">
+          <button style="margin-top: 10px" class="button register">
             <span>Se aktiviteter!</span>
           </button></router-link
         >

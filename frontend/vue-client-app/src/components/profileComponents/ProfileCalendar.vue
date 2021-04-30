@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-bottom: 40px; ">
     <vue-cal
         :time-from="6*60"
         :time-to="23*60"
@@ -9,7 +9,7 @@
         :on-event-click="onEventClick"
         locale="no"
         cell-contextmenu/>
-    <b-modal id="activity_modal" title="Activity pop-up">
+    <b-modal id="activity_modal" :hide-footer="true" title="Activity pop-up">
       <Activity
           :activity="selectedEvent"
           :isLoggedIn="loggedIn"
