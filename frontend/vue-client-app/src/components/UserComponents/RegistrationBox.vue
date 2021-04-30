@@ -155,7 +155,15 @@ export default {
         accountInfo: {
           firstname: name[0],
           surname: name[1],
-          phone: this.phoneValue
+          phone: this.phoneValue,
+          notificationSettings: {
+            wantsActivityChangedNotifications: true,
+            wantsActivityChangedMails: true,
+            wantsOutOfQueueNotifications: true,
+            wantsOutOfQueueMails: true,
+            wantsActivityCancelledNotifications: true,
+            wantsActivityCancelledMails: true
+          }
         },
       };
 
