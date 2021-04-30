@@ -34,8 +34,7 @@
                   v-for="(result, i) in results"
                   :key="i"
                   class="autocomplete-result"
-                  :class="{ 'is-active': i === arrowCounter }"
-                >
+                  :class="{ 'is-active': i === arrowCounter }">
                   <p @click="resultButtonClicked(result.id)">
                     <span class="title">{{ result.title }}</span>
                     <span class="email">{{ result.creator.email }}</span>
@@ -202,7 +201,7 @@ export default {
     },
 
     resultClicked(resultId) {
-      console.log(resultId);
+      console.log(resultId + "ZZZZZZZZZZZZZZZZZ");
       if (this.$router.path !== `/dashboard/activity/${resultId}`) {
         console.log("test");
         this.$router.push(`/dashboard/activity/${resultId}`);
