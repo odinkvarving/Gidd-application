@@ -16,6 +16,16 @@
 </template>
 
 <script>
+/**
+ * @author Kevin Andre Helgeland
+ *This is a component to have a toolbar for switching components
+ *
+ * methods:
+ * @method switchComponent(String)
+ * This is the method that emits the component that the user has selected to front end so that
+ * the parent component knows what to switch to
+ */
+
 export default {
   name: "ProfileToolbar",
   props:{

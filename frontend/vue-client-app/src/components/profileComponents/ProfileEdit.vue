@@ -67,6 +67,34 @@
 </template>
 
 <script>
+/**
+ * @author Kevin Andre Helgeland
+ * This is the component that displays the input fields for editing your own profile
+ * props:
+ * @property accountInfo JSON
+ * This is a property that holds the account from backend
+ * methods:
+ * @method exists(obj)
+ * This method checks if a value is not null. undefined or empty string.
+ * @method validFile(obj)
+ * This is a method that checks if the input file is of a valid format
+ * @method async sendChangePasswordForm()
+ * This is a method that sends a mail to the profile mail for changing the password
+ * @method checkForm(event)
+ * This is a method that checks if the values in the form is ok
+ * @method handleFiles(event)
+ * This is a method that readies an image for upload
+ * @method getOnCancelledSettings()
+ * This method changes the setting for how notifications should be handled if an activity that the user is
+ * registered in is cancelled
+ * @method getOnEditedSettings()
+ * This method changes the setting for how notifications should be handled if an activity that the user is
+ * registered in is edited
+ * @method getOnOutOfQueueSettings()
+ * This method changes the setting for how notifications should be handled if an activity that the user is
+ * in queue in gives the user a spot
+ */
+
 import { notificationService } from '../../services/NotificationService';
 import {userService} from "../../services/UserService";
 

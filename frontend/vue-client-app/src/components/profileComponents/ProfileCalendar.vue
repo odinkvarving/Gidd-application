@@ -31,13 +31,16 @@ import {userService} from "../../services/UserService";
  * This is a component for viewing a calendar using 'vue-cal'
  * @property activities JSON Array object
  *
- * Expppected input:
+ * @method getEvents()
+ * This is a method to convert the activities from backend to usable events for the calendar
+ *
+ * Expected input for event:
  *  * start: Date
  *  * end: Date {Optional; if missing, 'allDay' will beset to true}
  *  * title: String {Optional}
  *  * allDay: false {true if end is null}
- *  * class:String{Optional; if missing, can be edited in .css from .vuecal__event.normal-event.
- *  If provided, you can style the event in a .css doc using .vuecal__event.<String>}
+ *  * class:String{Optional; if missing, can be edited in .css from .vuecalevent.normal-event.
+ *  If provided, you can style the event in a .css doc using .vuecalevent.<String>}
  */
 export default {
   name: "ProfileCalendar",

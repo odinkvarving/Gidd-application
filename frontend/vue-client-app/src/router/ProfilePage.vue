@@ -45,6 +45,32 @@
 </template>
 
 <script>
+/**
+ * @Author Kevin Andre Helgeland
+ * Component for displaying the profile page
+ * Methods:
+ * @method getDefaultImg(String)
+ * This is a method for setting the profile picture to default picture if there are none
+ * @method sendComp(String)
+ * This is a method to send information to profile toolbar in order to disable the correct
+ * button and display the correct component
+ * @method getUserinfo()
+ * This method is created to fetch all information on user based on id in url.
+ * After fetching the data, it reads the data and displays it
+ * @method getAllActivities()
+ * This method i created to fetch all activities that the given user is registered to
+ * Computation:
+ * @method activityProperties()
+ * this method is created to format the activity data to fit either profileCalendar
+ * or profileActivity
+ * @data currentComp default: profileCalendar
+ * This is the variable that decides which component is currently showing.
+ * @data userInfo
+ * This is a JSON object that holds all information about the user
+ * @data activities
+ * This is a JSON array that holds all activities that the account is registered to
+ */
+
 import '../assets/styles/profile.css';
 import fetch from "node-fetch";
 import ProfileToolbar from '../components/profileComponents/ProfileToolbar';
