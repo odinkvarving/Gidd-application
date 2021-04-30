@@ -15,7 +15,13 @@ export const userService = {
     getAccountInfo
 }
 
-
+/**
+ * login is a function which performs account login and fetches response
+ * 
+ * @param {string} email: account email
+ * @param {string} password: account password
+ * @returns fetch response
+ */
 function login(email, password) {
     const requestOptions = {
         method: 'POST',
@@ -37,6 +43,13 @@ function login(email, password) {
         });
 }
 
+/**
+ * sendImage is a function which sends image to backend
+ * 
+ * @param {string} image: account image
+ * @param {Number} id: account ID
+ * @returns fetch response
+ */
 async function sendImage(image,id){
     console.log(image.get('file'))
     let user = JSON.parse(localStorage.getItem('user'));
@@ -51,6 +64,11 @@ async function sendImage(image,id){
 
 }
 
+/**
+ * getAccountByEmail is a function which returns account account by email
+ * 
+ * @returns account from fetch
+ */
 function getAccountByEmail(){
     try{
         let account = getAccountDetails();
@@ -65,11 +83,19 @@ function getAccountByEmail(){
     }
 }
 
+/**
+ * logout is a function which performs account logout
+ */
 function logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('user');
 }
 
+/**
+ * getAll is a function which returns all accounts
+ * 
+ * @returns all accounts
+ */
 function getAll() {
     const requestOptions = {
         method: 'GET',
@@ -79,7 +105,12 @@ function getAll() {
     return fetch("http://localhost:8080/accounts", requestOptions).then(handleResponse);
 }
 
-
+/**
+ * handleResponse is a function which handles response
+ * 
+ * @param {string} response: response
+ * @returns fetch response
+ */
 function handleResponse(response) {
     return response.text().then(text => {
         console.log(text)
@@ -98,7 +129,11 @@ function handleResponse(response) {
     });
 }
 
-// returns the authorization headeren with JWT token that is stored in local storage
+/**
+ * authorizationHeader is a function which returns authorization header used for authorized fetches
+ * 
+ * @returns authorization header with JWT token that is stored in local storage
+ */
 function authorizationHeader() {
 
     let user = JSON.parse(localStorage.getItem('user'));
@@ -110,6 +145,11 @@ function authorizationHeader() {
     }
 }
 
+/**
+ * getTokenString is a function which returns token as a string
+ * 
+ * @returns JWT token
+ */
 function getTokenString() {
     let user = JSON.parse(localStorage.getItem('user'));
 
@@ -120,9 +160,12 @@ function getTokenString() {
     }
 }
 
-
+/**
+ * getAccountDetails is a function which returns account info
+ * 
+ * @returns account info
+ */
 function getAccountDetails() {
-
     // get token from localstorage
     let token = JSON.parse(localStorage.getItem("user"));
     try {
@@ -135,6 +178,14 @@ function getAccountDetails() {
         return null;
     }
 }
+
+/**
+ * setAccount is a function which sets account JWT token
+ * 
+ * @param {Object} newAccount: new account which will be added
+ * @param {Number} id: account ID
+ * @returns boolean which tells us if the account was added
+ */
 function setAccount(newAccount,id){
     let user = JSON.parse(localStorage.getItem("user"));
     if(!user || !user.jwtToken){
@@ -150,6 +201,12 @@ function setAccount(newAccount,id){
         body: JSON.stringify(newAccount)
     }).then(handleResponse)
 }
+
+/**
+ * isLoggedIn is a function which checks if the account is logged in
+ * 
+ * @returns boolean to tell us if the account is logged in
+ */
 function isLoggedIn(){
     // get token from localstorage
     let user = JSON.parse(localStorage.getItem("user"));
@@ -170,6 +227,9 @@ function isLoggedIn(){
         .then(handleResponse);
 }
 
+/**
+ * getCurrentLocation is a function which returns the current location
+ */
 function getCurrentLocation(){
     let currentLocation;
 
@@ -183,6 +243,12 @@ function getCurrentLocation(){
     })
 }
 
+/**
+ * getAccountInfo is a function which returns account info of current account
+ * 
+ * @param {Number} accountId: account ID
+ * @returns Object containing account info
+ */
 async function getAccountInfo(accountId){
     let url = `http://localhost:8080/accounts/${accountId}/info`;
 
