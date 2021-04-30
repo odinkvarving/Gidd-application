@@ -9,7 +9,7 @@
         </ul>
       </div>
       <fieldset class="edit-general">
-        <legend>Generell bruker informasjon</legend>
+        <legend>Generell brukerinformasjon</legend>
         <div class="edit-name">
           <label for="first-name-form">Fornavn:</label>
           <input type="text" id="first-name-form"  v-model="firstName" :placeholder="AccountInfo.firstname">
@@ -17,11 +17,11 @@
           <input type="text" id="last-name-form" v-model="lastName" :placeholder="AccountInfo.surname">
         </div>
         <div class="edit-image">
-          <label for="image-form">Nytt profil bilde:</label>
+          <label for="image-form">Nytt profilbilde:</label>
           <input type="file" accept="image/png,image/gif,image/jpeg" id="image-form" value="Velg fil" @change="handleFiles($event)">
         </div>
         <div class="edit-notification-settings">
-          <label style="font-size: 20px; margin: 20px 10px 10px 10px">Endre notifikasjons instilinger</label>
+          <label style="font-size: 20px; margin: 20px 10px 10px 10px">Endre notifikasjonsinnstillinger</label>
           <div class="on-cancelled-activity notification-settings-item">
             <label for="">Når aktivitet blir avlyst: </label>
             <b-form-select v-model="cancelledActivityOption" :options="notificationOptions">
