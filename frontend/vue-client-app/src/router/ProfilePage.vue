@@ -131,6 +131,9 @@ export default {
             if(data.profileDescription!==null&&typeof data.profileDescription !== 'undefined'){
               this.AccountInfo.description=data.profileDescription;
             }
+            if(data.imageURL === null || !data.imageURL.includes("http://localhost:8080/profilepictures/")){
+                this.AccountInfo.imageURL = "http://localhost:8080/profilepictures/";
+            }            
 
           })
           .catch(e=>console.log(e))

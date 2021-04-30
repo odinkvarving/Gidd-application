@@ -10,15 +10,9 @@
     </div>
 
     <img
-      v-if="profilePicUrl !== null"
       v-bind:src="profilePicUrl"
       alt="profilepic"
-    />
-    <img
-      v-else
-      src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
-      alt="default pic"
-    />
+    >
     <router-link v-bind:to="profileLink">
       <h5 class="name">{{ name }}</h5>
     </router-link>
@@ -106,6 +100,9 @@ export default {
         .then((data) => {
           this.name = data.firstname + " " + data.surname;
           this.profilePicUrl = data.imageURL;
+          if(this.profilePicUrl === null || !this.profilePicUrl.includes("http://localhost:8080/profilepictures/")){
+            this.profilePicUrl = "http://localhost:8080/profilepictures/"
+          }
         })
         .catch((error) => console.error("error deleting message: " + error));
     },

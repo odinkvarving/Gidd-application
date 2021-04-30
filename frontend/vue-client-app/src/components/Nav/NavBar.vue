@@ -61,8 +61,7 @@
 
         <b-nav-item-dropdown right v-if="isLoggedIn">
           <template slot="button-content">
-            <img v-if="accountInfo.imageURL !== ''" class="profile-pic" alt="Profile picture" :src="this.accountInfo.imageURL" height="40px" width="40px">
-            <img v-else src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="default pic" class="profile-pic" height="40px" width="40px">
+            <img class="profile-pic" alt="Profile picture" :src="this.accountInfo.imageURL" height="40px" width="40px">
 
           </template>
           <b-dropdown-item :to="`${user[0].link}`">
@@ -192,6 +191,9 @@ export default {
     if(this.isLoggedIn){
       let account = await userService.getAccountByEmail();
       this.accountInfo = await userService.getAccountInfo(account.id);
+      if(this.accountInfo.imageURL === null || !this.accountInfo.imageURL.includes("http://localhost:8080/profilepictures/")){
+          this.accountInfo.imageURL = "http://localhost:8080/profilepictures/";
+      }
     }
   },
 

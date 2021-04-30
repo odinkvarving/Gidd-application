@@ -127,12 +127,6 @@ export default {
         console.log('changing description to '+this.description)
         newAccount.profileDescription=this.description
       }
-      if(this.exists(this.newImageFile)){
-        console.log('Changing image to '+this.newImageFile.name)
-        if(!this.validFile(this.newImageFile)){
-          this.errors.push('Ugyldig fil type. Støttede filtyper er som følger: .png .jpg .gif')
-        }
-      }
       if(this.cancelledActivityOption !== null){
         this.getOnCancelledSettings();
       }
@@ -145,13 +139,7 @@ export default {
         this.getOnOutOfQueueSettings();
       }
       if(userService.getAccountDetails().sub===this.AccountInfo.email) {
-        userService.login(this.AccountInfo.email, this.old_password).then(res => {
-          console.log('getting jwtToken')
-          if (!res.jwtToken) {
-            console.log('Authentication failed')
-            this.errors.push('Gammelt passord stemmer ikke med brukeren')
-          }else console.log('Login successful')
-        })
+        console.log("ok")
       }else{
         this.errors.push('Denne brukeren kan ikke gjøre endringer på ' + this.AccountInfo.email+' sin bruker.')
       }
@@ -159,17 +147,6 @@ export default {
         console.log('preventing post call '+this.errors.length+ ' errors')
         e.preventDefault()
       }else{
-
-        console.log('Current image status')
-        console.log(this.newImageFile)
-
-        if(this.exists(this.newImageFile)){
-          let formData=new FormData()
-          formData.append('file',this.newImageFile)
-          let res= await userService.sendImage(formData, this.$route.params.userId)
-          console.log('sendImage res'+res)
-        }
-
         console.log('sending following json')
         console.log(newAccount)
         if(this.exists(this.firstName)||this.exists(this.lastName)||
@@ -177,6 +154,15 @@ export default {
               newAccount.notificationSettings = this.notificationSettings;
           let res= await userService.setAccount(newAccount,this.$route.params.userId);
           console.log('setAccount res:'+res)
+        }
+        console.log('Current image status')
+        console.log(this.newImageFile)
+
+        if(this.exists(this.newImageFile)){
+          let formData=new FormData()
+          formData.append('file',this.newImageFile)
+          let res= await userService.sendImage(formData,this.$route.params.userId)
+          console.log('sendImage res'+res)
         }
 
       }
