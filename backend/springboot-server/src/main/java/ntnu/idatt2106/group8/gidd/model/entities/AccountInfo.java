@@ -39,6 +39,7 @@ public class AccountInfo {
     private String imageURL;
     private String firstname;
     private String surname;
+    private String phone;
     private String profileDescription;
     private int points;
 
@@ -46,12 +47,13 @@ public class AccountInfo {
     }
 
 
-    private AccountInfo(Level userLevel, String imageURL, String firstname, String surname,
+    private AccountInfo(Level userLevel, String imageURL, String firstname, String surname, String phone,
                         String profileDescription, int points) {
         this.level = userLevel;
         this.imageURL = imageURL;
         this.firstname = firstname;
         this.surname = surname;
+        this.phone = phone;
         this.profileDescription = profileDescription;
         this.points = points;
     }
@@ -113,6 +115,14 @@ public class AccountInfo {
         this.surname = surname;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getProfileDescription() {
         return profileDescription;
     }
@@ -135,6 +145,7 @@ public class AccountInfo {
         builder.append("id: " + this.id + "\n");
         builder.append("firstname: " + this.firstname + "\n");
         builder.append("surname: " + this.surname + "\n");
+        builder.append("phone: " + this.phone + "\n");
         builder.append("description: " + this.profileDescription + "\n");
         builder.append("points: " + this.points + "\n");
         builder.append("Profile picture URL: " + this.imageURL + "\n");
@@ -151,6 +162,7 @@ public class AccountInfo {
         private String imageURL;
         private String firstname;
         private String surname;
+        private String phone;
         private String profileDescription;
         private int points = 0;
 
@@ -161,7 +173,7 @@ public class AccountInfo {
         }
 
         public AccountInfo build() {
-            return new AccountInfo(this.userLevel, this.imageURL, this.firstname, this.surname, this.profileDescription, this.points);
+            return new AccountInfo(this.userLevel, this.imageURL, this.firstname, this.surname, this.phone ,this.profileDescription, this.points);
         }
 
         public Builder setUserLevel(Level userLevel) {
@@ -181,6 +193,11 @@ public class AccountInfo {
 
         public Builder setSurname(String surname) {
             this.surname = surname;
+            return this;
+        }
+
+        public Builder setPhone(String phone) {
+            this.phone = phone;
             return this;
         }
 

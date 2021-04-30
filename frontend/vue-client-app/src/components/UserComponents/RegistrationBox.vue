@@ -156,6 +156,7 @@ export default {
         accountInfo: {
           firstname: name[0],
           surname: name[1],
+          phone: this.phoneValue
         },
       };
 

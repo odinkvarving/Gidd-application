@@ -1,14 +1,17 @@
 <template>
   <div class="profile_buttons">
-    <button id="calendarBtn" class="tabBtn"
-          @click="switchComponent('profileCalendar')"
-          :disabled="currentComp==='profileCalendar'">Kalender</button>
-    <button id="activityBtn" class="tabBtn"
-            @click="switchComponent('profileActivity')"
-            :disabled="currentComp==='profileActivity'">Aktiviteter</button>
-    <button id="editBtn" class="tabBtn"
-            @click="switchComponent('profileEdit')"
-            :disabled="currentComp==='profileEdit'">Endre profil innstillinger</button>
+    <b-button id="calendarBtn" class="tabBtn" @click="switchComponent('profileCalendar')" :disabled="currentComp==='profileCalendar'">
+        Kalender
+        <b-icon icon="calendar"></b-icon>
+    </b-button>
+    <b-button id="activityBtn" class="tabBtn" @click="switchComponent('profileActivity')" :disabled="currentComp==='profileActivity'">
+      Aktiviteter
+      <b-icon icon="bicycle"></b-icon>
+    </b-button>
+    <b-button id="editBtn" class="tabBtn" @click="switchComponent('profileEdit')" :disabled="currentComp==='profileEdit'">
+      Endre profil
+      <b-icon icon="calendar"></b-icon>    
+    </b-button>
   </div>
 </template>
 
@@ -34,5 +37,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

@@ -836,7 +836,7 @@ h1{
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  justify-content: space-around;
+  justify-content: space-between;
   margin: 30px;
 }
 #ownerInfo img {

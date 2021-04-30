@@ -56,9 +56,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/messages/{id}",
             "/accounts/{id}/profilepicture",
             "/profilepictures/{filename}",
-            "/profilepictures/"};
+            "/profilepictures/",
+            "/profilepictures",
+
+            // Documentation
+            "/gidd-docs/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**"
+    };
+
     @Autowired
     CustomUserDetailsService customUserDetailsService;
+
     @Autowired
     private JwtFilter jwtFilter;
 
@@ -84,11 +93,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors();
-        http.headers().frameOptions().disable();
-        http.csrf().disable().authorizeRequests().antMatchers(AUTHORIZED_URLS)
-                .permitAll().anyRequest().authenticated()
-                .and().exceptionHandling().and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.headers()
+            .frameOptions()
+            .disable();
+
+        http.csrf()
+            .disable()
+            .authorizeRequests()
+            .antMatchers(AUTHORIZED_URLS)
+            .permitAll()
+            .anyRequest()
+            .authenticated()
+            .and()
+            .exceptionHandling()
+            .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

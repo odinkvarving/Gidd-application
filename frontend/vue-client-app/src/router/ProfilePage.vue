@@ -1,21 +1,44 @@
 <template>
   <div class="profile_container">
     <NavBar />
-    <img :src=AccountInfo.imageURL @error="AccountInfo.imageURL" alt="Profil bilde"
+    <div class="profile_info">
+      <img :src="AccountInfo.imageURL" @error="AccountInfo.imageURL" alt="Profil bilde"
          width="170" height="170"
          id="profile_photo">
-    <div class="profile_info">
-      <h1 id="name">{{ AccountInfo.firstname }} {{ AccountInfo.surname }}</h1>
-      <p id="description">{{ AccountInfo.description }}</p>
-
-      <ul id="info_list">
-        <li>
-          {{ AccountInfo.email }}
-        </li>
-      </ul>
-      <profileToolbar :current-comp="currentComp" @switchComp="sendComp"></profileToolbar>
+      <div id="info-list">
+        <div class="info-list-item">
+          <p>{{ AccountInfo.email }}</p>
+          <b-icon icon="mailbox"></b-icon>
+        </div>
+        <div class="info-list-item">
+          <p>{{ AccountInfo.phone }}</p>
+          <b-icon icon="telephone"></b-icon>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="header-info">
+        <h1 id="name">{{ AccountInfo.firstname }} {{ AccountInfo.surname }}</h1>
+        <p id="description">{{ AccountInfo.description }}</p>
+      </div>
+        <div class="profile-info-small">
+          <img :src=AccountInfo.imageURL @error="AccountInfo.imageURL" alt="Profil bilde"
+            width="170" height="170"
+            id="profile_photo">
+          <div id="info-list">
+            <div class="info-list-item">
+              <p>{{ AccountInfo.email }}</p>
+              <b-icon icon="mailbox"></b-icon>
+            </div>
+            <div class="info-list-item">
+              <p>{{ AccountInfo.phone }}</p>
+              <b-icon icon="telephone"></b-icon>
+            </div>
+          </div>
+      </div>
       <div class="display_container">
-        <component v-bind="activityProperties" :is="currentComp" ></component>
+          <profileToolbar :current-comp="currentComp" @switchComp="sendComp"></profileToolbar>
+          <component v-bind="activityProperties" :is="currentComp" ></component>
       </div>
     </div>
   </div>
@@ -96,8 +119,8 @@ export default {
             if(data.imageURL!==null&&typeof data.imageURL !== 'undefined'){
               this.AccountInfo.imageURL=data.imageURL;
             }
-            if(data.telephone!==null&&typeof data.telephone !== 'undefined'){
-              this.AccountInfo.telephone=data.telephone;
+            if(data.phone!==null&&typeof data.phone !== 'undefined'){
+              this.AccountInfo.phone=data.phone;
             }
             if(data.address!==null&&typeof data.address !== 'undefined') {
               this.AccountInfo.address = data.address;
@@ -152,7 +175,10 @@ export default {
           events.push({
             id: item.id,
             title: item.title,
-            startTime: item.startTime
+            startTime: item.startTime,
+            latitude: item.latitude,
+            longitude: item.longitude,
+            location: item.location
           })
         })
         //ProfileActivity.scrollToEnd();
@@ -199,4 +225,104 @@ export default {
 </script>
 
 <style scoped>
+
+  .profile_container {
+    padding-top: 200px;
+    background-color: #f6f6f6;
+    width: 99vw;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .profile_info{
+    width: 400px;
+    margin-right: 2vw;
+    border-right: 1px solid rgb(155, 153, 153);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-info-small {
+    display: none;
+  }
+
+  .header-info {
+    width: 75vw;
+  }
+
+  .display_container {
+    margin-right: 30px;
+  }
+
+  #info-list {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    margin-top: 70px;
+    margin: 70px 10px 10px 10px;
+  }
+
+  #info-list div{
+    margin: 5px 0;
+  }
+
+  .info-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .info-list-item p{
+    margin: 0 10px 0 0;
+  }
+
+  @media (max-width: 1225px) {
+    .profile_info {
+      display: none;
+    }
+
+    .profile_container {
+      flex-direction: column;
+    }
+
+    .display_container{
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    .profile-info-small {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    .header-info{
+      margin-left: 30px;
+    }
+  }
+
+  @media (max-width: 450px) {
+
+    .profile_container{
+      padding-top: 130px;
+    }
+
+    .header-info h1{
+      font-size: 25px;
+    }
+
+    .header-info p{
+      font-size: 15px;
+      opacity: 80%;
+    }
+
+    .profile-info-small img{
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+
 </style>
