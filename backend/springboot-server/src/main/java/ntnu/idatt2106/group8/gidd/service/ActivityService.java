@@ -261,6 +261,12 @@ public class ActivityService {
         return null;
     }
 
+    /**
+     * Returns the number of participants in the activity with the given id.
+     *
+     * @param id    the id of the activity
+     * @return      the number of participants in the activity with the given id.
+     */
     public int countAllAccountsInActivity(int id) {
         List<Account> participatingAccounts = new ArrayList<>();
         try {
@@ -275,6 +281,12 @@ public class ActivityService {
         return 0;
     }
 
+    /**
+     * Returns the number of accounts in the waiting list of the activity with the given id
+     *
+     * @param id the id of the activity
+     * @return   the number of participants in the waiting list of the activity with the given id
+     */
     public int countAllAccountsInQueue(int id) {
         List<Account> accountsInQueue = getAllAccountsInQueue(id);
         return accountsInQueue.size();
@@ -388,8 +400,17 @@ public class ActivityService {
         return false;
     }
 
-    public boolean addEquipmentToActivity(int activityId, String equipment) {
-        Activity activity = activityRepository.findById(activityId).orElse(null);
+    /**
+     * Adds the given equipment to the activity with the given id.
+     * If an activity with the given id exists, then the given equipment
+     * is added to it and true is returned. False is returned otherwise.
+     *
+     * @param id         the id of the activity to add the equipment to
+     * @param equipment  the equipment to add to the activity
+     * @return           true if the equipment was added to the activity, false if otherwise
+     */
+    public boolean addEquipmentToActivity(int id, String equipment) {
+        Activity activity = activityRepository.findById(id).orElse(null);
         if (activity != null) {
             activity.getEquipment().add(new Equipment(equipment.substring(1, equipment.length() - 1)));
             activityRepository.save(activity);
@@ -398,5 +419,4 @@ public class ActivityService {
             return false;
         }
     }
-
 }

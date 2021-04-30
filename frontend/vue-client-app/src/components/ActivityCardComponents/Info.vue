@@ -34,9 +34,12 @@
       <ul class="list" id="list1">
         <li class="txt">Kategori:</li>
         <li class="txt">Sted:</li>
-        <li class="txt">Tid:</li>
-        <li class="txt">Varighet:</li>
-        <li class="txt">Værmelding:</li>
+        <li class="txt" v-show="!inEditMode">Tid:</li>
+        <li class="txt" v-show="inEditMode">Start tid:</li>
+        <li class="txt" v-show="inEditMode">Slutt tid:</li>
+        <li class="txt" v-show="!inEditMode">Varighet:</li>
+        <li class="txt" v-show="!inEditMode">Værmelding:</li>
+        <li class="txt">Nivå:</li>
         <li class="txt">Deltakere:</li>
       </ul>
       <ul class="list" id="list2" v-show="!inEditMode">
@@ -53,6 +56,7 @@
           {{ weather.temp }} C°
         </li>
         <li class="txt" v-else>Ingen værmelding</li>
+        <li class="txt" v-show="!inEditMode">{{ activity.level.description }}</li>
         <li class="txt">
           {{ currentParticipants }} / {{ activity.maxParticipants }}
         </li>
@@ -129,9 +133,6 @@
         </li>
       </ul>
     </div>
-    <!--<div>
-      <img alt="Participant profile picture" v-for="image in images" :key="image.url" :src="image.url">
-    </div>-->
     <div v-show="!activity.cancelled && !isExpired">
       <div v-show="!inEditMode">
         <button
@@ -603,6 +604,7 @@ export default {
       if (this.nameState === true && this.descriptionState === true) {
         this.editActivity();
       }
+      this.inEditMode = false;
     },
 
     /**
@@ -704,6 +706,7 @@ export default {
           }
         })
         .catch((error) => console.log(error));
+        location.reload();
     },
 
     /**
@@ -931,6 +934,7 @@ h1{
 .edit .title {
   width: 75%;
   text-align: center;
+  height: 60px;
 }
 
 .edit .description {
