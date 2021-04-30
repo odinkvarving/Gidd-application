@@ -185,6 +185,9 @@ data() {
     this.getLevels();
   },
   methods: {
+    /**
+     * Validates input field and creates activity if correct.
+     */
     createButtonClicked(){
       //DOUBLE CHECK IF USER IS LOGGED IN HERE WITH isLoggedIn()
 
@@ -208,6 +211,10 @@ data() {
         
 
     },
+
+    /**
+     * Sets location to the activity from given input.
+     */
     setLocation(location){
       if(location.geometry){
         this.currentLocation = location;
@@ -218,6 +225,10 @@ data() {
         this.currentLocation = location;
       }
     },
+
+    /**
+     * Creates activity.
+     */
     async createActivity(){
 
       let accountDetails = await userService.getAccountByEmail();
@@ -274,6 +285,10 @@ data() {
 
       
     },
+
+    /**
+     * Gets all activities from database.
+     */
     async getCategories(){      
       
       let categoriesList;
@@ -294,6 +309,10 @@ data() {
         this.categories.push(categoriesList[i].type);
       }
     },
+
+    /**
+     * Gets all levels from database.
+     */
     async getLevels(){
       let levelsList;
 
@@ -313,6 +332,10 @@ data() {
         this.levels.push(levelsList[i].description);
       }
     },
+
+    /**
+     * Controls that the start date is before the end date, and is valid.
+     */
     validStartAndEndDate(){
       this.startDate === '' || this.startTime === '' ? this.startDateState = false : this.startDateState = true;
       this.endDate === '' || this.endTime === '' ? this.endDateState = false : this.endDateState = true;
