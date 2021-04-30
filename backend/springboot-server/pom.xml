@@ -10,11 +10,12 @@
 	</parent>
 	<groupId>ntnu.idatt2106.group8</groupId>
 	<artifactId>gidd</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1</version>
 	<name>gidd</name>
 	<description>Backend server for the project assignment in the idatt2106 course. Made by group 8</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<starter-class>ntnu.idatt2106.group8.gidd.GiddApplication</starter-class>
 	</properties>
 	<dependencies>
 		<dependency>
