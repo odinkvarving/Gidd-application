@@ -120,18 +120,9 @@ export default {
         .then((data) => {
           // If update activity was successfull
           if (data !== null) {
-            let result = notificationService.sendNotificationToAllParticipants(
+            notificationService.sendNotificationToAllParticipants(
               this.activity.id
             );
-            if (result === true) {
-              console.log(
-                "Sucessfully notified all participants about the edit!"
-              );
-            } else {
-              console.log(
-                "Error! Something went wrong when notifying participants!"
-              );
-            }
           }
         })
         .catch((error) => console.log(error));
@@ -168,18 +159,9 @@ export default {
           .then((data) => {
             // If update activity was successfull
             if (data !== null) {
-              let result = notificationService.sendNotificationToAllParticipants(
+              notificationService.sendNotificationToAllParticipants(
                 this.activity.id
               );
-              if (result === true) {
-                console.log(
-                  "Sucessfully notified all participants about the edit!"
-                );
-              } else {
-                console.log(
-                  "Error! Something went wrong when notifying participants!"
-                );
-              }
             }
           })
           .catch((error) => console.log(error));

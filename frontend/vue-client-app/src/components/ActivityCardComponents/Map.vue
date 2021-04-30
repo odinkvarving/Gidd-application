@@ -14,22 +14,26 @@
     </div>
 </template>
 <script>
+    /**
+     * Map is a component which displays the map of an activity's location.
+     * 
+     * @author Magnus Bredeli
+     */
     export default {
         name: "Map",
-        data(){
-            return{
-
-            }
-        },
         props: {
+            /**
+             * latitude is an int passed from ActivityCard which represents latitude of current activity.
+             */
             latitude: Number,
+            /**
+             * longitude is an int passed from ActivityCard which represents longitude of current activity.
+             */
             longitude: Number
         }
     }
 </script>
-
 <style scoped>
-
     #container{
         width: 40vh;
         height: 40vh;
