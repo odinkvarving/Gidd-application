@@ -87,7 +87,7 @@ import { userService } from "../../services/UserService.js";
 
 export default {
   name: "navbar",
-  props: {
+  /* props: {
     items: {
       type: Array,
       required: false,
@@ -110,7 +110,7 @@ export default {
       }
     },
   },
-
+ */
   components: {
     NotificationsDropdown,
   },
@@ -124,6 +124,7 @@ export default {
       this.accountInfo = await userService.getAccountInfo(account.id);
     }
   },
+
   destroyed() {
     document.removeEventListener("click", this.handleClickOutside);
   },
@@ -131,10 +132,16 @@ export default {
   data() {
     return {
       isCreateActivityVisible: false,
+      /**
+       * User: Contains information about the different items in the navbar dropdown menu, with corresponding links and functions.
+       */
       user: [
         {
           title: "Min Profil",
           link: String,
+          /**
+           * Checks if user is logged in, and adds the correct routing link to user page.
+           */
           method: () => {
             console.log(this.user[0].link);
             if (this.user[0].link) {
@@ -162,38 +169,58 @@ export default {
           },
         },
       ],
+      /**
+       * Boolean operator that flags if a user is logged in.
+       */
       isLoggedIn: false,
+      /**
+       * Array of notifications.
+       */
       notifications: [{}],
+      /**
+       * List of activities.
+       */
       activities: {},
+      /**
+       * Input text in search field
+       */
       search: "",
+      /**
+       * Boolean operator that flags if something is loading.
+       */
       isLoading: false,
+      /**
+       * List of search results.
+       */
       results: [],
+      /**
+       * oolean operator that flags if search field is open.
+       */
       isOpen: false,
+      /**
+       * Used to check which item in search field is selected with arrows.
+       */
       arrowCounter: -1,
+      /**
+       * Account info.
+       */
       accountInfo: {}
     };
   },
-  computed: {
-    onHomePage() {
-      if (
-        this.$route.path === "/" ||
-        this.$route.path === "/register" ||
-        this.$route.path === "/login" ||
-        this.$route.path === "/forgotPassword" ||
-        this.$route.path.includes("/resetpassword")
-      ) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-  },
+
+  /**
+   * Get user id on creation.
+   */
   created() {
     if (userService.getTokenString()) {
       this.getUserId();
     }
   },
+
   methods: {
+    /**
+     * Get user id of the logged in user.
+     */
     async getUserId() {
       let res = await userService.getAccountByEmail(
         userService.getAccountDetails().sub
@@ -201,6 +228,7 @@ export default {
       this.user[0].link = "/accounts/" + res.id;
     },
 
+    
     async resultClicked(resultId) {
       console.log(resultId);
       if (this.$router.path !== `/dashboard/activity/${resultId}`) {
