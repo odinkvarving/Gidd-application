@@ -26,11 +26,18 @@ import java.util.ArrayList;
 public class CustomUserDetailsService implements UserDetailsService {
 
     Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
+
     @Autowired
     private AccountService accountService;
 
-    // TODO: add error handling if email doesn't exist
-    // TODO: fix this method being called twice, WHYYYY????
+    /**
+     * Returns the user details of the account registered with the given email.
+     * Returns null if no account is registered with the given email.
+     *
+     * @param email the email of the account
+     * @return      null if no account is registered with the given email, or
+     *              the user details, if an account is registered with the given email
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Account account = accountService.findByEmail(email);

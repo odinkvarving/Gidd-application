@@ -5,12 +5,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.mail.*;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 /**
+ * Service class for sending emails to registered accounts
+ *
  * @author Endré Hadzalic
  */
 @Service
@@ -18,12 +24,10 @@ public class MailService {
 
     private static final Logger logger = LoggerFactory.getLogger(MailService.class);
 
-
     //Sender address details
     private static final String MAIL_ADDRESS = "giddteam@gmail.com";
     private static final String PASSWORD = "02YWD29BDP5ZaladZApqWaZtJ0f8voZo11V";
     private static final String BASE_URL = "http://localhost:8081/resetpassword/";
-
 
     /**
      * Generates and sends a test message to the specified recipient.
@@ -93,6 +97,12 @@ public class MailService {
         return mimeMessage;
     }
 
+    /**
+     * Sends a feedback mail to the gidd-team email
+     *
+     * @param feedbackDTO the message to send
+     * @return true if the email was sent, false if otherwise
+     */
     public boolean sendFeedbackEmail(FeedbackDTO feedbackDTO) {
         try {
             Message message = new MimeMessage(getGmailSession());
@@ -164,5 +174,4 @@ public class MailService {
         }
         return message;
     }
-
 }
